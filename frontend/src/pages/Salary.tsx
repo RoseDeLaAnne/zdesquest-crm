@@ -25,14 +25,11 @@ const columns: ColumnsType<DataType> = [
     render: (text) => (
       <Tooltip title={(
         <React.Fragment>
-          Максим - 650
-          <br />
           1) 500р. - 1 игра
           <br />
           2) 100р. - 1 видео
           <br />
           3) 50р. - проезд
-          <br />
         </React.Fragment>
       )}>
         <span>{text}</span>

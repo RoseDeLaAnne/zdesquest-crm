@@ -116,7 +116,7 @@ class QuestForm(models.Model):
     discount_desc = models.CharField(max_length=255)
     room_sum = models.IntegerField()
     room_quantity = models.IntegerField()
-    room_name = models.CharField(max_length=255)
+    room_employee_name = models.CharField(max_length=255)
     video = models.IntegerField()
     photomagnets_not_promo_sum = models.IntegerField()
     photomagnets_not_promo_quantity = models.IntegerField()
@@ -155,6 +155,21 @@ class BonusesPenaltiesForm(models.Model):
     penaltie = models.IntegerField()
 
     quests = models.ManyToManyField(Quest, blank=True)
+
+    def __str__(self):
+        return str(self.date)
+    
+class Additional1Form(models.Model):
+    STATUS = [
+        ('error', 'Отклонена'),
+        ('processing', 'В ожидании'),
+        ('success', 'Одобрена'),
+    ]
+
+    date = models.DateField()
+
+    value = models.IntegerField()
+    status = models.CharField(verbose_name=_('Статус'), choices=STATUS, default='processing', max_length=255)
 
     def __str__(self):
         return str(self.date)

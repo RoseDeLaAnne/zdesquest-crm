@@ -6,17 +6,22 @@ from .models import *
 
 class UserSerializer(ModelSerializer):
     class Meta:
-        # key = serializers.CharField(source='id', read_only=True)
+        key = serializers.CharField(max_length=50, source='id')
 
         model = User
-        fields = ['id', 'username', 'last_name', 'first_name', 'middle_name']
-        # fields = '__all__'
+        # fields = ['id', 'username', 'last_name', 'first_name', 'middle_name']
+        fields = '__all__'
 
         depth = 1
 
 class QuestSerializer(ModelSerializer):
     class Meta:
         model = Quest
+        fields = '__all__'
+
+class QuestFormSerializer(ModelSerializer):
+    class Meta:
+        model = QuestForm
         fields = '__all__'
 
 # class SalarySerializer(ModelSerializer):
@@ -65,12 +70,23 @@ class SalaryTimeSerializer(serializers.ModelSerializer):
         model = Salary
         fields = '__all__'
 
+        depth = 1
+
 class SalarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Salary
         fields = ['id', 'date', 'children']
 
         def get_children(self, instance):
-            incomes_with_same_date = Income.objects.filter(date=instance.date)
+            incomes_with_same_date = Salary.objects.filter(date=instance.date)
             return SalaryTimeSerializer(incomes_with_same_date, many=True).data
+        
+class Additional1Serializer(serializers.ModelSerializer):
+    key = serializers.CharField(max_length=50, source='id')
+
+    class Meta:
+        model = Additional1Form
+        fields = '__all__'
+
+        # depth = 1
         

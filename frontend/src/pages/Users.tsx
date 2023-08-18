@@ -1,237 +1,293 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import type { InputRef } from 'antd';
-import { Button, Form, Input, Popconfirm, Table } from 'antd';
-import type { FormInstance } from 'antd/es/form';
-import axios from 'axios';
+import React, { FC, ReactNode, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import {
+  Skeleton,
+  Layout,
+  Typography,
+  Form,
+  Table,
+  Input,
+  InputNumber,
+  Popconfirm,
+} from "antd";
+import {
+  UserOutlined,
+  QuestionOutlined,
+  RiseOutlined,
+  FallOutlined,
+  DollarOutlined,
+  AppstoreAddOutlined,
+} from "@ant-design/icons";
+import type { MenuProps } from "antd";
+import axios from "axios";
 
-const EditableContext = React.createContext<FormInstance<any> | null>(null);
+import SideBar from "../components/SideBar";
+import CustomBreadcrumb from "../components/Breadcrumb";
+import Main from "../components/Main";
+
+const { Title } = Typography;
+
+type MenuItem = Required<MenuProps>["items"][number];
+
+interface MainProps {
+  children: ReactNode;
+}
+
+function getItem(
+  label: React.ReactNode,
+  key: React.Key,
+  to: string, // Add the 'to' prop for the link
+  icon?: React.ReactNode,
+  children?: MenuItem[],
+  type?: "group"
+): MenuItem {
+  return {
+    key,
+    icon,
+    children,
+    // Wrap the label in a Link component
+    label: <Link to={to}>{label}</Link>,
+    type,
+  } as MenuItem;
+}
+
+const sideBarItems: MenuItem[] = [
+  getItem("Пользователи", "users", "/users", <UserOutlined />),
+
+  getItem("Квесты", "quests", "/quests", <QuestionOutlined />, [
+    getItem("Радуга", "sub3", "/quests", <QuestionOutlined />, [
+      getItem("Доходы", "11", "/quests", <RiseOutlined />),
+      getItem("Расходы", "12", "/quests", <FallOutlined />),
+      getItem("Зарплаты", "13", "/quests", <DollarOutlined />),
+    ]),
+    getItem("Добавить", "questsAdd", "/quests/add", <AppstoreAddOutlined />),
+  ]),
+];
+
+const breadCrumbItems = [
+  {
+    text: "Главная",
+    link: "/",
+  },
+  {
+    text: "Пользователи",
+    link: "",
+  },
+];
 
 interface Item {
   key: string;
-  name: string;
-  age: string;
-  address: string;
-}
-
-interface EditableRowProps {
-  index: number;
-}
-
-const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
-  const [form] = Form.useForm();
-  return (
-    <Form form={form} component={false}>
-      <EditableContext.Provider value={form}>
-        <tr {...props} />
-      </EditableContext.Provider>
-    </Form>
-  );
-};
-
-interface EditableCellProps {
-  title: React.ReactNode;
-  editable: boolean;
-  children: React.ReactNode;
-  dataIndex: keyof Item;
-  record: Item;
-  handleSave: (record: Item) => void;
-}
-
-const EditableCell: React.FC<EditableCellProps> = ({
-  title,
-  editable,
-  children,
-  dataIndex,
-  record,
-  handleSave,
-  ...restProps
-}) => {
-  const [editing, setEditing] = useState(false);
-  const inputRef = useRef<InputRef>(null);
-  const form = useContext(EditableContext)!;
-
-  useEffect(() => {
-    if (editing) {
-      inputRef.current!.focus();
-    }
-  }, [editing]);
-
-  const toggleEdit = () => {
-    setEditing(!editing);
-    form.setFieldsValue({ [dataIndex]: record[dataIndex] });
-  };
-
-  const save = async () => {
-    try {
-      const values = await form.validateFields();
-
-      toggleEdit();
-      handleSave({ ...record, ...values });
-    } catch (errInfo) {
-      console.log('Save failed:', errInfo);
-    }
-  };
-
-  let childNode = children;
-
-  if (editable) {
-    childNode = editing ? (
-      <Form.Item
-        style={{ margin: 0 }}
-        name={dataIndex}
-        rules={[
-          {
-            required: true,
-            message: `${title} is required.`,
-          },
-        ]}
-      >
-        <Input ref={inputRef} onPressEnter={save} onBlur={save} />
-      </Form.Item>
-    ) : (
-      <div className="editable-cell-value-wrap" style={{ paddingRight: 24 }} onClick={toggleEdit}>
-        {children}
-      </div>
-    );
-  }
-
-  return <td {...restProps}>{childNode}</td>;
-};
-
-type EditableTableProps = Parameters<typeof Table>[0];
-
-interface DataType {
-  key: React.Key;
   username: string;
-  last_name: string;
   first_name: string;
+  last_name: string;
   middle_name: string;
 }
 
-type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
+interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
+  editing: boolean;
+  dataIndex: string;
+  title: any;
+  inputType: "number" | "text";
+  record: Item;
+  index: number;
+  children: React.ReactNode;
+}
 
-const App: React.FC = () => {
-  const [dataSource, setDataSource] = useState<DataType[]>([
-    {
-      key: '0',
-      username: 'admin',
-      last_name: 'Васильев',
-      first_name: 'Никита',
-      middle_name: 'Евгеньевич',
-    },
-  ]);
+const EditableCell: React.FC<EditableCellProps> = ({
+  editing,
+  dataIndex,
+  title,
+  inputType,
+  record,
+  index,
+  children,
+  ...restProps
+}) => {
+  const inputNode = inputType === "number" ? <InputNumber /> : <Input />;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await axios.get('http://127.0.0.1:8000/api/users/'); // Replace this URL with your API endpoint
-      console.log(response.data)
+  return (
+    <td {...restProps}>
+      {editing ? (
+        <Form.Item
+          name={dataIndex}
+          style={{ margin: 0 }}
+          rules={[
+            {
+              required: true,
+              message: `Please Input ${title}!`,
+            },
+          ]}
+        >
+          {inputNode}
+        </Form.Item>
+      ) : (
+        children
+      )}
+    </td>
+  );
+};
 
-      // setDataSource(response.)
+const App: FC = () => {
+  const [collapsed, setCollapsed] = useState(false);
 
-      // setDataSource(response.data)
-    };
+  const [form] = Form.useForm();
+  const [data, setData] = useState([]);
+  const [editingKey, setEditingKey] = useState("");
 
-    fetchData();
-  }, []);
+  const isEditing = (record: Item) => record.key === editingKey;
 
-  const [count, setCount] = useState(2);
-
-  const handleDelete = (key: React.Key) => {
-    const newData = dataSource.filter((item) => item.key !== key);
-    setDataSource(newData);
+  const edit = (record: Partial<Item> & { key: React.Key }) => {
+    form.setFieldsValue({ name: "", age: "", address: "", ...record });
+    setEditingKey(record.key);
   };
 
-  const defaultColumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
+  const cancel = () => {
+    setEditingKey("");
+  };
+
+  const save = async (key: React.Key) => {
+    try {
+      const row = (await form.validateFields()) as Item;
+
+      const newData = [...data];
+      const index = newData.findIndex((item) => key === item.key);
+      if (index > -1) {
+        const item = newData[index];
+        newData.splice(index, 1, {
+          ...item,
+          ...row,
+        });
+        setData(newData);
+        setEditingKey("");
+      } else {
+        newData.push(row);
+        setData(newData);
+        setEditingKey("");
+      }
+    } catch (errInfo) {
+      console.log("Validate Failed:", errInfo);
+    }
+  };
+
+  const columns = [
     {
-      title: 'Логин',
-      dataIndex: 'username',
-    },
-    {
-      title: 'Фамилия',
-      dataIndex: 'lastName',
+      title: "Логин",
+      dataIndex: "username",
+      width: "15%",
       editable: true,
     },
     {
-      title: 'Имя',
-      dataIndex: 'firstName',
+      title: "Фамилия",
+      dataIndex: "last_name",
+      width: "22.5%",
       editable: true,
     },
     {
-      title: 'Отчество',
-      dataIndex: 'middleName',
+      title: "Имя",
+      dataIndex: "first_name",
+      width: "22.5%",
       editable: true,
     },
     {
-      title: 'operation',
-      dataIndex: 'operation',
-      render: (_, record: { key: React.Key }) =>
-        dataSource.length >= 1 ? (
-          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
-            <a>Delete</a>
-          </Popconfirm>
-        ) : null,
+      title: "Отчество",
+      dataIndex: "middle_name",
+      width: "22.5%",
+      editable: true,
+    },
+    {
+      title: "Операция",
+      dataIndex: "operation",
+      render: (_: any, record: Item) => {
+        const editable = isEditing(record);
+        return editable ? (
+          <span>
+            <Typography.Link
+              onClick={() => save(record.key)}
+              style={{ marginRight: 8, textTransform: "lowercase" }}
+            >
+              Сохранить
+            </Typography.Link>
+            <Popconfirm
+              title="Отменить?"
+              onConfirm={cancel}
+              style={{ textTransform: "lowercase" }}
+            >
+              <a>Отмена</a>
+            </Popconfirm>
+          </span>
+        ) : (
+          <Typography.Link
+            disabled={editingKey !== ""}
+            onClick={() => edit(record)}
+            style={{ textTransform: "lowercase" }}
+          >
+            Редактировать
+          </Typography.Link>
+        );
+      },
     },
   ];
 
-  const handleAdd = () => {
-    const newData: DataType = {
-      key: count,
-      username: 'admin',
-      last_name: 'Васильев',
-      first_name: 'Никита',
-      middle_name: 'Евгеньевич',
-    };
-    setDataSource([...dataSource, newData]);
-    setCount(count + 1);
-  };
-
-  const handleSave = (row: DataType) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => row.key === item.key);
-    const item = newData[index];
-    newData.splice(index, 1, {
-      ...item,
-      ...row,
-    });
-    setDataSource(newData);
-  };
-
-  const components = {
-    body: {
-      row: EditableRow,
-      cell: EditableCell,
-    },
-  };
-
-  const columns = defaultColumns.map((col) => {
+  const mergedColumns = columns.map((col) => {
     if (!col.editable) {
       return col;
     }
     return {
       ...col,
-      onCell: (record: DataType) => ({
+      onCell: (record: Item) => ({
         record,
-        editable: col.editable,
+        inputType: col.dataIndex === "age" ? "number" : "text",
         dataIndex: col.dataIndex,
         title: col.title,
-        handleSave,
+        editing: isEditing(record),
       }),
     };
   });
 
+  const getUsers = async () => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/api/users`);
+      setData(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    document.title = 'пользователи';
+
+    getUsers();
+  }, []);
+
   return (
-    <div>
-      <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
-        Add a row
-      </Button>
-      <Table
-        components={components}
-        rowClassName={() => 'editable-row'}
-        bordered
-        dataSource={dataSource}
-        columns={columns as ColumnTypes}
-      />
-    </div>
+    <Layout hasSider>
+      <SideBar items={sideBarItems} />
+      <Layout
+        className="site-layout"
+        style={{ marginLeft: collapsed ? "80px" : "200px" }}
+      >
+        <CustomBreadcrumb items={breadCrumbItems} />
+        <Main>
+          <Title style={{ textTransform: "lowercase" }}>Пользователи</Title>
+          <Form form={form} component={false}>
+            <Table
+              components={{
+                body: {
+                  cell: EditableCell,
+                },
+              }}
+              bordered
+              dataSource={data}
+              columns={mergedColumns}
+              rowClassName="editable-row"
+              pagination={{
+                onChange: cancel,
+              }}
+            />
+          </Form>
+        </Main>
+      </Layout>
+    </Layout>
   );
 };
 
