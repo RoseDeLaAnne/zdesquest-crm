@@ -1,293 +1,533 @@
-import React, { FC, ReactNode, useState, useEffect } from "react";
+import React, { FC, useState, useEffect, useRef } from "react";
+
+// react-router-dom
 import { Link } from "react-router-dom";
+
+// antd
 import {
-  Skeleton,
-  Layout,
   Typography,
+  Layout,
+  Menu,
+  Breadcrumb,
+  theme,
+  Col,
+  DatePicker,
+  Drawer,
   Form,
-  Table,
+  Row,
+  Select,
+  Space,
+  Tag,
+  Button,
   Input,
-  InputNumber,
+  Table,
   Popconfirm,
+  message,
 } from "antd";
+
+// antd | type
+import type { MenuProps, InputRef } from "antd";
+import type { ColumnType, ColumnsType } from "antd/es/table";
+import type {
+  FilterConfirmProps,
+  FilterValue,
+  SorterResult,
+} from "antd/es/table/interface";
+
+// antd | icons
 import {
+  HomeOutlined,
   UserOutlined,
   QuestionOutlined,
   RiseOutlined,
   FallOutlined,
   DollarOutlined,
   AppstoreAddOutlined,
+  TableOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  DeploymentUnitOutlined,
 } from "@ant-design/icons";
-import type { MenuProps } from "antd";
+
+// libs
 import axios from "axios";
 
-import SideBar from "../components/SideBar";
-import CustomBreadcrumb from "../components/Breadcrumb";
-import Main from "../components/Main";
+import Highlighter from "react-highlight-words";
 
-const { Title } = Typography;
+// api
+import { postUser } from "../api/APIUtils";
 
-type MenuItem = Required<MenuProps>["items"][number];
+// components
+import Template from "../components/Template";
 
-interface MainProps {
-  children: ReactNode;
-}
+const { Content, Sider } = Layout;
+const { Title, Text } = Typography;
+const { Option } = Select;
 
-function getItem(
-  label: React.ReactNode,
-  key: React.Key,
-  to: string, // Add the 'to' prop for the link
-  icon?: React.ReactNode,
-  children?: MenuItem[],
-  type?: "group"
-): MenuItem {
-  return {
-    key,
-    icon,
-    children,
-    // Wrap the label in a Link component
-    label: <Link to={to}>{label}</Link>,
-    type,
-  } as MenuItem;
-}
-
-const sideBarItems: MenuItem[] = [
-  getItem("Пользователи", "users", "/users", <UserOutlined />),
-
-  getItem("Квесты", "quests", "/quests", <QuestionOutlined />, [
-    getItem("Радуга", "sub3", "/quests", <QuestionOutlined />, [
-      getItem("Доходы", "11", "/quests", <RiseOutlined />),
-      getItem("Расходы", "12", "/quests", <FallOutlined />),
-      getItem("Зарплаты", "13", "/quests", <DollarOutlined />),
-    ]),
-    getItem("Добавить", "questsAdd", "/quests/add", <AppstoreAddOutlined />),
-  ]),
-];
-
-const breadCrumbItems = [
-  {
-    text: "Главная",
-    link: "/",
-  },
-  {
-    text: "Пользователи",
-    link: "",
-  },
-];
-
-interface Item {
-  key: string;
-  username: string;
-  first_name: string;
-  last_name: string;
-  middle_name: string;
-}
-
-interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
-  editing: boolean;
-  dataIndex: string;
-  title: any;
-  inputType: "number" | "text";
-  record: Item;
-  index: number;
-  children: React.ReactNode;
-}
-
-const EditableCell: React.FC<EditableCellProps> = ({
-  editing,
-  dataIndex,
-  title,
-  inputType,
-  record,
-  index,
-  children,
-  ...restProps
-}) => {
-  const inputNode = inputType === "number" ? <InputNumber /> : <Input />;
-
-  return (
-    <td {...restProps}>
-      {editing ? (
-        <Form.Item
-          name={dataIndex}
-          style={{ margin: 0 }}
-          rules={[
-            {
-              required: true,
-              message: `Please Input ${title}!`,
-            },
-          ]}
-        >
-          {inputNode}
-        </Form.Item>
-      ) : (
-        children
-      )}
-    </td>
-  );
-};
+const { RangePicker } = DatePicker;
 
 const App: FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
-
-  const [form] = Form.useForm();
-  const [data, setData] = useState([]);
-  const [editingKey, setEditingKey] = useState("");
-
-  const isEditing = (record: Item) => record.key === editingKey;
-
-  const edit = (record: Partial<Item> & { key: React.Key }) => {
-    form.setFieldsValue({ name: "", age: "", address: "", ...record });
-    setEditingKey(record.key);
+  const handleSearch = (
+    selectedKeys: string[],
+    confirm: (param?: FilterConfirmProps) => void,
+    dataIndex: DataIndex
+  ) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
   };
 
-  const cancel = () => {
-    setEditingKey("");
+  const handleReset = (clearFilters: () => void) => {
+    clearFilters();
+    setSearchText("");
   };
 
-  const save = async (key: React.Key) => {
-    try {
-      const row = (await form.validateFields()) as Item;
-
-      const newData = [...data];
-      const index = newData.findIndex((item) => key === item.key);
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-        });
-        setData(newData);
-        setEditingKey("");
-      } else {
-        newData.push(row);
-        setData(newData);
-        setEditingKey("");
-      }
-    } catch (errInfo) {
-      console.log("Validate Failed:", errInfo);
+  const handleDelete = async (key: React.Key) => {
+    const response = await deleteBonusPenalty(key);
+    if (response.status === 200) {
+      const newData = data.filter((item) => item.key !== key);
+      setData(newData);
     }
   };
 
+  const getColumnSearchProps = (
+    dataIndex: DataIndex,
+    title: string
+  ): ColumnType<DataType> => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+        <Input
+          ref={searchInput}
+          placeholder={`поиск по ${title}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            handleSearch(selectedKeys as string[], confirm, dataIndex)
+          }
+          style={{ marginBottom: 8, display: "block" }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() =>
+              handleSearch(selectedKeys as string[], confirm, dataIndex)
+            }
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            поиск
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            сброс
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex]
+        .toString()
+        .toLowerCase()
+        .includes((value as string).toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
+
+  const showDrawer = () => {
+    setOpen(true);
+    localStorage.setItem("usersDrawerIsOpen", "true");
+  };
+
+  const onClose = () => {
+    setOpen(false);
+    localStorage.setItem("usersDrawerIsOpen", "false");
+  };
+
+  const loading = () => {
+    messageApi.open({
+      type: "loading",
+      content: "получение данных..",
+      duration: 0,
+    });
+  };
+
+  const errorF = () => {
+    messageApi.open({
+      type: 'error',
+      content: 'данные не получены',
+    });
+  };
+
+  const fetchData = async () => {
+    // loading();
+    const url = `http://127.0.0.1:8000/api/users/`;
+    try {
+      const response = await axios.get(url);
+      if (response.status === 200) {
+        // setTimeout(messageApi.destroy, 100);
+        const formattedData = response.data.map((item) => ({
+          key: item.key,
+          username: item.username,
+          last_name: item.last_name,
+          first_name: item.first_name,
+          middle_name: item.middle_name,
+          quest: item.quest.name,
+          roles: item.roles.map((role) => role.name),
+        }));
+        setData(formattedData);
+      }
+    } catch (error) {
+      console.log(error);
+      // errorF();
+      // setTimeout(messageApi.destroy, 1000);
+    }
+  };
+
+  const fetchRoles = async () => {
+    const url = `http://127.0.0.1:8000/api/roles/`;
+    try {
+      const response = await axios.get(url);
+      if (response.status === 200) {
+        const formattedOptions = response.data.map((item) => ({
+          label: item.name.toLowerCase(),
+          value: item.id,
+        }));
+        setOptionsRoles(formattedOptions);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchQuests = async () => {
+    const url = `http://127.0.0.1:8000/api/quests/`;
+    try {
+      const response = await axios.get(url);
+      if (response.status === 200) {
+        const formattedOptions = response.data.map((item) => ({
+          label: item.name.toLowerCase(),
+          value: item.id,
+        }));
+        setOptionsQuests(formattedOptions);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteBonusPenalty = async (key) => {
+    const url = `http://127.0.0.1:8000/api/user/${key}`;
+    try {
+      const response = await axios.delete(url);
+
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onFinish = async (value: object) => {
+    try {
+      const response = await postUser(value);
+      if (response.status === 201) {
+        messageApi.open({
+          type: "success",
+          content: "запись создана",
+        });
+      }
+      fetchData();
+    } catch (error) {
+      messageApi.open({
+        type: "error",
+        content: "запись не создана",
+      });
+    }
+  };
+
+  const [open, setOpen] = useState(
+    localStorage.getItem("usersDrawerIsOpen")
+      ? localStorage.getItem("usersDrawerIsOpen") === "true"
+      : false
+  );
+  const [form] = Form.useForm();
+
+  const [data, setData] = useState<DataType[]>([]);
+  const [messageApi, contextHolder] = message.useMessage();
+  const [optionsRoles, setOptionsRoles] = useState([]);
+  const [optionsQuests, setOptionsQuests] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
+
+  const sourceBreadcrumbItems = [
+    {
+      icon: TableOutlined,
+      title: "сотрудники",
+    },
+  ];
   const columns = [
     {
       title: "Логин",
       dataIndex: "username",
-      width: "15%",
-      editable: true,
+      key: "username",
+      ...getColumnSearchProps("username", "логину"),
+      sorter: {
+        compare: (a, b) => a.username - b.username,
+      },
     },
     {
       title: "Фамилия",
       dataIndex: "last_name",
-      width: "22.5%",
-      editable: true,
+      key: "last_name",
+      ...getColumnSearchProps("last_name", "фамилии"),
+      sorter: {
+        compare: (a, b) => a.last_name - b.last_name,
+      },
     },
     {
       title: "Имя",
       dataIndex: "first_name",
-      width: "22.5%",
-      editable: true,
+      key: "first_name",
+      ...getColumnSearchProps("first_name", "имени"),
+      sorter: {
+        compare: (a, b) => a.first_name - b.first_name,
+      },
     },
     {
       title: "Отчество",
       dataIndex: "middle_name",
-      width: "22.5%",
-      editable: true,
+      key: "middle_name",
+      ...getColumnSearchProps("middle_name", "отчеству"),
+      sorter: {
+        compare: (a, b) => a.middle_name - b.middle_name,
+      },
     },
     {
-      title: "Операция",
-      dataIndex: "operation",
-      render: (_: any, record: Item) => {
-        const editable = isEditing(record);
-        return editable ? (
-          <span>
-            <Typography.Link
-              onClick={() => save(record.key)}
-              style={{ marginRight: 8, textTransform: "lowercase" }}
-            >
-              Сохранить
-            </Typography.Link>
-            <Popconfirm
-              title="Отменить?"
-              onConfirm={cancel}
-              style={{ textTransform: "lowercase" }}
-            >
-              <a>Отмена</a>
-            </Popconfirm>
-          </span>
-        ) : (
-          <Typography.Link
-            disabled={editingKey !== ""}
-            onClick={() => edit(record)}
-            style={{ textTransform: "lowercase" }}
-          >
-            Редактировать
-          </Typography.Link>
-        );
+      title: "Квест",
+      dataIndex: "quest",
+      key: "quest",
+      ...getColumnSearchProps("quest", "квесту"),
+      sorter: {
+        compare: (a, b) => a.quest - b.quest,
       },
+      render: (text) => (
+        <Tag color="geekblue" style={{ textTransform: "lowercase" }}>
+          {text}
+        </Tag>
+      ),
+    },
+    {
+      title: "Роли",
+      dataIndex: "roles",
+      key: "roles",
+      // render: (_, { roles }) => (
+      //   <>
+      //     {roles.map((roles) => {
+      //       return (
+      //         <Tag color="geekblue" key={role}>
+      //           {role.toLowerCase()}
+      //         </Tag>
+      //       );
+      //     })}
+      //   </>
+      // ),
+    },
+    {
+      title: "операция",
+      dataIndex: "operation",
+      render: (_, record: { key: React.Key }) =>
+        data.length >= 1 ? (
+          <Space>
+            <Link to={`edit/${record.key}`}>редактировать</Link>
+            <Popconfirm
+              title="уверены, что хотите удалить?"
+              onConfirm={() => handleDelete(record.key)}
+            >
+              <a>удалить</a>
+            </Popconfirm>
+          </Space>
+        ) : null,
     },
   ];
 
-  const mergedColumns = columns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      onCell: (record: Item) => ({
-        record,
-        inputType: col.dataIndex === "age" ? "number" : "text",
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-      }),
-    };
-  });
-
-  const getUsers = async () => {
-    try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/users`);
-      setData(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
   useEffect(() => {
-    document.title = 'пользователи';
-
-    getUsers();
+    fetchData();
+    fetchRoles();
+    fetchQuests();
   }, []);
 
   return (
-    <Layout hasSider>
-      <SideBar items={sideBarItems} />
-      <Layout
-        className="site-layout"
-        style={{ marginLeft: collapsed ? "80px" : "200px" }}
+    <Template
+      breadcrumbItems={sourceBreadcrumbItems}
+      defaultSelectedKeys={["users"]}
+    >
+      {contextHolder}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
       >
-        <CustomBreadcrumb items={breadCrumbItems} />
-        <Main>
-          <Title style={{ textTransform: "lowercase" }}>Пользователи</Title>
-          <Form form={form} component={false}>
-            <Table
-              components={{
-                body: {
-                  cell: EditableCell,
-                },
-              }}
-              bordered
-              dataSource={data}
-              columns={mergedColumns}
-              rowClassName="editable-row"
-              pagination={{
-                onChange: cancel,
-              }}
-            />
-          </Form>
-        </Main>
-      </Layout>
-    </Layout>
+        <Title>сотрудники</Title>
+        <Space size="middle">
+          <Button type="primary" onClick={showDrawer} icon={<PlusOutlined />}>
+            новый сотрудник
+          </Button>
+        </Space>
+      </div>
+      <Table columns={columns} dataSource={data} bordered />
+      <Drawer
+        title="создать нового сотрудника"
+        width={720}
+        onClose={onClose}
+        open={open}
+        bodyStyle={{ paddingBottom: 80 }}
+        extra={
+          <Space>
+            <Button onClick={onClose}>отмена</Button>
+            <Button onClick={() => form.submit()} type="primary">
+              создать
+            </Button>
+          </Space>
+        }
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          hideRequiredMark
+          onFinish={onFinish}
+        >
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="username"
+                label="логин"
+                rules={[
+                  { required: true, message: "пожалуйста, введите логин" },
+                ]}
+              >
+                <Input placeholder="пожалуйста, введите логин" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="password"
+                label="пароль"
+                rules={[
+                  { required: true, message: "пожалуйста, введите пароль" },
+                ]}
+              >
+                <Input placeholder="пожалуйста, введите пароль" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Form.Item
+                name="last_name"
+                label="Фамилия"
+                rules={[
+                  { required: true, message: "пожалуйста, введите фамилию" },
+                ]}
+              >
+                <Input placeholder="пожалуйста, введите фамилию" />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                name="first_name"
+                label="Имя"
+                rules={[{ required: true, message: "пожалуйста, введите имя" }]}
+              >
+                <Input placeholder="пожалуйста, введите имя" />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                name="middle_name"
+                label="Отчество"
+                rules={[
+                  { required: true, message: "пожалуйста, введите отчество" },
+                ]}
+              >
+                <Input placeholder="пожалуйста, введите отчество" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="quest"
+                label="квест"
+                rules={[
+                  {
+                    required: true,
+                    message: "пожалуйста, выберите квест",
+                  },
+                ]}
+              >
+                <Select
+                  allowClear
+                  style={{ width: "100%" }}
+                  placeholder="пожалуйста, выберите квест"
+                  options={optionsQuests}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="roles"
+                label="роли"
+                rules={[
+                  {
+                    required: true,
+                    message: "пожалуйста, выберите роли",
+                  },
+                ]}
+              >
+                <Select
+                  mode="multiple"
+                  allowClear
+                  style={{ width: "100%" }}
+                  placeholder="пожалуйста, выберите роли"
+                  options={optionsRoles}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      </Drawer>
+    </Template>
   );
 };
 

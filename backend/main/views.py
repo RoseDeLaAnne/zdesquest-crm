@@ -1,3 +1,6 @@
+import json
+
+from django.http import JsonResponse
 from django.db.models import Q
 from django.db.models import Count
 
@@ -12,252 +15,817 @@ from rest_framework.response import Response
 from .serializers import *
 from .models import *
 
+from .utils import create_qincome
 
-@api_view(['GET'])
-def GetUsers(request):
-    users = User.objects.all()
-    serializer = UserSerializer(users, many=True)
 
-    return Response(serializer.data)
+# GET
+@api_view(["GET"])
+def VUsers(request):
+    if request.method == "GET":
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
 
-@api_view(['GET'])
-def GetAnimators(request):
-    role = Roles.objects.get(role_name="Аниматор")
+        return Response(serializer.data)
 
-    users = User.objects.annotate(admin_role_count=Count('roles', filter=models.Q(roles=role))).filter(admin_role_count__gt=0)
-    serializer = UserSerializer(users, many=True)
 
-    return Response(serializer.data)
+@api_view(["GET"])
+def VUsersByRole(request, rname):
+    if request.method == "GET":
+        role = Role.objects.get(latin_name=rname)
+        users = User.objects.filter(roles=role)
+        serializer = UserSerializer(users, many=True)
 
-@api_view(['GET'])
-def GetActors(request):
-    role = Roles.objects.get(role_name="Актер")
+        return Response(serializer.data)
 
-    users = User.objects.annotate(admin_role_count=Count('roles', filter=models.Q(roles=role))).filter(admin_role_count__gt=0)
-    serializer = UserSerializer(users, many=True)
 
-    return Response(serializer.data)
+@api_view(["GET"])
+def VRoles(request):
+    if request.method == "GET":
+        roles = Role.objects.all()
+        serializer = RoleSerializer(roles, many=True)
 
-@api_view(['GET'])
-def GetAdministrators(request):
-    role = Roles.objects.get(role_name="Администратор")
+        return Response(serializer.data)
 
-    users = User.objects.annotate(admin_role_count=Count('roles', filter=models.Q(roles=role))).filter(admin_role_count__gt=0)
-    serializer = UserSerializer(users, many=True)
 
-    return Response(serializer.data)
+@api_view(["GET"])
+def VQuests(request):
+    if request.method == "GET":
+        quests = Quest.objects.all()
+        serializer = QuestSerializer(quests, many=True)
 
-@api_view(['GET'])
-def GetQuests(request):
-    quests = Quest.objects.all()
-    serializer = QuestSerializer(quests, many=True)
+        return Response(serializer.data)
 
-    return Response(serializer.data)
 
-@api_view(['GET'])
-def GetSalaries(request):
-    salaries = Salary.objects.all()
-    
-    # salary_dict = {}  # To track incomes by date
+@api_view(["GET"])
+def VTransactions(request):
+    if request.method == "GET":
+        start_date_param = request.query_params.get("start_date", None)
+        end_date_param = request.query_params.get("end_date", None)
 
-    # for salary in salaries:
-    #     if salary.date not in salary_dict:
-    #         salary_dict[salary.date] = {'id': salary.id, 'key': salary.id, 'dateTime': salary.date, 'value': 0, 'user': {
-    #             'id': salary.user.id,
-    #             'firstName': salary.user.first_name
-    #         }, 'children': []}
+        transactions = Transaction.objects.all().order_by("date")
 
-    #     salary_dict[salary.date]['value'] += salary.value  # Update sums
+        if start_date_param and end_date_param:
+            try:
+                start_date = datetime.strptime(start_date_param, "%d-%m-%Y").date()
+                end_date = datetime.strptime(end_date_param, "%d-%m-%Y").date()
 
-    #     salary_dict[salary.date]['children'].append({'id': salary.id, 'key': salary.id, 'object': salary.object, 'value': salary.value})
+                transactions = transactions.filter(date__range=(start_date, end_date))
+            except ValueError:
+                return Response(
+                    {
+                        "error": "Неверный формат даты. Пожалуйста, используйте ДД-ММ-ГГГГ."
+                    },
+                    status=400,
+                )
 
-    # response_data = list(salary_dict.values())
+        serializer = TransactionSerializer(transactions, many=True)
 
-    serializer = SalaryTimeSerializer(salaries, many=True)
-    
-    return Response(serializer.data)
+        return Response(serializer.data)
 
-@api_view(['GET'])
-def GetExpensesByQuestId(request, qid):
-    quest = Quest.objects.get(id=qid)
-    expenses = Expenses.objects.filter(quests=quest)
-    serializer = ExpensesSerializer(expenses, many=True)
 
-    return Response(serializer.data)
+@api_view(["GET"])
+def VSTQuests(request):
+    if request.method == "GET":
+        start_date_param = request.query_params.get("start_date", None)
+        end_date_param = request.query_params.get("end_date", None)
 
-@api_view(['GET'])
-def GetIncomesByQuestId(request, qid):
-    quest = Quest.objects.get(id = qid)
+        stquests = STQuest.objects.all().order_by("date")
 
-    start_date_str = request.GET.get('start_date')
-    end_date_str = request.GET.get('end_date')
+        if start_date_param and end_date_param:
+            try:
+                start_date = datetime.strptime(start_date_param, "%d-%m-%Y").date()
+                end_date = datetime.strptime(end_date_param, "%d-%m-%Y").date()
 
-    incomes = []
-    
-    try:
-        start_date = datetime.strptime(start_date_str, '%d-%m-%Y').date()
-        end_date = datetime.strptime(end_date_str, '%d-%m-%Y').date()
+                stquests = stquests.filter(date__range=(start_date, end_date))
+            except ValueError:
+                return Response(
+                    {
+                        "error": "Неверный формат даты. Пожалуйста, используйте ДД-ММ-ГГГГ."
+                    },
+                    status=400,
+                )
 
-        incomes = Income.objects.filter(quest=quest).filter(date__range=(start_date, end_date))
-    except:
-        incomes = Income.objects.filter(quest=quest)
+        serializer = STQuestSerializer(stquests, many=True)
 
-    
-    income_dict = {}  # To track incomes by date
+        return Response(serializer.data)
 
-    # print(request.GET.get('start_date'))
 
-   
+@api_view(["GET"])
+def VExpenses(request):
+    if request.method == "GET":
+        start_date_param = request.query_params.get("start_date", None)
+        end_date_param = request.query_params.get("end_date", None)
 
-    for income in incomes:
-        if income.date not in income_dict:
-            income_dict[income.date] = {'id': income.id, 'key': income.date.strftime('%Y%m%d'), 'dateTime': income.date, 'game': 0,  
-                    'room': 0,
-                    'video': 0,
-                    'photomagnets': 0,
-                    'actor': 0,
-                    'total': 0, 'children': []}
+        expenses = STExpense.objects.all().order_by("date")
 
-        child_id = f"{income.date.strftime('%Y%m%d')}{income.time.strftime('%H%M%S')}"
+        if start_date_param and end_date_param:
+            try:
+                start_date = datetime.strptime(start_date_param, "%d-%m-%Y").date()
+                end_date = datetime.strptime(end_date_param, "%d-%m-%Y").date()
 
-        income_dict[income.date]['game'] += income.game  # Update sums
-        income_dict[income.date]['room'] += income.room
-        income_dict[income.date]['video'] += income.video
-        income_dict[income.date]['photomagnets'] += income.photomagnets
-        income_dict[income.date]['actor'] += income.actor
-        income_dict[income.date]['total'] += (
-            income.game + income.room + income.video + income.photomagnets + income.actor
-        )
+                expenses = expenses.filter(date__range=(start_date, end_date))
+            except ValueError:
+                return Response(
+                    {
+                        "error": "Неверный формат даты. Пожалуйста, используйте ДД-ММ-ГГГГ."
+                    },
+                    status=400,
+                )
 
-        income_dict[income.date]['children'].append({'id': income.id, 'key': child_id, 'dateTime': income.time, 'game': income.game, 'room': income.room, 'video': income.video, 'photomagnets': income.photomagnets, 'actor': income.actor, 'total': income.total, 'quest': {
-                    'id': income.quest.id,
-                    'quest_name': income.quest.quest_name,
-                    'quest_address': income.quest.quest_address,
-                    'quest_rate': income.quest.quest_rate
-                }})
+        serializer = STExpenseSerializer(expenses, many=True)
 
-    response_data = list(income_dict.values())
-    
-    return Response(response_data)
+        return Response(serializer.data)
 
-@api_view(['POST'])
-def SetQuestForm(request):
-    # print(request.data)
 
-    quest = Quest.objects.get(id=request.data['quest'])
-    administrator = User.objects.get(id=request.data['administrator'])
-    actors = User.objects.filter(id__in=request.data['actor'])
-    animator = User.objects.get(id=request.data['animator'])
-    room_employee_name = User.objects.get(id=request.data['roomEmployeeName'])
+@api_view(["GET"])
+def VBonusesPenalties(request):
+    if request.method == "GET":
+        start_date_param = request.query_params.get("start_date", None)
+        end_date_param = request.query_params.get("end_date", None)
 
+        bonuses_penalties = STBonusPenalty.objects.all().order_by("date")
 
-    input_date_str = request.data['date']
-    input_date = datetime.strptime(input_date_str, '%Y-%m-%dT%H:%M:%S.%fZ')
-    aware_input_date = make_aware(input_date)
-    date_only_str = aware_input_date.strftime('%Y-%m-%d')
+        if start_date_param and end_date_param:
+            try:
+                start_date = datetime.strptime(start_date_param, "%d-%m-%Y").date()
+                end_date = datetime.strptime(end_date_param, "%d-%m-%Y").date()
 
-    input_time_str = request.data['time']
-    input_time = datetime.strptime(input_time_str, '%Y-%m-%dT%H:%M:%S.%fZ')
-    aware_input_time = make_aware(input_time)
-    new_datetime = aware_input_time + timedelta(hours=3)
-    time_only_str = new_datetime.strftime('%H:%M:%S.%f')[:-7]
+                bonuses_penalties = bonuses_penalties.filter(
+                    date__range=(start_date, end_date)
+                )
+            except ValueError:
+                return Response(
+                    {
+                        "error": "Неверный формат даты. Пожалуйста, используйте ДД-ММ-ГГГГ."
+                    },
+                    status=400,
+                )
 
-    print(time_only_str)
+        serializer = STBonusPenaltySerializer(bonuses_penalties, many=True)
+        return Response(serializer.data)
 
-    new_entry = QuestForm.objects.create(quest=quest, date=date_only_str, time=time_only_str, quest_cost=request.data['questCost'], package=request.data['package'], add_players=request.data['addPlayers'], actor_second_actor=request.data['actorSecondActor'], discount_sum=request.data['discount'], discount_desc=request.data['discountDescription'], room_sum=request.data['roomSum'], room_quantity=request.data['roomQuantity'], room_employee_name=room_employee_name, video=request.data['video'], photomagnets_not_promo_sum=request.data['photomagnetsNotPromoSum'], photomagnets_not_promo_quantity=request.data['photomagnetsNotPromoQuantity'], photomagnets_promo_sum=request.data['photomagnetsPromoSum'], photomagnets_promo_quantity=request.data['photomagnetsPromoQuantity'], birthday_congr=request.data['birthdayCongratulations'], easy_work=request.data['easyWork'], night_game=request.data['nightGame'], travel=request.data['travel'], administrator=administrator, animator=animator)
-    new_entry.actor.set(actors)    
 
-    # incomes (доходы)
-    income_game = int(request.data['questCost']) + int(request.data['addPlayers']) + int(request.data['easyWork']) + int(request.data['nightGame']) - int(request.data['discount'])
-    income_room = int(request.data['roomSum'])
-    income_video = int(request.data['video'])
-    income_photomagnets = int(request.data['photomagnetsNotPromoSum']) + int(request.data['photomagnetsPromoSum'])
-    income_actor = int(request.data['actorSecondActor'])
+@api_view(["GET"])
+def VExpenseCategories(request):
+    if request.method == "GET":
+        categories = STExpenseCategory.objects.all()
+        serializer = STExpenseCategorySerializer(categories, many=True)
 
-    new_entry_income = Income.objects.create(date=date_only_str, time=time_only_str, game=income_game, room=income_room, video=income_video, photomagnets=income_photomagnets, actor=income_actor, quest=quest)
+        return Response(serializer.data)
 
-    # salarys for admins (зарплаты для админов)
 
-    # salarys for actors (зарплаты для актеров)
-    # print(actors)
-    # for actor in actors:
-    #     Salary.objects.create(date='2023-05-31', key='Игра', value=quest.quest_rate, user=actor)
+@api_view(["GET"])
+def VExpenseSubCategories(request):
+    if request.method == "GET":
+        sub_categories = STExpenseSubCategory.objects.all()
+        serializer = STExpenseSubCategorySerializer(sub_categories, many=True)
 
-    #     if (request.data['video']):
-    #         Salary.objects.create(date='2023-05-31', key='Видео', value=100, user=actor)
+        return Response(serializer.data)
 
-    return Response(status=200)
 
-@api_view(['GET'])
-def GetQuestForm(request):
-    quest_form_data = QuestForm.objects.all()
-    serializer = QuestFormSerializer(quest_form_data, many=True)
+# GET, PUT, DELETE
+@api_view(["GET", "PUT", "DELETE"])
+def VUser(request, uid):
+    if request.method == "GET":
+        user = User.objects.get(id=uid)
+        serializer = UserSerializer(user, many=False)
 
-    return Response(serializer.data)
+        return Response(serializer.data)
 
-@api_view(['POST'])
-def SetExpensesForm(request):
-    print(request.data)
+    if request.method == "PUT":
+        try:
+            data = json.loads(request.body)
 
-    quests = Quest.objects.filter(id__in=request.data['quests'])
+            quest = Quest.objects.get(id=data["quest"])
+            roles = Role.objects.filter(id__in=data["roles"])
 
-    new_entry = ExpensesForm.objects.create(date='2023-05-31', sum=request.data['sum'], name_of_expense=request.data['expenseName'])
-    new_entry.quests.set(quests)
+            user = User.objects.get(id=uid)
+            user.username = data["username"]
+            user.last_name = data["last_name"]
+            user.first_name = data["first_name"]
+            user.middle_name = data["middle_name"]
+            user.quest = quest
 
-    return Response(status=200)
+            if "password" in data:
+                user.set_password(data["password"])
 
-@api_view(['POST'])
-def SetBonusesPenaltiesForm(request):
-    print(request.data)
+            user.save()
+            user.roles.set(roles)
 
-    employee = User.objects.get(id=request.data['employe'])
-    quests = Quest.objects.filter(id__in=request.data['quests'])
+            return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
 
-    print(quests)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
 
-    new_entry = BonusesPenaltiesForm.objects.create(date='2023-05-31', employee=employee, bonus=request.data['bonus'], penaltie=request.data['penalty'])
-    new_entry.quests.set(quests)
+    if request.method == "DELETE":
+        user = User.objects.get(id=uid)
+        user.delete()
 
-    return Response(status=200)
+        return Response(status=200)
 
-@api_view(['POST'])
-def SetAdditional1Form(request):
-    input_date_str = request.data['date']
-    input_date = datetime.strptime(input_date_str, '%Y-%m-%dT%H:%M:%S.%fZ')
-    aware_input_date = make_aware(input_date)
-    date_only_str = aware_input_date.strftime('%Y-%m-%d')
 
-    new_entry = Additional1Form.objects.create(date=date_only_str, value=request.data['customValue'])
+@api_view(["GET", "PUT", "DELETE"])
+def VRole(request, rid):
+    if request.method == "GET":
+        role = Role.objects.get(id=rid)
+        serializer = RoleSerializer(role, many=False)
 
-    return Response(status=200)
+        return Response(serializer.data)
 
-@api_view(['GET'])
-def GetAdditional1(request):
-    start_date_str = request.GET.get('start_date')
-    end_date_str = request.GET.get('end_date')
+    # if request.method == "PUT":
+    #     try:
+    #         data = json.loads(request.body)
 
-    additional1 = []
-    
-    try:
-        start_date = datetime.strptime(start_date_str, '%d-%m-%Y').date()
-        end_date = datetime.strptime(end_date_str, '%d-%m-%Y').date()
+    #         formatted_date = datetime.fromisoformat(data["date"]).date()
+    #         sub_category = ExpenseSubCategory.objects.get(id=data["subCategory"])
+    #         quests = Quest.objects.filter(id__in=data["quests"])
 
-        additional1 = Additional1Form.objects.filter(date__range=(start_date, end_date))
-    except:
-        additional1 = Additional1Form.objects.all()
+    #         expense = Expense.objects.get(id=rid)
+    #         expense.date = formatted_date
+    #         expense.amount = data["amount"]
+    #         expense.name = data["name"]
+    #         expense.sub_category = sub_category
+    #         expense.save()
+    #         expense.quests.set(quests)
 
-    serializer = Additional1Serializer(additional1, many=True)
+    #         return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
 
-    return Response(serializer.data)
+    #     except Exception as e:
+    #         return JsonResponse({"error": str(e)}, status=400)
 
-@api_view(['PUT'])
-def UpdateAdditional1(request, aid):
+    if request.method == "DELETE":
+        role = Role.objects.get(id=rid)
+        role.delete()
+
+        return Response(status=200)
+
+
+@api_view(["GET", "PUT", "DELETE"])
+def VQuest(request, qname):
+    if request.method == "GET":
+        quest = Quest.objects.get(latin_name=qname)
+        serializer = QuestSerializer(quest, many=False)
+
+        return Response(serializer.data)
+
+    if request.method == "PUT":
+        try:
+            data = json.loads(request.body)
+
+            quest = Quest.objects.get(latin_name=qname)
+            quest.latin_name = data["latin_name"]
+            quest.name = data["name"]
+            quest.address = data["address"]
+            quest.rate = data["rate"]
+            quest.save()
+
+            return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    if request.method == "DELETE":
+        quest = Quest.objects.get(latin_name=qname)
+        quest.delete()
+
+        return Response(status=200)
+
+
+@api_view(["GET"])
+def VQuestIncomes(request, qname):
+    if request.method == "GET":
+        start_date_param = request.query_params.get("start_date", None)
+        end_date_param = request.query_params.get("end_date", None)
+
+        quest = Quest.objects.get(latin_name=qname)
+        incomes = QIncome.objects.filter(quest=quest).order_by("date")
+
+        if start_date_param and end_date_param:
+            try:
+                start_date = datetime.strptime(start_date_param, "%d-%m-%Y").date()
+                end_date = datetime.strptime(end_date_param, "%d-%m-%Y").date()
+
+                incomes = incomes.filter(date__range=(start_date, end_date))
+            except ValueError:
+                return Response(
+                    {
+                        "error": "Неверный формат даты. Пожалуйста, используйте ДД-ММ-ГГГГ."
+                    },
+                    status=400,
+                )
+
+        serializer = QIncomeSerializer(incomes, many=True)
+        return Response(serializer.data)
+
+@api_view(["GET"])
+def VQuestExpenses(request, qname):
+    if request.method == "GET":
+        start_date_param = request.query_params.get("start_date", None)
+        end_date_param = request.query_params.get("end_date", None)
+
+        quest = Quest.objects.get(latin_name=qname)
+        expenses = STExpense.objects.filter(quests=quest).order_by("date")
+
+        if start_date_param and end_date_param:
+            try:
+                start_date = datetime.strptime(start_date_param, "%d-%m-%Y").date()
+                end_date = datetime.strptime(end_date_param, "%d-%m-%Y").date()
+
+                expenses = expenses.filter(date__range=(start_date, end_date))
+            except ValueError:
+                return Response(
+                    {
+                        "error": "Неверный формат даты. Пожалуйста, используйте ДД-ММ-ГГГГ."
+                    },
+                    status=400,
+                )
+
+        serializer = STExpenseSerializer(expenses, many=True)
+        return Response(serializer.data)
+
+
+@api_view(["GET"])
+def VQuestSalaries(request, qname):
+    if request.method == "GET":
+        quest = Quest.objects.get(latin_name=qname)
+        salaries = QSalary.objects.filter(user__quest=quest).order_by("date")
+
+        merged_data = {}
+
+        for transaction in salaries:
+            date_str = transaction.date.strftime("%d.%m.%Y")
+            item_name = transaction.name
+
+            if date_str not in merged_data:
+                merged_data[date_str] = {
+                    "id": transaction.id,
+                    "key": transaction.id,
+                    "date": date_str,
+                    "children": [],
+                }
+
+            found = False
+            for child in merged_data[date_str]["children"]:
+                if child["user"]["id"] == transaction.user.id:
+                    child["sum"] += transaction.amount
+                    child["tooltip"] = f"{child['sum']}р. - {item_name}"
+                    found = True
+                    break
+
+            if not found:
+                user_data = {
+                    "user": UserSerializer(transaction.user).data,
+                    "sum": transaction.amount,
+                    "tooltip": f"{transaction.amount}р. - {item_name}",
+                }
+
+                merged_data[date_str]["children"].append(user_data)
+
+        # Convert merged_data dictionary to the desired format
+        body_data = list(merged_data.values())
+
+        # Create the head data (user titles)
+        head_data = [
+            {
+                "title": user_data["user"]["username"],
+                "dataIndex": user_data["user"]["username"],
+                "key": user_data["user"]["username"],
+            }
+            for date_data in body_data
+            for user_data in date_data["children"]
+        ]
+
+        transformed_data = {"head": head_data, "body": body_data}
+
+        return Response(transformed_data)
+        # start_date_param = request.query_params.get("start_date", None)
+        # end_date_param = request.query_params.get("end_date", None)
+
+        # quest = Quest.objects.get(latin_name=qname)
+        # salaries = QSalary.objects.filter(user__quest=quest).order_by("date")
+
+        # if start_date_param and end_date_param:
+        #     try:
+        #         start_date = datetime.strptime(start_date_param, "%d-%m-%Y").date()
+        #         end_date = datetime.strptime(end_date_param, "%d-%m-%Y").date()
+
+        #         salaries = salaries.filter(date__range=(start_date, end_date))
+        #     except ValueError:
+        #         return Response(
+        #             {
+        #                 "error": "Неверный формат даты. Пожалуйста, используйте ДД-ММ-ГГГГ."
+        #             },
+        #             status=400,
+        #         )
+
+        # serializer = QSalarySerializer(salaries, many=True)
+        # return Response(serializer.data)
+
+
+@api_view(["GET", "PUT", "DELETE"])
+def VTransaction(request, tid):
+    if request.method == "GET":
+        transaction = Transaction.objects.get(id=tid)
+        serializer = TransactionSerializer(transaction, many=False)
+
+        return Response(serializer.data)
+
+    if request.method == "PUT":
+        try:
+            data = json.loads(request.body)
+
+            formatted_date = datetime.fromisoformat(data["date"]).date()
+
+            transaction = Transaction.objects.get(id=tid)
+            transaction.date = formatted_date
+            transaction.amount = data["amount"]
+            transaction.status = data["status"]
+            transaction.save()
+
+            return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    if request.method == "DELETE":
+        transaction = Transaction.objects.get(id=tid)
+        transaction.delete()
+
+        return JsonResponse({"message": "Запись успешно удалена"}, status=200)
+
+
+@api_view(["GET", "PUT", "DELETE"])
+def VExpense(request, eid):
+    if request.method == "GET":
+        expense = STExpense.objects.get(id=eid)
+        serializer = STExpenseSerializer(expense, many=False)
+
+        return Response(serializer.data)
+
+    if request.method == "PUT":
+        try:
+            data = json.loads(request.body)
+
+            formatted_date = datetime.fromisoformat(data["date"]).date()
+            sub_category = STExpenseSubCategory.objects.get(id=data["subCategory"])
+            quests = Quest.objects.filter(id__in=data["quests"])
+
+            expense = STExpense.objects.get(id=eid)
+            expense.date = formatted_date
+            expense.amount = data["amount"]
+            expense.name = data["name"]
+            expense.sub_category = sub_category
+            expense.save()
+            expense.quests.set(quests)
+
+            return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    if request.method == "DELETE":
+        expense = STExpense.objects.get(id=eid)
+        expense.delete()
+
+        return Response(status=200)
+
+
+@api_view(["GET", "PUT", "DELETE"])
+def VSTQuest(request, stqid):
+    if request.method == "GET":
+        stquest = STQuest.objects.get(id=stqid)
+        serializer = STQuestSerializer(stquest, many=False)
+
+        return Response(serializer.data)
+
+    if request.method == "PUT":
+        # try:
+        data = json.loads(request.body)
+
+        formatted_date = datetime.fromisoformat(data["date"]).date()
+        formatted_time = datetime.fromisoformat(data["time"]).time()
+        quest = Quest.objects.get(id=data["quest"])
+        administrator = User.objects.get(id=data["administrator"])
+        animator = User.objects.get(id=data["animator"])
+        actors = User.objects.filter(id__in=data["actor"])
+        room_employee_name = User.objects.get(id=data["room_employee_name"])
+
+        stquest_data = {
+            "quest": quest,
+            "date": formatted_date,
+            "time": formatted_time,
+            "quest_cost": data["quest_cost"],
+            "add_players": data["add_players"],
+            "actor_second_actor": data["actor_second_actor"],
+            "discount_sum": data["discount_sum"],
+            "discount_desc": data["discount_desc"],
+            "room_sum": data["room_sum"],
+            "room_quantity": data["room_quantity"],
+            "room_employee_name": room_employee_name,
+            "video": data["video"],
+            "birthday_congr": data["birthday_congr"],
+            "photomagnets_quantity": int(data["photomagnets_quantity"]),
+            "easy_work": data["easy_work"],
+            "night_game": data["night_game"],
+            "administrator": administrator,
+            "animator": animator,
+            "package": data["package"],
+            "travel": data["travel"],
+        }
+
+        stquest = STQuest.objects.get(id=stqid)
+        for key, value in stquest_data.items():
+            setattr(stquest, key, value)
+        stquest.save()
+        stquest.actor.set(actors)
+
+        return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
+
+        # except Exception as e:
+        #     return JsonResponse({"error": str(e)}, status=400)
+
+    if request.method == "DELETE":
+        stquest = STQuest.objects.get(id=stqid)
+        stquest.delete()
+
+        return Response(status=200)
+
+
+@api_view(["GET", "PUT", "DELETE"])
+def VBonusPenalty(request, bpid):
+    if request.method == "GET":
+        bonus_penalty = STBonusPenalty.objects.get(id=bpid)
+        serializer = STBonusPenaltySerializer(bonus_penalty, many=False)
+
+        return Response(serializer.data)
+
+    if request.method == "PUT":
+        try:
+            data = json.loads(request.body)
+
+            formatted_date = datetime.fromisoformat(data["date"]).date()
+            user = User.objects.get(id=data["user"])
+            quests = Quest.objects.filter(id__in=data["quests"])
+
+            bonus_penalty = STBonusPenalty.objects.get(id=bpid)
+            bonus_penalty.date = formatted_date
+            bonus_penalty.user = user
+            bonus_penalty.bonus = data["bonus"]
+            bonus_penalty.penalty = data["penalty"]
+            bonus_penalty.save()
+            bonus_penalty.quests.set(quests)
+
+            return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    if request.method == "DELETE":
+        bonus_penalty = STBonusPenalty.objects.get(id=bpid)
+        bonus_penalty.delete()
+
+        return Response(status=200)
+
+
+# POST
+@api_view(["POST"])
+def VCreateUser(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+
+            quest = Quest.objects.get(id=data["quest"])
+            roles = Role.objects.filter(id__in=data["roles"])
+
+            optional_fields = ["first_name", "last_name", "middle_name"]
+
+            user_data = {
+                "username": data["username"],
+                "password": data["password"],
+                "quest": quest,
+            }
+
+            for field in optional_fields:
+                if field in data:
+                    user_data[field] = data[field]
+
+            user = User.objects.create_user(**user_data)
+            user.roles.set(roles)
+
+            return JsonResponse({"message": "Пользователь успешно создан"}, status=201)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    else:
+        return JsonResponse({"error": "Разрешены только POST-запросы"}, status=405)
+
+
+@api_view(["POST"])
+def VCreateRole(request):
+    if request.method == "POST":
+        try:
+            # data = json.loads(request.body)
+
+            # formatted_date = datetime.fromisoformat(data["date"]).date()
+            # sub_category = ExpenseSubCategory.objects.get(id=data["subCategory"])
+            # quests = Quest.objects.filter(id__in=data["quests"])
+
+            # expense_data = {
+            #     "date": formatted_date,
+            #     "amount": data["amount"],
+            #     "name": data["name"],
+            #     "sub_category": sub_category,
+            # }
+
+            # expense = Expense(**expense_data)
+            # expense.save()
+            # expense.quests.set(quests)
+
+            return JsonResponse({"message": "Запись успешно создана"}, status=201)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    else:
+        return JsonResponse({"error": "Разрешены только POST-запросы"}, status=405)
+
+
+@api_view(["POST"])
+def VCreateQuest(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+
+            quest_data = {
+                "latin_name": data["latin_name"],
+                "name": data["name"],
+                "address": data["address"],
+                "rate": data["rate"],
+            }
+
+            quest = Quest(**quest_data)
+            quest.save()
+
+            return JsonResponse({"message": "Запись успешно создана"}, status=201)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    else:
+        return JsonResponse({"error": "Разрешены только POST-запросы"}, status=405)
+
+
+@api_view(["POST"])
+def VCreateTransaction(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+
+            formatted_date = datetime.fromisoformat(data["date"]).date()
+
+            transaction_data = {
+                "date": formatted_date,
+                "amount": data["amount"],
+            }
+
+            transaction = Transaction(**transaction_data)
+            transaction.save()
+
+            return JsonResponse({"message": "Запись успешно создана"}, status=201)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    else:
+        return JsonResponse({"error": "Разрешены только POST-запросы"}, status=405)
+
+
+@api_view(["POST"])
+def VCreateExpense(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+
+            formatted_date = datetime.fromisoformat(data["date"]).date()
+            sub_category = STExpenseSubCategory.objects.get(id=data["subCategory"])
+            quests = Quest.objects.filter(id__in=data["quests"])
+
+            expense_data = {
+                "date": formatted_date,
+                "amount": data["amount"],
+                "name": data["name"],
+                "sub_category": sub_category,
+            }
+
+            expense = STExpense(**expense_data)
+            expense.save()
+            expense.quests.set(quests)
+
+            return JsonResponse({"message": "Запись успешно создана"}, status=201)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    else:
+        return JsonResponse({"error": "Разрешены только POST-запросы"}, status=405)
+
+
+@api_view(["POST"])
+def VCreateSTQuest(request):
+    if request.method == "POST":
+        # try:
+        data = json.loads(request.body)
+
+        formatted_date = datetime.fromisoformat(data["date"]).date()
+        formatted_time = datetime.fromisoformat(data["time"]).time()
+        quest = Quest.objects.get(id=data["quest"])
+        administrator = User.objects.get(id=data["administrator"])
+        animator = User.objects.get(id=data["animator"])
+        actors = User.objects.filter(id__in=data["actor"])
+        room_employee_name = User.objects.get(id=data["room_employee_name"])
+
+        stquest_data = {
+            "quest": quest,
+            "date": formatted_date,
+            "time": formatted_time,
+            "quest_cost": data["quest_cost"],
+            "add_players": data["add_players"],
+            "actor_second_actor": data["actor_second_actor"],
+            "discount_sum": data["discount_sum"],
+            "discount_desc": data["discount_desc"],
+            "room_sum": data["room_sum"],
+            "room_quantity": data["room_quantity"],
+            "room_employee_name": room_employee_name,
+            "video": data["video"],
+            "birthday_congr": data["birthday_congr"],
+            "photomagnets_quantity": int(data["photomagnets_quantity"]),
+            "easy_work": data["easy_work"],
+            "night_game": data["night_game"],
+            "administrator": administrator,
+            "animator": animator,
+            "package": data["package"],
+            "travel": data["travel"],
+        }
+
+        stquest = STQuest(**stquest_data)
+        # stquest.save()
+        # stquest.actor.set(actors)
+
+        # create_qincome(data)
         
-    additional1 = Additional1Form.objects.get(id=aid)
-    additional1.status = 'success'
-    additional1.save()
+        for actor in actors:
+            game_salary_data = {
+                "date": formatted_date,
+                "amount": quest.rate,
+                "name": 'Игра',
+                "user": actor,
+            }
+            QSalary(**game_salary_data).save()
 
-    serializer = Additional1Serializer(additional1, many=False)
+            if (data['video']):
+                video_salary_data = {
+                    "date": formatted_date,
+                    "amount": 100,
+                    "name": 'Видео',
+                    "user": actor,
+                }
+                QSalary(**video_salary_data).save()
 
-    return Response(serializer.data)
-    
+        return JsonResponse({"message": "Запись успешно создана"}, status=201)
+
+        # except Exception as e:
+        #     return JsonResponse({"error": str(e)}, status=400)
+
+    else:
+        return JsonResponse({"error": "Разрешены только POST-запросы"}, status=405)
+
+
+@api_view(["POST"])
+def VCreateBonusPenalty(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+
+            formatted_date = datetime.fromisoformat(data["date"]).date()
+            user = User.objects.get(id=data["user"])
+            quests = Quest.objects.filter(id__in=data["quests"])
+
+            bonus_penalty_data = {
+                "date": formatted_date,
+                "user": user,
+                "bonus": data["bonus"],
+                "penalty": data["penalty"],
+            }
+
+            bonus_penalty = STBonusPenalty(**bonus_penalty_data)
+            bonus_penalty.save()
+            bonus_penalty.quests.set(quests)
+
+            return JsonResponse({"message": "Запись успешно создана"}, status=201)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    else:
+        return JsonResponse({"error": "Разрешены только POST-запросы"}, status=405)

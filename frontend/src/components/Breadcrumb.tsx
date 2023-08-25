@@ -1,36 +1,33 @@
 import React, { FC } from "react";
-import { Link } from "react-router-dom";
+
+// antd
 import { Breadcrumb } from "antd";
 
-interface BreadcrumbItem {
-  text: string;
-  link?: string;
-}
+// antd | icons
+import { HomeOutlined, FallOutlined, TableOutlined } from "@ant-design/icons";
 
-interface CustomBreadcrumbProps {
-  items: BreadcrumbItem[];
-}
+// utilities
 
-const CustomBreadcrumb: FC<CustomBreadcrumbProps> = ({ items }) => {
+import { generateBreadcrumbItems } from "../assets/utilities/breadcrumb";
+
+// interface
+import { IBreadcrumb } from "../assets/utilities/interface";
+
+const App: FC<IBreadcrumb> = ({ items }) => {
+  const defaultSourceBreadcrumbItem = {
+    icon: HomeOutlined,
+    title: "главная",
+    to: "/",
+  };
+  const sourceBreadcrumbItemsWithDefault = [
+    defaultSourceBreadcrumbItem,
+    ...items,
+  ];
+  const breadcrumbItems = generateBreadcrumbItems(sourceBreadcrumbItemsWithDefault);
+
   return (
-    <Breadcrumb
-      style={{
-        margin: "24px 16px 0",
-        textTransform: "lowercase",
-        letterSpacing: "0.1em",
-      }}
-    >
-      {items.map((item, index) => (
-        <Breadcrumb.Item key={index}>
-          {item.link ? (
-            <Link to={item.link}>{item.text}</Link>
-          ) : (
-            <span>{item.text}</span>
-          )}
-        </Breadcrumb.Item>
-      ))}
-    </Breadcrumb>
+    <Breadcrumb items={breadcrumbItems} style={{ margin: "24px 16px 0" }} />
   );
 };
 
-export default CustomBreadcrumb;
+export default App;

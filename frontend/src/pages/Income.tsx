@@ -43,7 +43,7 @@ interface MainProps {
 function getItem(
   label: React.ReactNode,
   key: React.Key,
-  to: string, // Add the 'to' prop for the link
+  to: string,
   icon?: React.ReactNode,
   children?: MenuItem[],
   type?: "group"
@@ -52,7 +52,6 @@ function getItem(
     key,
     icon,
     children,
-    // Wrap the label in a Link component
     label: <Link to={to}>{label}</Link>,
     type,
   } as MenuItem;
