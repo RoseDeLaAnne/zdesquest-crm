@@ -3,11 +3,12 @@ from datetime import datetime
 from .models import *
 
 
-def create_qincome(data):
+def create_qincome(data, stquest_id):
     formatted_date = datetime.fromisoformat(data["date"]).date()
     formatted_time = datetime.fromisoformat(data["time"]).time()
     
-    quest = Quest.objects.get(id=data["quest"])
+    stquest = STQuest.objects.get(id=stquest_id)
+    quest = Quest.objects.get(name=data["quest"])
 
     photomagnets_promo = int(data["photomagnets_quantity"]) // 2
     photomagnets_not_promo = int(data["photomagnets_quantity"]) - photomagnets_promo
@@ -25,6 +26,7 @@ def create_qincome(data):
         "video": int(data["video"]),
         "photomagnets": int(photomagnets_sum),
         "actor": int(data["actor_second_actor"]),
+        "stquest": stquest,
         "quest": quest,
     }
 

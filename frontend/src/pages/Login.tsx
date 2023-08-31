@@ -1,54 +1,67 @@
-import React from 'react';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input } from 'antd';
-import axios from 'axios'
+import React from "react";
+import { Button, Checkbox, Form, Input } from "antd";
 
-interface Post {
-  access: string;
-  refresh: string;
-}
+// api
+import { token } from "../api/APIUtils";
 
-const App: React.FC = () => {
-  const onFinish = async (values: any) => {
-    console.log('Received values of form: ', values);
+// utils
+import {
+  localStorageSetItem,
+} from "../assets/utilities/jwt";
 
-    const response = await axios.post<Post>('http://127.0.0.1:8000/api/token/', values);
-
-    localStorage.setItem('refresh', response.data.refresh)
-    localStorage.setItem('access', response.data.access)
-  };
-
-  return (
-    <Form
-      name="normal_login"
-      className="login-form"
-      initialValues={{ remember: true }}
-      onFinish={onFinish}
-    >
-      <Form.Item
-        name="username"
-        rules={[{ required: true, message: 'Please input your Username!' }]}
-      >
-        <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
-      </Form.Item>
-      <Form.Item
-        name="password"
-        rules={[{ required: true, message: 'Please input your Password!' }]}
-      >
-        <Input
-          prefix={<LockOutlined className="site-form-item-icon" />}
-          type="password"
-          placeholder="Password"
-        />
-      </Form.Item>
-
-      <Form.Item>
-        <Button type="primary" htmlType="submit" className="login-form-button">
-          Log in
-        </Button>
-      </Form.Item>
-    </Form>
-  );
+const onFinish = async (values: any) => {
+  try {
+    const response = await token(values);
+    if (response.status === 200) {
+      localStorageSetItem(response.data);
+    }
+  } catch (error) {
+    throw error;
+  }
 };
+
+const onFinishFailed = (errorInfo: any) => {
+  console.log("Failed:", errorInfo);
+};
+
+type FieldType = {
+  username?: string;
+  password?: string;
+};
+
+const App: React.FC = () => (
+  <Form
+    name="basic"
+    labelCol={{ span: 8 }}
+    wrapperCol={{ span: 16 }}
+    style={{ maxWidth: 600 }}
+    initialValues={{ remember: true }}
+    onFinish={onFinish}
+    onFinishFailed={onFinishFailed}
+    autoComplete="off"
+  >
+    <Form.Item<FieldType>
+      label="Username"
+      name="username"
+      rules={[{ required: true, message: "Please input your username!" }]}
+    >
+      <Input />
+    </Form.Item>
+
+    <Form.Item<FieldType>
+      label="Password"
+      name="password"
+      rules={[{ required: true, message: "Please input your password!" }]}
+    >
+      <Input.Password />
+    </Form.Item>
+
+    <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+      <Button type="primary" htmlType="submit">
+        Submit
+      </Button>
+    </Form.Item>
+  </Form>
+);
 
 export default App;

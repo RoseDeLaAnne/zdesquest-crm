@@ -344,3 +344,41 @@
     "sum": 800,
     "tooltip": "800р. - 2 Игра"
 },
+
+const items = [
+    {
+      gutter: 16,
+      items: [
+        {
+          span: 12,
+          name: "date",
+          label: "дата",
+          rules: {
+            required: true,
+            message: "пожалуйста, введите дату",
+          },
+          item: {
+            name: "Checkbox",
+            label: "да/нет",
+            placeholder: "",
+            options: [],
+          },
+        },
+        {
+          span: 12,
+          name: "amount",
+          label: "пожалуйста, введите сумму расхода",
+          rules: {
+            required: true,
+            message: "пожалуйста, введите сумму расхода",
+          },
+          item: {
+            name: "Input",
+            label: "",
+            placeholder: "пожалуйста, введите сумму расхода",
+            options: [],
+          },
+        },
+      ],
+    },
+  ];

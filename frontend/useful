@@ -1,0 +1,2 @@
+const location = useLocation();
+const currentURL = location.pathname;

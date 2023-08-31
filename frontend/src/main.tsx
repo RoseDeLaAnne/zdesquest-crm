@@ -10,14 +10,13 @@ import ruRU from "antd/locale/ru_RU";
 import "./index.sass";
 
 // title
-import './assets/stylesheets/title.sass'
+import "./assets/stylesheets/title.sass";
 
 // menu
-import './assets/stylesheets/menu.sass'
+import "./assets/stylesheets/menu.sass";
 
 // breadcrumb
-import './assets/stylesheets/breadcrumb.sass'
-
+import "./assets/stylesheets/breadcrumb.sass";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <ConfigProvider locale={ruRU}>

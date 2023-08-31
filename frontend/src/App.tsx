@@ -1,42 +1,38 @@
 import { ConfigProvider } from "antd";
 
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
+
+import PrivateRoutes from "./utils/PrivateRoutes";
 
 import Login from "./pages/Login";
-// import { Register } from "./pages/Register";
-import Home from "./pages/Home";
-import Income from "./pages/Income";
-import QuestExpenses from "./pages/QuestExpenses";
-
-import QuestForm from "./pages/QuestForm";
-import QuestTable from "./pages/QuestTable";
-import ExpensesForm from "./pages/ExpensesForm";
-import BonusesPenaltiesForm from "./pages/BonusesPenaltiesForm";
-import Salary from "./pages/Salary";
-import Additional1 from "./pages/Additional1";
-import Additional1Form from "./pages/Additional1Form";
-import Page404 from "./pages/404";
 
 import Users from "./pages/Users";
-import User from "./pages/User";
+import EditUsers from "./pages/EditUsers";
 
-import ATTransactions from "./pages/ATTransactions";
-import ATTransaction from "./pages/ATTransaction";
+// import ATCashRegister from "./pages/ATCashRegister";
+// import ATEditCashRegister from "./pages/ATEditCashRegister";
 
 import STQuests from "./pages/STQuests";
-import STQuest from "./pages/STQuest";
+import STEditQuests from "./pages/STEditQuests";
 import STExpenses from "./pages/STExpenses";
-import STExpense from "./pages/STExpense";
-import STBonusesPenalties from "./pages/STBonusesPenalties";
-import STBonusPenalty from "./pages/STBonusPenalty";
+import STEditExpenses from "./pages/STEditExpenses";
+import STBonuses from "./pages/STBonuses";
+import STEditBonuses from "./pages/STEditBonuses";
+import STPenalties from "./pages/STPenalties";
+import STEditPenalties from "./pages/STEditPenalties";
+
+import ATSTExpenseCategories from "./pages/ATSTExpenseCategories";
+import ATEditSTExpenseCategories from "./pages/ATEditSTExpenseCategories";
+import ATSTExpenseSubCategories from "./pages/ATSTExpenseSubCategories";
+import ATEditSTExpenseSubCategories from "./pages/ATEditSTExpenseSubCategories";
 
 import Quests from "./pages/Quests";
-import Quest from "./pages/Quest";
+import EditQuests from "./pages/EditQuests";
+
 import QIncomes from "./pages/QIncomes";
 import QExpenses from "./pages/QExpenses";
-import QSalaries from "./pages/QSalaries";
 
-import Template from "./pages/Template";
+import Salaries from "./pages/Salaries";
 
 function App() {
   return (
@@ -48,63 +44,76 @@ function App() {
       }}
     >
       <Routes>
+        <Route path="/" element={<Navigate to="/users" />} />
         <Route path="/login" element={<Login />} />
-        {/* <Route path="/register" element={<Register />} /> */}
-        <Route path="/" element={<Home />} />
-        {/* <Route path="/quests" element={<Quests />} /> */}
-        {/* <Route path="/quests/:id" element={<Quest />} /> */}
-        {/* <Route path="/quests/:id/income" element={<Income />} />
-        <Route path="/quests/:id/expenses" element={<QuestExpenses />} /> */}
 
-        <Route path="/quest-table" element={<QuestTable />} />
-        <Route path="/quest-form" element={<QuestForm />} />
-        <Route path="/expenses-form" element={<ExpensesForm />} />
+        <Route element={<PrivateRoutes />}>
+          <Route path="/users" element={<Users />} exact />
+          <Route path="/users/edit/:id" element={<EditUsers />} />
+        </Route>
+
+        {/* 
         <Route
-          path="/bonuses-penalties-form"
-          element={<BonusesPenaltiesForm />}
-        />
-        <Route path="/salary" element={<Salary />} />
-        <Route path="/additional1" element={<Additional1 />} />
-        <Route path="/additional1-form" element={<Additional1Form />} />
-        <Route path="/404" element={<Page404 />} />
-
-        <Route path="/users" element={<Users />} />
-        <Route path="/users/edit/:id" element={<User />} />
-
-        {/* <Route path="/source-tables" element={<STQuests />} /> */}
-        <Route
-          path="/additional-tables/transactions"
-          element={<ATTransactions />}
+          path="/additional-tables/:qname/cash-register"
+          element={<ATCashRegister />}
         />
         <Route
-          path="/additional-tables/transactions/edit/:tid"
-          element={<ATTransaction />}
+          path="/additional-tables/:qname/cash-register/edit/:crid"
+          element={<ATEditCashRegister />}
+        /> */}
+        <Route
+          path="/source-tables"
+          element={<Navigate to="/source-tables/quests" />}
         />
-
-        {/* <Route path="/source-tables" element={<STQuests />} /> */}
         <Route path="/source-tables/quests" element={<STQuests />} />
-        <Route path="/source-tables/quests/edit/:qid" element={<STQuest />} />
+        <Route
+          path="/source-tables/quests/edit/:id"
+          element={<STEditQuests />}
+        />
         <Route path="/source-tables/expenses" element={<STExpenses />} />
         <Route
-          path="/source-tables/expenses/edit/:eid"
-          element={<STExpense />}
+          path="/source-tables/expenses/edit/:id"
+          element={<STEditExpenses />}
+        />
+        <Route path="/source-tables/bonuses" element={<STBonuses />} />
+        <Route
+          path="/source-tables/bonuses/edit/:id"
+          element={<STEditBonuses />}
+        />
+        <Route path="/source-tables/penalties" element={<STPenalties />} />
+        <Route
+          path="/source-tables/penalties/edit/:id"
+          element={<STEditPenalties />}
+        />
+
+        <Route
+          path="/additional-tables"
+          element={<Navigate to="/additional-tables/stexpense-categories" />}
         />
         <Route
-          path="/source-tables/bonuses-penalties"
-          element={<STBonusesPenalties />}
+          path="/additional-tables/stexpense-categories"
+          element={<ATSTExpenseCategories />}
         />
         <Route
-          path="/source-tables/bonuses-penalties/edit/:bpid"
-          element={<STBonusPenalty />}
+          path="/additional-tables/stexpense-categories/edit/:id"
+          element={<ATEditSTExpenseCategories />}
+        />
+        <Route
+          path="/additional-tables/stexpense-subcategories"
+          element={<ATSTExpenseSubCategories />}
+        />
+        <Route
+          path="/additional-tables/stexpense-subcategories/edit/:id"
+          element={<ATEditSTExpenseSubCategories />}
         />
 
         <Route path="/quests" element={<Quests />} />
-        <Route path="/quests/edit/:name" element={<Quest />} />
-        <Route path="/quests/:qname/incomes" element={<QIncomes />} />
-        <Route path="/quests/:qname/expenses" element={<QExpenses />} />
-        <Route path="/quests/:qname/salaries" element={<QSalaries />} />
+        <Route path="/quests/edit/:id" element={<EditQuests />} />
 
-        <Route path="/template" element={<Template />} />
+        <Route path="/quests/:name/incomes" element={<QIncomes />} />
+        <Route path="/quests/:name/expenses" element={<QExpenses />} />
+
+        <Route path="/salaries" element={<Salaries />} />
       </Routes>
     </ConfigProvider>
   );

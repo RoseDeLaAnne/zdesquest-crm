@@ -1,288 +1,71 @@
-import React, { FC, useState, useEffect, useRef } from "react";
-
-// react-router-dom
-import { Link } from "react-router-dom";
+import React, { FC, useState, useEffect } from "react";
 
 // antd
-import {
-  Typography,
-  Layout,
-  Menu,
-  Breadcrumb,
-  theme,
-  Col,
-  DatePicker,
-  Drawer,
-  Form,
-  Row,
-  Select,
-  Space,
-  Tag,
-  Button,
-  Input,
-  Table,
-  Popconfirm,
-  message,
-} from "antd";
-
-// antd | type
-import type { MenuProps, InputRef } from "antd";
-import type { ColumnType, ColumnsType } from "antd/es/table";
-import type {
-  FilterConfirmProps,
-  FilterValue,
-  SorterResult,
-} from "antd/es/table/interface";
-
+import { Tag } from "antd";
 // antd | icons
 import {
-  HomeOutlined,
-  UserOutlined,
   QuestionOutlined,
-  RiseOutlined,
   FallOutlined,
-  DollarOutlined,
-  AppstoreAddOutlined,
   TableOutlined,
-  PlusOutlined,
-  SearchOutlined,
   DeploymentUnitOutlined,
 } from "@ant-design/icons";
 
-// libs
-import axios from "axios";
-
-import Highlighter from "react-highlight-words";
-
 // api
-import { deleteSTExpense, getQuests, getSTExpenses, postSTExpense } from "../api/APIUtils";
+import {
+  deleteSTExpense,
+  getSTExpenseSubCategories,
+  getQuests,
+  getSTExpenses,
+  postSTExpense,
+} from "../api/APIUtils";
 
 // components
-import Template from "../components/Template";
-
-const { Content, Sider } = Layout;
-const { Title, Text } = Typography;
-const { Option } = Select;
-
-const { RangePicker } = DatePicker;
+import TableTemplate from "../components/TableTemplate";
 
 const App: FC = () => {
-  const handleSearch = (
-    selectedKeys: string[],
-    confirm: (param?: FilterConfirmProps) => void,
-    dataIndex: DataIndex
-  ) => {
-    confirm();
-    setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
-  };
-
-  const handleReset = (clearFilters: () => void) => {
-    clearFilters();
-    setSearchText("");
-  };
-
-  const handleDelete = async (key: React.Key) => {
-    const response = await deleteExpense(key);
-    if (response.status === 200) {
-      const newData = data.filter((item) => item.key !== key);
-      setData(newData);
-    }
-  };
-
-  const getColumnSearchProps = (
-    dataIndex: DataIndex,
-    title: string
-  ): ColumnType<DataType> => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-      close,
-    }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder={`поиск по ${title}`}
-          value={selectedKeys[0]}
-          onChange={(e) =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() =>
-            handleSearch(selectedKeys as string[], confirm, dataIndex)
-          }
-          style={{ marginBottom: 8, display: "block" }}
-        />
-        <Space>
-          <Button
-            type="primary"
-            onClick={() =>
-              handleSearch(selectedKeys as string[], confirm, dataIndex)
-            }
-            icon={<SearchOutlined />}
-            size="small"
-            style={{ width: 90 }}
-          >
-            поиск
-          </Button>
-          <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
-            size="small"
-            style={{ width: 90 }}
-          >
-            сброс
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: (filtered: boolean) => (
-      <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
-    ),
-    onFilter: (value, record) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
-      }
-    },
-    render: (text) =>
-      searchedColumn === dataIndex ? (
-        <Highlighter
-          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-          searchWords={[searchText]}
-          autoEscape
-          textToHighlight={text ? text.toString() : ""}
-        />
-      ) : (
-        text
-      ),
-  });
-
-  const showDrawer = () => {
-    setOpen(true);
-    localStorage.setItem("expensesDrawerIsOpen", "true");
-  };
-
-  const onClose = () => {
-    setOpen(false);
-    localStorage.setItem("expensesDrawerIsOpen", "false");
-  };
-
-  const fetchData = async (startDate, endDate) => {
+  const [optionsSTExpenseSubCategories, setOptionsSTExpenseSubCategories] =
+    useState([]);
+  const [filtersSubCategories, setFiltersSubCategories] = useState([]);
+  const [filtersQuests, setFiltersQuests] = useState([]);
+  const [optionsQuests, setOptionsQuests] = useState([]);
+  const fetchSTExpenseSubCategories = async () => {
     try {
-      const response = await getSTExpenses(startDate, endDate);
+      const response = await getSTExpenseSubCategories();
       if (response.status === 200) {
-        const formattedData = response.data.map((item) => ({
-          key: item.key,
-          date: item.date,
-          amount: item.amount,
-          name: item.name,
-          subCategory: item.sub_category.name,
-          quests: item.quests.map((quest) => quest.name),
+        const formattedOptions = response.data.map((item) => ({
+          label: item.name.toLowerCase(),
+          value: item.name,
         }));
-        setData(formattedData);
+        const formattedFilters = response.data.map((item) => ({
+          text: item.name.toLowerCase(),
+          value: item.name,
+        }));
+        setOptionsSTExpenseSubCategories(formattedOptions);
+        setFiltersSubCategories(formattedFilters);
       }
     } catch (error) {
       console.log(error);
     }
   };
-
   const fetchQuests = async () => {
     try {
       const response = await getQuests();
       if (response.status === 200) {
         const formattedOptions = response.data.map((item) => ({
           label: item.name.toLowerCase(),
-          value: item.id,
+          value: item.name,
+        }));
+        const formattedFilters = response.data.map((item) => ({
+          text: item.name.toLowerCase(),
+          value: item.name,
         }));
         setOptionsQuests(formattedOptions);
+        setFiltersQuests(formattedFilters);
       }
     } catch (error) {
       console.log(error);
     }
   };
-
-  const fetchExpenseSubCategories = async () => {
-    const url = `http://127.0.0.1:8000/api/expense-sub-categories/`;
-    try {
-      const response = await axios.get(url);
-      if (response.status === 200) {
-        // setCategories(response.data);
-        const formattedOptions = response.data.map((item) => ({
-          label: item.name.toLowerCase(),
-          value: item.id,
-        }));
-        setOptionsSubCategories(formattedOptions);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const deleteExpense = async (key) => {
-    try {
-      const response = await deleteSTExpense(key);
-      return response;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleDateChange = async (dates) => {
-    setDates(dates);
-    if (dates !== null) {
-      fetchData(dates[0].format("DD-MM-YYYY"), dates[1].format("DD-MM-YYYY"));
-    } else {
-      fetchData(null, null);
-    }
-  };
-
-  const onFinish = async (value: object) => {
-    try {
-      const response = await postSTExpense(value);
-      if (response.status === 201) {
-        messageApi.open({
-          type: "success",
-          content: "запись создана",
-        });
-        // setData((prevData) => [...prevData, value])
-        if (dates.length !== 0) {
-          fetchData(
-            dates[0].format("DD-MM-YYYY"),
-            dates[1].format("DD-MM-YYYY")
-          );
-        } else {
-          fetchData(null, null);
-        }
-      }
-    } catch (error) {
-      messageApi.open({
-        type: "error",
-        content: "запись не создана",
-      });
-    }
-  };
-
-  const [open, setOpen] = useState(
-    localStorage.getItem("expensesDrawerIsOpen")
-      ? localStorage.getItem("expensesDrawerIsOpen") === "true"
-      : false
-  );
-  const [form] = Form.useForm();
-  const [messageApi, contextHolder] = message.useMessage();
-  const [data, setData] = useState<DataType[]>([]);
-  const [dates, setDates] = useState([]);
-  const [quests, setQuests] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [optionsQuests, setOptionsQuests] = useState([]);
-  const [optionsSubCategories, setOptionsSubCategories] = useState([]);
-  const [searchText, setSearchText] = useState("");
-  const [searchedColumn, setSearchedColumn] = useState("");
-  const searchInput = useRef<InputRef>(null);
 
   const sourceBreadcrumbItems = [
     {
@@ -309,269 +92,233 @@ const App: FC = () => {
         {
           key: "3",
           icon: DeploymentUnitOutlined,
-          label: "бонусы/штрафы",
-          to: "/source-tables/bonuses-penalties",
+          label: "бонусы",
+          to: "/source-tables/bonuses",
+        },
+        {
+          key: "4",
+          icon: DeploymentUnitOutlined,
+          label: "штрафы",
+          to: "/source-tables/penalties",
         },
       ],
     },
   ];
-  const columns = [
+
+  const initialPackedTableColumns = [
     {
-      title: "Дата",
+      title: "дата",
       dataIndex: "date",
       key: "date",
-      ...getColumnSearchProps("date", "дате"),
-      sorter: {
-        compare: (a, b) => {
-          const dateA = new Date(a.date.split(".").reverse().join("-"));
-          const dateB = new Date(b.date.split(".").reverse().join("-"));
-          return dateA - dateB;
-        },
+      sorting: {
+        isSorting: true,
+        isDate: true,
       },
+      searching: {
+        isSearching: true,
+        title: "дате",
+      },
+      countable: false,
       width: 112,
     },
     {
-      title: "Сумма расхода",
-      dataIndex: "amount",
-      key: "amount",
-      ...getColumnSearchProps("amount", "сумме расхода"),
-      sorter: {
-        compare: (a, b) => a.amount - b.amount,
-      },
-    },
-    {
-      title: "Наименование расхода",
+      title: "наименование",
       dataIndex: "name",
       key: "name",
-      ...getColumnSearchProps("name", "наименованию расхода"),
-      sorter: {
-        compare: (a, b) => a.name - b.name,
+      sorting: {
+        isSorting: true,
+        isDate: false,
       },
+      searching: {
+        isSearching: true,
+        title: "наименованию",
+      },
+      countable: false,
     },
     {
-      title: "Подкатегория",
-      dataIndex: "subCategory",
-      key: "subCategory",
-      filters: [
-        {
-          text: "instagram",
-          value: "Instagram",
-        },
-        {
-          text: "вконтакте",
-          value: "ВКонтакте",
-        },
-      ],
-      onFilter: (value: string, record) => record.subCategory.startsWith(value),
+      title: "сумма",
+      dataIndex: "amount",
+      key: "amount",
+      sorting: {
+        isSorting: true,
+        isDate: false,
+      },
+      searching: {
+        isSearching: true,
+        title: "сумме",
+      },
+      countable: true,
+    },
+    {
+      title: "подкатегория",
+      dataIndex: "sub_category",
+      key: "sub_category",
+      filters: filtersSubCategories,
+      onFilter: (value: string, record) =>
+        record.sub_category.startsWith(value),
       filterSearch: true,
-      render: (text) => (
-        <Tag color="geekblue" style={{ textTransform: "lowercase" }}>
-          {text}
-        </Tag>
-      ),
+      sorting: {
+        isSorting: false,
+        isDate: false,
+      },
+      searching: {
+        isSearching: false,
+        title: "",
+      },
+      countable: false,
+      render: (sub_category) => <Tag color="black">{sub_category}</Tag>,
     },
     {
-      title: "Квесты",
+      title: "квесты",
       dataIndex: "quests",
       key: "quests",
+      filters: filtersQuests,
+      onFilter: (value, record) => record.quests.includes(value),
+      filterSearch: true,
+      filterMultiple: true,
+      sorting: {
+        isSorting: false,
+        isDate: false,
+      },
+      searching: {
+        isSearching: false,
+        title: "",
+      },
+      countable: false,
       render: (_, { quests }) => (
         <>
           {quests.map((quest) => {
             return (
-              <Tag color="geekblue" key={quest}>
-                {quest.toLowerCase()}
+              <Tag color="orange" key={quest}>
+                {quest}
               </Tag>
             );
           })}
         </>
       ),
     },
+  ];
+  const formItems = [
     {
-      title: "операция",
-      dataIndex: "operation",
-      render: (_, record: { key: React.Key }) =>
-        data.length >= 1 ? (
-          <Space>
-            <Link to={`edit/${record.key}`}>редактировать</Link>
-            <Popconfirm
-              title="уверены, что хотите удалить?"
-              onConfirm={() => handleDelete(record.key)}
-            >
-              <a>удалить</a>
-            </Popconfirm>
-          </Space>
-        ) : null,
-      width: 192,
+      gutter: 16,
+      items: [
+        {
+          span: 24,
+          name: "date",
+          label: "дата",
+          rules: {
+            required: true,
+            message: "пожалуйста, введите дату",
+          },
+          item: {
+            name: "DatePicker",
+            label: "",
+            placeholder: "",
+            options: [],
+            multiple: null,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
+          span: 12,
+          name: "amount",
+          label: "сумма расхода",
+          rules: {
+            required: true,
+            message: "пожалуйста, введите сумму расхода",
+          },
+          item: {
+            name: "Input",
+            label: "",
+            placeholder: "пожалуйста, введите сумму расхода",
+            options: [],
+            multiple: null,
+          },
+        },
+        {
+          span: 12,
+          name: "name",
+          label: "наименование расхода",
+          rules: {
+            required: true,
+            message: "пожалуйста, введите наименование расхода",
+          },
+          item: {
+            name: "Input",
+            label: "",
+            placeholder: "пожалуйста, введите наименование расхода",
+            options: [],
+            multiple: null,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
+          span: 12,
+          name: "sub_category",
+          label: "подкатегория",
+          rules: {
+            required: true,
+            message: "пожалуйста, выберите подкатегорию",
+          },
+          item: {
+            name: "Select",
+            label: "",
+            placeholder: "пожалуйста, выберите подкатегорию",
+            options: optionsSTExpenseSubCategories,
+            multiple: false,
+          },
+        },
+        {
+          span: 12,
+          name: "quests",
+          label: "квесты",
+          rules: {
+            required: true,
+            message: "пожалуйста, выберите квесты",
+          },
+          item: {
+            name: "Select",
+            label: "",
+            placeholder: "пожалуйста, выберите квесты",
+            options: optionsQuests,
+            multiple: true,
+          },
+        },
+      ],
     },
   ];
 
   useEffect(() => {
-    fetchData(null, null);
+    fetchSTExpenseSubCategories();
     fetchQuests();
-    fetchExpenseSubCategories();
   }, []);
 
   return (
-    <Template
-      breadcrumbItems={sourceBreadcrumbItems}
+    <TableTemplate
       defaultOpenKeys={["sourceTables"]}
       defaultSelectedKeys={["sourceTablesExpenses"]}
-    >
-      {contextHolder}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <Title>исходные таблицы | расходы</Title>
-        <Space size="middle">
-          <RangePicker onChange={handleDateChange} />
-          <Button type="primary" onClick={showDrawer} icon={<PlusOutlined />}>
-            новая запись
-          </Button>
-        </Space>
-      </div>
-      <Table
-        columns={columns}
-        dataSource={data}
-        bordered
-        summary={() => {
-          if (data.length === 0) {
-            return null;
-          }
-
-          let totalAmount = 0;
-
-          data.forEach(({ amount }) => {
-            totalAmount += amount;
-          });
-
-          return (
-            <>
-              <Table.Summary.Row>
-                <Table.Summary.Cell index={0}>итого</Table.Summary.Cell>
-                <Table.Summary.Cell index={1}>
-                  <Text>{totalAmount}</Text>
-                </Table.Summary.Cell>
-                <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                <Table.Summary.Cell index={3}></Table.Summary.Cell>
-                <Table.Summary.Cell index={4}></Table.Summary.Cell>
-                <Table.Summary.Cell index={5}></Table.Summary.Cell>
-              </Table.Summary.Row>
-            </>
-          );
-        }}
-      />
-      <Drawer
-        title="создать новую запись"
-        width={720}
-        onClose={onClose}
-        open={open}
-        bodyStyle={{ paddingBottom: 80 }}
-        extra={
-          <Space>
-            <Button onClick={onClose}>отмена</Button>
-            <Button onClick={() => form.submit()} type="primary">
-              создать
-            </Button>
-          </Space>
-        }
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          hideRequiredMark
-          onFinish={onFinish}
-        >
-          <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item
-                name="date"
-                label="дата"
-                rules={[
-                  { required: true, message: "пожалуйста, введите дату" },
-                ]}
-              >
-                <DatePicker style={{ width: "100%" }} />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name="amount"
-                label="сумма расхода"
-                rules={[
-                  {
-                    required: true,
-                    message: "пожалуйста, введите сумму расхода",
-                  },
-                ]}
-              >
-                <Input placeholder="пожалуйста, введите сумму расхода" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="name"
-                label="наименование расхода"
-                rules={[
-                  {
-                    required: true,
-                    message: "пожалуйста, введите наименование расхода",
-                  },
-                ]}
-              >
-                <Input placeholder="пожалуйста, введите наименование расхода" />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name="subCategory"
-                label="подкатегория"
-                rules={[
-                  {
-                    required: true,
-                    message: "пожалуйста, выберите подкатегорию",
-                  },
-                ]}
-              >
-                <Select
-                  allowClear
-                  style={{ width: "100%" }}
-                  placeholder="пожалуйста, выберите подкатегорию"
-                  options={optionsSubCategories}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="quests"
-                label="квесты"
-                rules={[
-                  {
-                    required: true,
-                    message: "пожалуйста, выберите квесты",
-                  },
-                ]}
-              >
-                <Select
-                  mode="multiple"
-                  allowClear
-                  style={{ width: "100%" }}
-                  placeholder="пожалуйста, выберите квесты"
-                  options={optionsQuests}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-      </Drawer>
-    </Template>
+      breadcrumbItems={sourceBreadcrumbItems}
+      title={"исходные таблицы | расходы"}
+      datePicker={true}
+      addEntry={true}
+      addEntryTitle={"новая запись"}
+      fetchFunction={getSTExpenses}
+      createFunction={postSTExpense}
+      deleteFunction={deleteSTExpense}
+      initialPackedTableColumns={initialPackedTableColumns}
+      tableOperation={true}
+      tableBordered={true}
+      drawerTitle="создать новую запись"
+      formItems={formItems}
+    />
   );
 };
 

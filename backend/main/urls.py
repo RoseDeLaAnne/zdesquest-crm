@@ -1,39 +1,58 @@
-from django.urls import path
+from django.contrib import admin
+from django.urls import path, include
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 from . import views
 
 
 urlpatterns = [
+    path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     # GET
-    path("users/", views.VUsers),
-    path("users/<str:rname>/", views.VUsersByRole),
-    path("roles/", views.VRoles),
-    path("quests/", views.VQuests),
-    path("transactions/", views.VTransactions),
-    path("stquests/", views.VSTQuests),
-    path("expenses/", views.VExpenses),
-    path("bonuses-penalties/", views.VBonusesPenalties),
-    path("expense-categories/", views.VExpenseCategories),
-    path("expense-sub-categories/", views.VExpenseSubCategories),
+    path("users/", views.Users),
+    path("users/<str:rname>/", views.UsersByRole),
+    path("roles/", views.Roles),
+    path("quests/", views.Quests),
+    # path("transactions/", views.VTransactions),
+    path("stquests/", views.STQuests),
+    path("stexpenses/", views.STExpenses),
+    path("stbonuses/", views.STBonuses),
+    path("stpenalties/", views.STPenalties),
+    path("stexpense-categories/", views.STExpenseCategories),
+    path("stexpense-sub-categories/", views.STExpenseSubCategories),
+    path("quest/<str:name>/incomes/", views.QuestIncomes),
+    path("quest/<str:name>/expenses/", views.QuestExpenses),
+    # path("quest/<str:name>/salaries/", views.QuestSalaries),
+    path("salaries/", views.Salaries),
     # GET, PUT, DELETE
-    path("user/<int:uid>/", views.VUser),
-    path("role/<int:rid>/", views.VRole),
-    path("quest/<str:qname>/", views.VQuest),
-    path("quest/<str:qname>/incomes/", views.VQuestIncomes),
-    path("quest/<str:qname>/expenses/", views.VQuestExpenses),
-    path("quest/<str:qname>/salaries/", views.VQuestSalaries),
-    path("transaction/<int:tid>/", views.VTransaction),
-    path("stquest/<int:stqid>/", views.VSTQuest),
-    path("expense/<int:eid>/", views.VExpense),
-    path("bonus-penalty/<int:bpid>/", views.VBonusPenalty),
+    path("user/<int:id>/", views.VUser),
+    path("role/<int:id>/", views.VRole),
+    path("quest/<int:id>/", views.VQuest),
+    # path("transaction/<int:id>/", views.VTransaction),
+    path("stquest/<int:id>/", views.VSTQuest),
+    path("stexpense/<int:id>/", views.VSTExpense),
+    path("stbonus/<int:id>/", views.VSTBonus),
+    path("stpenalty/<int:id>/", views.VSTPenalty),
+    path("stexpense-category/<int:id>/", views.VSTExpenseCategory),
+    path("stexpense-subcategory/<int:id>/", views.VSTExpenseSubCategory),
     # POST
-    path("create/user/", views.VCreateUser),
-    path("create/role/", views.VCreateRole),
-    path("create/quest/", views.VCreateQuest),
-    path("create/transaction/", views.VCreateTransaction),
-    path("create/stexpense/", views.VCreateExpense),
-    path("create/stquest/", views.VCreateSTQuest),
-    path("create/stbonus-penalty/", views.VCreateBonusPenalty),
+    path("create/user/", views.CreateUser),
+    path("create/role/", views.CreateRole),
+    path("create/quest/", views.CreateQuest),
+    # path("create/transaction/", views.VCreateTransaction),
+    path("create/stexpense/", views.CreateSTExpense),
+    path("create/stquest/", views.CreateSTQuest),
+    path("create/stbonus/", views.CreateSTBonus),
+    path("create/stpenalty/", views.CreateSTPenalty),
+    path("create/stexpense-category/", views.CreateSTExpenseCategory),
+    path("create/stexpense-subcategory/", views.CreateSTExpenseSubCategory),
     # path('quests/', GetQuests),
     # path('animators/', GetAnimators),
     # path('actors/', GetActors),
@@ -50,4 +69,4 @@ urlpatterns = [
     # path('bonuses-penalties-form/', SetBonusesPenaltiesForm),
     # path('additional1-form/', SetAdditional1Form),
     # path('additional1-update/<int:aid>/', UpdateAdditional1),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -22,7 +22,6 @@ class UserSerializer(ModelSerializer):
             "username",
             "last_name",
             "first_name",
-            "middle_name",
             "quest",
             "roles",
         ]
@@ -46,18 +45,23 @@ class QuestSerializer(ModelSerializer):
         fields = "__all__"
 
 
-class TransactionSerializer(ModelSerializer):
-    key = serializers.CharField(max_length=255, source="id")
-    date = CustomDateFormatField()
+# class TransactionSerializer(ModelSerializer):
+#     key = serializers.CharField(max_length=255, source="id")
+#     date = CustomDateFormatField()
 
-    class Meta:
-        model = Transaction
-        fields = "__all__"
+#     class Meta:
+#         model = Transaction
+#         fields = "__all__"
 
 
 class STQuestSerializer(ModelSerializer):
     key = serializers.CharField(max_length=255, source="id")
+    date_time = CustomDateFormatField(source="date")
     date = CustomDateFormatField()
+    quest = serializers.CharField(source="quest.name")
+    administrator = serializers.CharField(source="administrator.first_name")
+    room_employee_name = serializers.CharField(source="room_employee_name.first_name")
+    animator = serializers.CharField(source="animator.first_name")
 
     class Meta:
         model = STQuest
@@ -65,27 +69,80 @@ class STQuestSerializer(ModelSerializer):
 
         depth = 1
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["actors"] = [actors["first_name"] for actors in data["actors"]]
+        return data
+
 
 class STExpenseSerializer(ModelSerializer):
     key = serializers.CharField(max_length=255, source="id")
     date = CustomDateFormatField()
+    sub_category = serializers.SerializerMethodField()
 
     class Meta:
         model = STExpense
-        fields = "__all__"
+        fields = [
+            "key",
+            "date",
+            "name",
+            "amount",
+            "sub_category",
+            "quests",
+        ]
 
         depth = 1
 
+    def get_sub_category(self, obj):
+        sub_category = obj.sub_category
+        return {"name": sub_category.name, "latin_name": sub_category.latin_name}
 
-class STBonusPenaltySerializer(ModelSerializer):
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["quests"] = [quest["name"] for quest in data["quests"]]
+        return data
+
+
+class STBonusSerializer(ModelSerializer):
     key = serializers.CharField(max_length=255, source="id")
     date = CustomDateFormatField()
+    user = serializers.SerializerMethodField()
 
     class Meta:
-        model = STBonusPenalty
+        model = STBonus
         fields = "__all__"
 
         depth = 1
+
+    def get_user(self, obj):
+        user = obj.user
+        return {"id": user.id, "first_name": user.first_name}
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["quests"] = [quest["name"] for quest in data["quests"]]
+        return data
+
+
+class STPenaltySerializer(ModelSerializer):
+    key = serializers.CharField(max_length=255, source="id")
+    date = CustomDateFormatField()
+    user = serializers.SerializerMethodField()
+
+    class Meta:
+        model = STPenalty
+        fields = "__all__"
+
+        depth = 1
+
+    def get_user(self, obj):
+        user = obj.user
+        return {"id": user.id, "first_name": user.first_name}
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["quests"] = [quest["name"] for quest in data["quests"]]
+        return data
 
 
 class STExpenseCategorySerializer(ModelSerializer):
@@ -103,8 +160,11 @@ class STExpenseSubCategorySerializer(ModelSerializer):
         model = STExpenseSubCategory
         fields = "__all__"
 
+        depth = 1
+
 
 class QIncomeSerializer(ModelSerializer):
+    date = CustomDateFormatField()
     key = serializers.CharField(max_length=255, source="id")
 
     class Meta:
@@ -114,12 +174,23 @@ class QIncomeSerializer(ModelSerializer):
         depth = 1
 
 
-class QSalarySerializer(ModelSerializer):
-    key = serializers.CharField(max_length=255, source="id")
+class QExpenseSerializer(ModelSerializer):
     date = CustomDateFormatField()
+    key = serializers.CharField(max_length=255, source="id")
 
     class Meta:
-        model = QSalary
+        model = STExpense
         fields = "__all__"
 
         depth = 1
+
+
+# class QSalarySerializer(ModelSerializer):
+#     key = serializers.CharField(max_length=255, source="id")
+#     date = CustomDateFormatField()
+
+#     class Meta:
+#         model = QSalary
+#         fields = "__all__"
+
+#         depth = 1
