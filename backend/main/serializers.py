@@ -23,7 +23,6 @@ class UserSerializer(ModelSerializer):
             "last_name",
             "first_name",
             "quest",
-            "roles",
         ]
 
         depth = 1
@@ -194,3 +193,41 @@ class QExpenseSerializer(ModelSerializer):
 #         fields = "__all__"
 
 #         depth = 1
+
+
+class QCashRegisterSerializer(ModelSerializer):
+    date = CustomDateFormatField()
+    key = serializers.CharField(max_length=255, source="id")
+
+    class Meta:
+        model = QCashRegister
+        fields = "__all__"
+
+        depth = 1
+
+
+class WorkCardExpenseSerializer(ModelSerializer):
+    date = CustomDateFormatField()
+    key = serializers.CharField(max_length=255, source="id")
+
+    class Meta:
+        model = WorkCardExpense
+        fields = "__all__"
+
+        depth = 1
+
+
+class ExpenseFromTheirSerializer(ModelSerializer):
+    date = CustomDateFormatField()
+    key = serializers.CharField(max_length=255, source="id")
+    who_paid = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ExpenseFromTheir
+        fields = "__all__"
+
+        depth = 1
+
+    def get_who_paid(self, obj):
+        who_paid = obj.who_paid
+        return {"id": who_paid.id, "first_name": who_paid.first_name, "last_name": who_paid.last_name}

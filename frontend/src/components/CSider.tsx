@@ -103,20 +103,6 @@ const App: FC<IFCSider> = ({
           "/additional-tables/stexpense-subcategories",
           <QuestionOutlined />
         ),
-        getItem(
-          "Радуга",
-          "additionalTablesRainbow",
-          "/additional-tables/rainbow",
-          <QuestionOutlined />,
-          [
-            getItem(
-              "касса",
-              "additionalTablesCashRegister",
-              "/additional-tables/rainbow/cash-register",
-              <QuestionOutlined />
-            ),
-          ]
-        ),
       ]
     ),
 
@@ -139,6 +125,12 @@ const App: FC<IFCSider> = ({
             "/quests/rainbow/expenses",
             <FallOutlined />
           ),
+          getItem(
+            "касса",
+            "questsRainbowCashRegister",
+            "/quests/rainbow/cash-register",
+            <FallOutlined />
+          ),
         ]
       ),
     ]),
@@ -147,6 +139,18 @@ const App: FC<IFCSider> = ({
       "зарплаты",
       "salaries",
       "/salaries",
+      <DollarOutlined />
+    ),
+    getItem(
+      "расходы с раб. карты",
+      "workCardExpenses",
+      "/work-card-expenses",
+      <DollarOutlined />
+    ),
+    getItem(
+      "расходы со своих",
+      "expensesFromTheir",
+      "/expenses-from-their",
       <DollarOutlined />
     ),
   ];

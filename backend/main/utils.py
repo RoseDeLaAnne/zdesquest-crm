@@ -8,7 +8,7 @@ def create_qincome(data, stquest_id):
     formatted_time = datetime.fromisoformat(data["time"]).time()
     
     stquest = STQuest.objects.get(id=stquest_id)
-    quest = Quest.objects.get(name=data["quest"])
+    quest = Quest.objects.get(id=data["quest"])
 
     photomagnets_promo = int(data["photomagnets_quantity"]) // 2
     photomagnets_not_promo = int(data["photomagnets_quantity"]) - photomagnets_promo

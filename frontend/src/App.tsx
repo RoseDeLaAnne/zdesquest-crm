@@ -26,6 +26,8 @@ import ATEditSTExpenseCategories from "./pages/ATEditSTExpenseCategories";
 import ATSTExpenseSubCategories from "./pages/ATSTExpenseSubCategories";
 import ATEditSTExpenseSubCategories from "./pages/ATEditSTExpenseSubCategories";
 
+import QCashRegister from "./pages/QCashRegister";
+
 import Quests from "./pages/Quests";
 import EditQuests from "./pages/EditQuests";
 
@@ -33,6 +35,12 @@ import QIncomes from "./pages/QIncomes";
 import QExpenses from "./pages/QExpenses";
 
 import Salaries from "./pages/Salaries";
+
+import WorkCardExpenses from "./pages/WorkCardExpenses";
+import ExpensesFromTheir from "./pages/ExpensesFromTheir";
+
+import FQuest from "./pages/FQuest";
+import FExpense from "./pages/FExpense";
 
 function App() {
   return (
@@ -48,19 +56,10 @@ function App() {
         <Route path="/login" element={<Login />} />
 
         <Route element={<PrivateRoutes />}>
-          <Route path="/users" element={<Users />} exact />
+          <Route path="/users" element={<Users />} />
           <Route path="/users/edit/:id" element={<EditUsers />} />
         </Route>
 
-        {/* 
-        <Route
-          path="/additional-tables/:qname/cash-register"
-          element={<ATCashRegister />}
-        />
-        <Route
-          path="/additional-tables/:qname/cash-register/edit/:crid"
-          element={<ATEditCashRegister />}
-        /> */}
         <Route
           path="/source-tables"
           element={<Navigate to="/source-tables/quests" />}
@@ -112,8 +111,19 @@ function App() {
 
         <Route path="/quests/:name/incomes" element={<QIncomes />} />
         <Route path="/quests/:name/expenses" element={<QExpenses />} />
+        <Route
+          path="/quests/:name/cash-register"
+          element={<QCashRegister />}
+        />
 
         <Route path="/salaries" element={<Salaries />} />
+
+        <Route path="/work-card-expenses" element={<WorkCardExpenses />} />
+        <Route path="/expenses-from-their" element={<ExpensesFromTheir />} />
+
+        <Route path="/forms" element={<Navigate to="/forms/quest" />} />
+        <Route path="/forms/quest" element={<FQuest />} />
+        <Route path="/forms/expense" element={<FExpense />} />
       </Routes>
     </ConfigProvider>
   );

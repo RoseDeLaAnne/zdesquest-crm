@@ -35,6 +35,7 @@ const App: FC = ({ items, form, onFinish }) => {
                     {...(innerItem.item.picker !== "time"
                       ? { format: "DD.MM.YYYY" }
                       : {})}
+                    style={{ width: "100%" }}
                   />
                 ) : innerItem.item.name === "Select" ? (
                   <Select

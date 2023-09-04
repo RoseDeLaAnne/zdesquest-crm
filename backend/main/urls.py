@@ -29,8 +29,10 @@ urlpatterns = [
     path("stexpense-sub-categories/", views.STExpenseSubCategories),
     path("quest/<str:name>/incomes/", views.QuestIncomes),
     path("quest/<str:name>/expenses/", views.QuestExpenses),
-    # path("quest/<str:name>/salaries/", views.QuestSalaries),
+    path("quest/<str:name>/cash-register/", views.VCashRegister),
     path("salaries/", views.Salaries),
+    path("work-card-expenses/", views.WorkCardExpenses),
+    path("expenses-from-their/", views.ExpensesFromTheir),
     # GET, PUT, DELETE
     path("user/<int:id>/", views.VUser),
     path("role/<int:id>/", views.VRole),

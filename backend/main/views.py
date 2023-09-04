@@ -441,6 +441,38 @@ def QuestExpenses(request, name):
 
 
 @api_view(["GET"])
+def VCashRegister(request, name):
+    if request.method == "GET":
+        start_date_param = request.query_params.get("start_date")
+        end_date_param = request.query_params.get("end_date")
+
+        try:
+            start_date = (
+                datetime.strptime(start_date_param, "%d-%m-%Y").date()
+                if start_date_param
+                else None
+            )
+            end_date = (
+                datetime.strptime(end_date_param, "%d-%m-%Y").date()
+                if end_date_param
+                else None
+            )
+        except ValueError:
+            return JsonResponse(
+                {"error": "Invalid date format. Please use DD-MM-YYYY."}, status=400
+            )
+
+        cash_register = QCashRegister.objects.all().order_by("date")
+
+        if start_date and end_date:
+            cash_register = cash_register.filter(date__range=(start_date, end_date))
+
+        serializer = QCashRegisterSerializer(cash_register, many=True)
+
+        return Response(serializer.data)
+
+
+@api_view(["GET"])
 def Salaries(request):
     if request.method == "GET":
         start_date_param = request.query_params.get("start_date")
@@ -534,6 +566,70 @@ def Salaries(request):
         return Response(transformed_data)
 
 
+@api_view(["GET"])
+def WorkCardExpenses(request):
+    if request.method == "GET":
+        start_date_param = request.query_params.get("start_date")
+        end_date_param = request.query_params.get("end_date")
+
+        try:
+            start_date = (
+                datetime.strptime(start_date_param, "%d-%m-%Y").date()
+                if start_date_param
+                else None
+            )
+            end_date = (
+                datetime.strptime(end_date_param, "%d-%m-%Y").date()
+                if end_date_param
+                else None
+            )
+        except ValueError:
+            return JsonResponse(
+                {"error": "Invalid date format. Please use DD-MM-YYYY."}, status=400
+            )
+
+        work_card_expenses = WorkCardExpense.objects.all().order_by("date")
+
+        if start_date and end_date:
+            work_card_expenses = work_card_expenses.filter(date__range=(start_date, end_date))
+
+        serializer = WorkCardExpenseSerializer(work_card_expenses, many=True)
+
+        return Response(serializer.data)
+
+
+@api_view(["GET"])
+def ExpensesFromTheir(request):
+    if request.method == "GET":
+        start_date_param = request.query_params.get("start_date")
+        end_date_param = request.query_params.get("end_date")
+
+        try:
+            start_date = (
+                datetime.strptime(start_date_param, "%d-%m-%Y").date()
+                if start_date_param
+                else None
+            )
+            end_date = (
+                datetime.strptime(end_date_param, "%d-%m-%Y").date()
+                if end_date_param
+                else None
+            )
+        except ValueError:
+            return JsonResponse(
+                {"error": "Invalid date format. Please use DD-MM-YYYY."}, status=400
+            )
+
+        expenses_from_their = ExpenseFromTheir.objects.all().order_by("date")
+
+        if start_date and end_date:
+            expenses_from_their = expenses_from_their.filter(date__range=(start_date, end_date))
+
+        serializer = ExpenseFromTheirSerializer(expenses_from_their, many=True)
+
+        return Response(serializer.data)
+
+
 # @api_view(["GET", "PUT", "DELETE"])
 # def VTransaction(request, tid):
 #     if request.method == "GET":
@@ -622,7 +718,7 @@ def VSTQuest(request, id):
         quest = Quest.objects.get(id=data["quest"])
         administrator = User.objects.get(id=data["administrator"])
         animator = User.objects.get(id=data["animator"])
-        actors = User.objects.filter(id__in=data["actor"])
+        actors = User.objects.filter(id__in=data["actors"])
         room_employee_name = User.objects.get(id=data["room_employee_name"])
 
         entry_data = {
@@ -657,7 +753,7 @@ def VSTQuest(request, id):
         for key, value in entry_data.items():
             setattr(entry, key, value)
         entry.save()
-        entry.actor.set(actors)
+        entry.actors.set(actors)
 
         return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
 
@@ -958,69 +1054,57 @@ def CreateSTQuest(request):
 
         formatted_date = datetime.fromisoformat(data["date"]).date()
         formatted_time = datetime.fromisoformat(data["time"]).time()
-        quest = Quest.objects.get(name=data["quest"])
+        quest = Quest.objects.get(id=data["quest"])
         administrator = User.objects.get(id=data["administrator"])
         animator = User.objects.get(id=data["animator"])
-        actors = User.objects.filter(id__in=data["actor"])
+        actors = User.objects.filter(id__in=data["actors"])
         room_employee_name = User.objects.get(id=data["room_employee_name"])
+
+        optional_fields = ["add_players", "actor_second_actor", "discount_sum", "discount_desc", "room_sum", "room_quantity", "video", "birthday_congr", "easy_work", "night_game", "package", "travel", "cash_payment", "cashless_payment", "cash_delivery", "cashless_delivery", "prepayment"]
 
         entry_data = {
             "quest": quest,
             "date": formatted_date,
             "time": formatted_time,
             "quest_cost": data["quest_cost"],
-            "add_players": data["add_players"],
-            "actor_second_actor": data["actor_second_actor"],
-            "discount_sum": data["discount_sum"],
-            "discount_desc": data["discount_desc"],
-            "room_sum": data["room_sum"],
-            "room_quantity": data["room_quantity"],
             "room_employee_name": room_employee_name,
-            "video": data["video"],
-            "birthday_congr": data["birthday_congr"],
             "photomagnets_quantity": int(data["photomagnets_quantity"]),
-            "easy_work": data["easy_work"],
-            "night_game": data["night_game"],
             "administrator": administrator,
             "animator": animator,
-            "package": data["package"],
-            "travel": data["travel"],
-            # "opl_nal": data["opl_nal"],
-            # "opl_beznal": data["opl_beznal"],
-            # "sdach_nal": data["sdach_nal"],
-            # "sdach_beznal": data["sdach_beznal"],
-            # "predoplata": data["predoplata"],
         }
+
+        for field in optional_fields:
+            if field in data:
+                entry_data[field] = data[field]
 
         entry = STQuest(**entry_data)
         entry.save()
-        entry.actors.set(actors)
+        if (actors):
+            entry.actors.set(actors)
 
-        create_qincome(data, entry.id)
+        # create_qincome(data, entry.id)
 
-        stquest = STQuest.objects.get(id=entry.id)
+        # stquest = STQuest.objects.get(id=entry.id)
 
-        
+        # for actor in actors:
+        #     game_salary_data = {
+        #         "date": formatted_date,
+        #         "amount": quest.actor_rate,
+        #         "name": "Игра",
+        #         "user": actor,
+        #         "stquest": stquest,
+        #     }
+        #     QSalary(**game_salary_data).save()
 
-        for actor in actors:
-            game_salary_data = {
-                "date": formatted_date,
-                "amount": quest.rate,
-                "name": "Игра",
-                "user": actor,
-                "stquest": stquest,
-            }
-            QSalary(**game_salary_data).save()
-
-            if data["video"]:
-                video_salary_data = {
-                    "date": formatted_date,
-                    "amount": 100,
-                    "name": "Видео",
-                    "user": actor,
-                    "stquest": stquest,
-                }
-                QSalary(**video_salary_data).save()
+        #     if data["video"]:
+        #         video_salary_data = {
+        #             "date": formatted_date,
+        #             "amount": 100,
+        #             "name": "Видео",
+        #             "user": actor,
+        #             "stquest": stquest,
+        #         }
+        #         QSalary(**video_salary_data).save()
 
         return JsonResponse({"message": "Запись успешно создана"}, status=201)
 

@@ -136,6 +136,114 @@ export const getSTExpenseSubCategories = async () => {
   }
 };
 
+export const getQuestIncomes = async (
+  name: string,
+  startDate: string,
+  endDate: string
+) => {
+  try {
+    let url;
+    if (startDate !== null && endDate !== null) {
+      url = `http://127.0.0.1:8000/api/quest/${name}/incomes/?start_date=${startDate}&end_date=${endDate}`;
+    } else {
+      url = `http://127.0.0.1:8000/api/quest/${name}/incomes/`;
+    }
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getQuestExpenses = async (
+  startDate: string,
+  endDate: string,
+  name: string
+) => {
+  try {
+    let url;
+    if (startDate !== null && endDate !== null) {
+      url = `http://127.0.0.1:8000/api/quest/${name}/expenses/?start_date=${startDate}&end_date=${endDate}`;
+    } else {
+      url = `http://127.0.0.1:8000/api/quest/${name}/expenses/`;
+    }
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getSalaries = async (startDate: string, endDate: string) => {
+  try {
+    let url;
+    if (startDate !== null && endDate !== null) {
+      url = `http://127.0.0.1:8000/api/salaries/?start_date=${startDate}&end_date=${endDate}`;
+    } else {
+      url = `http://127.0.0.1:8000/api/salaries/`;
+    }
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getQuestCashRegister = async (
+  startDate: string,
+  endDate: string,
+  name: string
+) => {
+  try {
+    let url;
+    if (startDate !== null && endDate !== null) {
+      url = `http://127.0.0.1:8000/api/quest/${name}/cash-register/?start_date=${startDate}&end_date=${endDate}`;
+    } else {
+      url = `http://127.0.0.1:8000/api/quest/${name}/cash-register/`;
+    }
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getWorkCardExpenses = async (
+  startDate: string,
+  endDate: string
+) => {
+  try {
+    let url;
+    if (startDate !== null && endDate !== null) {
+      url = `http://127.0.0.1:8000/api/work-card-expenses/?start_date=${startDate}&end_date=${endDate}`;
+    } else {
+      url = `http://127.0.0.1:8000/api/work-card-expenses/`;
+    }
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getExpensesFromTheir = async (
+  startDate: string,
+  endDate: string
+) => {
+  try {
+    let url;
+    if (startDate !== null && endDate !== null) {
+      url = `http://127.0.0.1:8000/api/expenses-from-their/?start_date=${startDate}&end_date=${endDate}`;
+    } else {
+      url = `http://127.0.0.1:8000/api/expenses-from-their/`;
+    }
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // GET, PUT, DELETE
 export const getUser = async (id: number) => {
   try {
@@ -196,92 +304,6 @@ export const deleteQuest = async (id: number) => {
     throw error;
   }
 };
-
-export const getQuestIncomes = async (
-  qname: string,
-  startDate: string,
-  endDate: string
-) => {
-  try {
-    let url;
-    if (startDate !== null && endDate !== null) {
-      url = `http://127.0.0.1:8000/api/quest/${qname}/incomes/?start_date=${startDate}&end_date=${endDate}`;
-    } else {
-      url = `http://127.0.0.1:8000/api/quest/${qname}/incomes/`;
-    }
-    const response = await axios.get(url);
-    return response;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const getQuestExpenses = async (
-  qname: string,
-  startDate: string,
-  endDate: string
-) => {
-  try {
-    let url;
-    if (startDate !== null && endDate !== null) {
-      url = `http://127.0.0.1:8000/api/quest/${qname}/expenses/?start_date=${startDate}&end_date=${endDate}`;
-    } else {
-      url = `http://127.0.0.1:8000/api/quest/${qname}/expenses/`;
-    }
-    const response = await axios.get(url);
-    return response;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const getSalaries = async (
-  startDate: string,
-  endDate: string
-) => {
-  try {
-    let url;
-    if (startDate !== null && endDate !== null) {
-      url = `http://127.0.0.1:8000/api/salaries/?start_date=${startDate}&end_date=${endDate}`;
-    } else {
-      url = `http://127.0.0.1:8000/api/salaries/`;
-    }
-    const response = await axios.get(url);
-    return response;
-  } catch (error) {
-    throw error;
-  }
-};
-
-// export const getTransaction = async (tid: number) => {
-//   try {
-//     const url = `http://127.0.0.1:8000/api/transaction/${tid}/`;
-//     const response = await axios.get(url);
-//     return response;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// export const putTransaction = async (tid: number, value: object) => {
-//   try {
-//     const url = `http://127.0.0.1:8000/api/transaction/${tid}/`;
-//     const response = await axios.put(url, value);
-//     return response;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// export const deleteTransaction = async (tid: number) => {
-//   try {
-//     const url = `http://127.0.0.1:8000/api/transaction/${tid}/`;
-//     const response = await axios.delete(url);
-//     return response;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
 
 export const getSTQuest = async (stqid: number) => {
   try {
@@ -503,16 +525,6 @@ export const postQuest = async (value: object) => {
     throw error;
   }
 };
-
-// export const postTransaction = async (value: object) => {
-//   try {
-//     const url = `http://127.0.0.1:8000/api/create/transaction/`;
-//     const response = await axios.post(url, value);
-//     return response;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
 
 export const postSTQuest = async (value: object) => {
   try {

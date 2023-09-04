@@ -83,11 +83,9 @@ const App: FC = ({
   isDatePicker,
   fetchFunction,
   isUseParams,
-  isTableDataHead,
   initialPackedTableDataColumn,
   initialPackedTableColumns,
   tableScroll,
-  tableIsObj,
 }) => {
   const {
     token: { colorBgContainer },
@@ -103,7 +101,6 @@ const App: FC = ({
   );
 
   const [dates, setDates] = useState([]);
-  const [tableDataHead, setTableDataHead] = useState([]);
   const [tableDataSource, setTableDataSource] = useState([]);
 
   const [searchText, setSearchText] = useState("");
@@ -203,15 +200,8 @@ const App: FC = ({
         ? await fetchFunction(startDate, endDate, name)
         : await fetchFunction(startDate, endDate);
 
-      if (response.status === 200) {       
-        if (!isTableDataHead) {
-          const { head, body } = response.data;
-          setTableDataHead(head);
-          setTableDataSource(body);
-        } else {
-          const { body } = response.data;
-          setTableDataSource(body);
-        }
+      if (response.status === 200) {
+        setTableDataSource(response.data);
       }
     } catch (error) {
       throw error;
@@ -258,34 +248,37 @@ const App: FC = ({
     };
   }
 
-  const initialTableColumns = tableDataHead.map((column) => {
-    return {
+  const initialTableColumns = initialPackedTableColumns.map((column) => {
+    let newColumn = {
       title: column.title,
       dataIndex: column.dataIndex,
       key: column.key,
-      ...getColumnSearchProps(column.dataIndex, ""),
-      sorter: {
-        compare: (a, b) => a[column.dataIndex] - b[column.dataIndex],
-      },
-      render: (obj) => {
-        if (obj.tooltip !== "") {
-          return (
-            <Tooltip
-              title={<div dangerouslySetInnerHTML={{ __html: obj.tooltip }} />}
-              placement="topLeft"
-            >
-              <div>{obj.sum}</div>
-            </Tooltip>
-          );
-        } else {
-          return <div>{obj.sum}</div>;
-        }
-      },
     };
+
+    if (column.isSorting) {
+      newColumn.sorter = {
+        compare: (a, b) => a[column.dataIndex] - b[column.dataIndex],
+      };
+    }
+
+    if (column.searching.isSearching) {
+      newColumn = {
+        ...newColumn,
+        ...getColumnSearchProps(column.dataIndex, column.searching.title),
+      };
+    }
+
+    if (column.render) {
+      newColumn.render = column.render;
+    }
+
+    return newColumn;
   });
 
   const tableColumns = [initialUnPackedTableDataColumn, ...initialTableColumns];
-  const countingFields = tableDataHead.map((column) => column.key);
+  const countingFields = initialPackedTableColumns
+    .filter((column) => column.countable)
+    .map((column) => column.key);
 
   useEffect(() => {
     document.title = title;
@@ -334,7 +327,7 @@ const App: FC = ({
               columns={tableColumns}
               dataSource={tableDataSource}
               countingFields={countingFields}
-              isObj={tableIsObj}
+              isObj={false}
             />
           </div>
         </Content>

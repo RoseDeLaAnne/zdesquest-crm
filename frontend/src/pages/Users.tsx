@@ -164,35 +164,35 @@ const App: FC = () => {
       countable: false,
       render: (quest) => <Tag color="orange">{quest.name}</Tag>,
     },
-    {
-      title: "роли",
-      dataIndex: "roles",
-      key: "roles",
-      filters: filtersRoles,
-      onFilter: (value, record) => record.roles.name.includes(value),
-      filterSearch: true,
-      filterMultiple: true,
-      sorting: {
-        isSorting: false,
-        isDate: false,
-      },
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      countable: false,
-      render: (_, { roles }) => (
-        <>
-          {roles.map((role) => {
-            return (
-              <Tag color="geekblue" key={role.id}>
-                {role.name}
-              </Tag>
-            );
-          })}
-        </>
-      ),
-    },
+    // {
+    //   title: "роли",
+    //   dataIndex: "roles",
+    //   key: "roles",
+    //   filters: filtersRoles,
+    //   onFilter: (value, record) => record.roles.name.includes(value),
+    //   filterSearch: true,
+    //   filterMultiple: true,
+    //   sorting: {
+    //     isSorting: false,
+    //     isDate: false,
+    //   },
+    //   searching: {
+    //     isSearching: false,
+    //     title: "",
+    //   },
+    //   countable: false,
+    //   render: (_, { roles }) => (
+    //     <>
+    //       {roles.map((role) => {
+    //         return (
+    //           <Tag color="geekblue" key={role.id}>
+    //             {role.name}
+    //           </Tag>
+    //         );
+    //       })}
+    //     </>
+    //   ),
+    // },
   ];
   const formItems = [
     {
@@ -273,7 +273,7 @@ const App: FC = () => {
       gutter: 16,
       items: [
         {
-          span: 12,
+          span: 24,
           name: "quest",
           label: "квест",
           rules: {
@@ -288,22 +288,22 @@ const App: FC = () => {
             multiple: false,
           },
         },
-        {
-          span: 12,
-          name: "roles",
-          label: "роли",
-          rules: {
-            required: true,
-            message: "пожалуйста, выберите роли",
-          },
-          item: {
-            name: "Select",
-            label: "",
-            placeholder: "пожалуйста, выберите роли",
-            options: optionsRoles,
-            multiple: true,
-          },
-        },
+        // {
+        //   span: 12,
+        //   name: "roles",
+        //   label: "роли",
+        //   rules: {
+        //     required: true,
+        //     message: "пожалуйста, выберите роли",
+        //   },
+        //   item: {
+        //     name: "Select",
+        //     label: "",
+        //     placeholder: "пожалуйста, выберите роли",
+        //     options: optionsRoles,
+        //     multiple: true,
+        //   },
+        // },
       ],
     },
   ];

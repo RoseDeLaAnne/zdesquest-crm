@@ -228,7 +228,7 @@ const App: FC = () => {
       gutter: 16,
       items: [
         {
-          span: 12,
+          span: 24,
           name: "quest",
           label: "квест",
           rules: {
@@ -243,22 +243,22 @@ const App: FC = () => {
             multiple: false,
           },
         },
-        {
-          span: 12,
-          name: "roles",
-          label: "роли",
-          rules: {
-            required: true,
-            message: "пожалуйста, выберите роли",
-          },
-          item: {
-            name: "Select",
-            label: "",
-            placeholder: "пожалуйста, выберите роли",
-            options: optionsRoles,
-            multiple: true,
-          },
-        },
+        // {
+        //   span: 12,
+        //   name: "roles",
+        //   label: "роли",
+        //   rules: {
+        //     required: true,
+        //     message: "пожалуйста, выберите роли",
+        //   },
+        //   item: {
+        //     name: "Select",
+        //     label: "",
+        //     placeholder: "пожалуйста, выберите роли",
+        //     options: optionsRoles,
+        //     multiple: true,
+        //   },
+        // },
       ],
     },
   ];

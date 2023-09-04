@@ -1,39 +1,76 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState, useEffect, useRef } from "react";
+
+// react-router-dom
+import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
 
 // antd
-import { Tag } from "antd";
+import {
+  Typography,
+  Layout,
+  Menu,
+  Breadcrumb,
+  theme,
+  Col,
+  DatePicker,
+  Drawer,
+  Form,
+  Row,
+  Select,
+  Space,
+  Tag,
+  Button,
+  Input,
+  Table,
+  Popconfirm,
+  message,
+} from "antd";
+// antd | type
+import type { MenuProps, InputRef } from "antd";
+import type { ColumnType, ColumnsType } from "antd/es/table";
+import type {
+  FilterConfirmProps,
+  FilterValue,
+  SorterResult,
+} from "antd/es/table/interface";
 // antd | icons
 import {
+  HomeOutlined,
+  UserOutlined,
   QuestionOutlined,
+  RiseOutlined,
   FallOutlined,
+  DollarOutlined,
+  AppstoreAddOutlined,
   TableOutlined,
+  PlusOutlined,
+  SearchOutlined,
   DeploymentUnitOutlined,
 } from "@ant-design/icons";
 
+// libs
+import dayjs from "dayjs";
+
+import axios from "axios";
+
 // api
 import {
-  deleteSTExpense,
-  getSTExpenseSubCategories,
   getQuests,
-  getSTExpenses,
-  postSTExpense,
-  getSTPenalties,
-  postSTPenalty,
-  deleteSTPenalty,
   getUsers,
-  getSTQuests,
   postSTQuest,
-  deleteSTQuest,
+  putSTPenalty,
+  getSTQuest,
+  putSTQuest,
 } from "../api/APIUtils";
 
 // components
-import TableTemplate from "../components/TableTemplate";
+import CreateTemplate from "../components/CreateTemplate";
+
+const { Content, Sider } = Layout;
+const { Title, Text } = Typography;
+const { Option } = Select;
 
 const App: FC = () => {
-  const [optionsUsers, setOptionsUsers] =
-    useState([]);
-  const [filtersUsers, setFiltersUsers] = useState([]);
-  const [filtersQuests, setFiltersQuests] = useState([]);
+  const [optionsUsers, setOptionsUsers] = useState([]);
   const [optionsQuests, setOptionsQuests] = useState([]);
   const fetchUsers = async () => {
     try {
@@ -43,12 +80,7 @@ const App: FC = () => {
           label: item.first_name.toLowerCase(),
           value: item.id,
         }));
-        const formattedFilters = response.data.map((item) => ({
-          text: item.first_name.toLowerCase(),
-          value: item.id,
-        }));
         setOptionsUsers(formattedOptions);
-        setFiltersUsers(formattedFilters);
       }
     } catch (error) {
       console.log(error);
@@ -60,14 +92,9 @@ const App: FC = () => {
       if (response.status === 200) {
         const formattedOptions = response.data.map((item) => ({
           label: item.name.toLowerCase(),
-          value: item.name,
-        }));
-        const formattedFilters = response.data.map((item) => ({
-          text: item.name.toLowerCase(),
-          value: item.name,
+          value: item.id,
         }));
         setOptionsQuests(formattedOptions);
-        setFiltersQuests(formattedFilters);
       }
     } catch (error) {
       console.log(error);
@@ -77,339 +104,12 @@ const App: FC = () => {
   const sourceBreadcrumbItems = [
     {
       icon: TableOutlined,
-      title: "исходные таблицы",
-      to: "/source-tables",
+      title: "формы",
+      to: "/forms",
     },
     {
-      icon: FallOutlined,
-      title: "квесты",
-      menu: [
-        {
-          key: "1",
-          icon: QuestionOutlined,
-          label: "квесты",
-          to: "/source-tables/quests",
-        },
-        {
-          key: "2",
-          icon: FallOutlined,
-          label: "расходы",
-          to: "/source-tables/expenses",
-        },
-        {
-          key: "3",
-          icon: DeploymentUnitOutlined,
-          label: "бонусы",
-          to: "/source-tables/bonuses",
-        },
-        {
-          key: "4",
-          icon: DeploymentUnitOutlined,
-          label: "штрафы",
-          to: "/source-tables/penalties",
-        },
-      ],
-    },
-  ];
-
-  const initialPackedTableColumns = [
-    {
-      title: "дата/время",
-      dataIndex: "date_time",
-      key: "date_time",
-      sorting: {
-        isSorting: false,
-        isDate: false,
-      },
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      countable: false,
-      width: 112,
-      // fixed: "left",
-    },
-    {
+      icon: TableOutlined,
       title: "квест",
-      dataIndex: "quest",
-      key: "quest",
-      filters: filtersQuests,
-      onFilter: (value: string, record) =>
-        record.quest.startsWith(value),
-      filterSearch: true,
-      sorting: {
-        isSorting: false,
-        isDate: false,
-      },
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      countable: false,
-      render: (quest) => <Tag color="orange">{quest}</Tag>,
-    },
-    {
-      title: "стоимость квеста",
-      dataIndex: "quest_cost",
-      key: "quest_cost",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      countable: true,
-    },
-    {
-      title: "дополнительные игороки",
-      dataIndex: "add_players",
-      key: "add_players",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      countable: true,
-    },
-    {
-      title: "актеры/второй актер",
-      dataIndex: "actor_second_actor",
-      key: "actor_second_actor",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      countable: true,
-    },
-    {
-      title: "сумма скидки",
-      dataIndex: "discount_sum",
-      key: "discount_sum",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      countable: true,
-    },
-    {
-      title: "описание скидки",
-      dataIndex: "discount_desc",
-      key: "discount_desc",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      countable: false,
-    },
-    {
-      title: "сумма комнат",
-      dataIndex: "room_sum",
-      key: "room_sum",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      countable: true,
-    },
-    {
-      title: "количество комнат",
-      dataIndex: "room_quantity",
-      key: "room_quantity",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      countable: true,
-    },
-    {
-      title: "сотрудник комнаты",
-      dataIndex: "room_employee_name",
-      key: "room_employee_name",
-      sorting: {
-        isSorting: false,
-        isDate: false,
-      },
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      countable: false,
-    },
-    {
-      title: "сумма видео",
-      dataIndex: "video",
-      key: "video",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      countable: true,
-    },
-    {
-      title: "сумма фотомагнитов",
-      dataIndex: "photomagnets_sum",
-      key: "photomagnets_sum",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      countable: true,
-    },
-    {
-      title: "количество фотомагнитов",
-      dataIndex: "photomagnets_quantity",
-      key: "photomagnets_quantity",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      countable: true,
-    },
-    {
-      title: "поздравление именинника",
-      dataIndex: "birthday_congr",
-      key: "birthday_congr",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      countable: true,
-    },
-    {
-      title: "сумма простоя",
-      dataIndex: "easy_work",
-      key: "easy_work",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      countable: true,
-    },
-    {
-      title: "сумма ночной игры",
-      dataIndex: "night_game",
-      key: "night_game",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      countable: true,
-    },
-    {
-      title: "администратор",
-      dataIndex: "administrator",
-      key: "administrator",
-      filters: filtersUsers,
-      onFilter: (value: string, record) =>
-        record.administrator.startsWith(value),
-      filterSearch: true,
-      sorting: {
-        isSorting: false,
-        isDate: false,
-      },
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      countable: false,
-      render: (user) => <Tag color="black">{user}</Tag>,
-    },
-    {
-      title: "актеры",
-      dataIndex: "actor",
-      key: "actor",
-      filters: filtersUsers,
-      onFilter: (value, record) => record.actors.includes(value),
-      filterSearch: true,
-      filterMultiple: true,
-      sorting: {
-        isSorting: false,
-        isDate: false,
-      },
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      countable: false,
-      render: (_, { actors }) => (
-        <>
-          {actors.map((actor) => {
-            return (
-              <Tag color="black" key={actor}>
-                {actor}
-              </Tag>
-            );
-          })}
-        </>
-      ),
-    },
-    {
-      title: "аниматор",
-      dataIndex: "animator",
-      key: "animator",
-      filters: filtersUsers,
-      onFilter: (value: string, record) =>
-        record.animator.startsWith(value),
-      filterSearch: true,
-      sorting: {
-        isSorting: false,
-        isDate: false,
-      },
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      countable: false,
-      render: (user) => <Tag color="black">{user}</Tag>,
     },
   ];
   const formItems = [
@@ -803,6 +503,84 @@ const App: FC = () => {
       items: [
         {
           span: 12,
+          name: "cash_payment",
+          label: "наличный расчет",
+          rules: {
+            required: false,
+            message: "пожалуйста, введите сумму наличного расчета",
+          },
+          item: {
+            name: "Input",
+            picker: "",
+            label: "",
+            placeholder: "пожалуйста, введите сумму наличного расчета",
+            options: [],
+            multiple: null,
+          },
+        },
+        {
+          span: 12,
+          name: "cashless_payment",
+          label: "безналичный расчет",
+          rules: {
+            required: false,
+            message: "пожалуйста, введите сумму безналичного расчета",
+          },
+          item: {
+            name: "Input",
+            picker: "",
+            label: "",
+            placeholder: "пожалуйста, введите сумму безналичного расчета",
+            options: [],
+            multiple: null,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
+          span: 12,
+          name: "cash_delivery",
+          label: "сдача наличными",
+          rules: {
+            required: false,
+            message: "пожалуйста, введите сумму сдачи наличными",
+          },
+          item: {
+            name: "Input",
+            picker: "",
+            label: "",
+            placeholder: "пожалуйста, введите сумму сдачи наличными",
+            options: [],
+            multiple: null,
+          },
+        },
+        {
+          span: 12,
+          name: "cashless_delivery",
+          label: "сдача безналичными",
+          rules: {
+            required: false,
+            message: "пожалуйста, введите сумму сдачи безналичными",
+          },
+          item: {
+            name: "Input",
+            picker: "",
+            label: "",
+            placeholder: "пожалуйста, введите сумму сдачи безналичными",
+            options: [],
+            multiple: null,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
+          span: 6,
           name: "package",
           label: "пакет",
           rules: {
@@ -819,7 +597,7 @@ const App: FC = () => {
           },
         },
         {
-          span: 12,
+          span: 6,
           name: "travel",
           label: "проезд",
           rules: {
@@ -835,6 +613,23 @@ const App: FC = () => {
             multiple: null,
           },
         },
+        {
+          span: 12,
+          name: "prepayment",
+          label: "предоплата",
+          rules: {
+            required: false,
+            message: "пожалуйста, введите сумму предоплаты",
+          },
+          item: {
+            name: "Input",
+            picker: "",
+            label: "",
+            placeholder: "пожалуйста, введите сумму предоплаты",
+            options: [],
+            multiple: null,
+          },
+        },
       ],
     },
   ];
@@ -845,22 +640,13 @@ const App: FC = () => {
   }, []);
 
   return (
-    <TableTemplate
-      defaultOpenKeys={["sourceTables"]}
-      defaultSelectedKeys={["sourceTablesQuests"]}
+    <CreateTemplate
+      defaultOpenKeys={[]}
+      defaultSelectedKeys={[]}
       breadcrumbItems={sourceBreadcrumbItems}
-      title={"исходные таблицы | квесты"}
-      datePicker={true}
-      addEntry={true}
-      addEntryTitle={"новая запись"}
-      fetchFunction={getSTQuests}
+      title={"формы | квест"}
+      fetchFunction={getSTQuest}
       createFunction={postSTQuest}
-      deleteFunction={deleteSTQuest}
-      initialPackedTableColumns={initialPackedTableColumns}
-      tableScroll={{ x: 4500 }}
-      tableOperation={true}
-      tableBordered={true}
-      drawerTitle="создать новую запись"
       formItems={formItems}
     />
   );
