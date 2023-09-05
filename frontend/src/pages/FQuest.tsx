@@ -645,7 +645,6 @@ const App: FC = () => {
       defaultSelectedKeys={[]}
       breadcrumbItems={sourceBreadcrumbItems}
       title={"формы | квест"}
-      fetchFunction={getSTQuest}
       createFunction={postSTQuest}
       formItems={formItems}
     />

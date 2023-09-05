@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect } from "react";
 
 // antd
-import { Tag } from "antd";
+import { Tag, Image } from "antd";
 // antd | icons
 import {
   QuestionOutlined,
@@ -17,17 +17,37 @@ import {
   getQuests,
   getSTExpenses,
   postSTExpense,
+  getUsers,
 } from "../api/APIUtils";
 
 // components
 import TableTemplate from "../components/TableTemplate";
 
+const backendUrl = "http://127.0.0.1:8000";
+
 const App: FC = () => {
+  const [optionsUsers, setOptionsUsers] =
+    useState([]);
   const [optionsSTExpenseSubCategories, setOptionsSTExpenseSubCategories] =
     useState([]);
   const [filtersSubCategories, setFiltersSubCategories] = useState([]);
   const [filtersQuests, setFiltersQuests] = useState([]);
   const [optionsQuests, setOptionsQuests] = useState([]);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await getUsers();
+      if (response.status === 200) {
+        const formattedOptions = response.data.map((item) => ({
+          label: item.last_name.toLowerCase() + ' ' + item.first_name.toLowerCase(),
+          value: item.id,
+        }));
+        setOptionsUsers(formattedOptions);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const fetchSTExpenseSubCategories = async () => {
     try {
       const response = await getSTExpenseSubCategories();
@@ -166,7 +186,7 @@ const App: FC = () => {
         title: "",
       },
       countable: false,
-      render: (sub_category) => <Tag color="black">{sub_category}</Tag>,
+      render: (sub_category) => <Tag color="black">{sub_category.name}</Tag>,
     },
     {
       title: "квесты",
@@ -195,6 +215,60 @@ const App: FC = () => {
             );
           })}
         </>
+      ),
+    },
+    {
+      title: "оплатил",
+      dataIndex: "who_paid",
+      key: "who_paid",
+      sorting: {
+        isSorting: false,
+        isDate: false,
+      },
+      searching: {
+        isSearching: false,
+        title: "",
+      },
+      countable: false,
+      render: (who_paid) => (
+        <Tag color="black">
+          {who_paid.last_name} {who_paid.first_name}
+        </Tag>
+      ),
+    },
+    {
+      title: "оплачено",
+      dataIndex: "who_paid_amount",
+      key: "who_paid_amount",
+      sorting: {
+        isSorting: true,
+        isDate: false,
+      },
+      searching: {
+        isSearching: true,
+        title: "",
+      },
+      countable: true,
+    },
+    {
+      title: "изображение",
+      dataIndex: "image",
+      key: "image",
+      sorting: {
+        isSorting: false,
+        isDate: false,
+      },
+      searching: {
+        isSearching: false,
+        title: "",
+      },
+      countable: false,
+      render: (text, record) => (
+        <Image
+          src={`${backendUrl}${record.image}`} // Concatenate the backend URL with the image path
+          alt={record.name}
+          width={100}
+        />
       ),
     },
   ];
@@ -294,9 +368,68 @@ const App: FC = () => {
         },
       ],
     },
+    {
+      gutter: 16,
+      items: [
+        {
+          span: 12,
+          name: "who_paid",
+          label: "оплатил",
+          rules: {
+            required: true,
+            message: "пожалуйста, выберите сотрудника",
+          },
+          item: {
+            name: "Select",
+            label: "",
+            placeholder: "пожалуйста, выберите сотрудника",
+            options: optionsUsers,
+            multiple: false,
+          },
+        },
+        {
+          span: 12,
+          name: "who_paid_amount",
+          label: "оплачено",
+          rules: {
+            required: true,
+            message: "пожалуйста, введите сумму",
+          },
+          item: {
+            name: "Input",
+            label: "",
+            placeholder: "пожалуйста, введите сумму",
+            options: [],
+            multiple: false,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
+          span: 24,
+          name: "image",
+          label: "изображение",
+          rules: {
+            required: true,
+            message: "пожалуйста, загрузите изображение",
+          },
+          item: {
+            name: "Upload",
+            label: "Upload",
+            placeholder: "пожалуйста, загрузите изображение",
+            options: [],
+            multiple: false,
+          },
+        },
+      ],
+    },
   ];
 
   useEffect(() => {
+    fetchUsers();
     fetchSTExpenseSubCategories();
     fetchQuests();
   }, []);

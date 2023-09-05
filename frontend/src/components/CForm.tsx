@@ -1,7 +1,25 @@
 import React, { FC, useState, useEffect, useRef } from "react";
 
 // antd
-import { Col, DatePicker, Form, Row, Select, Input, Checkbox } from "antd";
+import {
+  Col,
+  DatePicker,
+  Form,
+  Row,
+  Select,
+  Input,
+  Checkbox,
+  Upload,
+} from "antd";
+// antd | icons
+import { PlusOutlined } from "@ant-design/icons";
+
+const normFile = (e: any) => {
+  if (Array.isArray(e)) {
+    return e;
+  }
+  return e?.fileList;
+};
 
 const App: FC = ({ items, form, onFinish }) => {
   return (
@@ -13,6 +31,9 @@ const App: FC = ({ items, form, onFinish }) => {
               <Form.Item
                 name={innerItem.name}
                 label={innerItem.label}
+                {...(innerItem.item.name === "Upload"
+                  ? { valuePropName: "fileList", getValueFromEvent: normFile }
+                  : {})}
                 {...(innerItem.item.name === "Checkbox"
                   ? { valuePropName: "checked", initialValue: false }
                   : {})}
@@ -46,6 +67,13 @@ const App: FC = ({ items, form, onFinish }) => {
                   />
                 ) : innerItem.item.name === "Checkbox" ? (
                   <Checkbox>{innerItem.item.label}</Checkbox>
+                ) : innerItem.item.name === "Upload" ? (
+                  <Upload action="/upload.do" listType="picture-card">
+                    <div>
+                      <PlusOutlined />
+                      <div style={{ marginTop: 8 }}>Upload</div>
+                    </div>
+                  </Upload>
                 ) : (
                   <Input placeholder={innerItem.item.placeholder} />
                 )}

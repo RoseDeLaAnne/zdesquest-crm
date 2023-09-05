@@ -1020,17 +1020,17 @@ def CreateSTExpense(request):
 
         formatted_date = datetime.fromisoformat(data["date"]).date()
         sub_category = STExpenseSubCategory.objects.get(name=data["sub_category"])
-        # whooplatil = User.objects.get(id=data["whooplatil"])
+        who_paid = User.objects.get(id=data["who_paid"])
         quests = Quest.objects.filter(name__in=data["quests"])
 
         expense_data = {
             "date": formatted_date,
             "amount": data["amount"],
             "name": data["name"],
-            "sub_category": sub_category,
-            # "oplacheno": data["oplacheno"],
-            # "whooplatil": whooplatil,
-            # "image": request.data['photo']
+            "sub_category": sub_category,            
+            "who_paid": who_paid,
+            "who_paid_amount": data["who_paid_amount"],
+            # "image": request.data['image'][0]
         }
 
         expense = STExpense(**expense_data)

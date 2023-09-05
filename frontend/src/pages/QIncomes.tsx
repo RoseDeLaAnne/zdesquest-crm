@@ -179,6 +179,34 @@ const App: FC = () => {
       },
       countable: true,
     },
+    {
+      title: "уплачено наличными",
+      dataIndex: "paid_cash",
+      key: "paid_cash",
+      sorting: {
+        isSorting: true,
+        isDate: false,
+      },
+      searching: {
+        isSearching: true,
+        title: "",
+      },
+      countable: true,
+    },
+    {
+      title: "уплачено безналичными",
+      dataIndex: "paid_non_cash",
+      key: "paid_non_cash",
+      sorting: {
+        isSorting: true,
+        isDate: false,
+      },
+      searching: {
+        isSearching: true,
+        title: "",
+      },
+      countable: true,
+    },
   ];
 
   return (

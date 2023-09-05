@@ -411,6 +411,132 @@ const App: FC = () => {
       countable: false,
       render: (user) => <Tag color="black">{user}</Tag>,
     },
+    {
+      title: "пакет",
+      dataIndex: "package",
+      key: "package",
+      sorting: {
+        isSorting: false,
+        isDate: false,
+      },
+      searching: {
+        isSearching: false,
+        title: "",
+      },
+      countable: false,
+      render: (package1) => {
+        let color = "red";
+        let formattedPackage = 'нет';
+    
+        if (package1) {
+          color = "green";
+          formattedPackage = "да";
+        } else {
+          color = "red";
+          formattedPackage = 'нет';
+        }
+    
+        return <Tag color={color}>{formattedPackage}</Tag>;
+      },
+    },
+    {
+      title: "проезд",
+      dataIndex: "travel",
+      key: "travel",
+      sorting: {
+        isSorting: false,
+        isDate: false,
+      },
+      searching: {
+        isSearching: false,
+        title: "",
+      },
+      countable: false,
+      render: (package1) => {
+        let color = "red";
+        let formattedPackage = 'нет';
+    
+        if (package1) {
+          color = "green";
+          formattedPackage = "да";
+        } else {
+          color = "red";
+          formattedPackage = 'нет';
+        }
+    
+        return <Tag color={color}>{formattedPackage}</Tag>;
+      },
+    },
+    {
+      title: "наличный расчет",
+      dataIndex: "night_game",
+      key: "night_game",
+      sorting: {
+        isSorting: true,
+        isDate: false,
+      },
+      searching: {
+        isSearching: true,
+        title: "",
+      },
+      countable: true,
+    },
+    {
+      title: "безналичный расчет",
+      dataIndex: "cashless_payment",
+      key: "cashless_payment",
+      sorting: {
+        isSorting: true,
+        isDate: false,
+      },
+      searching: {
+        isSearching: true,
+        title: "",
+      },
+      countable: true,
+    },
+    {
+      title: "сдача наличными",
+      dataIndex: "cash_delivery",
+      key: "cash_delivery",
+      sorting: {
+        isSorting: true,
+        isDate: false,
+      },
+      searching: {
+        isSearching: true,
+        title: "",
+      },
+      countable: true,
+    },
+    {
+      title: "сдача безналичными",
+      dataIndex: "cashless_delivery",
+      key: "cashless_delivery",
+      sorting: {
+        isSorting: true,
+        isDate: false,
+      },
+      searching: {
+        isSearching: true,
+        title: "",
+      },
+      countable: true,
+    },
+    {
+      title: "предоплата",
+      dataIndex: "prepayment",
+      key: "prepayment",
+      sorting: {
+        isSorting: true,
+        isDate: false,
+      },
+      searching: {
+        isSearching: true,
+        title: "",
+      },
+      countable: true,
+    },
   ];
   const formItems = [
     {
@@ -803,6 +929,84 @@ const App: FC = () => {
       items: [
         {
           span: 12,
+          name: "cash_payment",
+          label: "наличный расчет",
+          rules: {
+            required: false,
+            message: "пожалуйста, введите сумму наличного расчета",
+          },
+          item: {
+            name: "Input",
+            picker: "",
+            label: "",
+            placeholder: "пожалуйста, введите сумму наличного расчета",
+            options: [],
+            multiple: null,
+          },
+        },
+        {
+          span: 12,
+          name: "cashless_payment",
+          label: "безналичный расчет",
+          rules: {
+            required: false,
+            message: "пожалуйста, введите сумму безналичного расчета",
+          },
+          item: {
+            name: "Input",
+            picker: "",
+            label: "",
+            placeholder: "пожалуйста, введите сумму безналичного расчета",
+            options: [],
+            multiple: null,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
+          span: 12,
+          name: "cash_delivery",
+          label: "сдача наличными",
+          rules: {
+            required: false,
+            message: "пожалуйста, введите сумму сдачи наличными",
+          },
+          item: {
+            name: "Input",
+            picker: "",
+            label: "",
+            placeholder: "пожалуйста, введите сумму сдачи наличными",
+            options: [],
+            multiple: null,
+          },
+        },
+        {
+          span: 12,
+          name: "cashless_delivery",
+          label: "сдача безналичными",
+          rules: {
+            required: false,
+            message: "пожалуйста, введите сумму сдачи безналичными",
+          },
+          item: {
+            name: "Input",
+            picker: "",
+            label: "",
+            placeholder: "пожалуйста, введите сумму сдачи безналичными",
+            options: [],
+            multiple: null,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
+          span: 6,
           name: "package",
           label: "пакет",
           rules: {
@@ -819,7 +1023,7 @@ const App: FC = () => {
           },
         },
         {
-          span: 12,
+          span: 6,
           name: "travel",
           label: "проезд",
           rules: {
@@ -831,6 +1035,23 @@ const App: FC = () => {
             picker: "",
             label: "да/нет",
             placeholder: "",
+            options: [],
+            multiple: null,
+          },
+        },
+        {
+          span: 12,
+          name: "prepayment",
+          label: "предоплата",
+          rules: {
+            required: false,
+            message: "пожалуйста, введите сумму предоплаты",
+          },
+          item: {
+            name: "Input",
+            picker: "",
+            label: "",
+            placeholder: "пожалуйста, введите сумму предоплаты",
             options: [],
             multiple: null,
           },

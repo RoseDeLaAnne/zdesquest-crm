@@ -231,7 +231,7 @@ const App: FC = () => {
           name: "add_players",
           label: "дополнительные игроки",
           rules: {
-            required: true,
+            required: false,
             message: "пожалуйста, введите сумму за дополнительных игроков",
           },
           item: {
@@ -248,7 +248,7 @@ const App: FC = () => {
           name: "actor_second_actor",
           label: "актеры/второй актер",
           rules: {
-            required: true,
+            required: false,
             message: "пожалуйста, введите сумму актеров/второго актера",
           },
           item: {
@@ -270,7 +270,7 @@ const App: FC = () => {
           name: "discount_sum",
           label: "сумма скидки",
           rules: {
-            required: true,
+            required: false,
             message: "пожалуйста, введите сумму скидки",
           },
           item: {
@@ -287,7 +287,7 @@ const App: FC = () => {
           name: "discount_desc",
           label: "описание скидки",
           rules: {
-            required: true,
+            required: false,
             message: "пожалуйста, введите описание скидки",
           },
           item: {
@@ -309,7 +309,7 @@ const App: FC = () => {
           name: "room_sum",
           label: "сумма комнат",
           rules: {
-            required: true,
+            required: false,
             message: "пожалуйста, введите сумму комнат",
           },
           item: {
@@ -326,7 +326,7 @@ const App: FC = () => {
           name: "room_quantity",
           label: "количество комнат",
           rules: {
-            required: true,
+            required: false,
             message: "пожалуйста, введите количество комнат",
           },
           item: {
@@ -343,7 +343,7 @@ const App: FC = () => {
           name: "room_employee_name",
           label: "сотрудник комнаты",
           rules: {
-            required: true,
+            required: false,
             message: "пожалуйста, выберите сотрудника комнаты",
           },
           item: {
@@ -365,7 +365,7 @@ const App: FC = () => {
           name: "video",
           label: "сумма видео",
           rules: {
-            required: true,
+            required: false,
             message: "пожалуйста, введите сумму видео",
           },
           item: {
@@ -382,7 +382,7 @@ const App: FC = () => {
           name: "photomagnets_quantity",
           label: "количество фотомагнитов",
           rules: {
-            required: true,
+            required: false,
             message: "пожалуйста, введите количество фотомагнитов",
           },
           item: {
@@ -399,7 +399,7 @@ const App: FC = () => {
           name: "birthday_congr",
           label: "поздравление именинника",
           rules: {
-            required: true,
+            required: false,
             message: "пожалуйста, введите сумму поздравления именинника",
           },
           item: {
@@ -421,7 +421,7 @@ const App: FC = () => {
           name: "easy_work",
           label: "простой",
           rules: {
-            required: true,
+            required: false,
             message: "пожалуйста, введите сумму простоя",
           },
           item: {
@@ -438,7 +438,7 @@ const App: FC = () => {
           name: "night_game",
           label: "ночная игра",
           rules: {
-            required: true,
+            required: false,
             message: "пожалуйста, введите сумму ночной игры",
           },
           item: {
@@ -456,11 +456,11 @@ const App: FC = () => {
       gutter: 16,
       items: [
         {
-          span: 8,
+          span: 12,
           name: "administrator",
           label: "администратор",
           rules: {
-            required: true,
+            required: false,
             message: "пожалуйста, выберите администратора",
           },
           item: {
@@ -473,28 +473,11 @@ const App: FC = () => {
           },
         },
         {
-          span: 8,
-          name: "actor",
-          label: "актер",
-          rules: {
-            required: true,
-            message: "пожалуйста, выберите актера",
-          },
-          item: {
-            name: "Select",
-            picker: "",
-            label: "",
-            placeholder: "пожалуйста, выберите актера",
-            options: optionsUsers,
-            multiple: true,
-          },
-        },
-        {
-          span: 8,
+          span: 12,
           name: "animator",
           label: "аниматор",
           rules: {
-            required: true,
+            required: false,
             message: "пожалуйста, выберите аниматора",
           },
           item: {
@@ -510,13 +493,147 @@ const App: FC = () => {
     },
     {
       gutter: 16,
+      items: [        
+        {
+          span: 12,
+          name: "actors",
+          label: "актеры",
+          rules: {
+            required: false,
+            message: "пожалуйста, выберите актеров",
+          },
+          item: {
+            name: "Select",
+            picker: "",
+            label: "",
+            placeholder: "пожалуйста, выберите актеров",
+            options: optionsUsers,
+            multiple: true,
+          },
+        },
+        {
+          span: 12,
+          name: "actors_half",
+          label: "актеры (50%)",
+          rules: {
+            required: false,
+            message: "пожалуйста, выберите актеров (50%)",
+          },
+          item: {
+            name: "Select",
+            picker: "",
+            label: "",
+            placeholder: "пожалуйста, выберите актеров (50%)",
+            options: optionsUsers,
+            multiple: true,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
       items: [
         {
           span: 12,
+          name: "cash_payment",
+          label: "наличный расчет",
+          rules: {
+            required: false,
+            message: "пожалуйста, введите сумму наличного расчета",
+          },
+          item: {
+            name: "Input",
+            picker: "",
+            label: "",
+            placeholder: "пожалуйста, введите сумму наличного расчета",
+            options: [],
+            multiple: null,
+          },
+        },
+        {
+          span: 12,
+          name: "cashless_payment",
+          label: "безналичный расчет",
+          rules: {
+            required: false,
+            message: "пожалуйста, введите сумму безналичного расчета",
+          },
+          item: {
+            name: "Input",
+            picker: "",
+            label: "",
+            placeholder: "пожалуйста, введите сумму безналичного расчета",
+            options: [],
+            multiple: null,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
+          span: 12,
+          name: "cash_delivery",
+          label: "сдача наличными",
+          rules: {
+            required: false,
+            message: "пожалуйста, введите сумму сдачи наличными",
+          },
+          item: {
+            name: "Input",
+            picker: "",
+            label: "",
+            placeholder: "пожалуйста, введите сумму сдачи наличными",
+            options: [],
+            multiple: null,
+          },
+        },
+        {
+          span: 12,
+          name: "cashless_delivery",
+          label: "сдача безналичными",
+          rules: {
+            required: false,
+            message: "пожалуйста, введите сумму сдачи безналичными",
+          },
+          item: {
+            name: "Input",
+            picker: "",
+            label: "",
+            placeholder: "пожалуйста, введите сумму сдачи безналичными",
+            options: [],
+            multiple: null,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
+          span: 6,
           name: "package",
           label: "пакет",
           rules: {
-            required: true,
+            required: false,
+            message: "",
+          },
+          item: {
+            name: "Checkbox",
+            picker: "",
+            label: "да/нет",
+            placeholder: "",
+            options: [],
+            multiple: null,
+          },
+        },
+        {
+          span: 6,
+          name: "travel",
+          label: "проезд",
+          rules: {
+            required: false,
             message: "",
           },
           item: {
@@ -530,17 +647,17 @@ const App: FC = () => {
         },
         {
           span: 12,
-          name: "travel",
-          label: "проезд",
+          name: "prepayment",
+          label: "предоплата",
           rules: {
-            required: true,
-            message: "",
+            required: false,
+            message: "пожалуйста, введите сумму предоплаты",
           },
           item: {
-            name: "Checkbox",
+            name: "Input",
             picker: "",
-            label: "да/нет",
-            placeholder: "",
+            label: "",
+            placeholder: "пожалуйста, введите сумму предоплаты",
             options: [],
             multiple: null,
           },

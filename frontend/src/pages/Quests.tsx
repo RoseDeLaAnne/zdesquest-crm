@@ -72,9 +72,37 @@ const App: FC = () => {
       countable: false,
     },
     {
-      title: "Ставка",
-      dataIndex: "rate",
-      key: "rate",
+      title: "ставка администратора",
+      dataIndex: "administrator_rate",
+      key: "administrator_rate",
+      sorting: {
+        isSorting: true,
+        isDate: false,
+      },
+      searching: {
+        isSearching: true,
+        title: "ставке",
+      },
+      countable: true,
+    },
+    {
+      title: "ставка актера",
+      dataIndex: "actor_rate",
+      key: "actor_rate",
+      sorting: {
+        isSorting: true,
+        isDate: false,
+      },
+      searching: {
+        isSearching: true,
+        title: "ставке",
+      },
+      countable: true,
+    },
+    {
+      title: "ставка аниматора",
+      dataIndex: "animator_rate",
+      key: "animator_rate",
       sorting: {
         isSorting: true,
         isDate: false,

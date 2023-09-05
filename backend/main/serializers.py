@@ -88,6 +88,9 @@ class STExpenseSerializer(ModelSerializer):
             "amount",
             "sub_category",
             "quests",
+            "who_paid",
+            "who_paid_amount",
+            "image",
         ]
 
         depth = 1

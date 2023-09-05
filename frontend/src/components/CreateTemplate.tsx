@@ -60,7 +60,6 @@ const App: FC = ({
   defaultSelectedKeys,
   breadcrumbItems,
   title,
-  fetchFunction,
   createFunction,
   formItems,
 }) => {
@@ -81,34 +80,6 @@ const App: FC = ({
 
   const onClose = () => {
     // navigate(breadcrumbItems[breadcrumbItems.length - 2].to);
-  };
-
-  const fetchData = async () => {
-    try {
-      const response = await fetchFunction(id);
-      if (response.status === 200) {
-        for (const key in response.data) {
-          if (response.data.hasOwnProperty(key)) {
-            const value = response.data[key];
-            if (key === "date") {
-              const date = dayjs(value, "DD.MM.YYYY");
-              form.setFieldsValue({ [key]: date });
-            } else if (key === "time") {
-              const time = dayjs(value, "HH:mm:ss");
-              form.setFieldsValue({ [key]: time });
-            } else if (key === "user") {
-              form.setFieldsValue({ [key]: value.id });
-            } else if (key === "category") {
-              form.setFieldsValue({ [key]: value.name });
-            } else {
-              form.setFieldsValue({ [key]: value });
-            }
-          }
-        }
-      }
-    } catch (error) {
-      throw error;
-    }
   };
 
   const [form] = Form.useForm();
@@ -134,8 +105,6 @@ const App: FC = ({
 
   useEffect(() => {
     document.title = title;
-
-    fetchData();
   }, []);
 
   return (

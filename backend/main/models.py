@@ -110,16 +110,16 @@ class STExpense(models.Model):
     amount = models.IntegerField()
     name = models.CharField(max_length=255)
 
-    quests = models.ManyToManyField(Quest, blank=True)
-
     sub_category = models.ForeignKey(
         STExpenseSubCategory, on_delete=models.SET_NULL, blank=True, null=True
     )
 
-    # skolkooplacheno = models.CharField(max_length=255, blank=True, null=True)
-    who_paid = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+    quests = models.ManyToManyField(Quest, blank=True)    
 
-    # image = models.FileField(upload_to="photos/", blank=True, null=True)
+    who_paid = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+    who_paid_amount = models.IntegerField(blank=True, null=True)
+
+    image = models.FileField(upload_to="photos/", blank=True, null=True)
 
     def __str__(self):
         return str(self.date)
@@ -183,7 +183,7 @@ class STQuest(models.Model):
 
     def __str__(self):
         # for actors
-        print(self.actors)
+        # print(self.actors)
 
         return str(self.quest)
 
@@ -226,8 +226,8 @@ class QIncome(models.Model):
     actor = models.IntegerField()
     total = models.IntegerField(blank=True, null=True)
 
-    # uplacheno_nal = models.IntegerField(blank=True, null=True)
-    # uplacheno_beznal = models.IntegerField(blank=True, null=True)
+    paid_cash = models.IntegerField(blank=True, null=True)
+    paid_non_cash = models.IntegerField(blank=True, null=True)
 
     quest = models.ForeignKey(Quest, on_delete=models.SET_NULL, blank=True, null=True)
 

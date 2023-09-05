@@ -59,7 +59,9 @@ import {
   postSTQuest,
   putSTPenalty,
   getSTQuest,
-  putSTQuest,
+  getSTExpenseSubCategories,
+  postSTExpense,
+  getSTExpense,
 } from "../api/APIUtils";
 
 // components
@@ -70,9 +72,24 @@ const { Title, Text } = Typography;
 const { Option } = Select;
 
 const App: FC = () => {
+  const [optionsUsers, setOptionsUsers] = useState([]);
   const [optionsSTExpenseSubCategories, setOptionsSTExpenseSubCategories] =
     useState([]);
   const [optionsQuests, setOptionsQuests] = useState([]);
+  const fetchUsers = async () => {
+    try {
+      const response = await getUsers();
+      if (response.status === 200) {
+        const formattedOptions = response.data.map((item) => ({
+          label: item.last_name.toLowerCase() + ' ' + item.first_name.toLowerCase(),
+          value: item.id,
+        }));
+        setOptionsUsers(formattedOptions);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const fetchSTExpenseSubCategories = async () => {
     try {
       const response = await getSTExpenseSubCategories();
@@ -209,9 +226,68 @@ const App: FC = () => {
         },
       ],
     },
+    {
+      gutter: 16,
+      items: [
+        {
+          span: 12,
+          name: "who_paid",
+          label: "оплатил",
+          rules: {
+            required: true,
+            message: "пожалуйста, выберите сотрудника",
+          },
+          item: {
+            name: "Select",
+            label: "",
+            placeholder: "пожалуйста, выберите сотрудника",
+            options: optionsUsers,
+            multiple: false,
+          },
+        },
+        {
+          span: 12,
+          name: "who_paid_amount",
+          label: "оплачено",
+          rules: {
+            required: true,
+            message: "пожалуйста, введите сумму",
+          },
+          item: {
+            name: "Input",
+            label: "",
+            placeholder: "пожалуйста, введите сумму",
+            options: [],
+            multiple: false,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
+          span: 24,
+          name: "image",
+          label: "изображение",
+          rules: {
+            required: true,
+            message: "пожалуйста, загрузите изображение",
+          },
+          item: {
+            name: "Upload",
+            label: "Upload",
+            placeholder: "пожалуйста, загрузите изображение",
+            options: [],
+            multiple: false,
+          },
+        },
+      ],
+    },
   ];
 
   useEffect(() => {
+    fetchUsers();
     fetchSTExpenseSubCategories();
     fetchQuests();
   }, []);
@@ -222,8 +298,7 @@ const App: FC = () => {
       defaultSelectedKeys={[]}
       breadcrumbItems={sourceBreadcrumbItems}
       title={"формы | расход"}
-      fetchFunction={getSTQuest}
-      createFunction={postSTQuest}
+      createFunction={postSTExpense}
       formItems={formItems}
     />
   );
