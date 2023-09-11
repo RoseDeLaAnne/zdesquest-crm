@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect } from "react";
 
 // react-router-dom
 import { Link } from "react-router-dom";
@@ -16,6 +16,11 @@ import {
   DeploymentUnitOutlined,
 } from "@ant-design/icons";
 
+// api
+import {
+  getQuests
+} from "../api/APIUtils";
+
 // interface
 import { IFCSider } from "../assets/utilities/interface";
 
@@ -31,6 +36,56 @@ const App: FC<IFCSider> = ({
   defaultOpenKeys,
   defaultSelectedKeys,
 }) => {
+  const [questsData, setQuestsData] = useState([])
+
+  const fetchQuests = async () => {
+    const response = await getQuests();
+    if (response.status === 200) {
+      setQuestsData(response.data)
+    }
+  }
+
+  function convertQuestToMenuItem(quest) {
+    return getItem(
+      quest.name,
+      `quests${quest.key}`,
+      `/quests/${quest.latin_name}`,
+      <QuestionOutlined />,
+      [
+        getItem(
+          "доходы",
+          `quests${quest.key}Incomes`,
+          `/quests/${quest.latin_name}/incomes`,
+          <RiseOutlined />
+        ),
+        getItem(
+          "расходы",
+          `quests${quest.key}Expenses`,
+          `/quests/${quest.latin_name}/expenses`,
+          <FallOutlined />
+        ),
+        getItem(
+          "касса",
+          `quests${quest.key}CashRegister`,
+          `/quests/${quest.latin_name}/cash-register`,
+          <FallOutlined />
+        ),
+        getItem(
+          "расходы с раб. карты",
+          `quests${quest.key}WorkCardExpenses`,
+          `/quests/${quest.latin_name}/work-card-expenses`,
+          <DollarOutlined />
+        ),
+        getItem(
+          "расходы со своих",
+          `quests${quest.key}ExpensesFromTheir`,
+          `/quests/${quest.latin_name}/expenses-from-their`,
+          <DollarOutlined />
+        ),
+      ]
+    );
+  }
+
   function getItem(
     label: React.ReactNode,
     key: React.Key,
@@ -51,6 +106,7 @@ const App: FC<IFCSider> = ({
       type,
     } as MenuItem;
   }
+
   const menuItems: MenuItem[] = [
     getItem("сотрудники", "users", "/users", <UserOutlined />),
     getItem(
@@ -72,15 +128,9 @@ const App: FC<IFCSider> = ({
           <FallOutlined />
         ),
         getItem(
-          "бонусы",
-          "sourceTablesBonuses",
-          "/source-tables/bonuses",
-          <DeploymentUnitOutlined />
-        ),
-        getItem(
-          "штрафы",
-          "sourceTablesPenalties",
-          "/source-tables/penalties",
+          "бонусы/штрафы",
+          "sourceTablesBonusesPenalties",
+          "/source-tables/bonuses-penalties",
           <DeploymentUnitOutlined />
         ),
       ]
@@ -105,55 +155,15 @@ const App: FC<IFCSider> = ({
         ),
       ]
     ),
-
     getItem("квесты", "quests", "/quests", <QuestionOutlined />, [
-      getItem(
-        "Радуга",
-        "questsRainbow",
-        "/quests/rainbow",
-        <QuestionOutlined />,
-        [
-          getItem(
-            "Доходы",
-            "questsRainbowIncomes",
-            "/quests/rainbow/incomes",
-            <RiseOutlined />
-          ),
-          getItem(
-            "Расходы",
-            "questsRainbowExpenses",
-            "/quests/rainbow/expenses",
-            <FallOutlined />
-          ),
-          getItem(
-            "касса",
-            "questsRainbowCashRegister",
-            "/quests/rainbow/cash-register",
-            <FallOutlined />
-          ),
-        ]
-      ),
-    ]),
-
-    getItem(
-      "зарплаты",
-      "salaries",
-      "/salaries",
-      <DollarOutlined />
-    ),
-    getItem(
-      "расходы с раб. карты",
-      "workCardExpenses",
-      "/work-card-expenses",
-      <DollarOutlined />
-    ),
-    getItem(
-      "расходы со своих",
-      "expensesFromTheir",
-      "/expenses-from-their",
-      <DollarOutlined />
-    ),
+      ...questsData.map(convertQuestToMenuItem),
+    ]),    
+    getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
   ];
+
+  useEffect(() => {
+    fetchQuests();
+  }, []);
 
   return (
     <Sider

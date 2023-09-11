@@ -11,7 +11,12 @@ import {
 } from "@ant-design/icons";
 
 // api
-import { getExpensesFromTheir, getQuestCashRegister, getWorkCardExpenses } from "../api/APIUtils";
+import {
+  getExpensesFromTheir,
+  getQuestCashRegister,
+  getWorkCardExpenses,
+  toggleExpensesFromTheir,
+} from "../api/APIUtils";
 
 // components
 import TableTemplate3 from "../components/TableTemplate3";
@@ -28,7 +33,7 @@ const App: FC = () => {
     title: "дата",
     dataIndex: "date",
     key: "date",
-    width: 112,
+    width: 140,
     isSorting: true,
     searching: {
       isSearching: true,
@@ -70,8 +75,12 @@ const App: FC = () => {
         title: "оплатил",
       },
       countable: false,
-      render: (user) => {    
-        return <Tag color="black">{user.first_name} {user.last_name}</Tag>;
+      render: (user) => {
+        return (
+          <Tag color="black">
+            {user.first_name} {user.last_name}
+          </Tag>
+        );
       },
     },
     {
@@ -87,29 +96,30 @@ const App: FC = () => {
       render: (status) => {
         let color = "red";
         let formattedStatus = status;
-    
-        if (status === 'paid') {
+
+        if (status === "paid") {
           color = "green";
           formattedStatus = "выплачено";
-        } else if (status === 'not_paid') {
+        } else if (status === "not_paid") {
           color = "red";
-          formattedStatus = 'не выплачено';
+          formattedStatus = "не выплачено";
         }
-    
+
         return <Tag color={color}>{formattedStatus}</Tag>;
       },
     },
-  ]
+  ];
 
   return (
     <TableTemplate3
-      defaultOpenKeys={[]}
+      defaultOpenKeys={["quests"]}
       defaultSelectedKeys={["workCardExpenses"]}
       breadcrumbItems={initialBreadcrumbItems}
       title={"расходы со своих"}
       isDatePicker={true}
       fetchFunction={getExpensesFromTheir}
-      isUseParams={false}
+      toggleFunction={toggleExpensesFromTheir}
+      isUseParams={true}
       initialPackedTableDataColumn={initialPackedTableDataColumn}
       initialPackedTableColumns={initialPackedTableColumns}
       tableScroll={null}

@@ -4,6 +4,7 @@ import React, { FC, useState, useEffect, useRef } from "react";
 import {
   Col,
   DatePicker,
+  TimePicker,
   Form,
   Row,
   Select,
@@ -64,6 +65,11 @@ const App: FC = ({ items, form, onFinish }) => {
                     showSearch
                     allowClear
                     options={innerItem.item.options}
+                  />
+                ) : innerItem.item.name === "TimePicker" ? (
+                  <TimePicker
+                    format="HH:mm"
+                    minuteStep={15}
                   />
                 ) : innerItem.item.name === "Checkbox" ? (
                   <Checkbox>{innerItem.item.label}</Checkbox>

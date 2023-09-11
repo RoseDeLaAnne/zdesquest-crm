@@ -60,11 +60,11 @@ const App: FC = () => {
       if (response.status === 200) {
         const formattedOptions = response.data.map((item) => ({
           label: item.name.toLowerCase(),
-          value: item.name,
+          value: item.id,
         }));
         const formattedFilters = response.data.map((item) => ({
           text: item.name.toLowerCase(),
-          value: item.name,
+          value: item.id,
         }));
         setOptionsQuests(formattedOptions);
         setFiltersQuests(formattedFilters);
@@ -126,8 +126,8 @@ const App: FC = () => {
         title: "",
       },
       countable: false,
-      width: 112,
-      // fixed: "left",
+      width: 140,
+      fixed: "left",
     },
     {
       title: "квест",
@@ -135,7 +135,7 @@ const App: FC = () => {
       key: "quest",
       filters: filtersQuests,
       onFilter: (value: string, record) =>
-        record.quest.startsWith(value),
+        record.quest.name.startsWith(value),
       filterSearch: true,
       sorting: {
         isSorting: false,
@@ -146,7 +146,7 @@ const App: FC = () => {
         title: "",
       },
       countable: false,
-      render: (quest) => <Tag color="orange">{quest}</Tag>,
+      render: (quest) => <Tag color="orange">{quest.name}</Tag>,
     },
     {
       title: "стоимость квеста",
@@ -361,12 +361,12 @@ const App: FC = () => {
         title: "",
       },
       countable: false,
-      render: (user) => <Tag color="black">{user}</Tag>,
+      render: (user) => <Tag color="black">{user.last_name} {user.first_name}</Tag>,
     },
     {
       title: "актеры",
-      dataIndex: "actor",
-      key: "actor",
+      dataIndex: "actors",
+      key: "actors",
       filters: filtersUsers,
       onFilter: (value, record) => record.actors.includes(value),
       filterSearch: true,
@@ -384,8 +384,37 @@ const App: FC = () => {
         <>
           {actors.map((actor) => {
             return (
-              <Tag color="black" key={actor}>
-                {actor}
+              <Tag color="black" key={actor.id}>
+                {actor.last_name} {actor.first_name}
+              </Tag>
+            );
+          })}
+        </>
+      ),
+    },
+    {
+      title: "актеры (50%)",
+      dataIndex: "actors_half",
+      key: "actors_half",
+      filters: filtersUsers,
+      onFilter: (value, record) => record.actors_half.includes(value),
+      filterSearch: true,
+      filterMultiple: true,
+      sorting: {
+        isSorting: false,
+        isDate: false,
+      },
+      searching: {
+        isSearching: false,
+        title: "",
+      },
+      countable: false,
+      render: (_, { actors_half }) => (
+        <>
+          {actors_half.map((actor_half) => {
+            return (
+              <Tag color="black" key={actor_half.id}>
+                {actor_half.last_name} {actor_half.first_name}
               </Tag>
             );
           })}
@@ -409,40 +438,12 @@ const App: FC = () => {
         title: "",
       },
       countable: false,
-      render: (user) => <Tag color="black">{user}</Tag>,
+      render: (user) => <Tag color="black">{user.last_name} {user.first_name}</Tag>,
     },
     {
       title: "пакет",
       dataIndex: "package",
       key: "package",
-      sorting: {
-        isSorting: false,
-        isDate: false,
-      },
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      countable: false,
-      render: (package1) => {
-        let color = "red";
-        let formattedPackage = 'нет';
-    
-        if (package1) {
-          color = "green";
-          formattedPackage = "да";
-        } else {
-          color = "red";
-          formattedPackage = 'нет';
-        }
-    
-        return <Tag color={color}>{formattedPackage}</Tag>;
-      },
-    },
-    {
-      title: "проезд",
-      dataIndex: "travel",
-      key: "travel",
       sorting: {
         isSorting: false,
         isDate: false,
@@ -590,7 +591,7 @@ const App: FC = () => {
             message: "пожалуйста, выберите время",
           },
           item: {
-            name: "DatePicker",
+            name: "TimePicker",
             picker: "time",
             label: "",
             placeholder: "",
@@ -1006,7 +1007,7 @@ const App: FC = () => {
       gutter: 16,
       items: [
         {
-          span: 6,
+          span: 12,
           name: "package",
           label: "пакет",
           rules: {
@@ -1022,23 +1023,23 @@ const App: FC = () => {
             multiple: null,
           },
         },
-        {
-          span: 6,
-          name: "travel",
-          label: "проезд",
-          rules: {
-            required: false,
-            message: "",
-          },
-          item: {
-            name: "Checkbox",
-            picker: "",
-            label: "да/нет",
-            placeholder: "",
-            options: [],
-            multiple: null,
-          },
-        },
+        // {
+        //   span: 6,
+        //   name: "travel",
+        //   label: "проезд",
+        //   rules: {
+        //     required: false,
+        //     message: "",
+        //   },
+        //   item: {
+        //     name: "Checkbox",
+        //     picker: "",
+        //     label: "да/нет",
+        //     placeholder: "",
+        //     options: [],
+        //     multiple: null,
+        //   },
+        // },
         {
           span: 12,
           name: "prepayment",
@@ -1078,7 +1079,7 @@ const App: FC = () => {
       createFunction={postSTQuest}
       deleteFunction={deleteSTQuest}
       initialPackedTableColumns={initialPackedTableColumns}
-      tableScroll={{ x: 4500 }}
+      tableScroll={{ x: 5000 }}
       tableOperation={true}
       tableBordered={true}
       drawerTitle="создать новую запись"

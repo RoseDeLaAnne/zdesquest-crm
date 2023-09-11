@@ -88,7 +88,7 @@ const App: FC = () => {
         title: "",
       },
       countable: false,
-      width: 112,
+      width: 140,
     },
   ];
 

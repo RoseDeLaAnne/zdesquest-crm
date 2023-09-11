@@ -373,6 +373,31 @@ const App: FC = () => {
       items: [
         {
           span: 12,
+          name: "paid_from",
+          label: "оплачено",
+          rules: {
+            required: true,
+            message: "пожалуйста, выберите сотрудника",
+          },
+          item: {
+            name: "Select",
+            label: "",
+            placeholder: "пожалуйста, выберите сотрудника",
+            options: [{
+              label: 'с рабочей карты',
+              value: 'work_card',
+            }, {
+              label: 'со своих',
+              value: 'their',
+            }, {
+              label: 'с кассы',
+              value: 'cash_register',
+            }],
+            multiple: false,
+          },
+        },
+        {
+          span: 12,
           name: "who_paid",
           label: "оплатил",
           rules: {
@@ -387,45 +412,45 @@ const App: FC = () => {
             multiple: false,
           },
         },
-        {
-          span: 12,
-          name: "who_paid_amount",
-          label: "оплачено",
-          rules: {
-            required: true,
-            message: "пожалуйста, введите сумму",
-          },
-          item: {
-            name: "Input",
-            label: "",
-            placeholder: "пожалуйста, введите сумму",
-            options: [],
-            multiple: false,
-          },
-        },
+        // {
+        //   span: 12,
+        //   name: "who_paid_amount",
+        //   label: "оплачено",
+        //   rules: {
+        //     required: true,
+        //     message: "пожалуйста, введите сумму",
+        //   },
+        //   item: {
+        //     name: "Input",
+        //     label: "",
+        //     placeholder: "пожалуйста, введите сумму",
+        //     options: [],
+        //     multiple: false,
+        //   },
+        // },
       ],
     },
-    {
-      gutter: 16,
-      items: [
-        {
-          span: 24,
-          name: "image",
-          label: "изображение",
-          rules: {
-            required: true,
-            message: "пожалуйста, загрузите изображение",
-          },
-          item: {
-            name: "Upload",
-            label: "Upload",
-            placeholder: "пожалуйста, загрузите изображение",
-            options: [],
-            multiple: false,
-          },
-        },
-      ],
-    },
+    // {
+    //   gutter: 16,
+    //   items: [
+    //     {
+    //       span: 24,
+    //       name: "image",
+    //       label: "изображение",
+    //       rules: {
+    //         required: true,
+    //         message: "пожалуйста, загрузите изображение",
+    //       },
+    //       item: {
+    //         name: "Upload",
+    //         label: "Upload",
+    //         placeholder: "пожалуйста, загрузите изображение",
+    //         options: [],
+    //         multiple: false,
+    //       },
+    //     },
+    //   ],
+    // },
   ];
 
   useEffect(() => {

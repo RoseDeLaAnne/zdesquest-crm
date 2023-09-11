@@ -78,7 +78,7 @@ const App: FC = () => {
       if (response.status === 200) {
         const formattedOptions = response.data.map((item) => ({
           label: item.first_name.toLowerCase(),
-          value: item.first_name.toLowerCase(),
+          value: item.id,
         }));
         setOptionsUsers(formattedOptions);
       }
@@ -92,7 +92,7 @@ const App: FC = () => {
       if (response.status === 200) {
         const formattedOptions = response.data.map((item) => ({
           label: item.name.toLowerCase(),
-          value: item.name,
+          value: item.id,
         }));
         setOptionsQuests(formattedOptions);
       }

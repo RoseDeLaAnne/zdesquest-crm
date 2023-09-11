@@ -11,7 +11,7 @@ import {
 } from "@ant-design/icons";
 
 // api
-import { getQuestCashRegister } from "../api/APIUtils";
+import { getQuestCashRegister, toggleQuestCashRegister } from "../api/APIUtils";
 
 // components
 import TableTemplate3 from "../components/TableTemplate3";
@@ -157,6 +157,7 @@ const App: FC = () => {
       title={"касса"}
       isDatePicker={true}
       fetchFunction={getQuestCashRegister}
+      toggleFunction={toggleQuestCashRegister}
       isUseParams={true}
       initialPackedTableDataColumn={initialPackedTableDataColumn}
       initialPackedTableColumns={initialPackedTableColumns}

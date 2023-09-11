@@ -24,7 +24,7 @@ import {
   Tooltip,
   Popconfirm,
   message,
-  FloatButton
+  FloatButton,
 } from "antd";
 
 // antd | type
@@ -57,12 +57,18 @@ import locale from "antd/es/date-picker/locale/ru_RU";
 // libs
 import Highlighter from "react-highlight-words";
 
+import dayjs from "dayjs";
+
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
 // components
 import CSider from "../components/CSider";
 import CBreadcrumb from "../components/CBreadcrumb";
 
 import CTable from "../components/CTable";
 import CDrawer from "../components/CDrawer";
+
+dayjs.extend(customParseFormat);
 
 // interface
 import { IFC } from "../assets/utilities/interface";
@@ -213,7 +219,7 @@ const App: FC = ({
         </Space>
       ) : null,
     width: 192,
-    // fixed: "right",
+    fixed: "right",
   };
   let tableColumns = [];
   const initialUnpackedTableColumns = initialPackedTableColumns.map(
@@ -284,7 +290,7 @@ const App: FC = ({
     try {
       let response;
       if (questTables) {
-        response = await fetchFunction(name, startDate, endDate);
+        response = await fetchFunction(startDate, endDate, name);
       } else {
         response = await fetchFunction(startDate, endDate);
       }
@@ -316,23 +322,46 @@ const App: FC = ({
   //     ),
   //   },
   //   {
-  //     title: "Sara",
-  //     dataIndex: "shaw",
-  //     key: "shaw",
-  //     render: (text) => (
-  //       <Tooltip
-  //         title={<div dangerouslySetInnerHTML={{ __html: text.tooltip }} />}
-  //         placement="topLeft"
-  //       >
-  //         <div>{text.sum}</div>
-  //       </Tooltip>
-  //     ),
+  // title: "Sara",
+  // dataIndex: "shaw",
+  // key: "shaw",
+  // render: (text) => (
+  //   <Tooltip
+  //     title={<div dangerouslySetInnerHTML={{ __html: text.tooltip }} />}
+  //     placement="topLeft"
+  //   >
+  //     <div>{text.sum}</div>
+  //   </Tooltip>
+  // ),
   //   },
   // ];
+  const newTableHead = tableHead.map((column) => {
+    return {
+      title: column.title,
+      children: column.children.map((child) => {
+        return {
+          title: child.title,
+          dataIndex: child.dataIndex,
+          key: child.dataIndex,
+          render: (text) => (
+            <Tooltip
+              title={<div dangerouslySetInnerHTML={{ __html: text.tooltip }} />}
+              placement="topLeft"
+            >
+              <div>{text.sum}</div>
+            </Tooltip>
+          ),
+        };
+      }),
+    };
+  });
+
+  console.log(newTableHead)
   if (tableColumnWithHead) {
     tableColumns = [
       ...initialUnpackedTableColumns,
-      ...tableHead,
+      // ...tableHead,
+      ...newTableHead,
       {
         title: "итого",
         dataIndex: "total",
@@ -357,6 +386,7 @@ const App: FC = ({
     }
   };
 
+  const [formatDates, setFormatDates] = useState([]);
   const [dates, setDates] = useState([]);
   const handleDateChange = async (dates) => {
     setDates(dates);
@@ -408,14 +438,56 @@ const App: FC = ({
   };
 
   const logout = async () => {
-    console.log('logout')
-  }
+    console.log("logout");
+  };
+
+  const formatDate = (dateString) => {
+    const [day, month, year] = dateString.split("-").map(Number);
+    return `${day < 10 ? "0" : ""}${day}-${
+      month < 10 ? "0" : ""
+    }${month}-${year}`;
+  };
 
   useEffect(() => {
     document.title = title;
 
+    // const currentDate = new Date();
+    // const currentDay = currentDate.getDate();
+    // const currentMonth = currentDate.getMonth() + 1;
+
+    // // 10.09.2023-25.09.2023 | 26.08.2023-09.09.2023
+
+    // if (currentDay <= 9) {
+    //   const currentYear = currentDate.getFullYear();
+    //   const startDate = `26-${currentMonth - 1}-${currentYear}`;
+    //   const endDate = `09-${currentMonth}-${currentYear}`;
+    //   const formattedStartDate = formatDate(startDate); // "26-08-2023"
+    //   const formattedEndDate = formatDate(endDate); // "09-09-2023"
+    //   fetchData(formattedStartDate, formattedEndDate);
+    // } else if (currentDay >= 10) {
+    //   const currentYear = currentDate.getFullYear();
+    //   const startDate = `10-${currentMonth}-${currentYear}`;
+    //   const endDate = `25-${currentMonth}-${currentYear}`;
+    //   const formattedStartDate = formatDate(startDate); // "26-08-2023"
+    //   const formattedEndDate = formatDate(endDate); // "09-09-2023"
+    //   fetchData(formattedStartDate, formattedEndDate);
+    // } else {
+    //   fetchData(null, null);
+    // }
+
     fetchData(null, null);
-  }, []);
+
+    // if (currentDay >= 9 && currentDay <= 10) {
+    //   // Replace month and year with the current values
+    //   const currentMonth = currentDate.getMonth() + 1; // Months are zero-based, so add 1
+    //   const currentYear = currentDate.getFullYear();
+
+    //   // Call the fetchData function with the updated dates
+    //   const startDate = `${currentDay}.${currentMonth}.${currentYear}`;
+    //   const endDate = `${currentDay}.${currentMonth}.${currentYear}`;
+    //   fetchData(startDate, endDate);
+    // }
+  }, [name]);
 
   return (
     <Layout hasSider>
@@ -454,6 +526,10 @@ const App: FC = ({
                 {datePicker ? (
                   <RangePicker
                     onChange={handleDateChange}
+                    // defaultValue={[
+                    //   dayjs("26-08-2023", "DD.MM.YYYY"),
+                    //   dayjs("09-09-2023", "DD.MM.YYYY"),
+                    // ]}
                     format={"DD.MM.YYYY"}
                   />
                 ) : (

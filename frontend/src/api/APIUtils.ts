@@ -86,13 +86,13 @@ export const getSTExpenses = async (startDate: string, endDate: string) => {
   }
 };
 
-export const getSTBonuses = async (startDate: string, endDate: string) => {
+export const getSTBonusesPenalties = async (startDate: string, endDate: string) => {
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `http://127.0.0.1:8000/api/stbonuses/?start_date=${startDate}&end_date=${endDate}`;
+      url = `http://127.0.0.1:8000/api/stbonuses-penalties/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `http://127.0.0.1:8000/api/stbonuses/`;
+      url = `http://127.0.0.1:8000/api/stbonuses-penalties/`;
     }
     const response = await axios.get(url);
     return response;
@@ -101,20 +101,35 @@ export const getSTBonuses = async (startDate: string, endDate: string) => {
   }
 };
 
-export const getSTPenalties = async (startDate: string, endDate: string) => {
-  try {
-    let url;
-    if (startDate !== null && endDate !== null) {
-      url = `http://127.0.0.1:8000/api/stpenalties/?start_date=${startDate}&end_date=${endDate}`;
-    } else {
-      url = `http://127.0.0.1:8000/api/stpenalties/`;
-    }
-    const response = await axios.get(url);
-    return response;
-  } catch (error) {
-    throw error;
-  }
-};
+// export const getSTBonuses = async (startDate: string, endDate: string) => {
+//   try {
+//     let url;
+//     if (startDate !== null && endDate !== null) {
+//       url = `http://127.0.0.1:8000/api/stbonuses/?start_date=${startDate}&end_date=${endDate}`;
+//     } else {
+//       url = `http://127.0.0.1:8000/api/stbonuses/`;
+//     }
+//     const response = await axios.get(url);
+//     return response;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
+
+// export const getSTPenalties = async (startDate: string, endDate: string) => {
+//   try {
+//     let url;
+//     if (startDate !== null && endDate !== null) {
+//       url = `http://127.0.0.1:8000/api/stpenalties/?start_date=${startDate}&end_date=${endDate}`;
+//     } else {
+//       url = `http://127.0.0.1:8000/api/stpenalties/`;
+//     }
+//     const response = await axios.get(url);
+//     return response;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
 export const getSTExpenseCategories = async () => {
   try {
@@ -136,10 +151,10 @@ export const getSTExpenseSubCategories = async () => {
   }
 };
 
-export const getQuestIncomes = async (
-  name: string,
+export const getQuestIncomes = async (  
   startDate: string,
-  endDate: string
+  endDate: string,
+  name: string
 ) => {
   try {
     let url;
@@ -208,16 +223,29 @@ export const getQuestCashRegister = async (
   }
 };
 
+export const toggleQuestCashRegister = async (
+  id: number
+) => {
+  try {
+    const url = `http://127.0.0.1:8000/api/toggle/cash-register/${id}/`;
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getWorkCardExpenses = async (
   startDate: string,
-  endDate: string
+  endDate: string,
+  name: string
 ) => {
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `http://127.0.0.1:8000/api/work-card-expenses/?start_date=${startDate}&end_date=${endDate}`;
+      url = `http://127.0.0.1:8000/api/quest/${name}/work-card-expenses/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `http://127.0.0.1:8000/api/work-card-expenses/`;
+      url = `http://127.0.0.1:8000/api/quest/${name}/work-card-expenses/`;
     }
     const response = await axios.get(url);
     return response;
@@ -228,15 +256,28 @@ export const getWorkCardExpenses = async (
 
 export const getExpensesFromTheir = async (
   startDate: string,
-  endDate: string
+  endDate: string,
+  name: string
 ) => {
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `http://127.0.0.1:8000/api/expenses-from-their/?start_date=${startDate}&end_date=${endDate}`;
+      url = `http://127.0.0.1:8000/api/quest/${name}/expenses-from-their/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `http://127.0.0.1:8000/api/expenses-from-their/`;
+      url = `http://127.0.0.1:8000/api/quest/${name}/expenses-from-their/`;
     }
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const toggleExpensesFromTheir = async (
+  id: number
+) => {
+  try {
+    const url = `http://127.0.0.1:8000/api/toggle/expenses-from-their/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -365,9 +406,9 @@ export const deleteSTExpense = async (id: number) => {
   }
 };
 
-export const getSTBonus = async (id: number) => {
+export const getSTBonusPenalty = async (id: number) => {
   try {
-    const url = `http://127.0.0.1:8000/api/stbonus/${id}/`;
+    const url = `http://127.0.0.1:8000/api/stbonus-penalty/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -375,9 +416,9 @@ export const getSTBonus = async (id: number) => {
   }
 };
 
-export const putSTBonus = async (id: number, value: object) => {
+export const putSTBonusPenalty = async (id: number, value: object) => {
   try {
-    const url = `http://127.0.0.1:8000/api/stbonus/${id}/`;
+    const url = `http://127.0.0.1:8000/api/stbonus-penalty/${id}/`;
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
@@ -385,9 +426,9 @@ export const putSTBonus = async (id: number, value: object) => {
   }
 };
 
-export const deleteSTBonus = async (id: number) => {
+export const deleteSTBonusPenalty = async (id: number) => {
   try {
-    const url = `http://127.0.0.1:8000/api/stbonus/${id}/`;
+    const url = `http://127.0.0.1:8000/api/stbonus-penalty/${id}/`;
     const response = await axios.delete(url);
     return response;
   } catch (error) {
@@ -395,35 +436,65 @@ export const deleteSTBonus = async (id: number) => {
   }
 };
 
-export const getSTPenalty = async (id: number) => {
-  try {
-    const url = `http://127.0.0.1:8000/api/stpenalty/${id}/`;
-    const response = await axios.get(url);
-    return response;
-  } catch (error) {
-    throw error;
-  }
-};
+// export const getSTBonus = async (id: number) => {
+//   try {
+//     const url = `http://127.0.0.1:8000/api/stbonus/${id}/`;
+//     const response = await axios.get(url);
+//     return response;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
-export const putSTPenalty = async (id: number, value: object) => {
-  try {
-    const url = `http://127.0.0.1:8000/api/stpenalty/${id}/`;
-    const response = await axios.put(url, value);
-    return response;
-  } catch (error) {
-    throw error;
-  }
-};
+// export const putSTBonus = async (id: number, value: object) => {
+//   try {
+//     const url = `http://127.0.0.1:8000/api/stbonus/${id}/`;
+//     const response = await axios.put(url, value);
+//     return response;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
-export const deleteSTPenalty = async (id: number) => {
-  try {
-    const url = `http://127.0.0.1:8000/api/stpenalty/${id}/`;
-    const response = await axios.delete(url);
-    return response;
-  } catch (error) {
-    throw error;
-  }
-};
+// export const deleteSTBonus = async (id: number) => {
+//   try {
+//     const url = `http://127.0.0.1:8000/api/stbonus/${id}/`;
+//     const response = await axios.delete(url);
+//     return response;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
+
+// export const getSTPenalty = async (id: number) => {
+//   try {
+//     const url = `http://127.0.0.1:8000/api/stpenalty/${id}/`;
+//     const response = await axios.get(url);
+//     return response;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
+
+// export const putSTPenalty = async (id: number, value: object) => {
+//   try {
+//     const url = `http://127.0.0.1:8000/api/stpenalty/${id}/`;
+//     const response = await axios.put(url, value);
+//     return response;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
+
+// export const deleteSTPenalty = async (id: number) => {
+//   try {
+//     const url = `http://127.0.0.1:8000/api/stpenalty/${id}/`;
+//     const response = await axios.delete(url);
+//     return response;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
 export const getSTExpenseCategory = async (id: number) => {
   try {
@@ -546,9 +617,9 @@ export const postSTExpense = async (value: object) => {
   }
 };
 
-export const postSTBonus = async (value: object) => {
+export const postSTBonusPenalty = async (value: object) => {
   try {
-    const url = `http://127.0.0.1:8000/api/create/stbonus/`;
+    const url = `http://127.0.0.1:8000/api/create/stbonus-penalty/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
@@ -556,15 +627,25 @@ export const postSTBonus = async (value: object) => {
   }
 };
 
-export const postSTPenalty = async (value: object) => {
-  try {
-    const url = `http://127.0.0.1:8000/api/create/stpenalty/`;
-    const response = await axios.post(url, value);
-    return response;
-  } catch (error) {
-    throw error;
-  }
-};
+// export const postSTBonus = async (value: object) => {
+//   try {
+//     const url = `http://127.0.0.1:8000/api/create/stbonus/`;
+//     const response = await axios.post(url, value);
+//     return response;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
+
+// export const postSTPenalty = async (value: object) => {
+//   try {
+//     const url = `http://127.0.0.1:8000/api/create/stpenalty/`;
+//     const response = await axios.post(url, value);
+//     return response;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
 export const postSTExpenseCategory = async (value: object) => {
   try {

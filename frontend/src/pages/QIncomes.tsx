@@ -82,8 +82,8 @@ const App: FC = () => {
   const initialPackedTableColumns = [
     {
       title: "дата/время",
-      dataIndex: "date",
-      key: "date",
+      dataIndex: "date_time",
+      key: "date_time",
       sorting: {
         isSorting: false,
         isDate: false,
@@ -93,7 +93,7 @@ const App: FC = () => {
         title: "",
       },
       countable: false,
-      width: 112,
+      width: 140,
     },
     {
       title: "игра",
@@ -207,6 +207,22 @@ const App: FC = () => {
       },
       countable: true,
     },
+    // {
+    //   title: "запись",
+    //   dataIndex: "record",
+    //   key: "record",
+    //   sorting: {
+    //     isSorting: false,
+    //     isDate: false,
+    //   },
+    //   searching: {
+    //     isSearching: false,
+    //     title: "",
+    //   },
+    //   countable: false,
+    //   render: (_, record: { key: React.Key }) =>
+    //   <Link to={`/source-tables/quests/edit/${record.stquest.id}`}>запись</Link>,
+    // }
   ];
 
   return (

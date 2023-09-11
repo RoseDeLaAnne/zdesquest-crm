@@ -57,10 +57,10 @@ class STQuestSerializer(ModelSerializer):
     key = serializers.CharField(max_length=255, source="id")
     date_time = CustomDateFormatField(source="date")
     date = CustomDateFormatField()
-    quest = serializers.CharField(source="quest.name")
-    administrator = serializers.CharField(source="administrator.first_name")
-    room_employee_name = serializers.CharField(source="room_employee_name.first_name")
-    animator = serializers.CharField(source="animator.first_name")
+    # quest = serializers.IntegerField(source="quest.id")
+    # administrator = serializers.IntegerField(source="administrator.id")
+    # room_employee_name = serializers.IntegerField(source="room_employee_name.id")
+    # animator = serializers.IntegerField(source="animator.id")
 
     class Meta:
         model = STQuest
@@ -68,10 +68,10 @@ class STQuestSerializer(ModelSerializer):
 
         depth = 1
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data["actors"] = [actors["first_name"] for actors in data["actors"]]
-        return data
+    # def to_representation(self, instance):
+    #     data = super().to_representation(instance)        
+    #     data["actors"] = [f"{actor['first_name']} {actor['last_name']}" for actor in data["actors"]]        
+    #     return data
 
 
 class STExpenseSerializer(ModelSerializer):
@@ -105,46 +105,56 @@ class STExpenseSerializer(ModelSerializer):
         return data
 
 
-class STBonusSerializer(ModelSerializer):
+class STBonusPenaltySerializer(ModelSerializer):
     key = serializers.CharField(max_length=255, source="id")
     date = CustomDateFormatField()
-    user = serializers.SerializerMethodField()
 
     class Meta:
-        model = STBonus
+        model = STBonusPenalty
         fields = "__all__"
 
         depth = 1
 
-    def get_user(self, obj):
-        user = obj.user
-        return {"id": user.id, "first_name": user.first_name}
+# class STBonusSerializer(ModelSerializer):
+#     key = serializers.CharField(max_length=255, source="id")
+#     date = CustomDateFormatField()
+#     user = serializers.SerializerMethodField()
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data["quests"] = [quest["name"] for quest in data["quests"]]
-        return data
+#     class Meta:
+#         model = STBonus
+#         fields = "__all__"
+
+#         depth = 1
+
+#     def get_user(self, obj):
+#         user = obj.user
+#         return {"id": user.id, "first_name": user.first_name}
+
+#     def to_representation(self, instance):
+#         data = super().to_representation(instance)
+#         data["quests"] = [quest["name"] for quest in data["quests"]]
+#         return data
 
 
-class STPenaltySerializer(ModelSerializer):
-    key = serializers.CharField(max_length=255, source="id")
-    date = CustomDateFormatField()
-    user = serializers.SerializerMethodField()
+# class STPenaltySerializer(ModelSerializer):
+#     key = serializers.CharField(max_length=255, source="id")
+#     date = CustomDateFormatField()
+#     user = serializers.SerializerMethodField()
 
-    class Meta:
-        model = STPenalty
-        fields = "__all__"
+#     class Meta:
+#         model = STPenalty
+#         fields = "__all__"
 
-        depth = 1
+#         depth = 1
 
-    def get_user(self, obj):
-        user = obj.user
-        return {"id": user.id, "first_name": user.first_name}
+#     def get_user(self, obj):
+#         user = obj.user
+#         return {"id": user.id, "first_name": user.first_name}
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data["quests"] = [quest["name"] for quest in data["quests"]]
-        return data
+#     def to_representation(self, instance):
+#         data = super().to_representation(instance)
+#         data["quests"] = [quest["name"] for quest in data["quests"]]
+#         return data
 
 
 class STExpenseCategorySerializer(ModelSerializer):
@@ -233,4 +243,8 @@ class ExpenseFromTheirSerializer(ModelSerializer):
 
     def get_who_paid(self, obj):
         who_paid = obj.who_paid
-        return {"id": who_paid.id, "first_name": who_paid.first_name, "last_name": who_paid.last_name}
+        return {
+            "id": who_paid.id,
+            "first_name": who_paid.first_name,
+            "last_name": who_paid.last_name,
+        }

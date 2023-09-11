@@ -55,6 +55,8 @@ import {
 import locale from "antd/es/date-picker/locale/ru_RU";
 
 // libs
+import dayjs from 'dayjs';
+
 import Highlighter from "react-highlight-words";
 
 // components
@@ -82,6 +84,7 @@ const App: FC = ({
   title,
   isDatePicker,
   fetchFunction,
+  toggleFunction,
   isUseParams,
   initialPackedTableDataColumn,
   initialPackedTableColumns,
@@ -101,6 +104,8 @@ const App: FC = ({
   );
 
   const [dates, setDates] = useState([]);
+  const [startDateC, setStartDateC] = useState([]);
+  const [endDateC, setEndDateC] = useState([]);
   const [tableDataSource, setTableDataSource] = useState([]);
 
   const [searchText, setSearchText] = useState("");
@@ -217,6 +222,11 @@ const App: FC = ({
     fetchData(startDateStr, endDateStr);
   };
 
+  const handleToggle = async (key: number) => {
+    const response = await toggleFunction(key);
+    fetchData(null, null);
+  };
+
   let initialUnPackedTableDataColumn = {
     title: initialPackedTableDataColumn.title,
     dataIndex: initialPackedTableDataColumn.dataIndex,
@@ -275,15 +285,59 @@ const App: FC = ({
     return newColumn;
   });
 
-  const tableColumns = [initialUnPackedTableDataColumn, ...initialTableColumns];
+  const tableColumns = [
+    initialUnPackedTableDataColumn,
+    ...initialTableColumns,
+    {
+      title: "операция",
+      dataIndex: "operation",
+      key: "operation",
+      render: (_, record: { key: React.Key }) =>
+        tableDataSource.length >= 1 ? (
+          <Space>
+            <Popconfirm
+              title="toggle"
+              onConfirm={() => handleToggle(record.key)}
+            >
+              <a>toggle</a>
+            </Popconfirm>
+          </Space>
+        ) : null,
+      width: 192,
+    },
+  ];
   const countingFields = initialPackedTableColumns
     .filter((column) => column.countable)
     .map((column) => column.key);
 
+  const formatDate = (dateString) => {
+    const [day, month, year] = dateString.split("-").map(Number);
+    return `${day < 10 ? "0" : ""}${day}-${
+      month < 10 ? "0" : ""
+    }${month}-${year}`;
+  };
+
   useEffect(() => {
     document.title = title;
 
-    fetchData(null, null);
+    fetchData(null, null)
+
+    // const currentDate = new Date();
+    // const currentDay = currentDate.getDate();
+    // const currentMonth = currentDate.getMonth() + 1;
+    // const currentYear = currentDate.getFullYear();
+
+    // let startDate;
+
+    // if (currentDay < 3) {
+    //   startDate = `${currentDay - 3}-${currentMonth - 1}-${currentYear}`;
+    // } else {
+    //   startDate = `${currentDay - 3}-${currentMonth}-${currentYear}`;
+    // }
+    // const endDate = `${currentDay}-${currentMonth}-${currentYear}`;
+    // const formattedStartDate = formatDate(startDate);
+    // const formattedEndDate = formatDate(endDate);
+    // fetchData(formattedStartDate, formattedEndDate);
   }, []);
 
   return (
@@ -319,7 +373,10 @@ const App: FC = ({
             >
               <Title>{title}</Title>
               {isDatePicker && (
-                <RangePicker onChange={handleDateChange} format={dateFormat} />
+                <RangePicker
+                  onChange={handleDateChange}
+                  format={dateFormat}
+                />
               )}
             </div>
             <CTable

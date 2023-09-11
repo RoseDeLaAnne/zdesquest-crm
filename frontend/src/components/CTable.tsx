@@ -26,20 +26,23 @@ const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {
         }
 
         dataSource.forEach((dataSourceColumns) => {
-          total.forEach((totalEach) => {
-            if (totalEach.total !== null && isObj) {
-              totalEach.total += dataSourceColumns[totalEach.key].sum;
-            } else if (totalEach.total !== null && !isObj) {
-              totalEach.total += dataSourceColumns[totalEach.key];
-            }
-          });
+          if (dataSourceColumns.status !== "reset" && dataSourceColumns.status !== "paid") {
+            total.forEach((totalEach) => {
+              if (totalEach.total !== null && isObj) {
+                totalEach.total += dataSourceColumns[totalEach.key].sum;
+              } else if (totalEach.total !== null && !isObj) {
+                totalEach.total += dataSourceColumns[totalEach.key];
+              }
+            });
+          }
         });
 
         return (
           <>
             <Table.Summary.Row>
               {columns.map((item, index) => (
-                <Table.Summary.Cell index={index + 1} key={index}>
+                // <Table.Summary.Cell index={index + 1} key={index}>
+                <Table.Summary.Cell index={index} key={index}>
                   {index === 0 ? "итого" : <Text>{total[index].total}</Text>}
                 </Table.Summary.Cell>
               ))}

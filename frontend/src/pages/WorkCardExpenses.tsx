@@ -28,7 +28,7 @@ const App: FC = () => {
     title: "дата",
     dataIndex: "date",
     key: "date",
-    width: 112,
+    width: 140,
     isSorting: true,
     searching: {
       isSearching: true,
@@ -64,13 +64,13 @@ const App: FC = () => {
 
   return (
     <TableTemplate3
-      defaultOpenKeys={[]}
+      defaultOpenKeys={["quests"]}
       defaultSelectedKeys={["workCardExpenses"]}
       breadcrumbItems={initialBreadcrumbItems}
       title={"расходы с рабочей карты"}
       isDatePicker={true}
       fetchFunction={getWorkCardExpenses}
-      isUseParams={false}
+      isUseParams={true}
       initialPackedTableDataColumn={initialPackedTableDataColumn}
       initialPackedTableColumns={initialPackedTableColumns}
       tableScroll={null}

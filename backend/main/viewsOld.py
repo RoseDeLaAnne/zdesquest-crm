@@ -103,11 +103,7 @@ def GetIncomesByQuestId(request, qid):
         incomes = Income.objects.filter(quest=quest)
 
     
-    income_dict = {}  # To track incomes by date
-
-    # print(request.GET.get('start_date'))
-
-   
+    income_dict = {}  # To track incomes by date   
 
     for income in incomes:
         if income.date not in income_dict:

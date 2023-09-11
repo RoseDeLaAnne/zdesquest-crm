@@ -1,6 +1,7 @@
 import { ConfigProvider } from "antd";
 
-import { Route, Routes, Navigate } from "react-router-dom";
+// import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Navigate } from "react-router-dom";
 
 import PrivateRoutes from "./utils/PrivateRoutes";
 
@@ -16,10 +17,12 @@ import STQuests from "./pages/STQuests";
 import STEditQuests from "./pages/STEditQuests";
 import STExpenses from "./pages/STExpenses";
 import STEditExpenses from "./pages/STEditExpenses";
-import STBonuses from "./pages/STBonuses";
-import STEditBonuses from "./pages/STEditBonuses";
-import STPenalties from "./pages/STPenalties";
-import STEditPenalties from "./pages/STEditPenalties";
+import STBonusesPenalties from "./pages/STBonusesPenalties";
+import STEditBonusesPenalties from "./pages/STEditBonusesPenalties";
+// import STBonuses from "./pages/STBonuses";
+// import STEditBonuses from "./pages/STEditBonuses";
+// import STPenalties from "./pages/STPenalties";
+// import STEditPenalties from "./pages/STEditPenalties";
 
 import ATSTExpenseCategories from "./pages/ATSTExpenseCategories";
 import ATEditSTExpenseCategories from "./pages/ATEditSTExpenseCategories";
@@ -42,6 +45,10 @@ import ExpensesFromTheir from "./pages/ExpensesFromTheir";
 import FQuest from "./pages/FQuest";
 import FExpense from "./pages/FExpense";
 
+// import AuthProvider from "./provider/authProvider";
+import AuthProvider from "./provider/authProvider";
+import Routes from "./routes";
+
 function App() {
   return (
     <ConfigProvider
@@ -51,8 +58,9 @@ function App() {
         },
       }}
     >
-      <Routes>
-        <Route path="/" element={<Navigate to="/users" />} />
+      <AuthProvider>
+        <Routes>
+          {/* <Route path="/" element={<Navigate to="/users" />} />
         <Route path="/login" element={<Login />} />
 
         <Route element={<PrivateRoutes />}>
@@ -74,15 +82,10 @@ function App() {
           path="/source-tables/expenses/edit/:id"
           element={<STEditExpenses />}
         />
-        <Route path="/source-tables/bonuses" element={<STBonuses />} />
+        <Route path="/source-tables/bonuses-penalties" element={<STBonusesPenalties />} />
         <Route
-          path="/source-tables/bonuses/edit/:id"
-          element={<STEditBonuses />}
-        />
-        <Route path="/source-tables/penalties" element={<STPenalties />} />
-        <Route
-          path="/source-tables/penalties/edit/:id"
-          element={<STEditPenalties />}
+          path="/source-tables/bonuses-penalties/edit/:id"
+          element={<STEditBonusesPenalties />}
         />
 
         <Route
@@ -118,13 +121,14 @@ function App() {
 
         <Route path="/salaries" element={<Salaries />} />
 
-        <Route path="/work-card-expenses" element={<WorkCardExpenses />} />
-        <Route path="/expenses-from-their" element={<ExpensesFromTheir />} />
+        <Route path="/quests/:name/work-card-expenses" element={<WorkCardExpenses />} />
+        <Route path="/quests/:name/expenses-from-their" element={<ExpensesFromTheir />} />
 
         <Route path="/forms" element={<Navigate to="/forms/quest" />} />
         <Route path="/forms/quest" element={<FQuest />} />
-        <Route path="/forms/expense" element={<FExpense />} />
-      </Routes>
+        <Route path="/forms/expense" element={<FExpense />} /> */}
+        </Routes>
+      </AuthProvider>
     </ConfigProvider>
   );
 }

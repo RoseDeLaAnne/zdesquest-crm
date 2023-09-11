@@ -99,8 +99,8 @@ const App: FC = ({
               form.setFieldsValue({ [key]: time });
             } else if (key === "user") {
               form.setFieldsValue({ [key]: value.id });
-            } else if (key === "category") {
-              form.setFieldsValue({ [key]: value.name });
+            } else if (key === "quest") {
+              form.setFieldsValue({ [key]: value.id });
             } else {
               form.setFieldsValue({ [key]: value });
             }
