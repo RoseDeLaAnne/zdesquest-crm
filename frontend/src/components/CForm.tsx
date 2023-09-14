@@ -69,7 +69,6 @@ const App: FC = ({ items, form, onFinish }) => {
                 ) : innerItem.item.name === "TimePicker" ? (
                   <TimePicker
                     format="HH:mm"
-                    minuteStep={15}
                   />
                 ) : innerItem.item.name === "Checkbox" ? (
                   <Checkbox>{innerItem.item.label}</Checkbox>

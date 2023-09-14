@@ -1,34 +1,41 @@
 import axios from "axios";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
+// utils
+import { localStorageGetItem, localStorageSetItem } from "../assets/utilities/jwt";
+
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   // State to hold the authentication token
-  const [token, setToken_] = useState(localStorage.getItem("token"));
+  const [refresh, setRefresh_] = useState(localStorageGetItem('refresh'));
+  const [access, setAccess_] = useState(localStorageGetItem('access'));
 
   // Function to set the authentication token
-  const setToken = (newToken) => {
-    setToken_(newToken);
+  const setRefresh = (newRefresh) => {
+    setRefresh_(newRefresh);
+  };
+  const setAccess = (newAccess) => {
+    setAccess_(newAccess);
   };
 
   useEffect(() => {
-    if (token) {
-      axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-      localStorage.setItem("token", token);
+    if (access) {
+      axios.defaults.headers.common["Authorization"] = "Bearer " + access;
+      localStorage.setItem("access", access);
     } else {
       delete axios.defaults.headers.common["Authorization"];
-      localStorage.removeItem("token");
+      localStorage.removeItem("access");
     }
-  }, [token]);
+  }, [access]);
 
   // Memoized value of the authentication context
   const contextValue = useMemo(
     () => ({
-      token,
-      setToken,
+      access,
+      setAccess,
     }),
-    [token]
+    [access]
   );
 
   // Provide the authentication context to the children components

@@ -19,6 +19,7 @@ from .models import *
 from collections import defaultdict
 
 from .utils import (
+    create_travel,
     create_qincome,
     create_qcash_register_from_stquest,
     create_qcash_register_from_stexpense,
@@ -27,12 +28,35 @@ from .utils import (
 
 # GET
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def Users(request):
     if request.method == "GET":
-        users = User.objects.all()
-        serializer = UserSerializer(users, many=True)
+        if (request.user.is_superuser):
+            users = User.objects.all()
+            serializer = UserSerializer(users, many=True)
+
+            return Response(serializer.data)
+        else:
+            return Response(status=401)
+        
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def UserCurrent(request):
+    if request.method == "GET":
+        serializer = UserSerializer(request.user, many=False)
 
         return Response(serializer.data)
+    
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def UserById(request, id):
+    if request.method == "GET":
+        user = User.objects.get(id=id)
+        serializer = UserSerializer(user, many=False)
+
+        return Response(serializer.data)
+
 
 
 @api_view(["GET"])
@@ -208,9 +232,6 @@ def STQuests(request):
                 "photomagnets_quantity"
             ] += entry.photomagnets_quantity
             entry_dict[date_timestamp]["photomagnets_sum"] += entry.photomagnets_sum
-            entry_dict[date_timestamp][
-                "photomagnets_quantity"
-            ] += entry.photomagnets_quantity
             entry_dict[date_timestamp]["birthday_congr"] += entry.birthday_congr
             entry_dict[date_timestamp]["easy_work"] += entry.easy_work
             entry_dict[date_timestamp]["night_game"] += entry.night_game
@@ -344,84 +365,6 @@ def STBonusesPenalties(request):
 
         serializer = STBonusPenaltySerializer(entries, many=True)
         return Response(serializer.data)
-
-
-# @api_view(["GET"])
-# def STBonuses(request):
-#     if request.method == "GET":
-#         start_date_param = request.query_params.get("start_date", None)
-#         end_date_param = request.query_params.get("end_date", None)
-
-#         entries = STBonus.objects.all().order_by("date")
-
-#         if start_date_param and end_date_param:
-#             try:
-#                 start_date = datetime.strptime(start_date_param, "%d-%m-%Y").date()
-#                 end_date = datetime.strptime(end_date_param, "%d-%m-%Y").date()
-
-#                 entries = entries.filter(date__range=(start_date, end_date))
-#             except ValueError:
-#                 return Response(
-#                     {
-#                         "error": "Неверный формат даты. Пожалуйста, используйте ДД-ММ-ГГГГ."
-#                     },
-#                     status=400,
-#                 )
-
-#         serializer = STBonusSerializer(entries, many=True)
-#         return Response(serializer.data)
-
-
-# @api_view(["GET"])
-# def STBonuses(request):
-#     if request.method == "GET":
-#         start_date_param = request.query_params.get("start_date", None)
-#         end_date_param = request.query_params.get("end_date", None)
-
-#         entries = STBonus.objects.all().order_by("date")
-
-#         if start_date_param and end_date_param:
-#             try:
-#                 start_date = datetime.strptime(start_date_param, "%d-%m-%Y").date()
-#                 end_date = datetime.strptime(end_date_param, "%d-%m-%Y").date()
-
-#                 entries = entries.filter(date__range=(start_date, end_date))
-#             except ValueError:
-#                 return Response(
-#                     {
-#                         "error": "Неверный формат даты. Пожалуйста, используйте ДД-ММ-ГГГГ."
-#                     },
-#                     status=400,
-#                 )
-
-#         serializer = STBonusSerializer(entries, many=True)
-#         return Response(serializer.data)
-
-
-# @api_view(["GET"])
-# def STPenalties(request):
-#     if request.method == "GET":
-#         start_date_param = request.query_params.get("start_date", None)
-#         end_date_param = request.query_params.get("end_date", None)
-
-#         entries = STPenalty.objects.all().order_by("date")
-
-#         if start_date_param and end_date_param:
-#             try:
-#                 start_date = datetime.strptime(start_date_param, "%d-%m-%Y").date()
-#                 end_date = datetime.strptime(end_date_param, "%d-%m-%Y").date()
-
-#                 entries = entries.filter(date__range=(start_date, end_date))
-#             except ValueError:
-#                 return Response(
-#                     {
-#                         "error": "Неверный формат даты. Пожалуйста, используйте ДД-ММ-ГГГГ."
-#                     },
-#                     status=400,
-#                 )
-
-#         serializer = STPenaltySerializer(entries, many=True)
-#         return Response(serializer.data)
 
 
 @api_view(["GET"])
@@ -1147,11 +1090,11 @@ def VSTQuest(request, id):
             "animator": animator,
             "package": data["package"],
             "travel": data["travel"],
-            # "opl_nal": data["opl_nal"],
-            # "opl_beznal": data["opl_beznal"],
-            # "sdach_nal": data["sdach_nal"],
-            # "sdach_beznal": data["sdach_beznal"],
-            # "predoplata": data["predoplata"],
+            "opl_nal": data["opl_nal"],
+            "opl_beznal": data["opl_beznal"],
+            "sdach_nal": data["sdach_nal"],
+            "sdach_beznal": data["sdach_beznal"],
+            "predoplata": data["predoplata"],
         }
 
         entry = STQuest.objects.get(id=id)
@@ -1207,78 +1150,6 @@ def VSTBonusPenalty(request, id):
         entry.delete()
 
         return Response(status=200)
-
-
-# @api_view(["GET", "PUT", "DELETE"])
-# def VSTBonus(request, id):
-#     if request.method == "GET":
-#         bonus = STBonus.objects.get(id=id)
-#         serializer = STBonusSerializer(bonus, many=False)
-
-#         return Response(serializer.data)
-
-#     if request.method == "PUT":
-#         try:
-#             data = json.loads(request.body)
-
-#             formatted_date = datetime.fromisoformat(data["date"]).date()
-#             user = User.objects.get(id=data["user"])
-#             quests = Quest.objects.filter(name__in=data["quests"])
-
-#             entry = STBonus.objects.get(id=id)
-#             entry.date = formatted_date
-#             entry.user = user
-#             entry.amount = data["amount"]
-#             entry.name = data["name"]
-#             entry.save()
-#             entry.quests.set(quests)
-
-#             return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
-
-#         except Exception as e:
-#             return JsonResponse({"error": str(e)}, status=400)
-
-#     if request.method == "DELETE":
-#         entry = STBonus.objects.get(id=id)
-#         entry.delete()
-
-#         return Response(status=200)
-
-
-# @api_view(["GET", "PUT", "DELETE"])
-# def VSTPenalty(request, id):
-#     if request.method == "GET":
-#         entry = STPenalty.objects.get(id=id)
-#         serializer = STPenaltySerializer(entry, many=False)
-
-#         return Response(serializer.data)
-
-#     if request.method == "PUT":
-#         try:
-#             data = json.loads(request.body)
-
-#             formatted_date = datetime.fromisoformat(data["date"]).date()
-#             user = User.objects.get(id=data["user"])
-#             quests = Quest.objects.filter(name__in=data["quests"])
-
-#             entry = STPenalty.objects.get(id=id)
-#             entry.date = formatted_date
-#             entry.user = user
-#             entry.amount = data["amount"]
-#             entry.name = data["name"]
-#             entry.save()
-#             entry.quests.set(quests)
-
-#             return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
-
-#         except Exception as e:
-#             return JsonResponse({"error": str(e)}, status=400)
-
-#     if request.method == "DELETE":
-#         entry = STPenalty.objects.get(id=id)
-#         entry.delete()
-
-#         return Response(status=200)
 
 
 @api_view(["GET", "PUT", "DELETE"])
@@ -1509,7 +1380,8 @@ def CreateSTQuest(request):
         data = json.loads(request.body)
 
         formatted_date = datetime.fromisoformat(data["date"]).date()
-        formatted_time = datetime.fromisoformat(data["time"]).time()
+        formatted_time_without_3_hours = datetime.fromisoformat(data["time"]).time()
+        formatted_time = (datetime.combine(datetime.min, formatted_time_without_3_hours) + timedelta(hours=3)).time()
         quest = Quest.objects.get(id=data["quest"])
         administrator = User.objects.get(id=data["administrator"])
         animator = User.objects.get(id=data["animator"])
@@ -1572,84 +1444,201 @@ def CreateSTQuest(request):
                 entry_data[field] = data[field]
 
         entry = STQuest(**entry_data)
-        entry.save()
+        create_travel(entry)
+        # entry.save()        
+        # if actors:
+        #     entry.actors.set(actors)
 
-        stquests = STQuest.objects.all()
-        print(stquests)
+        # salaries_to_delete = QSalary.objects.filter(name='Проезд')
+        # salaries_to_delete.delete()
 
-        prev_time = None  # Initialize a variable to track the previous time
-        prev_address = None  # Initialize a variable to track the previous address
+        # entries = STQuest.objects.order_by('date', 'time')
+        # prev_entry = None
+        # first_entry = True
+        # prep_time = timedelta(minutes=15)
+        # cleaning_time = timedelta(minutes=30)  # Define cleaning time here
 
-        for idx, stq in enumerate(stquests):
-            prep = 30
-            clean = 15
-            quest_duration = int(stq.quest.duration_minute)
-            initial_datetime = datetime.combine(datetime.today(), stq.time)
-            new_datetime = (
-                initial_datetime
-                + timedelta(minutes=quest_duration)
-                + timedelta(minutes=clean)
-            )
-            new_time = new_datetime.time()
+        # for entry in entries:
+        #     entry_datetime = datetime.combine(entry.date, entry.time)
+        #     print('now entry', entry_datetime)            
+            
+        #     if prev_entry:
+        #         entry_datetime = entry_datetime - timedelta(minutes=30)
+        #         print('now entry after minus 30', entry_datetime)
+        #         prev_end_datetime = prev_entry_datetime + timedelta(minutes=prev_entry.quest.duration_minute) + prep_time
+        #         print('prev entry after duration + prep', prev_end_datetime)
+                
+        #         if entry_datetime - prev_end_datetime >= timedelta(hours=2):
+                    # travel_data_administrator = {
+                    #     "date": entry.date.strftime('%Y-%m-%d'),
+                    #     "amount": 25,
+                    #     "name": "Проезд",
+                    #     "user": entry.administrator,
+                    #     "stquest": entry,
+                    # }
+        #             travel_data_animator = {
+        #                 "date": entry.date.strftime('%Y-%m-%d'),
+        #                 "amount": 25,
+        #                 "name": "Проезд",
+        #                 "user": entry.animator,
+        #                 "stquest": entry,
+        #             }
+        #             for _ in range(2):
+        #                 QSalary(**travel_data_administrator).save()
+        #                 QSalary(**travel_data_animator).save()
+        #             for actor in entry.actors.all():
+        #                 travel_data_actor = {
+        #                     "date": entry.date.strftime('%Y-%m-%d'),
+        #                     "amount": 25,
+        #                     "name": "Проезд",
+        #                     "user": actor,
+        #                     "stquest": entry,
+        #                 }
+        #                 for _ in range(2):
+        #                     QSalary(**travel_data_actor).save()
+        #             print('More or equal than 2 hours between entries on', entry.date.strftime('%d.%m.%Y'))
+        #         elif entry.quest.address != prev_entry.quest.address:
+        #             travel_data_administrator = {
+        #                 "date": entry.date.strftime('%Y-%m-%d'),
+        #                 "amount": 25,
+        #                 "name": "Проезд",
+        #                 "user": entry.administrator,
+        #                 "stquest": entry,
+        #             }
+        #             travel_data_animator = {
+        #                 "date": entry.date.strftime('%Y-%m-%d'),
+        #                 "amount": 25,
+        #                 "name": "Проезд",
+        #                 "user": entry.animator,
+        #                 "stquest": entry,
+        #             }
+        #             QSalary(**travel_data_administrator).save()
+        #             QSalary(**travel_data_animator).save()
+        #             for actor in entry.actors.all():
+        #                 travel_data_actor = {
+        #                     "date": entry.date.strftime('%Y-%m-%d'),
+        #                     "amount": 25,
+        #                     "name": "Проезд",
+        #                     "user": actor,
+        #                     "stquest": entry,
+        #                 }
+        #                 QSalary(**travel_data_actor).save()
+        #             print('Address not equal on', entry.date.strftime('%d.%m.%Y'))
+            
+        #     entry_datetime = datetime.combine(entry.date, entry.time)
 
-            if prev_address is not None and stq.quest.address != prev_address:
-                print("travel (addresses not equal)")
+        #     if first_entry == True:
+        #         prev_entry_datetime = entry_datetime
+        #         first_entry = False
+        #     else:
+        #         prev_entry_datetime = entry_datetime
+        #         print('prev entry', prev_entry_datetime)
+        #     prev_entry = entry
+            
+        # date_counts = STQuest.objects.values('date').annotate(count=Count('date'))
+        # print(date_counts)
+        # for _ in range(len(date_counts)):
+        #     travel_data_administrator = {
+        #         "date": entry.date.strftime('%Y-%m-%d'),
+        #         "amount": 25,
+        #         "name": "Проезд",
+        #         "user": entry.administrator,
+        #         "stquest": entry,
+        #     }
+        #     travel_data_animator = {
+        #         "date": entry.date.strftime('%Y-%m-%d'),
+        #         "amount": 25,
+        #         "name": "Проезд",
+        #         "user": entry.animator,
+        #         "stquest": entry,
+        #     }
+        #     for _ in range(2):
+        #         QSalary(**travel_data_administrator).save()
+        #         QSalary(**travel_data_animator).save()
+        #     for actor in entry.actors.all():
+        #         travel_data_actor = {
+        #             "date": entry.date.strftime('%Y-%m-%d'),
+        #             "amount": 25,
+        #             "name": "Проезд",
+        #             "user": actor,
+        #             "stquest": entry,
+        #         }
+        #         for _ in range(2):
+        #             QSalary(**travel_data_actor).save()
 
-                for _ in range(3):
-                    travel_data_administrator = {
-                        "date": formatted_date,
-                        "amount": 25,
-                        "name": "Проезд",
-                        "user": administrator,
-                        "stquest": stq,
-                    }
-                    QSalary(**travel_data_administrator).save()
-                    travel_data_animator = {
-                        "date": formatted_date,
-                        "amount": 25,
-                        "name": "Проезд",
-                        "user": animator,
-                        "stquest": stq,
-                    }
-                    QSalary(**travel_data_animator).save()
+        # prev_time = None  # Initialize a variable to track the previous time
+        # prev_address = None  # Initialize a variable to track the previous address
 
-            prev_address = stq.quest.address  # Update the previous address
+        # for idx, stq in enumerate(stquests):
+        #     prep = 30
+        #     clean = 15
+        #     quest_duration = int(stq.quest.duration_minute)
+        #     initial_datetime = datetime.combine(datetime.today(), stq.time)
+        #     new_datetime = (
+        #         initial_datetime
+        #         + timedelta(minutes=quest_duration)
+        #         + timedelta(minutes=clean)
+        #     )
+        #     new_time = new_datetime.time()
 
-            if prev_time is not None:
-                # Calculate the time difference in hours only
-                time_difference_hours = (
-                    initial_datetime - prev_time
-                ).total_seconds() / 3600
+        #     if prev_address is not None and stq.quest.address != prev_address:
+        #         print("travel (addresses not equal)")
 
-                if (
-                    time_difference_hours >= 2
-                ):  # Check if the time difference is greater than or equal to 2 hours
-                    print("travel (time difference >= 2 hours)")
+        #         for _ in range(3):
+                    # travel_data_administrator = {
+                    #     "date": formatted_date,
+                    #     "amount": 25,
+                    #     "name": "Проезд",
+                    #     "user": administrator,
+                    #     "stquest": stq,
+                    # }
+                    # QSalary(**travel_data_administrator).save()
+        #             travel_data_animator = {
+        #                 "date": formatted_date,
+        #                 "amount": 25,
+        #                 "name": "Проезд",
+        #                 "user": animator,
+        #                 "stquest": stq,
+        #             }
+        #             QSalary(**travel_data_animator).save()
 
-                    for _ in range(4):
-                        travel_data_administrator = {
-                            "date": formatted_date,
-                            "amount": 25,
-                            "name": "Проезд",
-                            "user": administrator,
-                            "stquest": stq,
-                        }
-                        QSalary(**travel_data_administrator).save()
-                        travel_data_animator = {
-                            "date": formatted_date,
-                            "amount": 25,
-                            "name": "Проезд",
-                            "user": animator,
-                            "stquest": stq,
-                        }
-                        QSalary(**travel_data_animator).save()
+        #     prev_address = stq.quest.address  # Update the previous address
 
-            prev_time = new_datetime  # Update the previous time to the new time
+        #     if prev_time is not None:
+        #         # Calculate the time difference in hours only
+        #         time_difference_hours = (
+        #             initial_datetime - prev_time
+        #         ).total_seconds() / 3600
 
-            if idx % 2 == 0:
-                print(new_time.strftime("%H:%M:%S"))
-            else:
-                print("Odd Index:", stq.time)
+        #         if (
+        #             time_difference_hours >= 2
+        #         ):  # Check if the time difference is greater than or equal to 2 hours
+        #             print("travel (time difference >= 2 hours)")
+
+        #             for _ in range(4):
+        #                 travel_data_administrator = {
+        #                     "date": formatted_date,
+        #                     "amount": 25,
+        #                     "name": "Проезд",
+        #                     "user": administrator,
+        #                     "stquest": stq,
+        #                 }
+        #                 QSalary(**travel_data_administrator).save()
+        #                 travel_data_animator = {
+        #                     "date": formatted_date,
+        #                     "amount": 25,
+        #                     "name": "Проезд",
+        #                     "user": animator,
+        #                     "stquest": stq,
+        #                 }
+        #                 QSalary(**travel_data_animator).save()
+
+        #     prev_time = new_datetime  # Update the previous time to the new time
+
+        #     if idx % 2 == 0:
+        #         print(new_time.strftime("%H:%M:%S"))
+        #     else:
+        #         print("Odd Index:", stq.time)
 
         # prev_time = None  # Initialize a variable to track the previous time
 
@@ -1712,114 +1701,111 @@ def CreateSTQuest(request):
 
         #     # print(new_time.strftime("%H:%M:%S"))
 
-        if actors:
-            entry.actors.set(actors)
+        # create_qincome(data, entry.id)
+        # create_qcash_register_from_stquest(data, entry.id)
 
-        create_qincome(data, entry.id)
-        create_qcash_register_from_stquest(data, entry.id)
+        # stquest = STQuest.objects.get(id=entry.id)
 
-        stquest = STQuest.objects.get(id=entry.id)
+        # if data["video"]:
+        #     video_salary_data_administrator = {
+        #         "date": formatted_date,
+        #         "amount": 100,
+        #         "name": "Видео",
+        #         "user": administrator,
+        #         "stquest": stquest,
+        #     }
+        #     QSalary(**video_salary_data_administrator).save()
+        #     package_bonus_salary_data_administrator = {
+        #         "date": formatted_date,
+        #         "amount": 100,
+        #         "name": "Бонус за пакет",
+        #         "user": administrator,
+        #         "stquest": stquest,
+        #     }
+        #     QSalary(**package_bonus_salary_data_administrator).save()
+        #     photomagnet_promo_salary_data_administrator = {
+        #         "date": formatted_date,
+        #         "amount": 30,
+        #         "name": "Фотомагнит акц.",
+        #         "user": administrator,
+        #         "stquest": stquest,
+        #     }
+        #     QSalary(**photomagnet_promo_salary_data_administrator).save()
 
-        if data["video"]:
-            video_salary_data_administrator = {
-                "date": formatted_date,
-                "amount": 100,
-                "name": "Видео",
-                "user": administrator,
-                "stquest": stquest,
-            }
-            QSalary(**video_salary_data_administrator).save()
-            package_bonus_salary_data_administrator = {
-                "date": formatted_date,
-                "amount": 100,
-                "name": "Бонус за пакет",
-                "user": administrator,
-                "stquest": stquest,
-            }
-            QSalary(**package_bonus_salary_data_administrator).save()
-            photomagnet_promo_salary_data_administrator = {
-                "date": formatted_date,
-                "amount": 30,
-                "name": "Фотомагнит акц.",
-                "user": administrator,
-                "stquest": stquest,
-            }
-            QSalary(**photomagnet_promo_salary_data_administrator).save()
+        # if data["night_game"]:
+        #     night_game_salary_data_administrator = {
+        #         "date": formatted_date,
+        #         "amount": 100,
+        #         "name": "Ночная игра",
+        #         "user": administrator,
+        #         "stquest": stquest,
+        #     }
+        #     QSalary(**night_game_salary_data_administrator).save()
+        #     night_game_salary_data_animator = {
+        #         "date": formatted_date,
+        #         "amount": 100,
+        #         "name": "Ночная игра",
+        #         "user": animator,
+        #         "stquest": stquest,
+        #     }
+        #     QSalary(**night_game_salary_data_animator).save()
 
-        if data["night_game"]:
-            night_game_salary_data_administrator = {
-                "date": formatted_date,
-                "amount": 100,
-                "name": "Ночная игра",
-                "user": administrator,
-                "stquest": stquest,
-            }
-            QSalary(**night_game_salary_data_administrator).save()
-            night_game_salary_data_animator = {
-                "date": formatted_date,
-                "amount": 100,
-                "name": "Ночная игра",
-                "user": animator,
-                "stquest": stquest,
-            }
-            QSalary(**night_game_salary_data_animator).save()
+        # easy_work_salary_data_administrator = {
+        #     "date": formatted_date,
+        #     "amount": int(data["easy_work"]) / count_easy_work,
+        #     "name": "Простой",
+        #     "user": administrator,
+        #     "stquest": stquest,
+        # }
+        # QSalary(**easy_work_salary_data_administrator).save()
 
-        easy_work_salary_data_administrator = {
-            "date": formatted_date,
-            "amount": int(data["easy_work"]) / count_easy_work,
-            "name": "Простой",
-            "user": administrator,
-            "stquest": stquest,
-        }
-        QSalary(**easy_work_salary_data_administrator).save()
+        # easy_work_salary_data_animator = {
+        #     "date": formatted_date,
+        #     "amount": int(data["easy_work"]) / count_easy_work,
+        #     "name": "Простой",
+        #     "user": animator,
+        #     "stquest": stquest,
+        # }
+        # QSalary(**easy_work_salary_data_animator).save()
 
-        easy_work_salary_data_animator = {
-            "date": formatted_date,
-            "amount": int(data["easy_work"]) / count_easy_work,
-            "name": "Простой",
-            "user": animator,
-            "stquest": stquest,
-        }
-        QSalary(**easy_work_salary_data_animator).save()
+        # for actor in actors:
+        #     if data["night_game"]:
+        #         night_game_salary_data = {
+        #             "date": formatted_date,
+        #             "amount": 100,
+        #             "name": "Ночная игра",
+        #             "user": actor,
+        #             "stquest": stquest,
+        #         }
+        #         QSalary(**night_game_salary_data).save()
 
-        for actor in actors:
-            if data["night_game"]:
-                night_game_salary_data = {
-                    "date": formatted_date,
-                    "amount": 100,
-                    "name": "Ночная игра",
-                    "user": actor,
-                    "stquest": stquest,
-                }
-                QSalary(**night_game_salary_data).save()
+        #     easy_work_salary_data = {
+        #         "date": formatted_date,
+        #         "amount": int(data["easy_work"]) / count_easy_work,
+        #         "name": "Простой",
+        #         "user": actor,
+        #         "stquest": stquest,
+        #     }
+        #     QSalary(**easy_work_salary_data).save()
 
-            easy_work_salary_data = {
-                "date": formatted_date,
-                "amount": int(data["easy_work"]) / count_easy_work,
-                "name": "Простой",
-                "user": actor,
-                "stquest": stquest,
-            }
-            QSalary(**easy_work_salary_data).save()
+        #     game_salary_data = {
+        #         "date": formatted_date,
+        #         "amount": quest.actor_rate,
+        #         "name": "Игра",
+        #         "user": actor,
+        #         "stquest": stquest,
+        #     }
+        #     QSalary(**game_salary_data).save()
 
-            game_salary_data = {
-                "date": formatted_date,
-                "amount": quest.actor_rate,
-                "name": "Игра",
-                "user": actor,
-                "stquest": stquest,
-            }
-            QSalary(**game_salary_data).save()
-
-            if data["video"]:
-                video_salary_data = {
-                    "date": formatted_date,
-                    "amount": 100,
-                    "name": "Видео",
-                    "user": actor,
-                    "stquest": stquest,
-                }
-                QSalary(**video_salary_data).save()
+        #     if data["video"]:
+        #         video_salary_data = {
+        #             "date": formatted_date,
+        #             "amount": 100,
+        #             "name": "Видео",
+        #             "user": actor,
+        #             "stquest": stquest,
+        #         }
+        #         QSalary(**video_salary_data).save()
 
         return JsonResponse({"message": "Запись успешно создана"}, status=201)
 
@@ -1859,66 +1845,6 @@ def CreateSTBonusPenalty(request):
 
     else:
         return JsonResponse({"error": "Разрешены только POST-запросы"}, status=405)
-
-
-# @api_view(["POST"])
-# def CreateSTBonus(request):
-#     if request.method == "POST":
-#         try:
-#             data = json.loads(request.body)
-
-#             formatted_date = datetime.fromisoformat(data["date"]).date()
-#             user = User.objects.get(id=data["user"])
-#             quests = Quest.objects.filter(id__in=data["quests"])
-
-#             entry_data = {
-#                 "date": formatted_date,
-#                 "amount": data["amount"],
-#                 "name": data["name"],
-#                 "user": user,
-#             }
-
-#             entry = STBonus(**entry_data)
-#             entry.save()
-#             entry.quests.set(quests)
-
-#             return JsonResponse({"message": "Запись успешно создана"}, status=201)
-
-#         except Exception as e:
-#             return JsonResponse({"error": str(e)}, status=400)
-
-#     else:
-#         return JsonResponse({"error": "Разрешены только POST-запросы"}, status=405)
-
-
-# @api_view(["POST"])
-# def CreateSTPenalty(request):
-#     if request.method == "POST":
-#         try:
-#             data = json.loads(request.body)
-
-#             formatted_date = datetime.fromisoformat(data["date"]).date()
-#             user = User.objects.get(id=data["user"])
-#             quests = Quest.objects.filter(id__in=data["quests"])
-
-#             entry_data = {
-#                 "date": formatted_date,
-#                 "amount": data["amount"],
-#                 "name": data["name"],
-#                 "user": user,
-#             }
-
-#             entry = STPenalty(**entry_data)
-#             entry.save()
-#             entry.quests.set(quests)
-
-#             return JsonResponse({"message": "Запись успешно создана"}, status=201)
-
-#         except Exception as e:
-#             return JsonResponse({"error": str(e)}, status=400)
-
-#     else:
-#         return JsonResponse({"error": "Разрешены только POST-запросы"}, status=405)
 
 
 @api_view(["POST"])

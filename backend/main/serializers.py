@@ -23,6 +23,7 @@ class UserSerializer(ModelSerializer):
             "last_name",
             "first_name",
             "quest",
+            "is_superuser",
         ]
 
         depth = 1

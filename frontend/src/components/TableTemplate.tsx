@@ -1,7 +1,5 @@
 import React, { FC, useState, useEffect, useRef } from "react";
-
-// react-router-dom
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
 // antd
 import {
@@ -26,7 +24,6 @@ import {
   message,
   FloatButton,
 } from "antd";
-
 // antd | type
 import type { MenuProps, InputRef } from "antd";
 import type { ColumnType, ColumnsType } from "antd/es/table";
@@ -35,7 +32,6 @@ import type {
   FilterValue,
   SorterResult,
 } from "antd/es/table/interface";
-
 // antd | icons
 import {
   HomeOutlined,
@@ -60,6 +56,12 @@ import Highlighter from "react-highlight-words";
 import dayjs from "dayjs";
 
 import customParseFormat from "dayjs/plugin/customParseFormat";
+
+// utils
+import { localStorageRemoveItem } from "../assets/utilities/jwt";
+
+// provider
+import { useAuth } from "../provider/authProdiver";
 
 // components
 import CSider from "../components/CSider";
@@ -104,6 +106,7 @@ const App: FC = ({
   } = theme.useToken();
 
   const { name } = useParams();
+  const navigate = useNavigate();
 
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -356,7 +359,7 @@ const App: FC = ({
     };
   });
 
-  console.log(newTableHead)
+  console.log(newTableHead);
   if (tableColumnWithHead) {
     tableColumns = [
       ...initialUnpackedTableColumns,
@@ -437,8 +440,12 @@ const App: FC = ({
     localStorage.setItem("drawerIsOpen", "false");
   };
 
+  const { setAccess } = useAuth();
+
   const logout = async () => {
-    console.log("logout");
+    setAccess();
+    localStorageRemoveItem(['refresh', 'access'])
+    navigate("/", { replace: true });
   };
 
   const formatDate = (dateString) => {

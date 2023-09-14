@@ -122,6 +122,8 @@ class STExpense(models.Model):
     amount = models.IntegerField()
     name = models.CharField(max_length=255)
 
+    paid_tax = models.ManyToManyField(User, blank=True, related_name="paid_tax_users")
+
     sub_category = models.ForeignKey(
         STExpenseSubCategory, on_delete=models.SET_NULL, blank=True, null=True
     )
@@ -221,33 +223,6 @@ class STBonusPenalty(models.Model):
 
     def __str__(self):
         return str(self.date)
-    
-# class STBonus(models.Model):
-#     date = models.DateField()
-
-#     amount = models.IntegerField()
-#     name = models.CharField(max_length=255)
-
-#     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
-
-#     quests = models.ManyToManyField(Quest, blank=True)
-
-#     def __str__(self):
-#         return str(self.date)
-
-
-# class STPenalty(models.Model):
-#     date = models.DateField()
-
-#     amount = models.IntegerField()
-#     name = models.CharField(max_length=255)
-
-#     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
-
-#     quests = models.ManyToManyField(Quest, blank=True)
-
-#     def __str__(self):
-#         return str(self.date)
 
 
 class QIncome(models.Model):

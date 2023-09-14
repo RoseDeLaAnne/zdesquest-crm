@@ -17,9 +17,7 @@ import {
 } from "@ant-design/icons";
 
 // api
-import {
-  getQuests
-} from "../api/APIUtils";
+import { getQuests, getCurrentUser } from "../api/APIUtils";
 
 // interface
 import { IFCSider } from "../assets/utilities/interface";
@@ -36,14 +34,20 @@ const App: FC<IFCSider> = ({
   defaultOpenKeys,
   defaultSelectedKeys,
 }) => {
-  const [questsData, setQuestsData] = useState([])
-
+  const [user, setUser] = useState([]);
+  const [questsData, setQuestsData] = useState([]);
+  const fetchUser = async () => {
+    const response = await getCurrentUser();
+    if (response.status === 200) {
+      setUser(response.data);
+    }
+  };
   const fetchQuests = async () => {
     const response = await getQuests();
     if (response.status === 200) {
-      setQuestsData(response.data)
+      setQuestsData(response.data);
     }
-  }
+  };
 
   function convertQuestToMenuItem(quest) {
     return getItem(
@@ -107,61 +111,144 @@ const App: FC<IFCSider> = ({
     } as MenuItem;
   }
 
-  const menuItems: MenuItem[] = [
-    getItem("сотрудники", "users", "/users", <UserOutlined />),
-    getItem(
-      "исх. таблицы",
-      "sourceTables",
-      "/source-tables",
-      <TableOutlined />,
-      [
-        getItem(
-          "квесты",
-          "sourceTablesQuests",
-          "/source-tables/quests",
-          <QuestionOutlined />
-        ),
-        getItem(
-          "расходы",
-          "sourceTablesExpenses",
-          "/source-tables/expenses",
-          <FallOutlined />
-        ),
-        getItem(
-          "бонусы/штрафы",
-          "sourceTablesBonusesPenalties",
-          "/source-tables/bonuses-penalties",
-          <DeploymentUnitOutlined />
-        ),
-      ]
-    ),
-    getItem(
-      "доп. таблицы",
-      "additionalTables",
-      "/additional-tables",
-      <TableOutlined />,
-      [
-        getItem(
-          "категории расходов",
-          "additionalTablesSTExpenseCategories",
-          "/additional-tables/stexpense-categories",
-          <QuestionOutlined />
-        ),
-        getItem(
-          "подкатегории расходов",
-          "additionalTablesSTExpenseSubCategories",
-          "/additional-tables/stexpense-subcategories",
-          <QuestionOutlined />
-        ),
-      ]
-    ),
-    getItem("квесты", "quests", "/quests", <QuestionOutlined />, [
-      ...questsData.map(convertQuestToMenuItem),
-    ]),    
-    getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
-  ];
+  // const menuItems: MenuItem[] = [
+  //   getItem("сотрудники", "users", "/users", <UserOutlined />),
+  //   getItem(
+  //     "исх. таблицы",
+  //     "sourceTables",
+  //     "/source-tables",
+  //     <TableOutlined />,
+  //     [
+  //       getItem(
+  //         "квесты",
+  //         "sourceTablesQuests",
+  //         "/source-tables/quests",
+  //         <QuestionOutlined />
+  //       ),
+  //       getItem(
+  //         "расходы",
+  //         "sourceTablesExpenses",
+  //         "/source-tables/expenses",
+  //         <FallOutlined />
+  //       ),
+  //       getItem(
+  //         "бонусы/штрафы",
+  //         "sourceTablesBonusesPenalties",
+  //         "/source-tables/bonuses-penalties",
+  //         <DeploymentUnitOutlined />
+  //       ),
+  //     ]
+  //   ),
+  //   getItem(
+  //     "доп. таблицы",
+  //     "additionalTables",
+  //     "/additional-tables",
+  //     <TableOutlined />,
+  //     [
+  //       getItem(
+  //         "категории расходов",
+  //         "additionalTablesSTExpenseCategories",
+  //         "/additional-tables/stexpense-categories",
+  //         <QuestionOutlined />
+  //       ),
+  //       getItem(
+  //         "подкатегории расходов",
+  //         "additionalTablesSTExpenseSubCategories",
+  //         "/additional-tables/stexpense-subcategories",
+  //         <QuestionOutlined />
+  //       ),
+  //     ]
+  //   ),
+  //   getItem("квесты", "quests", "/quests", <QuestionOutlined />, [
+  //     ...questsData.map(convertQuestToMenuItem),
+  //   ]),
+  //   getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
+  // ];
+
+  let menuItems = [];
+
+  if (user.is_superuser) {
+    menuItems = [
+      getItem("сотрудники", "users", "/users", <UserOutlined />),
+      getItem(
+        "исх. таблицы",
+        "sourceTables",
+        "/source-tables",
+        <TableOutlined />,
+        [
+          getItem(
+            "квесты",
+            "sourceTablesQuests",
+            "/source-tables/quests",
+            <QuestionOutlined />
+          ),
+          getItem(
+            "расходы",
+            "sourceTablesExpenses",
+            "/source-tables/expenses",
+            <FallOutlined />
+          ),
+          getItem(
+            "бонусы/штрафы",
+            "sourceTablesBonusesPenalties",
+            "/source-tables/bonuses-penalties",
+            <DeploymentUnitOutlined />
+          ),
+        ]
+      ),
+      getItem(
+        "доп. таблицы",
+        "additionalTables",
+        "/additional-tables",
+        <TableOutlined />,
+        [
+          getItem(
+            "категории расходов",
+            "additionalTablesSTExpenseCategories",
+            "/additional-tables/stexpense-categories",
+            <QuestionOutlined />
+          ),
+          getItem(
+            "подкатегории расходов",
+            "additionalTablesSTExpenseSubCategories",
+            "/additional-tables/stexpense-subcategories",
+            <QuestionOutlined />
+          ),
+        ]
+      ),
+      getItem("квесты", "quests", "/quests", <QuestionOutlined />, [
+        ...questsData.map(convertQuestToMenuItem),
+      ]),
+      getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
+    ];
+  } else {
+    menuItems = [
+      getItem(
+        "формы",
+        "forms",
+        "/forms",
+        <TableOutlined />,
+        [
+          getItem(
+            "квесты",
+            "formsQuest",
+            "/forms/quest",
+            <QuestionOutlined />
+          ),
+          getItem(
+            "расходы",
+            "formsExpense",
+            "/forms/expense",
+            <QuestionOutlined />
+          ),
+        ]
+      ),
+      getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
+    ];
+  }
 
   useEffect(() => {
+    fetchUser();
     fetchQuests();
   }, []);
 

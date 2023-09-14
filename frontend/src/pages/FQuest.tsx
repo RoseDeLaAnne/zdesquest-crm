@@ -461,7 +461,7 @@ const App: FC = () => {
     },
     {
       gutter: 16,
-      items: [        
+      items: [
         {
           span: 12,
           name: "actors",
@@ -641,8 +641,8 @@ const App: FC = () => {
 
   return (
     <CreateTemplate
-      defaultOpenKeys={[]}
-      defaultSelectedKeys={[]}
+      defaultOpenKeys={["forms"]}
+      defaultSelectedKeys={["formsQuest"]}
       breadcrumbItems={sourceBreadcrumbItems}
       title={"формы | квест"}
       createFunction={postSTQuest}

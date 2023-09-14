@@ -294,8 +294,8 @@ const App: FC = () => {
 
   return (
     <CreateTemplate
-      defaultOpenKeys={[]}
-      defaultSelectedKeys={[]}
+      defaultOpenKeys={["forms"]}
+      defaultSelectedKeys={["formsExpense"]}
       breadcrumbItems={sourceBreadcrumbItems}
       title={"формы | расход"}
       createFunction={postSTExpense}

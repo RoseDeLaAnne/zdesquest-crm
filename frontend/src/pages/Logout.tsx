@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../provider/authProvider";
+import { useAuth } from "../provider/authProdiver";
 
 const Logout = () => {
-  const { setToken } = useAuth();
+  const { setAccess } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    setToken();
+    setAccess();
     navigate("/", { replace: true });
   };
 

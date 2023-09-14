@@ -12,7 +12,6 @@ class UserAdmin(UserAdmin):
         'username',
         'last_name',
         'first_name',
-        'middle_name',
     )
 
     ordering = (
@@ -23,7 +22,6 @@ class UserAdmin(UserAdmin):
         'username',
         'last_name',
         'first_name',
-        'middle_name',
         'is_active',
         'is_staff',
         'is_superuser',
@@ -46,7 +44,6 @@ class UserAdmin(UserAdmin):
                 'username',
                 'last_name',
                 'first_name',
-                'middle_name',
             ),
         }),
         (_('Права доступа'), {
@@ -56,15 +53,15 @@ class UserAdmin(UserAdmin):
                 'is_superuser',
             ),
         }),
-        (_('Роли пользователя'), {
-            'fields': (
-                'roles',
-            ),
-        }),
         (_('Важные даты'), {
             'fields': (
                 'last_login',
                 'date_joined',
+            ),
+        }),
+        (None, {
+            'fields': (
+                'quest',
             ),
         }),
     )
@@ -81,7 +78,6 @@ class UserAdmin(UserAdmin):
                 'username',
                 'last_name',
                 'first_name',
-                'middle_name',
             ),
         }),
         (_('Права доступа'), {
@@ -91,14 +87,14 @@ class UserAdmin(UserAdmin):
                 'is_superuser',
             ),
         }),
-        (_('Роли пользователя'), {
-            'fields': (
-                'roles',
-            ),
-        }),
         (_('Важные даты'), {
             'fields': (
                 'date_joined',
+            ),
+        }),
+        (None, {
+            'fields': (
+                'quest',
             ),
         }),
     )
@@ -106,7 +102,7 @@ class UserAdmin(UserAdmin):
 
 admin.site.unregister(Group)
 
-admin.site.register(User)
+admin.site.register(User, UserAdmin)
 admin.site.register(Role)
 
 admin.site.register(Quest)
