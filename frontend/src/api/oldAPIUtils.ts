@@ -3,7 +3,7 @@ import axios from "axios";
 // GET
 export const getUsers = async () => {
   try {
-    const url = `http://crm.zdesquest.ru/api/users/`;
+    const url = `http://127.0.0.1:8000/api/users/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -13,9 +13,9 @@ export const getUsers = async () => {
 
 export const getCurrentUser = async () => {
   try {
-    const url = `http://crm.zdesquest.ru/api/user/current/`;
+    const url = `http://127.0.0.1:8000/api/user/current/`;
     const response = await axios.get(url);
-    return response;
+    return response;http://crm.zdesquest.ru/api/users/
   } catch (error) {
     throw error;
   }
@@ -23,7 +23,7 @@ export const getCurrentUser = async () => {
 
 export const getUsersByRole = async (roleName: string) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/users/${roleName}/`;
+    const url = `http://127.0.0.1:8000/api/users/${roleName}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -33,7 +33,7 @@ export const getUsersByRole = async (roleName: string) => {
 
 export const getRoles = async () => {
   try {
-    const url = `http://crm.zdesquest.ru/api/roles/`;
+    const url = `http://127.0.0.1:8000/api/roles/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -43,7 +43,7 @@ export const getRoles = async () => {
 
 export const getQuests = async () => {
   try {
-    const url = `http://crm.zdesquest.ru/api/quests/`;
+    const url = `http://127.0.0.1:8000/api/quests/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -55,9 +55,9 @@ export const getQuests = async () => {
 //   try {
 //     let url;
 //     if (startDate !== null && endDate !== null) {
-//       url = `http://crm.zdesquest.ru/api/transactions/?start_date=${startDate}&end_date=${endDate}`;
+//       url = `http://127.0.0.1:8000/api/transactions/?start_date=${startDate}&end_date=${endDate}`;
 //     } else {
-//       url = `http://crm.zdesquest.ru/api/transactions/`;
+//       url = `http://127.0.0.1:8000/api/transactions/`;
 //     }
 //     const response = await axios.get(url);
 //     return response;
@@ -70,9 +70,9 @@ export const getSTQuests = async (startDate: string, endDate: string) => {
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `http://crm.zdesquest.ru/api/stquests/?start_date=${startDate}&end_date=${endDate}`;
+      url = `http://127.0.0.1:8000/api/stquests/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `http://crm.zdesquest.ru/api/stquests/`;
+      url = `http://127.0.0.1:8000/api/stquests/`;
     }
     const response = await axios.get(url);
     return response;
@@ -85,9 +85,9 @@ export const getSTExpenses = async (startDate: string, endDate: string) => {
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `http://crm.zdesquest.ru/api/stexpenses/?start_date=${startDate}&end_date=${endDate}`;
+      url = `http://127.0.0.1:8000/api/stexpenses/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `http://crm.zdesquest.ru/api/stexpenses/`;
+      url = `http://127.0.0.1:8000/api/stexpenses/`;
     }
     const response = await axios.get(url);
     return response;
@@ -100,9 +100,9 @@ export const getSTBonusesPenalties = async (startDate: string, endDate: string) 
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `http://crm.zdesquest.ru/api/stbonuses-penalties/?start_date=${startDate}&end_date=${endDate}`;
+      url = `http://127.0.0.1:8000/api/stbonuses-penalties/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `http://crm.zdesquest.ru/api/stbonuses-penalties/`;
+      url = `http://127.0.0.1:8000/api/stbonuses-penalties/`;
     }
     const response = await axios.get(url);
     return response;
@@ -115,9 +115,9 @@ export const getSTBonusesPenalties = async (startDate: string, endDate: string) 
 //   try {
 //     let url;
 //     if (startDate !== null && endDate !== null) {
-//       url = `http://crm.zdesquest.ru/api/stbonuses/?start_date=${startDate}&end_date=${endDate}`;
+//       url = `http://127.0.0.1:8000/api/stbonuses/?start_date=${startDate}&end_date=${endDate}`;
 //     } else {
-//       url = `http://crm.zdesquest.ru/api/stbonuses/`;
+//       url = `http://127.0.0.1:8000/api/stbonuses/`;
 //     }
 //     const response = await axios.get(url);
 //     return response;
@@ -130,9 +130,9 @@ export const getSTBonusesPenalties = async (startDate: string, endDate: string) 
 //   try {
 //     let url;
 //     if (startDate !== null && endDate !== null) {
-//       url = `http://crm.zdesquest.ru/api/stpenalties/?start_date=${startDate}&end_date=${endDate}`;
+//       url = `http://127.0.0.1:8000/api/stpenalties/?start_date=${startDate}&end_date=${endDate}`;
 //     } else {
-//       url = `http://crm.zdesquest.ru/api/stpenalties/`;
+//       url = `http://127.0.0.1:8000/api/stpenalties/`;
 //     }
 //     const response = await axios.get(url);
 //     return response;
@@ -143,7 +143,7 @@ export const getSTBonusesPenalties = async (startDate: string, endDate: string) 
 
 export const getSTExpenseCategories = async () => {
   try {
-    const url = `http://crm.zdesquest.ru/api/stexpense-categories/`;
+    const url = `http://127.0.0.1:8000/api/stexpense-categories/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -153,7 +153,7 @@ export const getSTExpenseCategories = async () => {
 
 export const getSTExpenseSubCategories = async () => {
   try {
-    const url = `http://crm.zdesquest.ru/api/stexpense-sub-categories/`;
+    const url = `http://127.0.0.1:8000/api/stexpense-sub-categories/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -169,9 +169,9 @@ export const getQuestIncomes = async (
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `http://crm.zdesquest.ru/api/quest/${name}/incomes/?start_date=${startDate}&end_date=${endDate}`;
+      url = `http://127.0.0.1:8000/api/quest/${name}/incomes/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `http://crm.zdesquest.ru/api/quest/${name}/incomes/`;
+      url = `http://127.0.0.1:8000/api/quest/${name}/incomes/`;
     }
     const response = await axios.get(url);
     return response;
@@ -188,9 +188,9 @@ export const getQuestExpenses = async (
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `http://crm.zdesquest.ru/api/quest/${name}/expenses/?start_date=${startDate}&end_date=${endDate}`;
+      url = `http://127.0.0.1:8000/api/quest/${name}/expenses/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `http://crm.zdesquest.ru/api/quest/${name}/expenses/`;
+      url = `http://127.0.0.1:8000/api/quest/${name}/expenses/`;
     }
     const response = await axios.get(url);
     return response;
@@ -203,9 +203,9 @@ export const getSalaries = async (startDate: string, endDate: string) => {
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `http://crm.zdesquest.ru/api/salaries/?start_date=${startDate}&end_date=${endDate}`;
+      url = `http://127.0.0.1:8000/api/salaries/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `http://crm.zdesquest.ru/api/salaries/`;
+      url = `http://127.0.0.1:8000/api/salaries/`;
     }
     const response = await axios.get(url);
     return response;
@@ -222,9 +222,9 @@ export const getQuestCashRegister = async (
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `http://crm.zdesquest.ru/api/quest/${name}/cash-register/?start_date=${startDate}&end_date=${endDate}`;
+      url = `http://127.0.0.1:8000/api/quest/${name}/cash-register/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `http://crm.zdesquest.ru/api/quest/${name}/cash-register/`;
+      url = `http://127.0.0.1:8000/api/quest/${name}/cash-register/`;
     }
     const response = await axios.get(url);
     return response;
@@ -237,7 +237,7 @@ export const toggleQuestCashRegister = async (
   id: number
 ) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/toggle/cash-register/${id}/`;
+    const url = `http://127.0.0.1:8000/api/toggle/cash-register/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -253,9 +253,9 @@ export const getWorkCardExpenses = async (
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `http://crm.zdesquest.ru/api/quest/${name}/work-card-expenses/?start_date=${startDate}&end_date=${endDate}`;
+      url = `http://127.0.0.1:8000/api/quest/${name}/work-card-expenses/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `http://crm.zdesquest.ru/api/quest/${name}/work-card-expenses/`;
+      url = `http://127.0.0.1:8000/api/quest/${name}/work-card-expenses/`;
     }
     const response = await axios.get(url);
     return response;
@@ -272,9 +272,9 @@ export const getExpensesFromTheir = async (
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `http://crm.zdesquest.ru/api/quest/${name}/expenses-from-their/?start_date=${startDate}&end_date=${endDate}`;
+      url = `http://127.0.0.1:8000/api/quest/${name}/expenses-from-their/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `http://crm.zdesquest.ru/api/quest/${name}/expenses-from-their/`;
+      url = `http://127.0.0.1:8000/api/quest/${name}/expenses-from-their/`;
     }
     const response = await axios.get(url);
     return response;
@@ -287,7 +287,7 @@ export const toggleExpensesFromTheir = async (
   id: number
 ) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/toggle/expenses-from-their/${id}/`;
+    const url = `http://127.0.0.1:8000/api/toggle/expenses-from-their/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -298,7 +298,7 @@ export const toggleExpensesFromTheir = async (
 // GET, PUT, DELETE
 export const getUser = async (id: number) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/user/${id}/`;
+    const url = `http://127.0.0.1:8000/api/user/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -308,7 +308,7 @@ export const getUser = async (id: number) => {
 
 export const putUser = async (id: number, value: object) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/user/${id}/`;
+    const url = `http://127.0.0.1:8000/api/user/${id}/`;
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
@@ -318,7 +318,7 @@ export const putUser = async (id: number, value: object) => {
 
 export const deleteUser = async (id: number) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/user/${id}/`;
+    const url = `http://127.0.0.1:8000/api/user/${id}/`;
     const response = await axios.delete(url);
     return response;
   } catch (error) {
@@ -328,7 +328,7 @@ export const deleteUser = async (id: number) => {
 
 export const getQuest = async (id: number) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/quest/${id}/`;
+    const url = `http://127.0.0.1:8000/api/quest/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -338,7 +338,7 @@ export const getQuest = async (id: number) => {
 
 export const putQuest = async (id: number, value: object) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/quest/${id}/`;
+    const url = `http://127.0.0.1:8000/api/quest/${id}/`;
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
@@ -348,7 +348,7 @@ export const putQuest = async (id: number, value: object) => {
 
 export const deleteQuest = async (id: number) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/quest/${id}/`;
+    const url = `http://127.0.0.1:8000/api/quest/${id}/`;
     const response = await axios.delete(url);
     return response;
   } catch (error) {
@@ -358,7 +358,7 @@ export const deleteQuest = async (id: number) => {
 
 export const getSTQuest = async (stqid: number) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/stquest/${stqid}/`;
+    const url = `http://127.0.0.1:8000/api/stquest/${stqid}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -368,7 +368,7 @@ export const getSTQuest = async (stqid: number) => {
 
 export const putSTQuest = async (id: number, value: object) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/stquest/${id}/`;
+    const url = `http://127.0.0.1:8000/api/stquest/${id}/`;
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
@@ -378,7 +378,7 @@ export const putSTQuest = async (id: number, value: object) => {
 
 export const deleteSTQuest = async (id: number) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/stquest/${id}/`;
+    const url = `http://127.0.0.1:8000/api/stquest/${id}/`;
     const response = await axios.delete(url);
     return response;
   } catch (error) {
@@ -388,7 +388,7 @@ export const deleteSTQuest = async (id: number) => {
 
 export const getSTExpense = async (id: number) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/stexpense/${id}/`;
+    const url = `http://127.0.0.1:8000/api/stexpense/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -398,7 +398,7 @@ export const getSTExpense = async (id: number) => {
 
 export const putSTExpense = async (id: number, value: object) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/stexpense/${id}/`;
+    const url = `http://127.0.0.1:8000/api/stexpense/${id}/`;
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
@@ -408,7 +408,7 @@ export const putSTExpense = async (id: number, value: object) => {
 
 export const deleteSTExpense = async (id: number) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/stexpense/${id}/`;
+    const url = `http://127.0.0.1:8000/api/stexpense/${id}/`;
     const response = await axios.delete(url);
     return response;
   } catch (error) {
@@ -418,7 +418,7 @@ export const deleteSTExpense = async (id: number) => {
 
 export const getSTBonusPenalty = async (id: number) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/stbonus-penalty/${id}/`;
+    const url = `http://127.0.0.1:8000/api/stbonus-penalty/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -428,7 +428,7 @@ export const getSTBonusPenalty = async (id: number) => {
 
 export const putSTBonusPenalty = async (id: number, value: object) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/stbonus-penalty/${id}/`;
+    const url = `http://127.0.0.1:8000/api/stbonus-penalty/${id}/`;
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
@@ -438,7 +438,7 @@ export const putSTBonusPenalty = async (id: number, value: object) => {
 
 export const deleteSTBonusPenalty = async (id: number) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/stbonus-penalty/${id}/`;
+    const url = `http://127.0.0.1:8000/api/stbonus-penalty/${id}/`;
     const response = await axios.delete(url);
     return response;
   } catch (error) {
@@ -448,7 +448,7 @@ export const deleteSTBonusPenalty = async (id: number) => {
 
 // export const getSTBonus = async (id: number) => {
 //   try {
-//     const url = `http://crm.zdesquest.ru/api/stbonus/${id}/`;
+//     const url = `http://127.0.0.1:8000/api/stbonus/${id}/`;
 //     const response = await axios.get(url);
 //     return response;
 //   } catch (error) {
@@ -458,7 +458,7 @@ export const deleteSTBonusPenalty = async (id: number) => {
 
 // export const putSTBonus = async (id: number, value: object) => {
 //   try {
-//     const url = `http://crm.zdesquest.ru/api/stbonus/${id}/`;
+//     const url = `http://127.0.0.1:8000/api/stbonus/${id}/`;
 //     const response = await axios.put(url, value);
 //     return response;
 //   } catch (error) {
@@ -468,7 +468,7 @@ export const deleteSTBonusPenalty = async (id: number) => {
 
 // export const deleteSTBonus = async (id: number) => {
 //   try {
-//     const url = `http://crm.zdesquest.ru/api/stbonus/${id}/`;
+//     const url = `http://127.0.0.1:8000/api/stbonus/${id}/`;
 //     const response = await axios.delete(url);
 //     return response;
 //   } catch (error) {
@@ -478,7 +478,7 @@ export const deleteSTBonusPenalty = async (id: number) => {
 
 // export const getSTPenalty = async (id: number) => {
 //   try {
-//     const url = `http://crm.zdesquest.ru/api/stpenalty/${id}/`;
+//     const url = `http://127.0.0.1:8000/api/stpenalty/${id}/`;
 //     const response = await axios.get(url);
 //     return response;
 //   } catch (error) {
@@ -488,7 +488,7 @@ export const deleteSTBonusPenalty = async (id: number) => {
 
 // export const putSTPenalty = async (id: number, value: object) => {
 //   try {
-//     const url = `http://crm.zdesquest.ru/api/stpenalty/${id}/`;
+//     const url = `http://127.0.0.1:8000/api/stpenalty/${id}/`;
 //     const response = await axios.put(url, value);
 //     return response;
 //   } catch (error) {
@@ -498,7 +498,7 @@ export const deleteSTBonusPenalty = async (id: number) => {
 
 // export const deleteSTPenalty = async (id: number) => {
 //   try {
-//     const url = `http://crm.zdesquest.ru/api/stpenalty/${id}/`;
+//     const url = `http://127.0.0.1:8000/api/stpenalty/${id}/`;
 //     const response = await axios.delete(url);
 //     return response;
 //   } catch (error) {
@@ -508,7 +508,7 @@ export const deleteSTBonusPenalty = async (id: number) => {
 
 export const getSTExpenseCategory = async (id: number) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/stexpense-category/${id}/`;
+    const url = `http://127.0.0.1:8000/api/stexpense-category/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -518,7 +518,7 @@ export const getSTExpenseCategory = async (id: number) => {
 
 export const putSTExpenseCategory = async (id: number, value: object) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/stexpense-category/${id}/`;
+    const url = `http://127.0.0.1:8000/api/stexpense-category/${id}/`;
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
@@ -528,7 +528,7 @@ export const putSTExpenseCategory = async (id: number, value: object) => {
 
 export const deleteSTExpenseCategory = async (id: number) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/stexpense-category/${id}/`;
+    const url = `http://127.0.0.1:8000/api/stexpense-category/${id}/`;
     const response = await axios.delete(url);
     return response;
   } catch (error) {
@@ -538,7 +538,7 @@ export const deleteSTExpenseCategory = async (id: number) => {
 
 export const getSTExpenseSubCategory = async (id: number) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/stexpense-subcategory/${id}/`;
+    const url = `http://127.0.0.1:8000/api/stexpense-subcategory/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -548,7 +548,7 @@ export const getSTExpenseSubCategory = async (id: number) => {
 
 export const putSTExpenseSubCategory = async (id: number, value: object) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/stexpense-subcategory/${id}/`;
+    const url = `http://127.0.0.1:8000/api/stexpense-subcategory/${id}/`;
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
@@ -558,7 +558,7 @@ export const putSTExpenseSubCategory = async (id: number, value: object) => {
 
 export const deleteSTExpenseSubCategory = async (id: number) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/stexpense-subcategory/${id}/`;
+    const url = `http://127.0.0.1:8000/api/stexpense-subcategory/${id}/`;
     const response = await axios.delete(url);
     return response;
   } catch (error) {
@@ -569,7 +569,7 @@ export const deleteSTExpenseSubCategory = async (id: number) => {
 // POST
 export const token = async (value: object) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/token/`;
+    const url = `http://127.0.0.1:8000/api/token/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
@@ -579,7 +579,7 @@ export const token = async (value: object) => {
 
 export const tokenRefresh = async (value: object) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/token/refresh/`;
+    const url = `http://127.0.0.1:8000/api/token/refresh/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
@@ -589,7 +589,7 @@ export const tokenRefresh = async (value: object) => {
 
 export const postUser = async (value: object) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/create/user/`;
+    const url = `http://127.0.0.1:8000/api/create/user/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
@@ -599,7 +599,7 @@ export const postUser = async (value: object) => {
 
 export const postQuest = async (value: object) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/create/quest/`;
+    const url = `http://127.0.0.1:8000/api/create/quest/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
@@ -609,7 +609,7 @@ export const postQuest = async (value: object) => {
 
 export const postSTQuest = async (value: object) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/create/stquest/`;
+    const url = `http://127.0.0.1:8000/api/create/stquest/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
@@ -619,7 +619,7 @@ export const postSTQuest = async (value: object) => {
 
 export const postSTExpense = async (value: object) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/create/stexpense/`;
+    const url = `http://127.0.0.1:8000/api/create/stexpense/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
@@ -629,7 +629,7 @@ export const postSTExpense = async (value: object) => {
 
 export const postSTBonusPenalty = async (value: object) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/create/stbonus-penalty/`;
+    const url = `http://127.0.0.1:8000/api/create/stbonus-penalty/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
@@ -639,7 +639,7 @@ export const postSTBonusPenalty = async (value: object) => {
 
 // export const postSTBonus = async (value: object) => {
 //   try {
-//     const url = `http://crm.zdesquest.ru/api/create/stbonus/`;
+//     const url = `http://127.0.0.1:8000/api/create/stbonus/`;
 //     const response = await axios.post(url, value);
 //     return response;
 //   } catch (error) {
@@ -649,7 +649,7 @@ export const postSTBonusPenalty = async (value: object) => {
 
 // export const postSTPenalty = async (value: object) => {
 //   try {
-//     const url = `http://crm.zdesquest.ru/api/create/stpenalty/`;
+//     const url = `http://127.0.0.1:8000/api/create/stpenalty/`;
 //     const response = await axios.post(url, value);
 //     return response;
 //   } catch (error) {
@@ -659,7 +659,7 @@ export const postSTBonusPenalty = async (value: object) => {
 
 export const postSTExpenseCategory = async (value: object) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/create/stexpense-category/`;
+    const url = `http://127.0.0.1:8000/api/create/stexpense-category/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
@@ -669,7 +669,7 @@ export const postSTExpenseCategory = async (value: object) => {
 
 export const postSTExpenseSubCategory = async (value: object) => {
   try {
-    const url = `http://crm.zdesquest.ru/api/create/stexpense-subcategory/`;
+    const url = `http://127.0.0.1:8000/api/create/stexpense-subcategory/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
