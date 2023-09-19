@@ -167,7 +167,7 @@ const App: FC<IFCSider> = ({
 
   let menuItems = [];
 
-  if (user.is_superuser) {
+  // if (user.is_superuser) {
     menuItems = [
       getItem("сотрудники", "users", "/users", <UserOutlined />),
       getItem(
@@ -221,31 +221,31 @@ const App: FC<IFCSider> = ({
       ]),
       getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
     ];
-  } else {
-    menuItems = [
-      getItem(
-        "формы",
-        "forms",
-        "/forms",
-        <TableOutlined />,
-        [
-          getItem(
-            "квесты",
-            "formsQuest",
-            "/forms/quest",
-            <QuestionOutlined />
-          ),
-          getItem(
-            "расходы",
-            "formsExpense",
-            "/forms/expense",
-            <QuestionOutlined />
-          ),
-        ]
-      ),
-      getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
-    ];
-  }
+  // } else {
+  //   menuItems = [
+  //     getItem(
+  //       "формы",
+  //       "forms",
+  //       "/forms",
+  //       <TableOutlined />,
+  //       [
+  //         getItem(
+  //           "квесты",
+  //           "formsQuest",
+  //           "/forms/quest",
+  //           <QuestionOutlined />
+  //         ),
+  //         getItem(
+  //           "расходы",
+  //           "formsExpense",
+  //           "/forms/expense",
+  //           <QuestionOutlined />
+  //         ),
+  //       ]
+  //     ),
+  //     getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
+  //   ];
+  // }
 
   useEffect(() => {
     fetchUser();

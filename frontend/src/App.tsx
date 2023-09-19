@@ -1,7 +1,7 @@
 import { ConfigProvider } from "antd";
 
 // import { Route, Routes, Navigate } from "react-router-dom";
-import { Route, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 
 import PrivateRoutes from "./utils/PrivateRoutes";
 
@@ -45,8 +45,8 @@ import ExpensesFromTheir from "./pages/ExpensesFromTheir";
 import FQuest from "./pages/FQuest";
 import FExpense from "./pages/FExpense";
 
-import AuthProvider from "./provider/authProdiver";
-import Routes from "./routes";
+// import AuthProvider from "./provider/authProdiver";
+// import Routes from "./routes";
 
 function App() {
   return (
@@ -57,9 +57,9 @@ function App() {
         },
       }}
     >
-      <AuthProvider>
-        <Routes />
-      {/* <Routes>
+      {/* <AuthProvider> */}
+        {/* <Routes /> */}
+      <Routes>
         <Route path="/" element={<Navigate to="/users" />} />
         <Route path="/login" element={<Login />} />
 
@@ -133,8 +133,8 @@ function App() {
         <Route path="/forms" element={<Navigate to="/forms/quest" />} />
         <Route path="/forms/quest" element={<FQuest />} />
         <Route path="/forms/expense" element={<FExpense />} />
-      </Routes> */}
-      </AuthProvider>
+      </Routes>
+      {/* </AuthProvider> */}
     </ConfigProvider>
   );
 }

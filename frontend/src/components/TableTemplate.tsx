@@ -61,7 +61,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import { localStorageRemoveItem } from "../assets/utilities/jwt";
 
 // provider
-import { useAuth } from "../provider/authProdiver";
+// import { useAuth } from "../provider/authProdiver";
 
 // components
 import CSider from "../components/CSider";
@@ -440,10 +440,10 @@ const App: FC = ({
     localStorage.setItem("drawerIsOpen", "false");
   };
 
-  const { setAccess } = useAuth();
+  // const { setAccess } = useAuth();
 
   const logout = async () => {
-    setAccess();
+    // setAccess();
     localStorageRemoveItem(['refresh', 'access'])
     navigate("/", { replace: true });
   };

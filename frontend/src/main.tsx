@@ -21,9 +21,9 @@ import "./assets/stylesheets/breadcrumb.sass";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <ConfigProvider locale={ruRU}>
     <React.StrictMode>
-      {/* <BrowserRouter> */}
-      <App />
-      {/* </BrowserRouter> */}
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </React.StrictMode>
   </ConfigProvider>
 );
