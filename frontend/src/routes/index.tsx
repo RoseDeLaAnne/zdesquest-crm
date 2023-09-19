@@ -75,6 +75,22 @@ const Routes = () => {
     //   element: <Users />,
     // },
     {
+      path: "/users",
+      element: <Users />,
+    },
+    {
+      path: "/source-tables/quests",
+      element: <STQuests />,
+    },
+    {
+      path: "/forms/quest",
+      element: <FQuest />,
+    },
+    {
+      path: "/forms/expense",
+      element: <FExpense />,
+    },
+    {
       path: "/login",
       element: <Login />,
     },
