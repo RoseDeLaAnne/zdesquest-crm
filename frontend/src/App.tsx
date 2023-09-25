@@ -60,7 +60,7 @@ function App() {
       {/* <AuthProvider> */}
         {/* <Routes /> */}
       <Routes>
-        <Route path="/" element={<Navigate to="/users" />} />
+        <Route exact path="/" element={<Navigate to="/users" />} />
         <Route path="/login" element={<Login />} />
 
         <Route element={<PrivateRoutes />}>
