@@ -61,7 +61,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import { localStorageRemoveItem } from "../assets/utilities/jwt";
 
 // provider
-// import { useAuth } from "../provider/authProdiver";
+import { useAuth } from "../provider/authProdiver";
 
 // components
 import CSider from "../components/CSider";
@@ -100,12 +100,14 @@ const App: FC = ({
   tableBordered,
   drawerTitle,
   formItems,
+  handleChange,
+  checkboxOnChange
 }) => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const { name } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const [searchText, setSearchText] = useState("");
@@ -293,7 +295,7 @@ const App: FC = ({
     try {
       let response;
       if (questTables) {
-        response = await fetchFunction(startDate, endDate, name);
+        response = await fetchFunction(startDate, endDate, id);
       } else {
         response = await fetchFunction(startDate, endDate);
       }
@@ -440,10 +442,10 @@ const App: FC = ({
     localStorage.setItem("drawerIsOpen", "false");
   };
 
-  // const { setAccess } = useAuth();
+  const { setAccess } = useAuth();
 
   const logout = async () => {
-    // setAccess();
+    setAccess();
     localStorageRemoveItem(['refresh', 'access'])
     navigate("/", { replace: true });
   };
@@ -494,7 +496,7 @@ const App: FC = ({
     //   const endDate = `${currentDay}.${currentMonth}.${currentYear}`;
     //   fetchData(startDate, endDate);
     // }
-  }, [name]);
+  }, [id]);
 
   return (
     <Layout hasSider>
@@ -570,6 +572,8 @@ const App: FC = ({
                 formItems={formItems}
                 formForm={form}
                 formOnFinish={formOnFinish}
+                handleChange={handleChange}
+                checkboxOnChange={checkboxOnChange}
               />
             ) : (
               ""

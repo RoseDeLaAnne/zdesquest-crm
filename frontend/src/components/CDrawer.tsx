@@ -13,6 +13,8 @@ const App: FC = ({
   formItems,
   formForm,
   formOnFinish,
+  handleChange,
+  checkboxOnChange
 }) => {
   return (
     <Drawer
@@ -30,7 +32,7 @@ const App: FC = ({
         </Space>
       }
     >
-      <CForm items={formItems} form={formForm} onFinish={formOnFinish} />
+      <CForm items={formItems} form={formForm} onFinish={formOnFinish} handleChange={handleChange} checkboxOnChange={checkboxOnChange} />
     </Drawer>
   );
 };

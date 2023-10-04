@@ -13,6 +13,7 @@ class CustomDateFormatField(serializers.DateField):
 
 class UserSerializer(ModelSerializer):
     key = serializers.CharField(max_length=255, source="id")
+    date_of_birth = CustomDateFormatField()
 
     class Meta:
         model = User
@@ -20,8 +21,12 @@ class UserSerializer(ModelSerializer):
             "key",
             "id",
             "username",
+            "email",
+            "phone_number",
             "last_name",
             "first_name",
+            "middle_name",
+            "date_of_birth",
             "quest",
             "is_superuser",
         ]
@@ -249,3 +254,13 @@ class ExpenseFromTheirSerializer(ModelSerializer):
             "first_name": who_paid.first_name,
             "last_name": who_paid.last_name,
         }
+    
+class QVideoSerializer(ModelSerializer):
+    date = CustomDateFormatField()
+    key = serializers.CharField(max_length=255, source="id")
+
+    class Meta:
+        model = QVideo
+        fields = "__all__"
+
+        depth = 1

@@ -6,7 +6,7 @@ import { Outlet, Navigate } from "react-router-dom";
 import axios from "axios";
 
 // api
-import { token, tokenRefresh } from "../api/APIUtils";
+import { token, tokenRefresh } from "../../api/APIUtils";
 
 // utils
 import {

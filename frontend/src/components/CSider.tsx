@@ -53,37 +53,43 @@ const App: FC<IFCSider> = ({
     return getItem(
       quest.name,
       `quests${quest.key}`,
-      `/quests/${quest.latin_name}`,
+      `/quests/${quest.id}`,
       <QuestionOutlined />,
       [
         getItem(
           "доходы",
           `quests${quest.key}Incomes`,
-          `/quests/${quest.latin_name}/incomes`,
+          `/quests/${quest.id}/incomes`,
           <RiseOutlined />
         ),
         getItem(
           "расходы",
           `quests${quest.key}Expenses`,
-          `/quests/${quest.latin_name}/expenses`,
+          `/quests/${quest.id}/expenses`,
           <FallOutlined />
         ),
         getItem(
           "касса",
           `quests${quest.key}CashRegister`,
-          `/quests/${quest.latin_name}/cash-register`,
+          `/quests/${quest.id}/cash-register`,
           <FallOutlined />
         ),
         getItem(
           "расходы с раб. карты",
           `quests${quest.key}WorkCardExpenses`,
-          `/quests/${quest.latin_name}/work-card-expenses`,
+          `/quests/${quest.id}/work-card-expenses`,
           <DollarOutlined />
         ),
         getItem(
           "расходы со своих",
           `quests${quest.key}ExpensesFromTheir`,
-          `/quests/${quest.latin_name}/expenses-from-their`,
+          `/quests/${quest.id}/expenses-from-their`,
+          <DollarOutlined />
+        ),
+        getItem(
+          "видео",
+          `quests${quest.key}Videos`,
+          `/quests/${quest.id}/videos`,
           <DollarOutlined />
         ),
       ]
@@ -167,7 +173,7 @@ const App: FC<IFCSider> = ({
 
   let menuItems = [];
 
-  // if (user.is_superuser) {
+  if (user.is_superuser) {
     menuItems = [
       getItem("сотрудники", "users", "/users", <UserOutlined />),
       getItem(
@@ -221,31 +227,20 @@ const App: FC<IFCSider> = ({
       ]),
       getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
     ];
-  // } else {
-  //   menuItems = [
-  //     getItem(
-  //       "формы",
-  //       "forms",
-  //       "/forms",
-  //       <TableOutlined />,
-  //       [
-  //         getItem(
-  //           "квесты",
-  //           "formsQuest",
-  //           "/forms/quest",
-  //           <QuestionOutlined />
-  //         ),
-  //         getItem(
-  //           "расходы",
-  //           "formsExpense",
-  //           "/forms/expense",
-  //           <QuestionOutlined />
-  //         ),
-  //       ]
-  //     ),
-  //     getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
-  //   ];
-  // }
+  } else {
+    menuItems = [
+      getItem("формы", "forms", "/forms", <TableOutlined />, [
+        getItem("квесты", "formsQuest", "/forms/quest", <QuestionOutlined />),
+        getItem(
+          "расходы",
+          "formsExpense",
+          "/forms/expense",
+          <QuestionOutlined />
+        ),
+      ]),
+      getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
+    ];
+  }
 
   useEffect(() => {
     fetchUser();

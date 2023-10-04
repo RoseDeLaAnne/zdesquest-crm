@@ -46,7 +46,7 @@ import dayjs from "dayjs";
 import CSider from "../components/CSider";
 import CBreadcrumb from "../components/CBreadcrumb";
 
-import CForm from "../components/CForm";
+import CForm from "../components/UI/Form";
 
 // interface
 import { IFC } from "../assets/utilities/interface";
@@ -63,6 +63,8 @@ const App: FC = ({
   fetchFunction,
   putFunction,
   formItems,
+  visibleFormItems,
+  handleOnChange
 }) => {
   const {
     token: { colorBgContainer },
@@ -133,6 +135,13 @@ const App: FC = ({
     }
   };
 
+  const filteredUsersFormItems = formItems
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => visibleFormItems.includes(item.name)),
+    }))
+    .filter((group) => group.items.length > 0);
+
   useEffect(() => {
     document.title = title;
 
@@ -178,7 +187,12 @@ const App: FC = ({
                 </Button>
               </Space>
             </div>
-            <CForm items={formItems} form={form} onFinish={formOnFinish} />
+            <CForm
+              items={filteredUsersFormItems}
+              form={form}
+              handleOnChange={handleOnChange}
+              onFinish={formOnFinish}
+            />
           </div>
         </Content>
       </Layout>

@@ -93,7 +93,7 @@ const App: FC = ({
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const { name } = isUseParams ? useParams() : { name: "" };
+  const { id } = isUseParams ? useParams() : { id: "" };
 
   const [messageApi, contextHolder] = message.useMessage();
   const [collapsed, setCollapsed] = useState(
@@ -200,10 +200,10 @@ const App: FC = ({
   ) => {
     try {
       const response = isUseParams
-        ? await fetchFunction(startDate, endDate, name)
+        ? await fetchFunction(startDate, endDate, id)
         : await fetchFunction(startDate, endDate);
 
-      if (response.status === 200) {       
+      if (response.status === 200) {
         if (!isTableDataHead) {
           const { head, body } = response.data;
           setTableDataHead(head);

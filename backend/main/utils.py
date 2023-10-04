@@ -5,6 +5,10 @@ from django.db.models import Q
 from .models import *
 
 
+def date_to_timestamp(date):
+    return int(datetime(date.year, date.month, date.day).timestamp())
+
+
 def create_qincome(data, stquest_id):
     formatted_date = datetime.fromisoformat(data["date"]).date()
     formatted_time = datetime.fromisoformat(data["time"]).time()
@@ -12,35 +16,39 @@ def create_qincome(data, stquest_id):
     stquest = STQuest.objects.get(id=stquest_id)
     quest = Quest.objects.get(id=data["quest"])
 
-    photomagnets_promo = int(data["photomagnets_quantity"]) // 2
-    photomagnets_not_promo = int(data["photomagnets_quantity"]) - photomagnets_promo
-    photomagnets_sum = photomagnets_not_promo * 250 + photomagnets_promo * 150
-
-    # optional_fields = ["paid_cash", "paid_non_cash"]
+    if data["photomagnets_quantity"]:
+        photomagnets_promo = int(data["photomagnets_quantity"]) // 2
+        photomagnets_not_promo = int(data["photomagnets_quantity"]) - photomagnets_promo
+        photomagnets_sum = photomagnets_not_promo * 250 + photomagnets_promo * 150
 
     local_data = {
         "date": formatted_date,
         "time": formatted_time,
-        "game": int(data["quest_cost"])
-        + int(data["add_players"])
-        + int(data["easy_work"])
-        + int(data["night_game"])
-        - int(data["discount_sum"]),
-        "room": int(data["room_sum"]),
-        "video": int(data["video"]),
-        "photomagnets": int(photomagnets_sum),
         "actor": int(data["actor_second_actor"]),
         "stquest": stquest,
         "quest": quest,
-        "paid_cash": int(data["cash_payment"]) - int(data["cash_delivery"]),
-        "paid_non_cash": int(data["prepayment"])
-        + int(data["cashless_payment"])
-        - int(data["cashless_delivery"]),
     }
 
-    # for field in optional_fields:
-    #         if field in data:
-    #             local_data[field] = data[field]
+    if data["room_sum"]:
+        local_data = {"room": int(data["room_sum"])}
+
+    if data["video"]:
+        local_data = {"video": int(data["video"])}
+
+    if data["photomagnets_quantity"]:
+        local_data = {"photomagnets": int(photomagnets_sum)}
+
+    if data["cash_payment"] and data["cash_delivery"]:
+        local_data = {
+            "paid_cash": int(data["cash_payment"]) - int(data["cash_delivery"]),
+        }
+
+    if data["prepayment"] and data["cashless_payment"] and data["cashless_delivery"]:
+        local_data = {
+            "paid_non_cash": int(data["prepayment"])
+            + int(data["cashless_payment"])
+            - int(data["cashless_delivery"]),
+        }
 
     qincome = QIncome(**local_data)
     qincome.save()
@@ -92,6 +100,7 @@ def create_travel(entry):
         users.extend(stquest.actors.all())
     users = list(set(users))
     for user in users:
+        print(user)
         stquests_by_user = STQuest.objects.filter(date=stquest_date).filter(
             Q(administrator=user) | Q(animator=user) | Q(actors__in=[user])
         )
@@ -171,3 +180,48 @@ def create_travel(entry):
                     QSalary(**travel_data_prev).save()
 
             prev_stquest_by_user = stquest_by_user
+
+
+def convert_with_children(entries, keys_to_remove):
+    keys = set()
+    keys_to_remove_local = ["_state", "date", "time"] + keys_to_remove
+    for entry in entries:
+        keys.update(entry.__dict__.keys())
+    keys = [x for x in keys if x not in keys_to_remove_local]
+    keys = list(keys)
+
+    entry_dict = {}
+
+    for entry in entries:
+        date_timestamp = date_to_timestamp(entry.date)
+        date_str = entry.date.strftime("%d.%m.%Y")
+
+        if date_timestamp not in entry_dict:
+            entry_dict[date_timestamp] = {}
+            for key in keys:
+                entry_dict[date_timestamp][key] = entry.__dict__[key]
+            entry_dict[date_timestamp]["id"] = str(entry.id).zfill(2)
+            entry_dict[date_timestamp]["key"] = str(date_timestamp)
+            entry_dict[date_timestamp]["date_time"] = date_str
+            entry_dict[date_timestamp]["children"] = []
+
+        for key in keys:
+            entry_dict[date_timestamp][key] = []
+            # if isinstance(entry.__dict__[key], str):
+                # entry_dict[date_timestamp][key] += " " + entry.__dict__[key]
+            entry_dict[date_timestamp][key].append(entry.__dict__[key])
+
+        entry_time = entry.time.strftime("%H:%M")
+        entry_data = {"id": entry.id, "key": str(entry.id), "date_time": entry_time}
+        for key in keys:
+            value = getattr(entry, key, None)
+            entry_data[key] = []
+            entry_data[key].append(value)
+        entry_dict[date_timestamp]["children"].append(entry_data)
+
+    for date_data in entry_dict.values():
+        date_data["children"].sort(key=lambda x: x["date_time"])
+
+    response_data = list(entry_dict.values())
+
+    return response_data

@@ -10,7 +10,14 @@ from .managers import UserManager
 
 class Role(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    latin_name = models.CharField(max_length=255, unique=True)
+    # latin_name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class QuestVersion(models.Model):
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
@@ -18,14 +25,17 @@ class Role(models.Model):
 
 class Quest(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    latin_name = models.CharField(max_length=255, unique=True, blank=True, null=True)
+    # latin_name = models.CharField(max_length=255, unique=True, blank=True, null=True)
     address = models.CharField(max_length=255)
 
     administrator_rate = models.IntegerField()
     actor_rate = models.IntegerField()
     animator_rate = models.IntegerField(blank=True, null=True)
 
-    duration_minute = models.IntegerField(blank=True, null=True)
+    duration = models.IntegerField(blank=True, null=True)
+
+    special_versions = models.ManyToManyField("self", blank=True, symmetrical=False)
+    versions = models.ManyToManyField(QuestVersion, blank=True)
 
     def save(self, *args, **kwargs):
         self.animator_rate = self.actor_rate + 50
@@ -37,7 +47,7 @@ class Quest(models.Model):
 
 class STExpenseCategory(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    latin_name = models.CharField(max_length=255, unique=True)
+    # latin_name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
@@ -45,7 +55,7 @@ class STExpenseCategory(models.Model):
 
 class STExpenseSubCategory(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    latin_name = models.CharField(max_length=255, unique=True)
+    # latin_name = models.CharField(max_length=255, unique=True)
 
     category = models.ForeignKey(
         STExpenseCategory, on_delete=models.CASCADE, blank=True, null=True
@@ -57,18 +67,31 @@ class STExpenseSubCategory(models.Model):
 
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(
-        verbose_name=_("Имя пользователя"), max_length=255, unique=True
+        verbose_name=_("Логин"), max_length=255, unique=True
+    )
+    email = models.EmailField(
+        verbose_name=_("Адрес электронной почты"),
+        unique=True,
+        blank=True,
+        null=True,
+    )
+    phone_number = models.CharField(
+        verbose_name=_("Номер телефона"),
+        max_length=18,
+        unique=True,
+        blank=True,
+        null=True,
     )
 
     last_name = models.CharField(
-        verbose_name=_("Фамилия пользователя"), max_length=255, blank=True, null=True
+        verbose_name=_("Фамилия"), max_length=255, blank=True, null=True
     )
     first_name = models.CharField(
-        verbose_name=_("Имя пользователя"), max_length=255, blank=True, null=True
+        verbose_name=_("Имя"), max_length=255, blank=True, null=True
     )
-    # middle_name = models.CharField(
-    #     verbose_name=_("Отчество пользователя"), max_length=255, blank=True, null=True
-    # )
+    middle_name = models.CharField(
+        verbose_name=_("Отчество"), max_length=255, blank=True, null=True
+    )
 
     is_active = models.BooleanField(
         verbose_name=_("Активный"),
@@ -91,14 +114,17 @@ class User(AbstractBaseUser, PermissionsMixin):
         ),
         default=False,
     )
-    # roles = models.ManyToManyField(
-    #     Role, verbose_name=_("Роли пользователя"), blank=True
-    # )
+    roles = models.ManyToManyField(
+        Role, verbose_name=_("Роли"), blank=True
+    )
 
     quest = models.ForeignKey(Quest, on_delete=models.SET_NULL, blank=True, null=True)
 
     date_joined = models.DateTimeField(
-        verbose_name=_("Дата регистрации пользователя"), default=timezone.now
+        verbose_name=_("Дата регистрации"), default=timezone.now
+    )
+    date_of_birth = models.DateTimeField(
+        verbose_name=_("Дата рождения"), default=timezone.now
     )
 
     USERNAME_FIELD = "username"
@@ -130,7 +156,7 @@ class STExpense(models.Model):
 
     quests = models.ManyToManyField(Quest, blank=True)
 
-    paid_from = models.CharField(choices=PAID_FROM, default="work_card", max_length=255)    
+    paid_from = models.CharField(choices=PAID_FROM, default="work_card", max_length=255)
 
     who_paid = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
     who_paid_amount = models.IntegerField(blank=True, null=True)
@@ -146,7 +172,7 @@ class STQuest(models.Model):
 
     date = models.DateField()
     time = models.TimeField()
-    quest_cost = models.IntegerField()    
+    quest_cost = models.IntegerField()
     add_players = models.IntegerField(blank=True, null=True)
     actor_second_actor = models.IntegerField(blank=True, null=True)
     discount_sum = models.IntegerField(blank=True, null=True)
@@ -165,7 +191,7 @@ class STQuest(models.Model):
     photomagnets_sum = models.IntegerField(blank=True, null=True)
     birthday_congr = models.IntegerField(blank=True, null=True)
     easy_work = models.IntegerField(blank=True, null=True)
-    night_game = models.IntegerField(blank=True, null=True)    
+    night_game = models.IntegerField(blank=True, null=True)
     administrator = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -174,7 +200,9 @@ class STQuest(models.Model):
         related_name="administrator_stquest",
     )
     actors = models.ManyToManyField(User, blank=True, related_name="actors_stquest")
-    actors_half = models.ManyToManyField(User, blank=True, related_name="actors_half_stquest")
+    actors_half = models.ManyToManyField(
+        User, blank=True, related_name="actors_half_stquest"
+    )
     animator = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -290,9 +318,7 @@ class QCashRegister(models.Model):
     stquest = models.ForeignKey(
         STQuest, on_delete=models.CASCADE, blank=True, null=True
     )
-    quest = models.ForeignKey(
-        Quest, on_delete=models.CASCADE, blank=True, null=True
-    )
+    quest = models.ForeignKey(Quest, on_delete=models.CASCADE, blank=True, null=True)
     stexpense = models.ForeignKey(
         STExpense, on_delete=models.CASCADE, blank=True, null=True
     )
@@ -307,9 +333,7 @@ class WorkCardExpense(models.Model):
     amount = models.IntegerField()
     description = models.CharField(max_length=255)
 
-    quest = models.ForeignKey(
-        Quest, on_delete=models.CASCADE, blank=True, null=True
-    )
+    quest = models.ForeignKey(Quest, on_delete=models.CASCADE, blank=True, null=True)
     stexpense = models.ForeignKey(
         STExpense, on_delete=models.CASCADE, blank=True, null=True
     )
@@ -322,23 +346,34 @@ class ExpenseFromTheir(models.Model):
     STATUS = [
         ("paid", "Выплачено"),
         ("not_paid", "Не выплачено"),
-    ]    
+    ]
 
     date = models.DateField()
 
     amount = models.IntegerField()
     description = models.CharField(max_length=255)
-    
+
     who_paid = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
     status = models.CharField(choices=STATUS, default="not_paid", max_length=255)
 
-    quest = models.ForeignKey(
-        Quest, on_delete=models.CASCADE, blank=True, null=True
-    )
+    quest = models.ForeignKey(Quest, on_delete=models.CASCADE, blank=True, null=True)
     stexpense = models.ForeignKey(
         STExpense, on_delete=models.CASCADE, blank=True, null=True
     )
+
+    def __str__(self):
+        return str(self.date)
+
+
+class QVideo(models.Model):
+    date = models.DateField()
+    time = models.TimeField()
+
+    client_name = models.CharField(max_length=255)
+    sent = models.BooleanField()
+
+    quest = models.ForeignKey(Quest, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return str(self.date)

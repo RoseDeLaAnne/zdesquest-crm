@@ -22,7 +22,7 @@ const normFile = (e: any) => {
   return e?.fileList;
 };
 
-const App: FC = ({ items, form, onFinish }) => {
+const App: FC = ({ items, form, onFinish, handleChange, checkboxOnChange }) => {
   return (
     <Form form={form} layout={"vertical"} requiredMark onFinish={onFinish}>
       {items.map((item, index) => (
@@ -65,13 +65,14 @@ const App: FC = ({ items, form, onFinish }) => {
                     showSearch
                     allowClear
                     options={innerItem.item.options}
+                    onChange={handleChange}
                   />
                 ) : innerItem.item.name === "TimePicker" ? (
                   <TimePicker
                     format="HH:mm"
                   />
                 ) : innerItem.item.name === "Checkbox" ? (
-                  <Checkbox>{innerItem.item.label}</Checkbox>
+                  <Checkbox onChange={checkboxOnChange}>{innerItem.item.label}</Checkbox>
                 ) : innerItem.item.name === "Upload" ? (
                   <Upload action="/upload.do" listType="picture-card">
                     <div>

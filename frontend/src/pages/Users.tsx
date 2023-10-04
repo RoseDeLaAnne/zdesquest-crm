@@ -17,9 +17,6 @@ import {
   getQuests,
   getSTExpenses,
   postSTExpense,
-  getSTPenalties,
-  postSTPenalty,
-  deleteSTPenalty,
   getUsers,
   postUser,
   deleteUser,
@@ -136,6 +133,20 @@ const App: FC = () => {
       title: "имя",
       dataIndex: "first_name",
       key: "first_name",
+      sorting: {
+        isSorting: true,
+        isDate: false,
+      },
+      searching: {
+        isSearching: true,
+        title: "",
+      },
+      countable: false,
+    },
+    {
+      title: "отчество",
+      dataIndex: "middle_name",
+      key: "middle_name",
       sorting: {
         isSorting: true,
         isDate: false,

@@ -55,7 +55,7 @@ import {
 import locale from "antd/es/date-picker/locale/ru_RU";
 
 // libs
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 import Highlighter from "react-highlight-words";
 
@@ -88,13 +88,14 @@ const App: FC = ({
   isUseParams,
   initialPackedTableDataColumn,
   initialPackedTableColumns,
+  isOperation,
   tableScroll,
 }) => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const { name } = isUseParams ? useParams() : { name: "" };
+  const { id } = isUseParams ? useParams() : { id: "" };
 
   const [messageApi, contextHolder] = message.useMessage();
   const [collapsed, setCollapsed] = useState(
@@ -202,7 +203,7 @@ const App: FC = ({
   ) => {
     try {
       const response = isUseParams
-        ? await fetchFunction(startDate, endDate, name)
+        ? await fetchFunction(startDate, endDate, id)
         : await fetchFunction(startDate, endDate);
 
       if (response.status === 200) {
@@ -285,27 +286,30 @@ const App: FC = ({
     return newColumn;
   });
 
-  const tableColumns = [
-    initialUnPackedTableDataColumn,
-    ...initialTableColumns,
-    {
-      title: "операция",
-      dataIndex: "operation",
-      key: "operation",
-      render: (_, record: { key: React.Key }) =>
-        tableDataSource.length >= 1 ? (
-          <Space>
-            <Popconfirm
-              title="toggle"
-              onConfirm={() => handleToggle(record.key)}
-            >
-              <a>toggle</a>
-            </Popconfirm>
-          </Space>
-        ) : null,
-      width: 192,
-    },
-  ];
+  let tableColumns = [initialUnPackedTableDataColumn, ...initialTableColumns];
+
+  if (isOperation) {
+    tableColumns = [
+      ...tableColumns,
+      {
+        title: "операция",
+        dataIndex: "operation",
+        key: "operation",
+        render: (_, record: { key: React.Key }) =>
+          tableDataSource.length >= 1 ? (
+            <Space>
+              <Popconfirm
+                title="toggle"
+                onConfirm={() => handleToggle(record.key)}
+              >
+                <a>toggle</a>
+              </Popconfirm>
+            </Space>
+          ) : null,
+        width: 192,
+      },
+    ];
+  }
   const countingFields = initialPackedTableColumns
     .filter((column) => column.countable)
     .map((column) => column.key);
@@ -320,7 +324,7 @@ const App: FC = ({
   useEffect(() => {
     document.title = title;
 
-    fetchData(null, null)
+    fetchData(null, null);
 
     // const currentDate = new Date();
     // const currentDay = currentDate.getDate();
@@ -338,7 +342,7 @@ const App: FC = ({
     // const formattedStartDate = formatDate(startDate);
     // const formattedEndDate = formatDate(endDate);
     // fetchData(formattedStartDate, formattedEndDate);
-  }, []);
+  }, [id]);
 
   return (
     <Layout hasSider>
@@ -373,10 +377,7 @@ const App: FC = ({
             >
               <Title>{title}</Title>
               {isDatePicker && (
-                <RangePicker
-                  onChange={handleDateChange}
-                  format={dateFormat}
-                />
+                <RangePicker onChange={handleDateChange} format={dateFormat} />
               )}
             </div>
             <CTable
