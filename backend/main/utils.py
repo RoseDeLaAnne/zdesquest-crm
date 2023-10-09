@@ -9,14 +9,13 @@ def date_to_timestamp(date):
     return int(datetime(date.year, date.month, date.day).timestamp())
 
 
-def create_qincome(data, stquest_id):
+def create_qincome(data, entry):
     formatted_date = datetime.fromisoformat(data["date"]).date()
     formatted_time = datetime.fromisoformat(data["time"]).time()
 
-    stquest = STQuest.objects.get(id=stquest_id)
     quest = Quest.objects.get(id=data["quest"])
 
-    if data["photomagnets_quantity"]:
+    if ("photomagnets_quantity") in data:
         photomagnets_promo = int(data["photomagnets_quantity"]) // 2
         photomagnets_not_promo = int(data["photomagnets_quantity"]) - photomagnets_promo
         photomagnets_sum = photomagnets_not_promo * 250 + photomagnets_promo * 150
@@ -24,31 +23,45 @@ def create_qincome(data, stquest_id):
     local_data = {
         "date": formatted_date,
         "time": formatted_time,
-        "actor": int(data["actor_second_actor"]),
-        "stquest": stquest,
+        "stquest": entry,
         "quest": quest,
     }
 
-    if data["room_sum"]:
-        local_data = {"room": int(data["room_sum"])}
+    if "actor_second_actor" in data:
+        new_data = {
+            "actor": int(data["actor_second_actor"]),
+        }
+        local_data.update(new_data)
 
-    if data["video"]:
-        local_data = {"video": int(data["video"])}
+    if "room_sum" in data:
+        new_data = {"room": int(data["room_sum"])}
+        local_data.update(new_data)
 
-    if data["photomagnets_quantity"]:
-        local_data = {"photomagnets": int(photomagnets_sum)}
+    if "video" in data:
+        new_data = {"video": int(data["video"])}
+        local_data.update(new_data)
 
-    if data["cash_payment"] and data["cash_delivery"]:
-        local_data = {
+    if "photomagnets_quantity" in data:
+        new_data = {"photomagnets": int(photomagnets_sum)}
+        local_data.update(new_data)
+
+    if ("cash_payment" in data) and ("cash_delivery" in data):
+        new_data = {
             "paid_cash": int(data["cash_payment"]) - int(data["cash_delivery"]),
         }
+        local_data.update(new_data)
 
-    if data["prepayment"] and data["cashless_payment"] and data["cashless_delivery"]:
-        local_data = {
+    if (
+        ("prepayment" in data)
+        and ("cashless_payment" in data)
+        and ("cashless_delivery" in data)
+    ):
+        new_data = {
             "paid_non_cash": int(data["prepayment"])
             + int(data["cashless_payment"])
             - int(data["cashless_delivery"]),
         }
+        local_data.update(new_data)
 
     qincome = QIncome(**local_data)
     qincome.save()
@@ -208,7 +221,7 @@ def convert_with_children(entries, keys_to_remove):
         for key in keys:
             entry_dict[date_timestamp][key] = []
             # if isinstance(entry.__dict__[key], str):
-                # entry_dict[date_timestamp][key] += " " + entry.__dict__[key]
+            # entry_dict[date_timestamp][key] += " " + entry.__dict__[key]
             entry_dict[date_timestamp][key].append(entry.__dict__[key])
 
         entry_time = entry.time.strftime("%H:%M")

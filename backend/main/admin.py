@@ -83,13 +83,22 @@ class UserAdmin(UserAdmin):
                 "fields": ("quest",),
             },
         ),
+        (
+            None,
+            {
+                "fields": ("roles",),
+            },
+        ),
     )
 
     add_fieldsets = (
         (
             None,
             {
-                "fields": ("password",),
+                "fields": (
+                    "password1",
+                    "password2",
+                ),
             },
         ),
         (
@@ -129,6 +138,12 @@ class UserAdmin(UserAdmin):
             None,
             {
                 "fields": ("quest",),
+            },
+        ),
+        (
+            None,
+            {
+                "fields": ("roles",),
             },
         ),
     )

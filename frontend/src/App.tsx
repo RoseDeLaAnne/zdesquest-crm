@@ -57,17 +57,10 @@ function App() {
         },
       }}
     >
-<<<<<<< HEAD
       <AuthProvider>
         <Routes />
       {/* <Routes>
         <Route path="/" element={<Navigate to="/users" />} />
-=======
-      {/* <AuthProvider> */}
-        {/* <Routes /> */}
-      <Routes>
-        <Route exact path="/" element={<Navigate to="/users" />} />
->>>>>>> d9ac6966759c1868f2e604b1a275f6243f548cd8
         <Route path="/login" element={<Login />} />
 
         <Route element={<PrivateRoutes />}>

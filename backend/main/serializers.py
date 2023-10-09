@@ -28,6 +28,7 @@ class UserSerializer(ModelSerializer):
             "middle_name",
             "date_of_birth",
             "quest",
+            "roles",
             "is_superuser",
         ]
 
@@ -49,14 +50,14 @@ class QuestSerializer(ModelSerializer):
         model = Quest
         fields = "__all__"
 
+        depth = 1
 
-# class TransactionSerializer(ModelSerializer):
-#     key = serializers.CharField(max_length=255, source="id")
-#     date = CustomDateFormatField()
+class QuestVersionSerializer(ModelSerializer):
+    key = serializers.CharField(max_length=255, source="id")
 
-#     class Meta:
-#         model = Transaction
-#         fields = "__all__"
+    class Meta:
+        model = QuestVersion
+        fields = "__all__"
 
 
 class STQuestSerializer(ModelSerializer):
@@ -75,40 +76,42 @@ class STQuestSerializer(ModelSerializer):
         depth = 1
 
     # def to_representation(self, instance):
-    #     data = super().to_representation(instance)        
-    #     data["actors"] = [f"{actor['first_name']} {actor['last_name']}" for actor in data["actors"]]        
+    #     data = super().to_representation(instance)
+    #     data["actors"] = [f"{actor['first_name']} {actor['last_name']}" for actor in data["actors"]]
     #     return data
 
 
 class STExpenseSerializer(ModelSerializer):
     key = serializers.CharField(max_length=255, source="id")
     date = CustomDateFormatField()
-    sub_category = serializers.SerializerMethodField()
+    # sub_category = serializers.SerializerMethodField()
 
     class Meta:
         model = STExpense
         fields = [
+            "id",
             "key",
             "date",
             "name",
             "amount",
             "sub_category",
             "quests",
+            "paid_from",
             "who_paid",
-            "who_paid_amount",
-            "image",
+            # "who_paid_amount",
+            # "attachment",
         ]
 
         depth = 1
 
-    def get_sub_category(self, obj):
-        sub_category = obj.sub_category
-        return {"name": sub_category.name, "latin_name": sub_category.latin_name}
+    # def get_sub_category(self, obj):
+    #     sub_category = obj.sub_category
+    #     return {"name": sub_category.name}
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data["quests"] = [quest["name"] for quest in data["quests"]]
-        return data
+    # def to_representation(self, instance):
+    #     data = super().to_representation(instance)
+    #     data["quests"] = [quest["name"] for quest in data["quests"]]
+    #     return data
 
 
 class STBonusPenaltySerializer(ModelSerializer):
@@ -120,6 +123,7 @@ class STBonusPenaltySerializer(ModelSerializer):
         fields = "__all__"
 
         depth = 1
+
 
 # class STBonusSerializer(ModelSerializer):
 #     key = serializers.CharField(max_length=255, source="id")
@@ -254,7 +258,8 @@ class ExpenseFromTheirSerializer(ModelSerializer):
             "first_name": who_paid.first_name,
             "last_name": who_paid.last_name,
         }
-    
+
+
 class QVideoSerializer(ModelSerializer):
     date = CustomDateFormatField()
     key = serializers.CharField(max_length=255, source="id")

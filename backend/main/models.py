@@ -25,14 +25,16 @@ class QuestVersion(models.Model):
 
 class Quest(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    # latin_name = models.CharField(max_length=255, unique=True, blank=True, null=True)
     address = models.CharField(max_length=255)
+
+    cost_weekdays = models.IntegerField(blank=True, null=True)
+    cost_weekends = models.IntegerField(blank=True, null=True)
 
     administrator_rate = models.IntegerField()
     actor_rate = models.IntegerField()
     animator_rate = models.IntegerField(blank=True, null=True)
 
-    duration = models.IntegerField(blank=True, null=True)
+    duration_minute = models.IntegerField(blank=True, null=True)
 
     special_versions = models.ManyToManyField("self", blank=True, symmetrical=False)
     versions = models.ManyToManyField(QuestVersion, blank=True)
@@ -66,9 +68,7 @@ class STExpenseSubCategory(models.Model):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(
-        verbose_name=_("Логин"), max_length=255, unique=True
-    )
+    username = models.CharField(verbose_name=_("Логин"), max_length=255, unique=True)
     email = models.EmailField(
         verbose_name=_("Адрес электронной почты"),
         unique=True,
@@ -114,17 +114,15 @@ class User(AbstractBaseUser, PermissionsMixin):
         ),
         default=False,
     )
-    roles = models.ManyToManyField(
-        Role, verbose_name=_("Роли"), blank=True
-    )
+    roles = models.ManyToManyField(Role, verbose_name=_("Роли"), blank=True)
 
     quest = models.ForeignKey(Quest, on_delete=models.SET_NULL, blank=True, null=True)
 
     date_joined = models.DateTimeField(
         verbose_name=_("Дата регистрации"), default=timezone.now
     )
-    date_of_birth = models.DateTimeField(
-        verbose_name=_("Дата рождения"), default=timezone.now
+    date_of_birth = models.DateField(
+        verbose_name=_("Дата рождения"), blank=True, null=True
     )
 
     USERNAME_FIELD = "username"
@@ -145,8 +143,8 @@ class STExpense(models.Model):
 
     date = models.DateField()
 
-    amount = models.IntegerField()
     name = models.CharField(max_length=255)
+    amount = models.IntegerField()
 
     paid_tax = models.ManyToManyField(User, blank=True, related_name="paid_tax_users")
 
@@ -161,24 +159,23 @@ class STExpense(models.Model):
     who_paid = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
     who_paid_amount = models.IntegerField(blank=True, null=True)
 
-    image = models.FileField(upload_to="photos/", blank=True, null=True)
+    attachment = models.FileField(upload_to="photos/", blank=True, null=True)
 
     def __str__(self):
         return str(self.date)
 
 
 class STQuest(models.Model):
-    quest = models.ForeignKey(Quest, on_delete=models.SET_NULL, blank=True, null=True)
-
     date = models.DateField()
     time = models.TimeField()
+    quest = models.ForeignKey(Quest, on_delete=models.SET_NULL, blank=True, null=True)
     quest_cost = models.IntegerField()
-    add_players = models.IntegerField(blank=True, null=True)
-    actor_second_actor = models.IntegerField(blank=True, null=True)
-    discount_sum = models.IntegerField(blank=True, null=True)
-    discount_desc = models.CharField(blank=True, null=True, max_length=255)
-    room_sum = models.IntegerField(blank=True, null=True)
-    room_quantity = models.IntegerField(blank=True, null=True)
+    add_players = models.IntegerField(default=0)
+    actor_second_actor = models.IntegerField(default=0)
+    discount_sum = models.IntegerField(default=0)
+    discount_desc = models.CharField(default="", max_length=255)
+    room_sum = models.IntegerField(default=0)
+    room_quantity = models.IntegerField(default=0)
     room_employee_name = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -186,12 +183,12 @@ class STQuest(models.Model):
         null=True,
         related_name="room_employee_stquest",
     )
-    video = models.IntegerField(blank=True, null=True)
-    photomagnets_quantity = models.IntegerField(blank=True, null=True)
-    photomagnets_sum = models.IntegerField(blank=True, null=True)
-    birthday_congr = models.IntegerField(blank=True, null=True)
-    easy_work = models.IntegerField(blank=True, null=True)
-    night_game = models.IntegerField(blank=True, null=True)
+    video = models.IntegerField(default=0)
+    photomagnets_quantity = models.IntegerField(default=0)
+    photomagnets_sum = models.IntegerField(default=0)
+    birthday_congr = models.IntegerField(default=0)
+    easy_work = models.IntegerField(default=0)
+    night_game = models.IntegerField(default=0)
     administrator = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -210,19 +207,28 @@ class STQuest(models.Model):
         null=True,
         related_name="animatator_stquest",
     )
-    package = models.BooleanField(blank=True, null=True)
-    travel = models.BooleanField(blank=True, null=True)
+    is_package = models.BooleanField(default=False)
+    is_video_review = models.BooleanField(default=False)
 
-    cash_payment = models.IntegerField(blank=True, null=True)
-    cashless_payment = models.IntegerField(blank=True, null=True)
-    cash_delivery = models.IntegerField(blank=True, null=True)
-    cashless_delivery = models.IntegerField(blank=True, null=True)
-    prepayment = models.IntegerField(blank=True, null=True)
+    cash_payment = models.IntegerField(default=0)
+    cashless_payment = models.IntegerField(default=0)
+    cash_delivery = models.IntegerField(default=0)
+    cashless_delivery = models.IntegerField(default=0)
+    prepayment = models.IntegerField(default=0)
+
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="created_by",
+    )
 
     def save(self, *args, **kwargs):
-        photomagnets_promo = self.photomagnets_quantity // 2
-        photomagnets_not_promo = self.photomagnets_quantity - photomagnets_promo
-        self.photomagnets_sum = photomagnets_not_promo * 250 + photomagnets_promo * 150
+        if (self.photomagnets_quantity):
+            photomagnets_promo = self.photomagnets_quantity // 2
+            photomagnets_not_promo = self.photomagnets_quantity - photomagnets_promo
+            self.photomagnets_sum = photomagnets_not_promo * 250 + photomagnets_promo * 150
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -256,15 +262,15 @@ class STBonusPenalty(models.Model):
 class QIncome(models.Model):
     date = models.DateField()
     time = models.TimeField()
-    game = models.IntegerField()
-    room = models.IntegerField()
-    video = models.IntegerField()
-    photomagnets = models.IntegerField()
-    actor = models.IntegerField()
+    game = models.IntegerField(default=0)
+    room = models.IntegerField(default=0)
+    video = models.IntegerField(default=0)
+    photomagnets = models.IntegerField(default=0)
+    actor = models.IntegerField(default=0)
     total = models.IntegerField(blank=True, null=True)
 
-    paid_cash = models.IntegerField(blank=True, null=True)
-    paid_non_cash = models.IntegerField(blank=True, null=True)
+    paid_cash = models.IntegerField(default=0)
+    paid_non_cash = models.IntegerField(default=0)
 
     quest = models.ForeignKey(Quest, on_delete=models.SET_NULL, blank=True, null=True)
 

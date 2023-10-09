@@ -14,29 +14,47 @@ import {
 import { getQVideos } from "../../api/APIUtils";
 
 // components
-import TableTemplate3 from "../../components/TableTemplate3";
+import TemplateTable from "../../components/template/Table";
 
 const QVideos: FC = () => {
   const initialBreadcrumbItems = [
     {
       icon: TableOutlined,
+      title: "квесты",
+      to: "/quests",
+    },
+    {
+      icon: FallOutlined,
+      title: "радуга",
+      menu: [
+        {
+          key: "1",
+          icon: FallOutlined,
+          label: "радуга",
+          to: "/quests/rainbow",
+        },
+      ],
+    },
+    {
+      icon: FallOutlined,
       title: "видео",
+      menu: [
+        {
+          key: "1",
+          icon: QuestionOutlined,
+          label: "доходы",
+          to: "/quests/rainbow/incomes",
+        },
+        {
+          key: "2",
+          icon: FallOutlined,
+          label: "расходы",
+          to: "/quests/rainbow/expenses",
+        },
+      ],
     },
   ];
-  const title = initialBreadcrumbItems[initialBreadcrumbItems.length - 1].title;
 
-  const initialPackedTableDataColumn = {
-    title: "date_time",
-    dataIndex: "date_time",
-    key: "date_time",
-    width: 140,
-    isSorting: true,
-    searching: {
-      isSearching: true,
-      title: "date_time",
-    },
-    fixed: "left",
-  };
   const initialPackedTableColumns = [
     {
       title: "id",
@@ -106,18 +124,28 @@ const QVideos: FC = () => {
   ];
 
   return (
-    <TableTemplate3
-      defaultOpenKeys={["quests"]}
-      defaultSelectedKeys={["workCardExpenses"]}
+    <TemplateTable
+      defaultOpenKeys={["quests", "questsРадуга"]}
+      defaultSelectedKeys={["questsРадугаIncomes"]}
       breadcrumbItems={initialBreadcrumbItems}
-      title={title}
-      isDatePicker={true}
-      fetchFunction={getQVideos}
-      isUseParams={true}
-      initialPackedTableDataColumn={initialPackedTableDataColumn}
-      initialPackedTableColumns={initialPackedTableColumns}
-      isOperation={false}
+      isRangePicker={true}
+      addEntryTitle={null}
+      isCancel={false}
+      isCreate={false}
       tableScroll={null}
+      tableDateColumn={"date_time"}
+      initialPackedTableColumns={initialPackedTableColumns}
+      tableIsOperation={false}
+      getFunction={getQVideos}
+      deleteFunction={null}
+      postFunction={null}
+      isUseParams={true}
+      isAddEntry={null}
+      drawerTitle={null}
+      formItems={null}
+      notVisibleFormItems={null}
+      defaultValuesFormItems={null}
+      formHandleOnChange={null}
     />
   );
 };

@@ -78,7 +78,6 @@ h6
   font-weight: 600
   background-color: #FAFAFA
 
-
 // range picker
 .ant-picker-range
   input
@@ -91,3 +90,88 @@ h6
 // tag
 .ant-tag
   text-transform: lowercase
+
+h1
+  margin-bottom: 0 !important
+
+.main__inner
+  min-height: calc(100vh - 48px - 22px - 24px)
+  border-radius: 4px
+
+.main__header
+  margin-bottom: 20px
+  display: flex
+
+.custom-space
+  display: flex
+  align-items: center
+  gap: 16px
+
+/* Для десктопной версии > 1024 */
+@media (min-width: 1024px)
+  .desktop-version
+    display: block
+
+  .mobile-version
+    display: none
+
+  .site-layout
+    margin-left: 80px
+
+  .breadcrumb
+    margin: 24px 16px 0
+
+  main
+    margin: 24px 16px
+    overflow: initial
+
+  .main__inner
+    padding: 16px
+
+  .main__header
+    flex-direction: row
+    justify-content: space-between
+
+  .custom-space
+    flex-direction: row
+
+/* Для мобильной версии < 1023 */
+@media (max-width: 1023px)
+  .desktop-version
+    display: none
+
+  .mobile-version
+    display: block
+
+  .site-layout
+    margin-top: 64px
+
+  .breadcrumb
+    margin: 12px 8px 0
+
+  main
+    margin: 12px 8px
+    overflow: initial
+
+  .main__inner
+    padding: 8px
+
+  .main__header
+    flex-direction: column
+    row-gap: 10px
+
+  .m-w100
+    width: 100%
+
+/* Для мобильной версии < 575 */
+@media (max-width: 575px)
+  .ant-drawer-header
+    padding: 16px !important
+
+  .ant-drawer-body
+    padding: 16px !important
+
+  .custom-space
+    flex-direction: column
+
+  

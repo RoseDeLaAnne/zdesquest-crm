@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect, useRef } from "react";
 
 // react-router-dom
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
 // antd
 import {
@@ -68,6 +68,8 @@ import CDrawer from "../components/CDrawer";
 import { IFC } from "../assets/utilities/interface";
 
 import { dateFormat } from "../constants/dateFormat";
+import { localStorageRemoveItem } from "../assets/utilities/jwt";
+import { useAuth } from "../provider/authProdiver";
 
 const { Content, Sider } = Layout;
 const { Title, Text } = Typography;
@@ -93,7 +95,8 @@ const App: FC = ({
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const { id } = isUseParams ? useParams() : { id: "" };
+  const { id } = isUseParams ? useParams() : { name: "" };
+  const navigate = useNavigate();
 
   const [messageApi, contextHolder] = message.useMessage();
   const [collapsed, setCollapsed] = useState(
@@ -203,7 +206,7 @@ const App: FC = ({
         ? await fetchFunction(startDate, endDate, id)
         : await fetchFunction(startDate, endDate);
 
-      if (response.status === 200) {
+      if (response.status === 200) {       
         if (!isTableDataHead) {
           const { head, body } = response.data;
           setTableDataHead(head);
@@ -286,6 +289,14 @@ const App: FC = ({
 
   const tableColumns = [initialUnPackedTableDataColumn, ...initialTableColumns];
   const countingFields = tableDataHead.map((column) => column.key);
+  
+  const { setAccess } = useAuth();
+
+  const logout = async () => {
+    setAccess();
+    localStorageRemoveItem(['refresh', 'access'])
+    navigate("/", { replace: true });
+  };
 
   useEffect(() => {
     document.title = title;
@@ -308,6 +319,7 @@ const App: FC = ({
         <CBreadcrumb items={breadcrumbItems} />
 
         <Content style={{ margin: "24px 16px", overflow: "initial" }}>
+          <FloatButton onClick={() => logout()} />
           {contextHolder}
           <div
             style={{

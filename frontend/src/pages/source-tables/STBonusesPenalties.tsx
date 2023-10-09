@@ -1,96 +1,48 @@
-import React, { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect } from "react";
 
 // antd
 import { Tag } from "antd";
 // antd | icons
-import {
-  QuestionOutlined,
-  FallOutlined,
-  TableOutlined,
-  DeploymentUnitOutlined,
-} from "@ant-design/icons";
+import { TableOutlined } from "@ant-design/icons";
+
+// components
+import TemplateTable from "../../components/template/Table";
 
 // api
 import {
-  getQuests,
-  getUsers,
+  deleteSTBonusPenalty,
   getSTBonusesPenalties,
   postSTBonusPenalty,
-  deleteSTBonusPenalty,
 } from "../../api/APIUtils";
 
-// components
-import TableTemplate from "../../components/TableTemplate";
+import { getSTBonusesPenaltiesFormItems } from "../../constants";
 
-const App: FC = () => {
-  const [optionsUsers, setOptionsUsers] = useState([]);
-  const [filtersUsers, setFiltersUsers] = useState([]);
-  const [filtersQuests, setFiltersQuests] = useState([]);
-  const [optionsQuests, setOptionsQuests] = useState([]);
-  const fetchUsers = async () => {
-    try {
-      const response = await getUsers();
-      if (response.status === 200) {
-        const formattedOptions = response.data.map((item) => ({
-          label: item.first_name.toLowerCase(),
-          value: item.id,
-        }));
-        const formattedFilters = response.data.map((item) => ({
-          text: item.first_name.toLowerCase(),
-          value: item.id,
-        }));
-        setOptionsUsers(formattedOptions);
-        setFiltersUsers(formattedFilters);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const fetchQuests = async () => {
-    try {
-      const response = await getQuests();
-      if (response.status === 200) {
-        const formattedOptions = response.data.map((item) => ({
-          label: item.name.toLowerCase(),
-          value: item.id,
-        }));
-        const formattedFilters = response.data.map((item) => ({
-          text: item.name.toLowerCase(),
-          value: item.id,
-        }));
-        setOptionsQuests(formattedOptions);
-        setFiltersQuests(formattedFilters);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const sourceBreadcrumbItems = [
+const STQuests: FC = () => {
+  const initialBreadcrumbItems = [
     {
       icon: TableOutlined,
       title: "исходные таблицы",
       to: "/source-tables",
     },
     {
-      icon: FallOutlined,
+      icon: TableOutlined,
       title: "бонусы/штрафы",
       menu: [
         {
           key: "1",
-          icon: QuestionOutlined,
+          icon: TableOutlined,
           label: "квесты",
           to: "/source-tables/quests",
         },
         {
           key: "2",
-          icon: FallOutlined,
+          icon: TableOutlined,
           label: "расходы",
           to: "/source-tables/expenses",
         },
         {
           key: "3",
-          icon: DeploymentUnitOutlined,
+          icon: TableOutlined,
           label: "бонусы/штрафы",
           to: "/source-tables/bonuses-penalties",
         },
@@ -100,33 +52,15 @@ const App: FC = () => {
 
   const initialPackedTableColumns = [
     {
-      title: "дата",
-      dataIndex: "date",
-      key: "date",
-      sorting: {
-        isSorting: true,
-        isDate: true,
-      },
-      searching: {
-        isSearching: true,
-        title: "дате",
-      },
-      countable: false,
-      width: 112,
-    },
-    {
       title: "тип",
       dataIndex: "type",
       key: "type",
-      sorting: {
-        isSorting: false,
-        isDate: false,
-      },
+      isSorting: false,
       searching: {
         isSearching: false,
         title: "",
       },
-      countable: false,
+      isCountable: false,
       render: (type) => {
         let color = "red";
         let formattedType = type;
@@ -143,70 +77,60 @@ const App: FC = () => {
       },
     },
     {
+      title: "наименование",
+      dataIndex: "name",
+      key: "name",
+      isSorting: true,
+      searching: {
+        isSearching: true,
+        title: "",
+      },
+      isCountable: false,
+    },
+    {
       title: "сумма",
       dataIndex: "amount",
       key: "amount",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
+      isSorting: true,
       searching: {
         isSearching: true,
         title: "сумме",
       },
-      countable: true,
-    },
-    {
-      title: "описание",
-      dataIndex: "name",
-      key: "name",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
-      searching: {
-        isSearching: true,
-        title: "описанию бонуса",
-      },
-      countable: false,
+      isCountable: true,
     },
     {
       title: "сотрудник",
       dataIndex: "user",
       key: "user",
-      filters: filtersUsers,
-      onFilter: (value: string, record) =>
-        record.user.first_name.startsWith(value),
-      filterSearch: true,
-      sorting: {
-        isSorting: false,
-        isDate: false,
-      },
+      isSorting: false,
       searching: {
         isSearching: false,
         title: "",
       },
-      countable: false,
-      render: (user) => <Tag color="black">{user.username}</Tag>,
+      isCountable: false,
+      render: (user) => {
+        if (user !== null) {
+          return (
+            <Tag color="black">
+              {user.last_name} {user.first_name}{" "}
+              {user.middle_name ? user.middle_name : ""}
+            </Tag>
+          );
+        } else {
+          return null;
+        }
+      },
     },
     {
       title: "квесты",
       dataIndex: "quests",
       key: "quests",
-      filters: filtersQuests,
-      onFilter: (value, record) =>
-        record.quests.some((quest) => quest.name === value),
-      filterSearch: true,
-      filterMultiple: true,
-      sorting: {
-        isSorting: false,
-        isDate: false,
-      },
+      isSorting: false,
       searching: {
         isSearching: false,
         title: "",
       },
-      countable: false,
+      isCountable: false,
       render: (_, { quests }) => (
         <>
           {quests.map((quest) => {
@@ -220,153 +144,41 @@ const App: FC = () => {
       ),
     },
   ];
-  const formItems = [
-    {
-      gutter: 16,
-      items: [
-        {
-          span: 12,
-          name: "date",
-          label: "дата",
-          rules: {
-            required: true,
-            message: "пожалуйста, введите дату",
-          },
-          item: {
-            name: "DatePicker",
-            label: "",
-            placeholder: "",
-            options: [],
-            multiple: null,
-          },
-        },
-        {
-          span: 12,
-          name: "type",
-          label: "тип",
-          rules: {
-            required: true,
-            message: "пожалуйста, введите дату",
-          },
-          item: {
-            name: "Select",
-            label: "",
-            placeholder: "",
-            options: [
-              {
-                label: "бонус",
-                value: "bonus",
-              },
-              {
-                label: "штраф",
-                value: "penalty",
-              },
-            ],
-            multiple: null,
-          },
-        },
-      ],
-    },
-    {
-      gutter: 16,
-      items: [
-        {
-          span: 12,
-          name: "amount",
-          label: "сумма",
-          rules: {
-            required: true,
-            message: "пожалуйста, введите сумму бонуса",
-          },
-          item: {
-            name: "Input",
-            label: "",
-            placeholder: "пожалуйста, введите сумму бонуса",
-            options: [],
-            multiple: null,
-          },
-        },
-        {
-          span: 12,
-          name: "name",
-          label: "описание",
-          rules: {
-            required: true,
-            message: "пожалуйста, введите описание бонуса",
-          },
-          item: {
-            name: "Input",
-            label: "",
-            placeholder: "пожалуйста, введите описание бонуса",
-            options: [],
-            multiple: null,
-          },
-        },
-      ],
-    },
-    {
-      gutter: 16,
-      items: [
-        {
-          span: 12,
-          name: "user",
-          label: "сотрудник",
-          rules: {
-            required: true,
-            message: "пожалуйста, выберите сотрудника",
-          },
-          item: {
-            name: "Select",
-            label: "",
-            placeholder: "пожалуйста, выберите сотрудника",
-            options: optionsUsers,
-            multiple: false,
-          },
-        },
-        {
-          span: 12,
-          name: "quests",
-          label: "квесты",
-          rules: {
-            required: true,
-            message: "пожалуйста, выберите квесты",
-          },
-          item: {
-            name: "Select",
-            label: "",
-            placeholder: "пожалуйста, выберите квесты",
-            options: optionsQuests,
-            multiple: true,
-          },
-        },
-      ],
-    },
-  ];
 
+  const [formItems, setFormItems] = useState([])
+  const getFormItems = async () => {
+    const res = await getSTBonusesPenaltiesFormItems()
+    setFormItems(res)
+  }
   useEffect(() => {
-    fetchUsers();
-    fetchQuests();
-  }, []);
+    getFormItems();
+  }, [])
+
+  const formHandleOnChange = () => {};
 
   return (
-    <TableTemplate
+    <TemplateTable
       defaultOpenKeys={["sourceTables"]}
       defaultSelectedKeys={["sourceTablesBonusesPenalties"]}
-      breadcrumbItems={sourceBreadcrumbItems}
-      title={"исходные таблицы | бонусы/штрафы"}
-      datePicker={true}
-      addEntry={true}
+      breadcrumbItems={initialBreadcrumbItems}
+      isRangePicker={true}
       addEntryTitle={"новая запись"}
-      fetchFunction={getSTBonusesPenalties}
-      createFunction={postSTBonusPenalty}
-      deleteFunction={deleteSTBonusPenalty}
+      isCancel={false}
+      isCreate={false}
+      tableScroll={null}
+      tableDateColumn={"date"}
       initialPackedTableColumns={initialPackedTableColumns}
-      tableOperation={true}
-      tableBordered={true}
-      drawerTitle="создать новую запись"
+      tableIsOperation={true}
+      getFunction={getSTBonusesPenalties}
+      deleteFunction={deleteSTBonusPenalty}
+      postFunction={postSTBonusPenalty}
+      isUseParams={false}
+      isAddEntry={true}
+      drawerTitle={"создать новую запись"}
       formItems={formItems}
+      formHandleOnChange={formHandleOnChange}
     />
   );
 };
 
-export default App;
+export default STQuests;

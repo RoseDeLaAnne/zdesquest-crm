@@ -23,7 +23,10 @@ const App: React.FC = () => {
       const response = await token(values);
       if (response.status === 200) {
         localStorageSetItem(response.data);
-        navigate("/", { replace: true });
+        // navigate("/users", { replace: true });
+        // window.location.reload();
+        window.location.href = '/salaries';
+        // navigate("/users");
       }
     } catch (error) {
       throw error;

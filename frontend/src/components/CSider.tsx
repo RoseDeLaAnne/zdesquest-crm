@@ -53,43 +53,37 @@ const App: FC<IFCSider> = ({
     return getItem(
       quest.name,
       `quests${quest.key}`,
-      `/quests/${quest.id}`,
+      `/quests/${quest.latin_name}`,
       <QuestionOutlined />,
       [
         getItem(
           "доходы",
           `quests${quest.key}Incomes`,
-          `/quests/${quest.id}/incomes`,
+          `/quests/${quest.latin_name}/incomes`,
           <RiseOutlined />
         ),
         getItem(
           "расходы",
           `quests${quest.key}Expenses`,
-          `/quests/${quest.id}/expenses`,
+          `/quests/${quest.latin_name}/expenses`,
           <FallOutlined />
         ),
         getItem(
           "касса",
           `quests${quest.key}CashRegister`,
-          `/quests/${quest.id}/cash-register`,
+          `/quests/${quest.latin_name}/cash-register`,
           <FallOutlined />
         ),
         getItem(
           "расходы с раб. карты",
           `quests${quest.key}WorkCardExpenses`,
-          `/quests/${quest.id}/work-card-expenses`,
+          `/quests/${quest.latin_name}/work-card-expenses`,
           <DollarOutlined />
         ),
         getItem(
           "расходы со своих",
           `quests${quest.key}ExpensesFromTheir`,
-          `/quests/${quest.id}/expenses-from-their`,
-          <DollarOutlined />
-        ),
-        getItem(
-          "видео",
-          `quests${quest.key}Videos`,
-          `/quests/${quest.id}/videos`,
+          `/quests/${quest.latin_name}/expenses-from-their`,
           <DollarOutlined />
         ),
       ]
@@ -208,16 +202,28 @@ const App: FC<IFCSider> = ({
         "/additional-tables",
         <TableOutlined />,
         [
+          // getItem(
+          //   "категории расходов",
+          //   "additionalTablesSTExpenseCategories",
+          //   "/additional-tables/stexpense-categories",
+          //   <QuestionOutlined />
+          // ),
+          // getItem(
+          //   "подкатегории расходов",
+          //   "additionalTablesSTExpenseSubCategories",
+          //   "/additional-tables/stexpense-subcategories",
+          //   <QuestionOutlined />
+          // ),
           getItem(
-            "категории расходов",
-            "additionalTablesSTExpenseCategories",
-            "/additional-tables/stexpense-categories",
+            "квесты",
+            "additionalTablesQuests",
+            "/additional-tables/quests",
             <QuestionOutlined />
           ),
           getItem(
-            "подкатегории расходов",
-            "additionalTablesSTExpenseSubCategories",
-            "/additional-tables/stexpense-subcategories",
+            "версии квестов",
+            "additionalTablesQuestVersions",
+            "/additional-tables/quest-versions",
             <QuestionOutlined />
           ),
         ]
@@ -229,15 +235,26 @@ const App: FC<IFCSider> = ({
     ];
   } else {
     menuItems = [
-      getItem("формы", "forms", "/forms", <TableOutlined />, [
-        getItem("квесты", "formsQuest", "/forms/quest", <QuestionOutlined />),
-        getItem(
-          "расходы",
-          "formsExpense",
-          "/forms/expense",
-          <QuestionOutlined />
-        ),
-      ]),
+      getItem(
+        "формы",
+        "forms",
+        "/forms",
+        <TableOutlined />,
+        [
+          getItem(
+            "квесты",
+            "formsQuest",
+            "/forms/quest",
+            <QuestionOutlined />
+          ),
+          getItem(
+            "расходы",
+            "formsExpense",
+            "/forms/expense",
+            <QuestionOutlined />
+          ),
+        ]
+      ),
       getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
     ];
   }

@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useRef } from "react";
+import { FC } from "react";
 
 // antd
 import {
@@ -15,19 +15,52 @@ import {
 // antd | icons
 import { PlusOutlined } from "@ant-design/icons";
 
-const App: FC = ({ items, form, onFinish, handleOnChange }) => {
-  // const handleOnChange = (e, name) => {
-  //   console.log(e)
-  //   console.log(name)
-  // }
+// constants
+import {
+  datePickerFormat,
+  minuteStep,
+  timePickerFormat,
+} from "../../constants";
 
+const normFile = (e: any) => {
+  if (Array.isArray(e)) {
+    return e;
+  }
+  return e?.fileList;
+};
+
+const FormFC: FC = ({ items, form, onFinish, handleOnChange }) => {
   return (
     <Form form={form} layout={"vertical"} requiredMark onFinish={onFinish}>
       {items.map((item, index) => (
         <Row gutter={item.gutter} key={index}>
           {item.items.map((innerItem, innerIndex) => (
-            <Col span={innerItem.span} key={innerIndex}>
-              <Form.Item name={innerItem.name} label={innerItem.label}>
+            <Col
+              xs={innerItem.spanXS}
+              sm={innerItem.spanSM}
+              md={innerItem.spanMD}
+              key={innerIndex}
+            >
+              <Form.Item
+                name={innerItem.name}
+                label={innerItem.label}
+                {...(innerItem.element.name === "Checkbox"
+                  ? { valuePropName: "checked", initialValue: false }
+                  : {})}
+                {...(innerItem.element.name === "Upload"
+                  ? { valuePropName: "fileList", getValueFromEvent: normFile }
+                  : {})}
+                {...(innerItem.element.name !== "Checkbox"
+                  ? {
+                      rules: [
+                        {
+                          required: innerItem.isRequired,
+                          message: innerItem.placeholder,
+                        },
+                      ],
+                    }
+                  : {})}
+              >
                 {innerItem.element.name === "Select" ? (
                   <Select
                     {...(innerItem.element.multiple
@@ -40,6 +73,35 @@ const App: FC = ({ items, form, onFinish, handleOnChange }) => {
                       handleOnChange(selectedValues, innerItem.name)
                     }
                   />
+                ) : innerItem.element.name === "DatePicker" ? (
+                  <DatePicker
+                    format={datePickerFormat}
+                    style={{ width: "100%" }}
+                    onChange={(selectedValues) =>
+                      handleOnChange(selectedValues, innerItem.name)
+                    }
+                  />
+                ) : innerItem.element.name === "TimePicker" ? (
+                  <TimePicker
+                    format={timePickerFormat}
+                    style={{ width: "100%" }}
+                    minuteStep={minuteStep}
+                  />
+                ) : innerItem.element.name === "Checkbox" ? (
+                  <Checkbox
+                    onChange={(selectedValues) =>
+                      handleOnChange(selectedValues, innerItem.name)
+                    }
+                  >
+                    {innerItem.placeholder}
+                  </Checkbox>
+                ) : innerItem.element.name === "Upload" ? (
+                  <Upload action="/upload.do" listType="picture-card" maxCount={1}>
+                    <div>
+                      <PlusOutlined />
+                      <div style={{ marginTop: 8 }}>Upload</div>
+                    </div>
+                  </Upload>
                 ) : (
                   <Input placeholder={innerItem.placeholder} />
                 )}
@@ -52,4 +114,4 @@ const App: FC = ({ items, form, onFinish, handleOnChange }) => {
   );
 };
 
-export default App;
+export default FormFC;

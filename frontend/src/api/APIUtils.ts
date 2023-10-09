@@ -21,7 +21,22 @@ export const getCurrentUser = async () => {
   }
 };
 
-export const getUsersByRole = async (roleid: string) => {
+export const getUserSTQuests = async (startDate: string, endDate: string) => {
+  try {
+    let url;
+    if (startDate !== null && endDate !== null) {
+      url = `http://127.0.0.1:8000/api/user/stquests/?start_date=${startDate}&end_date=${endDate}`;
+    } else {
+      url = `http://127.0.0.1:8000/api/user/stquests/`;
+    }
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUsersByRole = async (roleName: string) => {
   try {
     const url = `http://127.0.0.1:8000/api/users/${roleName}/`;
     const response = await axios.get(url);
@@ -51,20 +66,15 @@ export const getQuests = async () => {
   }
 };
 
-// export const getTransactions = async (startDate: string, endDate: string) => {
-//   try {
-//     let url;
-//     if (startDate !== null && endDate !== null) {
-//       url = `http://127.0.0.1:8000/api/transactions/?start_date=${startDate}&end_date=${endDate}`;
-//     } else {
-//       url = `http://127.0.0.1:8000/api/transactions/`;
-//     }
-//     const response = await axios.get(url);
-//     return response;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
+export const getQuestVersions = async () => {
+  try {
+    const url = `http://127.0.0.1:8000/api/quest-versions/`;
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const getSTQuests = async (startDate: string, endDate: string) => {
   try {
@@ -96,7 +106,10 @@ export const getSTExpenses = async (startDate: string, endDate: string) => {
   }
 };
 
-export const getSTBonusesPenalties = async (startDate: string, endDate: string) => {
+export const getSTBonusesPenalties = async (
+  startDate: string,
+  endDate: string
+) => {
   try {
     let url;
     if (startDate !== null && endDate !== null) {
@@ -110,36 +123,6 @@ export const getSTBonusesPenalties = async (startDate: string, endDate: string) 
     throw error;
   }
 };
-
-// export const getSTBonuses = async (startDate: string, endDate: string) => {
-//   try {
-//     let url;
-//     if (startDate !== null && endDate !== null) {
-//       url = `http://127.0.0.1:8000/api/stbonuses/?start_date=${startDate}&end_date=${endDate}`;
-//     } else {
-//       url = `http://127.0.0.1:8000/api/stbonuses/`;
-//     }
-//     const response = await axios.get(url);
-//     return response;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// export const getSTPenalties = async (startDate: string, endDate: string) => {
-//   try {
-//     let url;
-//     if (startDate !== null && endDate !== null) {
-//       url = `http://127.0.0.1:8000/api/stpenalties/?start_date=${startDate}&end_date=${endDate}`;
-//     } else {
-//       url = `http://127.0.0.1:8000/api/stpenalties/`;
-//     }
-//     const response = await axios.get(url);
-//     return response;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
 
 export const getSTExpenseCategories = async () => {
   try {
@@ -161,10 +144,10 @@ export const getSTExpenseSubCategories = async () => {
   }
 };
 
-export const getQuestIncomes = async (  
+export const getQuestIncomes = async (
   startDate: string,
   endDate: string,
-  id: string
+  id: number
 ) => {
   try {
     let url;
@@ -183,7 +166,7 @@ export const getQuestIncomes = async (
 export const getQuestExpenses = async (
   startDate: string,
   endDate: string,
-  id: string
+  id: number
 ) => {
   try {
     let url;
@@ -217,7 +200,7 @@ export const getSalaries = async (startDate: string, endDate: string) => {
 export const getQuestCashRegister = async (
   startDate: string,
   endDate: string,
-  id: string
+  id: number
 ) => {
   try {
     let url;
@@ -233,9 +216,7 @@ export const getQuestCashRegister = async (
   }
 };
 
-export const toggleQuestCashRegister = async (
-  id: number
-) => {
+export const toggleQuestCashRegister = async (id: number) => {
   try {
     const url = `http://127.0.0.1:8000/api/toggle/cash-register/${id}/`;
     const response = await axios.get(url);
@@ -248,7 +229,7 @@ export const toggleQuestCashRegister = async (
 export const getWorkCardExpenses = async (
   startDate: string,
   endDate: string,
-  id: string
+  id: number
 ) => {
   try {
     let url;
@@ -267,7 +248,7 @@ export const getWorkCardExpenses = async (
 export const getExpensesFromTheir = async (
   startDate: string,
   endDate: string,
-  id: string
+  id: number
 ) => {
   try {
     let url;
@@ -302,9 +283,7 @@ export const getQVideos = async (
   }
 };
 
-export const toggleExpensesFromTheir = async (
-  id: number
-) => {
+export const toggleExpensesFromTheir = async (id: number) => {
   try {
     const url = `http://127.0.0.1:8000/api/toggle/expenses-from-their/${id}/`;
     const response = await axios.get(url);
@@ -368,6 +347,36 @@ export const putQuest = async (id: number, value: object) => {
 export const deleteQuest = async (id: number) => {
   try {
     const url = `http://127.0.0.1:8000/api/quest/${id}/`;
+    const response = await axios.delete(url);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getQuestVersion = async (id: number) => {
+  try {
+    const url = `http://127.0.0.1:8000/api/quest-version/${id}/`;
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const putQuestVersion = async (id: number, value: object) => {
+  try {
+    const url = `http://127.0.0.1:8000/api/quest-version/${id}/`;
+    const response = await axios.put(url, value);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteQuestVersion = async (id: number) => {
+  try {
+    const url = `http://127.0.0.1:8000/api/quest-version/${id}/`;
     const response = await axios.delete(url);
     return response;
   } catch (error) {
@@ -464,66 +473,6 @@ export const deleteSTBonusPenalty = async (id: number) => {
     throw error;
   }
 };
-
-// export const getSTBonus = async (id: number) => {
-//   try {
-//     const url = `http://127.0.0.1:8000/api/stbonus/${id}/`;
-//     const response = await axios.get(url);
-//     return response;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// export const putSTBonus = async (id: number, value: object) => {
-//   try {
-//     const url = `http://127.0.0.1:8000/api/stbonus/${id}/`;
-//     const response = await axios.put(url, value);
-//     return response;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// export const deleteSTBonus = async (id: number) => {
-//   try {
-//     const url = `http://127.0.0.1:8000/api/stbonus/${id}/`;
-//     const response = await axios.delete(url);
-//     return response;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// export const getSTPenalty = async (id: number) => {
-//   try {
-//     const url = `http://127.0.0.1:8000/api/stpenalty/${id}/`;
-//     const response = await axios.get(url);
-//     return response;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// export const putSTPenalty = async (id: number, value: object) => {
-//   try {
-//     const url = `http://127.0.0.1:8000/api/stpenalty/${id}/`;
-//     const response = await axios.put(url, value);
-//     return response;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// export const deleteSTPenalty = async (id: number) => {
-//   try {
-//     const url = `http://127.0.0.1:8000/api/stpenalty/${id}/`;
-//     const response = await axios.delete(url);
-//     return response;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
 
 export const getSTExpenseCategory = async (id: number) => {
   try {
@@ -626,6 +575,16 @@ export const postQuest = async (value: object) => {
   }
 };
 
+export const postQuestVersion = async (value: object) => {
+  try {
+    const url = `http://127.0.0.1:8000/api/create/quest-version/`;
+    const response = await axios.post(url, value);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const postSTQuest = async (value: object) => {
   try {
     const url = `http://127.0.0.1:8000/api/create/stquest/`;
@@ -655,26 +614,6 @@ export const postSTBonusPenalty = async (value: object) => {
     throw error;
   }
 };
-
-// export const postSTBonus = async (value: object) => {
-//   try {
-//     const url = `http://127.0.0.1:8000/api/create/stbonus/`;
-//     const response = await axios.post(url, value);
-//     return response;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// export const postSTPenalty = async (value: object) => {
-//   try {
-//     const url = `http://127.0.0.1:8000/api/create/stpenalty/`;
-//     const response = await axios.post(url, value);
-//     return response;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
 
 export const postSTExpenseCategory = async (value: object) => {
   try {

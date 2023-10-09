@@ -26,10 +26,10 @@ import {
 } from "../../api/APIUtils";
 
 // components
-import TableTemplate from "../../components/TableTemplate";
+import TemplateTable from "../../components/template/Table";
 
-const App: FC = () => {
-  const sourceBreadcrumbItems = [
+const QIncomesFC: FC = () => {
+  const initialBreadcrumbItems = [
     {
       icon: TableOutlined,
       title: "квесты",
@@ -41,21 +41,9 @@ const App: FC = () => {
       menu: [
         {
           key: "1",
-          icon: QuestionOutlined,
-          label: "квартира 404",
-          to: "/quests/room-404",
-        },
-        {
-          key: "2",
           icon: FallOutlined,
           label: "радуга",
           to: "/quests/rainbow",
-        },
-        {
-          key: "3",
-          icon: DeploymentUnitOutlined,
-          label: "тьма",
-          to: "/quests/dark",
         },
       ],
     },
@@ -81,170 +69,120 @@ const App: FC = () => {
 
   const initialPackedTableColumns = [
     {
-      title: "дата/время",
-      dataIndex: "date_time",
-      key: "date_time",
-      sorting: {
-        isSorting: false,
-        isDate: false,
-      },
+      title: "игра",
+      dataIndex: "game",
+      key: "game",
+      isSorting: false,
       searching: {
         isSearching: false,
         title: "",
       },
-      countable: false,
-      width: 140,
-    },
-    {
-      title: "игра",
-      dataIndex: "game",
-      key: "game",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      countable: true,
+      isCountable: true,
     },
     {
       title: "комната",
       dataIndex: "room",
       key: "room",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
+      isSorting: false,
       searching: {
-        isSearching: true,
+        isSearching: false,
         title: "",
       },
-      countable: true,
+      isCountable: true,
     },
     {
       title: "видео",
       dataIndex: "video",
       key: "video",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
+      isSorting: false,
       searching: {
-        isSearching: true,
+        isSearching: false,
         title: "",
       },
-      countable: true,
+      isCountable: true,
     },
     {
       title: "фотомагниты",
       dataIndex: "photomagnets",
       key: "photomagnets",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
+      isSorting: false,
       searching: {
-        isSearching: true,
+        isSearching: false,
         title: "",
       },
-      countable: true,
+      isCountable: true,
     },
     {
       title: "актер",
       dataIndex: "actor",
       key: "actor",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
+      isSorting: false,
       searching: {
-        isSearching: true,
+        isSearching: false,
         title: "",
       },
-      countable: true,
+      isCountable: true,
     },
     {
       title: "итог",
       dataIndex: "total",
       key: "total",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
+      isSorting: false,
       searching: {
-        isSearching: true,
+        isSearching: false,
         title: "",
       },
-      countable: true,
+      isCountable: true,
     },
     {
       title: "уплачено наличными",
       dataIndex: "paid_cash",
       key: "paid_cash",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
+      isSorting: false,
       searching: {
-        isSearching: true,
+        isSearching: false,
         title: "",
       },
-      countable: true,
+      isCountable: true,
     },
     {
       title: "уплачено безналичными",
       dataIndex: "paid_non_cash",
       key: "paid_non_cash",
-      sorting: {
-        isSorting: true,
-        isDate: false,
-      },
+      isSorting: false,
       searching: {
-        isSearching: true,
+        isSearching: false,
         title: "",
       },
-      countable: true,
+      isCountable: true,
     },
-    // {
-    //   title: "запись",
-    //   dataIndex: "record",
-    //   key: "record",
-    //   sorting: {
-    //     isSorting: false,
-    //     isDate: false,
-    //   },
-    //   searching: {
-    //     isSearching: false,
-    //     title: "",
-    //   },
-    //   countable: false,
-    //   render: (_, record: { key: React.Key }) =>
-    //   <Link to={`/source-tables/quests/edit/${record.stquest.id}`}>запись</Link>,
-    // }
   ];
 
   return (
-    <TableTemplate
-      defaultOpenKeys={["quests", "questsRainbow"]}
-      defaultSelectedKeys={["questsRainbowIncomes"]}
-      breadcrumbItems={sourceBreadcrumbItems}
-      title={"радуга | доходы"}
-      datePicker={true}
-      addEntry={false}
-      addEntryTitle={""}
-      questTables={true}
-      fetchFunction={getQuestIncomes}
-      createFunction={null}
-      deleteFunction={null}
+    <TemplateTable
+      defaultOpenKeys={["quests", "questsРадуга"]}
+      defaultSelectedKeys={["questsРадугаIncomes"]}
+      breadcrumbItems={initialBreadcrumbItems}
+      isRangePicker={true}
+      addEntryTitle={null}
+      isCancel={false}
+      isCreate={false}
+      tableScroll={null}
+      tableDateColumn={"date_time"}
       initialPackedTableColumns={initialPackedTableColumns}
-      tableOperation={false}
-      tableBordered={true}
-      drawerTitle=""
+      tableIsOperation={false}
+      getFunction={getQuestIncomes}
+      deleteFunction={null}
+      postFunction={null}
+      isUseParams={true}
+      isAddEntry={null}
+      drawerTitle={null}
       formItems={null}
+      notVisibleFormItems={null}
+      defaultValuesFormItems={null}
+      formHandleOnChange={null}
     />
   );
 };
 
-export default App;
+export default QIncomesFC;
