@@ -68,7 +68,7 @@ const QVideos: FC = () => {
       isCountable: false,
     },
     {
-      title: "client_name",
+      title: "имя клиента",
       dataIndex: "client_name",
       key: "client_name",
       isSorting: true,
@@ -90,7 +90,7 @@ const QVideos: FC = () => {
       ),
     },
     {
-      title: "sent",
+      title: "отправлено",
       dataIndex: "sent",
       key: "sent",
       isSorting: false,
@@ -122,7 +122,7 @@ const QVideos: FC = () => {
       ),
     },
     {
-      title: "package",
+      title: "пакет",
       dataIndex: "is_package",
       key: "is_package",
       isSorting: false,
@@ -147,7 +147,7 @@ const QVideos: FC = () => {
       },
     },
     {
-      title: "note",
+      title: "примечание",
       dataIndex: "note",
       key: "note",
       isSorting: false,
