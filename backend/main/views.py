@@ -782,6 +782,8 @@ def VQuestVersion(request, id):
 
             entry = QuestVersion.objects.get(id=id)
             entry.name = data["name"]
+            entry.cost_weekdays = data["cost_weekdays"]
+            entry.cost_weekends = data["cost_weekends"]
             entry.save()
 
             return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
@@ -1987,6 +1989,8 @@ def CreateQuestVersion(request):
 
             entry_data = {
                 "name": data["name"],
+                "cost_weekdays": data["cost_weekdays"],
+                "cost_weekends": data["cost_weekends"],
             }
 
             entry = QuestVersion(**entry_data)

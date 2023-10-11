@@ -18,6 +18,9 @@ class Role(models.Model):
 
 class QuestVersion(models.Model):
     name = models.CharField(max_length=255, unique=True)
+    
+    cost_weekdays = models.IntegerField(blank=True, null=True)
+    cost_weekends = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return self.name

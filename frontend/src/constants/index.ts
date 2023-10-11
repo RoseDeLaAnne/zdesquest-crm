@@ -1265,6 +1265,39 @@ export const getQuestVersionsFormItems = async () => {
         },
       ],
     },
+    {
+      gutter: 16,
+      items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 12,
+          name: "cost_weekdays",
+          label: "стоимость квеста в будние дни",
+          isRequired: true,
+          placeholder: "пожалуйста, введите логин",
+          element: {
+            name: "Input",
+            options: [],
+            multiple: null,
+          },
+        },
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 12,
+          name: "cost_weekends",
+          label: "стоимость квеста в выходные дни",
+          isRequired: true,
+          placeholder: "пожалуйста, введите пароль",
+          element: {
+            name: "Input",
+            options: [],
+            multiple: null,
+          },
+        },
+      ],
+    },
   ];
 
   return formItems;

@@ -63,7 +63,7 @@ const ATQuests: FC = () => {
         isSearching: true,
         title: "",
       },
-      isCountable: true,
+      isCountable: false,
     },
     {
       title: "стоимость квеста в выходные дни",
@@ -74,7 +74,7 @@ const ATQuests: FC = () => {
         isSearching: true,
         title: "",
       },
-      isCountable: true,
+      isCountable: false,
     },
     {
       title: "ставка актера",
@@ -85,7 +85,7 @@ const ATQuests: FC = () => {
         isSearching: true,
         title: "",
       },
-      isCountable: true,
+      isCountable: false,
     },
     {
       title: "ставка аниматора",
@@ -96,7 +96,7 @@ const ATQuests: FC = () => {
         isSearching: true,
         title: "",
       },
-      isCountable: true,
+      isCountable: false,
     },
     {
       title: "специальные версии",
@@ -151,7 +151,7 @@ const ATQuests: FC = () => {
         isSearching: true,
         title: "",
       },
-      isCountable: true,
+      isCountable: false,
     },
   ];
 
