@@ -90,6 +90,7 @@ const App: FC = ({
   initialPackedTableColumns,
   tableScroll,
   tableIsObj,
+  isAdmin
 }) => {
   const {
     token: { colorBgContainer },

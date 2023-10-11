@@ -116,7 +116,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     roles = models.ManyToManyField(Role, verbose_name=_("Роли"), blank=True)
 
-    quest = models.ForeignKey(Quest, on_delete=models.SET_NULL, blank=True, null=True)
+    quest = models.ForeignKey(Quest, on_delete=models.SET_NULL, blank=True, null=True, related_name="quest_user")
 
     date_joined = models.DateTimeField(
         verbose_name=_("Дата регистрации"), default=timezone.now
@@ -124,6 +124,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_of_birth = models.DateField(
         verbose_name=_("Дата рождения"), blank=True, null=True
     )
+
+    range_staj_start = models.DateField(blank=True, null=True)
+    range_staj_end = models.DateField(blank=True, null=True)
+
+    quest_staj = models.ForeignKey(Quest, on_delete=models.SET_NULL, blank=True, null=True, related_name="quest_staf_user")
 
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = []
@@ -175,16 +180,29 @@ class STQuest(models.Model):
     discount_sum = models.IntegerField(default=0)
     discount_desc = models.CharField(default="", max_length=255)
     room_sum = models.IntegerField(default=0)
+    room_sum_after = models.IntegerField(default=0)
+    room_sum_total = models.IntegerField(default=0)
     room_quantity = models.IntegerField(default=0)
-    room_employee_name = models.ForeignKey(
+    room_employee_name = models.ForeignKey( 
         User,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
         related_name="room_employee_stquest",
     )
+    # room_employee_name_after = models.ForeignKey(
+    #     User,
+    #     on_delete=models.SET_NULL,
+    #     blank=True,
+    #     null=True,
+    #     related_name="room_employee_after_stquest",
+    # )
     video = models.IntegerField(default=0)
+    video_after = models.IntegerField(default=0)
+    video_total = models.IntegerField(default=0)
     photomagnets_quantity = models.IntegerField(default=0)
+    photomagnets_quantity_after = models.IntegerField(default=0)
+    photomagnets_quantity_total = models.IntegerField(default=0)
     photomagnets_sum = models.IntegerField(default=0)
     birthday_congr = models.IntegerField(default=0)
     easy_work = models.IntegerField(default=0)
@@ -214,7 +232,19 @@ class STQuest(models.Model):
     cashless_payment = models.IntegerField(default=0)
     cash_delivery = models.IntegerField(default=0)
     cashless_delivery = models.IntegerField(default=0)
+    cash_payment_after = models.IntegerField(default=0)
+    cashless_payment_after = models.IntegerField(default=0)
+    cash_delivery_after = models.IntegerField(default=0)
+    cashless_delivery_after = models.IntegerField(default=0)
+    cash_payment_total = models.IntegerField(default=0)
+    cashless_payment_total = models.IntegerField(default=0)
+    cash_delivery_total = models.IntegerField(default=0)
+    cashless_delivery_total = models.IntegerField(default=0)
     prepayment = models.IntegerField(default=0)
+
+    employee_with_staj = models.ManyToManyField(
+        User, blank=True, related_name="employee_with_staj_stquest"
+    )
 
     created_by = models.ForeignKey(
         User,
@@ -225,10 +255,18 @@ class STQuest(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        if (self.photomagnets_quantity):
-            photomagnets_promo = self.photomagnets_quantity // 2
-            photomagnets_not_promo = self.photomagnets_quantity - photomagnets_promo
-            self.photomagnets_sum = photomagnets_not_promo * 250 + photomagnets_promo * 150
+        self.room_sum_total = self.room_sum + self.room_sum_after
+        self.video_total = self.video + self.video_after
+        self.photomagnets_quantity_total = self.photomagnets_quantity + self.photomagnets_quantity_after
+        self.cash_payment_total = self.cash_payment + self.cash_payment_after
+        self.cashless_payment_total = self.cashless_payment + self.cashless_payment_after
+        self.cash_delivery_total = self.cash_delivery + self.cash_delivery_after
+        self.cashless_delivery_total = self.cashless_delivery + self.cashless_delivery_after
+
+        # if (self.photomagnets_quantity):
+        photomagnets_promo = self.photomagnets_quantity // 2
+        photomagnets_not_promo = self.photomagnets_quantity - photomagnets_promo
+        self.photomagnets_sum = photomagnets_not_promo * 250 + photomagnets_promo * 150
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -378,6 +416,10 @@ class QVideo(models.Model):
 
     client_name = models.CharField(max_length=255)
     sent = models.BooleanField()
+
+    is_package = models.BooleanField(default=False)
+
+    note = models.CharField(max_length=255, default="")
 
     quest = models.ForeignKey(Quest, on_delete=models.CASCADE, blank=True, null=True)
 

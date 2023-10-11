@@ -144,6 +144,28 @@ const STExpensesFC: FC = () => {
     //     />
     //   ),
     // },
+    {
+      title: "кто уехали",
+      dataIndex: "paid_tax",
+      key: "paid_tax",
+      isSorting: false,
+      searching: {
+        isSearching: false,
+        title: "",
+      },
+      isCountable: false,
+      render: (_, { paid_tax }) => (
+        <>
+          {paid_tax.map((el) => {
+            return (
+              <Tag color="orange" key={el.id}>
+                {el.name}
+              </Tag>
+            );
+          })}
+        </>
+      ),
+    },
   ];
 
   const [formItems, setFormItems] = useState([])

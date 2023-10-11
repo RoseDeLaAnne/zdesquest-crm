@@ -20,6 +20,8 @@ def create_qincome(data, entry):
         photomagnets_not_promo = int(data["photomagnets_quantity"]) - photomagnets_promo
         photomagnets_sum = photomagnets_not_promo * 250 + photomagnets_promo * 150
 
+    
+
     local_data = {
         "date": formatted_date,
         "time": formatted_time,
@@ -34,8 +36,54 @@ def create_qincome(data, entry):
         local_data.update(new_data)
 
     if "room_sum" in data:
-        new_data = {"room": int(data["room_sum"])}
+        new_room_sum = 0
+        if (entry.quest.name == 'Проклятые' or entry.quest.name == 'Логово Ведьмы'):
+            new_room_sum_for_room404 = (data["room_sum"]-100)/2
+            new_room_sum = data["room_sum"] - new_room_sum_for_room404
+            new_data = {"room": new_room_sum}
+
+            quest_room404 = Quest.objects.get(name="Квартира 404")
+            local_data_for404 = {
+                "date": formatted_date,
+                "time": formatted_time,
+                "stquest": entry,
+                "quest": quest_room404,
+                "room": new_room_sum_for_room404
+            }
+            qincome2 = QIncome(**local_data_for404)
+            qincome2.save()
+
+            if ("is_package" in data):
+                new_game_sum = data["quest_cost"] - 250
+                new_sum_for_room404 = 250
+                local_data_for_package = {
+                    "date": formatted_date,
+                    "time": formatted_time,
+                    "stquest": entry,
+                    "quest": quest_room404,
+                    "game": new_game_sum
+                    # "game": {
+                        # "tooltip": "Пакет",
+                        # "value": new_game_sum,
+                    # }
+                }
+                local_data_for404_package = {
+                    "date": formatted_date,
+                    "time": formatted_time,
+                    "stquest": entry,
+                    "quest": quest_room404,
+                    "room": new_sum_for_room404
+                }
+                QIncome(**local_data_for_package).save()
+                QIncome(**local_data_for404_package).save()
+
+            # else:
+
+        else:
+            new_data = {"room": int(data["room_sum"])}
+        
         local_data.update(new_data)
+
 
     if "video" in data:
         new_data = {"video": int(data["video"])}
@@ -67,32 +115,28 @@ def create_qincome(data, entry):
     qincome.save()
 
 
-def create_qcash_register_from_stquest(data, stquest_id):
-    formatted_date = datetime.fromisoformat(data["date"]).date()
-
-    stquest = STQuest.objects.get(id=stquest_id)
+def create_qcash_register_from_stquest(entry):
+    formatted_date = datetime.fromisoformat(entry["date"]).date()
 
     local_data = {
         "date": formatted_date,
-        "amount": int(data["cash_payment"]) - int(data["cash_delivery"]),
-        "stquest": stquest,
-        "quest": stquest.quest,
+        "amount": int(entry["cash_payment"]) - int(entry["cash_delivery"]),
+        "stquest": entry,
+        "quest": entry.quest,
     }
 
     cash_register = QCashRegister(**local_data)
     cash_register.save()
 
 
-def create_qcash_register_from_stexpense(data, stexpense_id):
+def create_qcash_register_from_stexpense(data):
     formatted_date = datetime.fromisoformat(data["date"]).date()
-
-    stexpense = STExpense.objects.get(id=stexpense_id)
 
     local_data = {
         "date": formatted_date,
         "amount": -int(data["amount"]),
         "description": data["name"],
-        "stexpense": stexpense,
+        "stexpense": data,
     }
 
     cash_register = QCashRegister(**local_data)
@@ -113,7 +157,7 @@ def create_travel(entry):
         users.extend(stquest.actors.all())
     users = list(set(users))
     for user in users:
-        print(user)
+        # print(user)
         stquests_by_user = STQuest.objects.filter(date=stquest_date).filter(
             Q(administrator=user) | Q(animator=user) | Q(actors__in=[user])
         )

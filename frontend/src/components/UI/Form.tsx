@@ -22,12 +22,18 @@ import {
   timePickerFormat,
 } from "../../constants";
 
+import locale from 'antd/es/date-picker/locale/ru_RU';
+
+import 'dayjs/locale/ru';
+
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
     return e;
   }
   return e?.fileList;
 };
+
+const { RangePicker } = DatePicker;
 
 const FormFC: FC = ({ items, form, onFinish, handleOnChange }) => {
   return (
@@ -75,6 +81,7 @@ const FormFC: FC = ({ items, form, onFinish, handleOnChange }) => {
                   />
                 ) : innerItem.element.name === "DatePicker" ? (
                   <DatePicker
+                    locale={locale}
                     format={datePickerFormat}
                     style={{ width: "100%" }}
                     onChange={(selectedValues) =>
@@ -86,6 +93,11 @@ const FormFC: FC = ({ items, form, onFinish, handleOnChange }) => {
                     format={timePickerFormat}
                     style={{ width: "100%" }}
                     minuteStep={minuteStep}
+                  />
+                ) : innerItem.element.name === "RangePicker" ? (
+                  <RangePicker
+                    format={datePickerFormat}
+                    style={{ width: "100%" }}
                   />
                 ) : innerItem.element.name === "Checkbox" ? (
                   <Checkbox

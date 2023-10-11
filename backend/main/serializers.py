@@ -14,6 +14,8 @@ class CustomDateFormatField(serializers.DateField):
 class UserSerializer(ModelSerializer):
     key = serializers.CharField(max_length=255, source="id")
     date_of_birth = CustomDateFormatField()
+    range_staj_start = CustomDateFormatField()
+    range_staj_end = CustomDateFormatField()
 
     class Meta:
         model = User
@@ -27,8 +29,11 @@ class UserSerializer(ModelSerializer):
             "first_name",
             "middle_name",
             "date_of_birth",
+            "range_staj_start",
+            "range_staj_end",
             "quest",
             "roles",
+            "quest_staj",
             "is_superuser",
         ]
 

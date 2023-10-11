@@ -1,4 +1,5 @@
 import { ConfigProvider } from "antd";
+import ruRU from 'antd/lib/locale/ru_RU';
 
 // import { Route, Routes, Navigate } from "react-router-dom";
 import { Route, Navigate } from "react-router-dom";
@@ -50,7 +51,7 @@ import Routes from "./routes";
 
 function App() {
   return (
-    <ConfigProvider
+    <ConfigProvider locale={ruRU}
       theme={{
         token: {
           fontFamily: "Jost",

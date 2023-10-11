@@ -473,6 +473,7 @@ const STQuests: FC = () => {
   const [isPackage, setIsPackage] = useState(false);
   const [isWeekend, setIsWeekend] = useState(null);
   const [notVisibleFormItems, setNotVisibleFormItems] = useState([]);
+  const [titlesFormItems, setTitlesFormItems] = useState({});
   const [defaultValuesFormItems, setDefaultValuesFormItems] = useState({});
 
   const formHandleOnChange = (value, name) => {
@@ -484,34 +485,58 @@ const STQuests: FC = () => {
       if (isPackage === false) {
         switch (quest.name) {
           case "ДСР":
-            setNotVisibleFormItems([""]);
+            setTitlesFormItems({
+              actor_second_actor: "asda",
+            });            
             break;
           case "У57":
-            setNotVisibleFormItems([""]);
-            break;
-          case "Тьма":
             setNotVisibleFormItems(["actor_second_actor"]);
             break;
-          case "ДМ":
-            setNotVisibleFormItems(["animator"]);
+          case "Тьма":
+            setTitlesFormItems({
+              actor_second_actor: "второй актер",
+            });
+            break;
+          case "Дом Монстров":
+            setTitlesFormItems({
+              actor_second_actor: "аниматор",
+            });
             break;
           case "Они":
+            setTitlesFormItems({
+              actor_second_actor: "второй актер",
+            });
+            break;
+          case "Квартира 404":
             setNotVisibleFormItems(["actor_second_actor"]);
             break;
           case "ОСК":
-            setNotVisibleFormItems(["animator"]);
+            setTitlesFormItems({
+              actor_second_actor: "аниматор",
+            });
+            break;
+          case "Проклятые":
+            setNotVisibleFormItems(["actor_second_actor"]);
             break;
           case "Логово Ведьмы":
-            setNotVisibleFormItems(["animator"]);
+            setTitlesFormItems({
+              actor_second_actor: "аниматор",
+            });
+            break;
+          case "Обитель Зла":
+            setNotVisibleFormItems(["actor_second_actor"]);
+            break;
+          case "Покайся во грехе":
+            setNotVisibleFormItems(["actor_second_actor"]);
             break;
           default:
             setNotVisibleFormItems([]);
             break;
         }
   
-        if (quest.address === 'Афанасьева, 13') {
-          setNotVisibleFormItems(['photomagnets_quantity']);
-        }
+        // if (quest.address === 'Афанасьева, 13') {
+        //   setNotVisibleFormItems(['photomagnets_quantity']);
+        // }
       }
 
       if (isWeekend === true) {
@@ -532,19 +557,19 @@ const STQuests: FC = () => {
           });
           return accumulator;
         }, []);
-        const visibleNames = [
-          "quest",
-          "is_package",
-          "is_video_review",
-          "date",
-          "time",
-          "quest_cost",
-          "administrator"
-        ];
-        const filteredArray = names.filter(
-          (item) => !visibleNames.includes(item)
-        );
-        setNotVisibleFormItems(filteredArray);
+        // const visibleNames = [
+        //   "quest",
+        //   "is_package",
+        //   "is_video_review",
+        //   "date",
+        //   "time",
+        //   "quest_cost",
+        //   "administrator"
+        // ];
+        // const filteredArray = names.filter(
+        //   (item) => !visibleNames.includes(item)
+        // );
+        setNotVisibleFormItems(['birthday_congr', 'video']);
       } else {
         setNotVisibleFormItems([]);
       }

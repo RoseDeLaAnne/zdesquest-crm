@@ -47,13 +47,16 @@ const EditFC: FC = ({
       const res = await getFunction(id);
 
       if (res.status === 200) {
-        for (const key in res.data) {
-          if (res.data.hasOwnProperty(key)) {
-            const value = res.data[key];
+        const cleanedData = Object.fromEntries(
+            Object.entries(res.data).filter(([key, val]) => val !== "" && val !== null)
+        );
+        for (const key in cleanedData) {
+          if (cleanedData.hasOwnProperty(key)) {
+            const value = cleanedData[key];
 
             if (key === "date" || key === "date_of_birth") {
               const date = dayjs(value, datePickerFormat);
-              form.setFieldsValue({ [key]: date });
+              form.setFieldsValue({ [key]: date });              
             } else if (key === "time") {
               const time = dayjs(value, timePickerFormat);
               form.setFieldsValue({ [key]: time });
@@ -61,8 +64,6 @@ const EditFC: FC = ({
               key === "user" || key === "administrator" || key === "animator" || key === "created_by" || key === "room_employee_name" || key === "quest" || key === "user" || key === "who_paid" || key === "sub_category"
             ) {
               form.setFieldsValue({ [key]: value !== null ? value.id : value });
-            } else if (key === 'administrator') {
-              console.log(key)
             } else if (
               key === "actors" ||
               key === "actors_half" ||

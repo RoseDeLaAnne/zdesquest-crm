@@ -140,6 +140,64 @@ const UsersFC: FC = () => {
         </>
       ),
     },
+    {
+      title: "начала стажировки",
+      dataIndex: "range_staj_start",
+      key: "range_staj_start",
+      isSorting: false,
+      searching: {
+        isSearching: false,
+        title: "",
+      },
+      isCountable: false,
+    },
+    {
+      title: "окончание стажировки",
+      dataIndex: "range_staj_end",
+      key: "range_staj_end",
+      isSorting: false,
+      searching: {
+        isSearching: false,
+        title: "",
+      },
+      isCountable: false,
+    },
+    {
+      title: "квест стажировочные",
+      dataIndex: "quest_staj",
+      key: "quest_staj",
+      isSorting: false,
+      searching: {
+        isSearching: false,
+        title: "",
+      },
+      isCountable: false,
+      render: (quest_staj) => {
+        if (quest_staj !== null) {
+          return <Tag color="orange">{quest_staj.name}</Tag>;
+        } else {
+          return null;
+        }
+      },
+    },
+    {
+      title: "квест стажировочные",
+      dataIndex: "quest_staj",
+      key: "quest_staj",
+      isSorting: false,
+      searching: {
+        isSearching: false,
+        title: "",
+      },
+      isCountable: false,
+      render: (quest_staj) => {
+        if (quest_staj !== null) {
+          return <Tag color="orange">{quest_staj.name}</Tag>;
+        } else {
+          return null;
+        }
+      },
+    },
   ];
 
   const [formItems, setFormItems] = useState([])

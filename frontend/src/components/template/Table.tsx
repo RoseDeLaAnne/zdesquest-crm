@@ -7,7 +7,15 @@ import { FC, useRef, useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 
 // antd
-import { Space, Form, Button, Input, Popconfirm, FloatButton, message } from "antd";
+import {
+  Space,
+  Form,
+  Button,
+  Input,
+  Popconfirm,
+  FloatButton,
+  message,
+} from "antd";
 // antd | type
 import type { MenuProps, InputRef } from "antd";
 import type { ColumnType, ColumnsType } from "antd/es/table";
@@ -199,7 +207,7 @@ const TableFC: FC = ({
   let tableColumns = [];
   let initialUnpackedTableDateColumn = {};
   let unpackedTableColumns = [];
-  let tableCountingFields = []
+  let tableCountingFields = [];
   if (tableDateColumn === "date") {
     initialUnpackedTableDateColumn = {
       title: "дата",
@@ -252,9 +260,8 @@ const TableFC: FC = ({
       return newColumn;
     });
     tableCountingFields = initialPackedTableColumns
-    .filter((column) => column.isCountable)
-    .map((column) => column.key);
-
+      .filter((column) => column.isCountable)
+      .map((column) => column.key);
   }
   if (tableDateColumn) {
     tableColumns = [
@@ -368,16 +375,6 @@ const TableFC: FC = ({
 
   const [messageApi, contextHolder] = message.useMessage();
   const formOnFinish = async (value) => {
-    // const photomagnets_promo = Math.floor((parseInt(value.photomagnets_quantity) / 2))
-    // const photomagnets_not_promo = parseInt(value.photomagnets_quantity) - photomagnets_promo
-    // const photomagnets_sum = photomagnets_not_promo * 250 + photomagnets_promo * 150
-
-    // const sum = parseInt(value.actor_second_actor) + parseInt(value.add_players) + parseInt(value.birthday_congr) + parseInt(value.discount_sum) + parseInt(value.easy_work) + parseInt(value.night_game) + photomagnets_sum + parseInt(value.quest_cost)
-
-    // const noname1 = sum - value.prepayment
-    // const noname2 = parseInt(value.cash_payment) + parseInt(value.cashless_payment) - parseInt(value.cash_delivery) - parseInt(value.cashless_delivery)
-
-    // console.log(noname2)
     try {
       const response = await postFunction(value);
       if (response.status === 201) {
@@ -393,6 +390,11 @@ const TableFC: FC = ({
         } else {
           getEntries(null, null);
         }
+      } else {
+        messageApi.open({
+          type: "error",
+          content: "запись не создана",
+        });
       }
     } catch (error) {
       messageApi.open({

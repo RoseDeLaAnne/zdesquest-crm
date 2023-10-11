@@ -38,6 +38,8 @@ urlpatterns = [
     path("toggle/expenses-from-their/<int:id>/", views.ToggleQExpensesFromTheir),
     path("toggle/cash-register/<int:id>/", views.ToggleQCashRegister),
     path("salaries/", views.Salaries),
+    path("salaries/current/", views.SalariesCurrent),
+    path("quest-profit/<int:id>/", views.QuestProfitById),
     # GET, PUT, DELETE
     path("user/<int:id>/", views.VUser),
     path("role/<int:id>/", views.VRole),

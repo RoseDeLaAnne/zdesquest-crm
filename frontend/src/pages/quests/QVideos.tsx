@@ -121,6 +121,42 @@ const QVideos: FC = () => {
         </>
       ),
     },
+    {
+      title: "package",
+      dataIndex: "is_package",
+      key: "is_package",
+      isSorting: false,
+      searching: {
+        isSearching: false,
+        title: "",
+      },
+      isCountable: false,
+      render: (is_package) => {
+        let color = "red";
+        let formattedIsPackage = "";
+
+        if (is_package === true) {
+          color = "green";
+          formattedIsPackage = "да";
+        } else if (is_package === false) {
+          color = "red";
+          formattedIsPackage = "нет";
+        }
+
+        return <Tag color={color}>{formattedIsPackage}</Tag>;
+      },
+    },
+    {
+      title: "note",
+      dataIndex: "note",
+      key: "note",
+      isSorting: false,
+      searching: {
+        isSearching: false,
+        title: "",
+      },
+      isCountable: false,
+    },
   ];
 
   return (

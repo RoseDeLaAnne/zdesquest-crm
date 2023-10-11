@@ -26,7 +26,7 @@ import {
 } from "../../api/APIUtils";
 
 // components
-import TemplateTable from "../../components/template/Table";
+import TemplateTable from "../../components/template/Table10";
 
 const QIncomesFC: FC = () => {
   const initialBreadcrumbItems = [

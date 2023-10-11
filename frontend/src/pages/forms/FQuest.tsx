@@ -138,9 +138,9 @@ const QuestFC: FC = () => {
             break;
         }
   
-        if (quest.address === 'Афанасьева, 13') {
-          setNotVisibleFormItems(['photomagnets_quantity']);
-        }
+        // if (quest.address === 'Афанасьева, 13') {
+        //   setNotVisibleFormItems(['photomagnets_quantity']);
+        // }
       }
 
       if (isWeekend === true) {
@@ -161,19 +161,19 @@ const QuestFC: FC = () => {
           });
           return accumulator;
         }, []);
-        const visibleNames = [
-          "quest",
-          "is_package",
-          "is_video_review",
-          "date",
-          "time",
-          "quest_cost",
-          "administrator"
-        ];
-        const filteredArray = names.filter(
-          (item) => !visibleNames.includes(item)
-        );
-        setNotVisibleFormItems(filteredArray);
+        // const visibleNames = [
+        //   "quest",
+        //   "is_package",
+        //   "is_video_review",
+        //   "date",
+        //   "time",
+        //   "quest_cost",
+        //   "administrator"
+        // ];
+        // const filteredArray = names.filter(
+        //   (item) => !visibleNames.includes(item)
+        // );
+        setNotVisibleFormItems(['birthday_congr', 'video']);
       } else {
         setNotVisibleFormItems([]);
       }

@@ -20,15 +20,15 @@ import {
 import { getQuests, getCurrentUser } from "../api/APIUtils";
 
 // interface
-import { IFCSider } from "../assets/utilities/interface";
+// import { IFCSider } from "../assets/utilities/interface";
 
 // type
 import { MenuItem } from "../assets/utilities/type";
 
 // layout
-const { Sider } = Layout;
+const { Sider, Header } = Layout;
 
-const App: FC<IFCSider> = ({
+const App: FC = ({
   collapsed,
   setCollapsed,
   defaultOpenKeys,
@@ -52,38 +52,44 @@ const App: FC<IFCSider> = ({
   function convertQuestToMenuItem(quest) {
     return getItem(
       quest.name,
-      `quests${quest.key}`,
-      `/quests/${quest.latin_name}`,
+      `quests${quest.name}`,
+      `/quests/${quest.id}`,
       <QuestionOutlined />,
       [
         getItem(
           "доходы",
-          `quests${quest.key}Incomes`,
-          `/quests/${quest.latin_name}/incomes`,
+          `quests${quest.name}Incomes`,
+          `/quests/${quest.id}/incomes`,
           <RiseOutlined />
         ),
         getItem(
           "расходы",
-          `quests${quest.key}Expenses`,
-          `/quests/${quest.latin_name}/expenses`,
+          `quests${quest.name}Expenses`,
+          `/quests/${quest.id}/expenses`,
           <FallOutlined />
         ),
         getItem(
           "касса",
-          `quests${quest.key}CashRegister`,
-          `/quests/${quest.latin_name}/cash-register`,
+          `quests${quest.name}CashRegister`,
+          `/quests/${quest.id}/cash-register`,
           <FallOutlined />
         ),
         getItem(
           "расходы с раб. карты",
-          `quests${quest.key}WorkCardExpenses`,
-          `/quests/${quest.latin_name}/work-card-expenses`,
+          `quests${quest.name}WorkCardExpenses`,
+          `/quests/${quest.id}/work-card-expenses`,
           <DollarOutlined />
         ),
         getItem(
           "расходы со своих",
-          `quests${quest.key}ExpensesFromTheir`,
-          `/quests/${quest.latin_name}/expenses-from-their`,
+          `quests${quest.name}ExpensesFromTheir`,
+          `/quests/${quest.id}/expenses-from-their`,
+          <DollarOutlined />
+        ),
+        getItem(
+          "видео",
+          `quests${quest.name}Videos`,
+          `/quests/${quest.id}/videos`,
           <DollarOutlined />
         ),
       ]
@@ -235,26 +241,24 @@ const App: FC<IFCSider> = ({
     ];
   } else {
     menuItems = [
-      getItem(
-        "формы",
-        "forms",
-        "/forms",
-        <TableOutlined />,
-        [
-          getItem(
-            "квесты",
-            "formsQuest",
-            "/forms/quest",
-            <QuestionOutlined />
-          ),
-          getItem(
-            "расходы",
-            "formsExpense",
-            "/forms/expense",
-            <QuestionOutlined />
-          ),
-        ]
-      ),
+      getItem("таблицы", "tables", "/tables", <TableOutlined />, [
+        getItem("квесты", "tablesQuests", "/tables/quests", <QuestionOutlined />),
+        getItem(
+          "расходы",
+          "tablesExpenses",
+          "/tables/expenses",
+          <QuestionOutlined />
+        ),
+      ]),
+      getItem("формы", "forms", "/forms", <TableOutlined />, [
+        getItem("квесты", "formsQuest", "/forms/quest", <QuestionOutlined />),
+        getItem(
+          "расходы",
+          "formsExpense",
+          "/forms/expense",
+          <QuestionOutlined />
+        ),
+      ]),
       getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
     ];
   }
@@ -265,31 +269,56 @@ const App: FC<IFCSider> = ({
   }, []);
 
   return (
-    <Sider
-      collapsible
-      collapsed={collapsed}
-      onCollapse={(value) => {
-        setCollapsed(value);
-        localStorage.setItem("collapsed", value.toString());
-      }}
-      style={{
-        overflow: "auto",
-        height: "100vh",
-        position: "fixed",
-        left: 0,
-        top: 0,
-        bottom: 0,
-      }}
-    >
-      <div className="demo-logo-vertical" />
-      <Menu
-        theme="dark"
-        defaultOpenKeys={defaultOpenKeys}
-        defaultSelectedKeys={defaultSelectedKeys}
-        mode="inline"
-        items={menuItems}
-      />
-    </Sider>
+    <>
+      <div className="desktop-version">
+        <Sider
+          collapsible
+          collapsed={collapsed}
+          onCollapse={(value) => {
+            setCollapsed(value);
+            localStorage.setItem("collapsed", value.toString());
+          }}
+          style={{
+            overflow: "auto",
+            height: "100vh",
+            position: "fixed",
+            left: 0,
+            top: 0,
+            bottom: 0,
+          }}
+        >
+          <div className="demo-logo-vertical" />
+          <Menu
+            theme="dark"
+            mode="inline"
+            defaultOpenKeys={defaultOpenKeys}
+            defaultSelectedKeys={defaultSelectedKeys}
+            items={menuItems}
+          />
+        </Sider>
+      </div>
+      <div className="mobile-version">
+        <Header
+          style={{
+            position: "fixed",
+            top: 0,
+            zIndex: 1,
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <div className="demo-logo" />
+          <Menu
+            theme="dark"
+            mode="horizontal"
+            defaultOpenKeys={defaultOpenKeys}
+            defaultSelectedKeys={defaultSelectedKeys}
+            items={menuItems}
+          />
+        </Header>
+      </div>
+    </>
   );
 };
 

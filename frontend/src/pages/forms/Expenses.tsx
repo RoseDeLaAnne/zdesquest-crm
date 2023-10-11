@@ -63,7 +63,7 @@ import {
   postSTExpense,
 } from "../../api/APIUtils";
 
-import { getQuestsFormItems, getSTQuestFormItems } from "../../constants/index.ts";
+import { getQuestsFormItems, getSTExpensesFormItems, getSTQuestFormItems } from "../../constants/index.ts";
 
 // components
 import TemplateCreate from "../../components/template/Create.tsx";
@@ -90,7 +90,7 @@ const QuestFC: FC = () => {
 
   const [formItems, setFormItems] = useState([]);
   const getFormItems = async () => {
-    const res = await getSTQuestFormItems();
+    const res = await getSTExpensesFormItems();
     setFormItems(res);
   };
   useEffect(() => {
