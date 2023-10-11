@@ -10,8 +10,8 @@ def date_to_timestamp(date):
 
 
 def create_qincome(data, entry):
-    formatted_date = datetime.fromisoformat(data["date"]).date()
-    formatted_time = datetime.fromisoformat(data["time"]).time()
+    formatted_date = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
+    formatted_time = datetime.fromisoformat(data['time'].replace('Z', '')).time()
 
     quest = Quest.objects.get(id=data["quest"])
 
@@ -37,7 +37,7 @@ def create_qincome(data, entry):
 
     if "room_sum" in data:
         new_room_sum = 0
-        if (entry.quest.name == 'Проклятые' or entry.quest.name == 'Логово Ведьмы'):
+        if (quest.name == 'Проклятые' or quest.name == 'Логово Ведьмы'):
             new_room_sum_for_room404 = (data["room_sum"]-100)/2
             new_room_sum = data["room_sum"] - new_room_sum_for_room404
             new_data = {"room": new_room_sum}
@@ -115,22 +115,24 @@ def create_qincome(data, entry):
     qincome.save()
 
 
-def create_qcash_register_from_stquest(entry):
-    formatted_date = datetime.fromisoformat(entry["date"]).date()
+def create_qcash_register_from_stquest(data, entry):
+    formatted_date = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
 
-    local_data = {
+    quest = Quest.objects.get(id=data['quest'])
+
+    local_data2 = {
         "date": formatted_date,
-        "amount": int(entry["cash_payment"]) - int(entry["cash_delivery"]),
+        "amount": int(data["cash_payment"]) - int(data["cash_delivery"]),
         "stquest": entry,
-        "quest": entry.quest,
+        "quest": quest,
     }
 
-    cash_register = QCashRegister(**local_data)
+    cash_register = QCashRegister(**local_data2)
     cash_register.save()
 
 
 def create_qcash_register_from_stexpense(data):
-    formatted_date = datetime.fromisoformat(data["date"]).date()
+    formatted_date = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
 
     local_data = {
         "date": formatted_date,

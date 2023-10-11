@@ -648,34 +648,41 @@ def VUser(request, id):
         return Response(serializer.data)
 
     if request.method == "PUT":
-        try:
-            data = json.loads(request.body)
+        # try:
+        data = json.loads(request.body)
 
-            quest = Quest.objects.get(id=data["quest"])
-            roles = Role.objects.filter(id__in=data["roles"])
+        print('asd')
 
-            formatted_date = datetime.fromisoformat(data["date_of_birth"]).date()
+        quest = Quest.objects.get(id=data["quest"])
+        roles = Role.objects.filter(id__in=data["roles"])
 
-            user = User.objects.get(id=id)
-            user.username = data["username"]
-            user.last_name = data["last_name"]
-            user.first_name = data["first_name"]
+        formatted_date = datetime.strptime(data['date_of_birth'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
+
+        user = User.objects.get(id=id)
+        user.username = data["username"]
+        user.last_name = data["last_name"]
+        user.first_name = data["first_name"]
+        if "middle_name" in data:
             user.middle_name = data["middle_name"]
+        if "date_of_birth" in data:
             user.date_of_birth = formatted_date
+        if "email" in data:
             user.email = data["email"]
+        if "phone_number" in data:
             user.phone_number = data["phone_number"]
+        if "quest" in data:
             user.quest = quest
 
-            if "password" in data:
-                user.set_password(data["password"])
+        if "password" in data:
+            user.set_password(data["password"])
 
-            user.save()
-            user.roles.set(roles)
+        user.save()
+        user.roles.set(roles)
 
-            return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
+        return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
 
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=400)
+        # except Exception as e:
+        #     return JsonResponse({"error": str(e)}, status=400)
 
     if request.method == "DELETE":
         user = User.objects.get(id=id)
@@ -696,7 +703,7 @@ def VRole(request, id):
     #     try:
     #         data = json.loads(request.body)
 
-    #         formatted_date = datetime.fromisoformat(data["date"]).date()
+    #         formatted_date = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
     #         sub_category = ExpenseSubCategory.objects.get(id=data["subCategory"])
     #         quests = Quest.objects.filter(id__in=data["quests"])
 
@@ -1548,7 +1555,7 @@ def ToggleQExpensesFromTheir(request, id):
 #         try:
 #             data = json.loads(request.body)
 
-#             formatted_date = datetime.fromisoformat(data["date"]).date()
+#             formatted_date = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
 
 #             transaction = Transaction.objects.get(id=tid)
 #             transaction.date = formatted_date
@@ -1581,7 +1588,7 @@ def VSTExpense(request, id):
             data1 = json.loads(request.body)
             data = {key: value for key, value in data1.items() if value not in ("", None)}
 
-            formatted_date = datetime.fromisoformat(data["date"]).date()
+            formatted_date = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
             sub_category = STExpenseSubCategory.objects.get(id=data["sub_category"])
             quests = Quest.objects.filter(id__in=data["quests"])
             who_paid = User.objects.get(id=data['who_paid'])
@@ -1655,13 +1662,13 @@ def VSTQuest(request, id):
         new_data4 = {}
 
         if "date" in data:
-            formatted_date = datetime.fromisoformat(data["date"]).date()
+            formatted_date = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
             new_data01 = {
                 "date": formatted_date,
             }
 
         if "time" in data:
-            formatted_time_without_3_hours = datetime.fromisoformat(data["time"]).time()
+            formatted_time_without_3_hours = datetime.fromisoformat(data['time'].replace('Z', '')).time()
             formatted_time = (
                 datetime.combine(datetime.min, formatted_time_without_3_hours)
                 + timedelta(hours=3)
@@ -1749,7 +1756,7 @@ def VSTBonusPenalty(request, id):
         try:
             data = json.loads(request.body)
 
-            formatted_date = datetime.fromisoformat(data["date"]).date()
+            formatted_date = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
             user = User.objects.get(id=data["user"])
             quests = Quest.objects.filter(id__in=data["quests"])
 
@@ -1862,7 +1869,7 @@ def CreateUser(request):
             }
 
         if "date_of_birth" in data:
-            formatted_date = datetime.fromisoformat(data["date_of_birth"]).date()
+            formatted_date = datetime.strptime(data['date_of_birth'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
             user_data02 = {
                 "date_of_birth": formatted_date,
             }
@@ -1911,7 +1918,7 @@ def CreateUser(request):
 #         try:
 #             # data = json.loads(request.body)
 
-#             # formatted_date = datetime.fromisoformat(data["date"]).date()
+#             # formatted_date = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
 #             # sub_category = ExpenseSubCategory.objects.get(id=data["subCategory"])
 #             # quests = Quest.objects.filter(id__in=data["quests"])
 
@@ -2009,7 +2016,7 @@ def CreateSTExpense(request):
         # image_data = base64.b64decode(attachment)
         # image_file = ContentFile(image_data, name=attachment_name)
 
-        formatted_date = datetime.fromisoformat(data["date"]).date()
+        formatted_date = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
         sub_category = STExpenseSubCategory.objects.get(id=data["sub_category"])
         
         quests = Quest.objects.filter(id__in=data["quests"])
@@ -2091,8 +2098,8 @@ def CreateSTQuest(request):
         data1 = json.loads(request.body)
         data = {key: value for key, value in data1.items() if value not in ("", None)}
 
-        formatted_date = datetime.fromisoformat(data["date"]).date()
-        formatted_time_without_3_hours = datetime.fromisoformat(data["time"]).time()
+        formatted_date = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
+        formatted_time_without_3_hours = datetime.fromisoformat(data['time'].replace('Z', '')).time()
         formatted_time = (
             datetime.combine(datetime.min, formatted_time_without_3_hours)
             + timedelta(hours=3)
@@ -2135,48 +2142,46 @@ def CreateSTQuest(request):
             "quest_cost": data["quest_cost"],
             "administrator": administrator,
             "created_by": request.user
-            # "animator": animator,
-            # "room_employee_name": room_employee_name,
-            # "photomagnets_quantity": int(data["photomagnets_quantity"]),
         }
 
         if "animator" in data:
             count_easy_work += 1
             animator = User.objects.get(id=data["animator"])
-            entry_data = {
-                "animator": animator,
-            }
+            entry_data['animator'] = animator
         if "room_employee_name" in data:
             room_employee_name = User.objects.get(id=data["room_employee_name"])
-            entry_data = {
-                "room_employee_name": room_employee_name,
-            }
-            QSalary({
-                "date": formatted_date,
-                "amount": 100,
-                "name": "Комната",
-                "user": room_employee_name,
-                "stquest": entry,
-            }).save()
-        if ("photomagnets_quantity" in data) and (data.quest.address != "Афанасьева, 13"):
-            entry_data = {"photomagnets_quantity": int(data["photomagnets_quantity"])}
+            entry_data['room_employee_name'] = room_employee_name
+            
+        if ("photomagnets_quantity" in data) and (quest.address != "Афанасьева, 13"):
+            entry_data['photomagnets_quantity'] = int(data["photomagnets_quantity"])
 
         for field in optional_fields:
             if field in data:
                 entry_data[field] = data[field]
 
         entry = STQuest(**entry_data)
-        # create_travel(entry)
+        create_travel(entry)
         entry.save()
         if "actors" in data:
             actors = User.objects.filter(id__in=data["actors"])
             entry.actors.set(actors)
 
         create_qincome(data, entry)
-        create_qcash_register_from_stquest(data)
+
+        if "room_employee_name" in data:
+            QSalary(**{
+                "date": formatted_date,
+                "amount": 100,
+                "name": "Комната",
+                "user": room_employee_name,
+                "stquest": entry,
+            }).save()
+
+        if "cash_payment" in data and "cash_delivery" in data:
+            create_qcash_register_from_stquest(data, entry)
 
         if ("is_video_review" in data):
-            QSalary({
+            QSalary(**{
                 "date": formatted_date,
                 "amount": 50,
                 "name": "Видео отзыв",
@@ -2185,7 +2190,7 @@ def CreateSTQuest(request):
             }).save()
 
         if ("video_after" in data):
-            QSalary({
+            QSalary(**{
                 "date": formatted_date,
                 "amount": 200,
                 "name": "Видео после",
@@ -2196,42 +2201,45 @@ def CreateSTQuest(request):
         if ("employee_with_staj" in data):
             employees = User.objects.filter(id__in=data['employee_with_staj'])
             for employee in employees:
-                QSalary({
+                QSalary(**{
                         "date": formatted_date,
                         "amount": 250,
                         "name": "Игра",
                         "user": employee,
-                        "stquest": entry,
+                        "stquest": entry
                     }).save()
 
-        if (("video" in data) or ("is_video_review" in data) or ("video_after" in data)) and ("client_name" in data):
-            QVideo({
-                    "date": formatted_date,
-                    "time": formatted_time,
-                    "client_name": data.client_name,
-                    "sent": False,
-                    "is_package": data.is_package,
-                    "note": "",
-                    "quest": data.quest,
-                }).save()
+        if (("video" in data) or (data['is_video_review'] == True) or ("video_after" in data)) and ("client_name" in data):
+            # if data['video'] != 0:
+            print(data)
+            QVideo(**{
+                "date": formatted_date,
+                "time": formatted_time,
+                "client_name": data['client_name'],
+                "sent": False,
+                "is_package": data['is_package'],
+                "note": "",
+                "quest": quest,
+                "stquest": entry
+            }).save()
 
         if "is_package" in data:
             if data['is_package'] == True:
-                QSalary({
+                QSalary(**{
                     "date": formatted_date,
                     "amount": 100,
                     "name": "Видео",
                     "user": administrator,
                     "stquest": entry,
                 }).save()
-                QSalary({
+                QSalary(**{
                     "date": formatted_date,
                     "amount": 100,
                     "name": "Бонус за пакет",
                     "user": administrator,
                     "stquest": entry,
                 }).save()
-                QSalary({
+                QSalary(**{
                     "date": formatted_date,
                     "amount": 30,
                     "name": "Фотомагнит акц.",
@@ -2240,22 +2248,25 @@ def CreateSTQuest(request):
                 }).save()
 
         if "night_game" in data:
-            night_game_salary_data_administrator = {
-                "date": formatted_date,
-                "amount": 100,
-                "name": "Ночная игра",
-                "user": administrator,
-                "stquest": entry,
-            }
-            QSalary(**night_game_salary_data_administrator).save()
-            night_game_salary_data_animator = {
-                "date": formatted_date,
-                "amount": 100,
-                "name": "Ночная игра",
-                "user": animator,
-                "stquest": entry,
-            }
-            QSalary(**night_game_salary_data_animator).save()
+            if "administrator" in data:
+                administrator = User.objects.get(id=data['administrator'])
+                night_game_salary_data_administrator = {
+                    "date": formatted_date,
+                    "amount": 100,
+                    "name": "Ночная игра",
+                    "user": administrator,
+                    "stquest": entry,
+                }
+                QSalary(**night_game_salary_data_administrator).save()
+            if "animator" in data:
+                animator = User.objects.get(id=data['animator'])
+                QSalary(**{
+                    "date": formatted_date,
+                    "amount": 100,
+                    "name": "Ночная игра",
+                    "user": animator,
+                    "stquest": entry,
+                }).save()
 
         if "actors" in data:
             count_easy_work += actors.count()
@@ -2339,7 +2350,7 @@ def CreateSTBonusPenalty(request):
         data1 = json.loads(request.body)
         data = {key: value for key, value in data1.items() if value not in ("", None)}
 
-        formatted_date = datetime.fromisoformat(data["date"]).date()
+        formatted_date = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
         user = User.objects.get(id=data["user"])            
 
         optional_fields = ["name"]

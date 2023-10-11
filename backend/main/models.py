@@ -254,14 +254,16 @@ class STQuest(models.Model):
         related_name="created_by",
     )
 
+    client_name = models.CharField(max_length=255, default='')
+
     def save(self, *args, **kwargs):
-        self.room_sum_total = self.room_sum + self.room_sum_after
-        self.video_total = self.video + self.video_after
-        self.photomagnets_quantity_total = self.photomagnets_quantity + self.photomagnets_quantity_after
-        self.cash_payment_total = self.cash_payment + self.cash_payment_after
-        self.cashless_payment_total = self.cashless_payment + self.cashless_payment_after
-        self.cash_delivery_total = self.cash_delivery + self.cash_delivery_after
-        self.cashless_delivery_total = self.cashless_delivery + self.cashless_delivery_after
+        self.room_sum_total = int(self.room_sum) + int(self.room_sum_after)
+        self.video_total = int(self.video) + int(self.video_after)
+        self.photomagnets_quantity_total = int(self.photomagnets_quantity) + int(self.photomagnets_quantity_after)
+        self.cash_payment_total = int(self.cash_payment) + int(self.cash_payment_after)
+        self.cashless_payment_total = int(self.cashless_payment) + int(self.cashless_payment_after)
+        self.cash_delivery_total = int(self.cash_delivery) + int(self.cash_delivery_after)
+        self.cashless_delivery_total = int(self.cashless_delivery) + int(self.cashless_delivery_after)
 
         # if (self.photomagnets_quantity):
         photomagnets_promo = self.photomagnets_quantity // 2
@@ -422,6 +424,7 @@ class QVideo(models.Model):
     note = models.CharField(max_length=255, default="")
 
     quest = models.ForeignKey(Quest, on_delete=models.CASCADE, blank=True, null=True)
+    stquest = models.ForeignKey(STQuest, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return str(self.date)
