@@ -76,6 +76,16 @@ export const getQuests = async () => {
   }
 };
 
+export const getQuestsWithSpecVersions = async () => {
+  try {
+    const url = `https://crm.zdesquest.ru/api/quests-with-spec-versions/`;
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getQuestVersions = async () => {
   try {
     const url = `https://crm.zdesquest.ru/api/quest-versions/`;

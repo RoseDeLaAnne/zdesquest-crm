@@ -2,6 +2,7 @@
 import {
   getQuestVersions,
   getQuests,
+  getQuestsWithSpecVersions,
   getRoles,
   getSTExpenseSubCategories,
   getUsers,
@@ -88,6 +89,21 @@ const fetchSubCategories = async () => {
 const fetchQuests = async () => {
   try {
     const res = await getQuests();
+    if (res.status === 200) {
+      const formattedOptions = res.data.map((el) => ({
+        label: el.name.toLowerCase(),
+        value: el.id,
+      }));
+
+      return formattedOptions;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+const fetchQuestsWithSpecVersions = async () => {
+  try {
+    const res = await getQuestsWithSpecVersions();
     if (res.status === 200) {
       const formattedOptions = res.data.map((el) => ({
         label: el.name.toLowerCase(),
@@ -328,7 +344,8 @@ export const getUsersFormItems = async () => {
 // getSTQuestFormItems
 export const getSTQuestFormItems = async () => {
   const optionsUsers = await fetchUsers();
-  const optionsQuests = await fetchQuests();
+  // const optionsQuests = await fetchQuests();
+  const optionsQuests = await fetchQuestsWithSpecVersions();
 
   const formItems = [
     {

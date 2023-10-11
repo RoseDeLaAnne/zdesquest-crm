@@ -306,7 +306,16 @@ def Roles(request):
 @api_view(["GET"])
 def Quests(request):
     if request.method == "GET":
-        quests = Quest.objects.all()
+        quests = Quest.objects.filter(special_versions__isnull=True)
+        serializer = QuestSerializer(quests, many=True)
+
+        return Response(serializer.data)
+    
+
+@api_view(["GET"])
+def QuestsWithSpecailVersions(request):
+    if request.method == "GET":
+        quests = Quest.objects.all()        
         serializer = QuestSerializer(quests, many=True)
 
         return Response(serializer.data)
