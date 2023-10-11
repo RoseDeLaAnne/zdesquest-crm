@@ -16,7 +16,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "https://your-api-domain.com/api/$1" // Replace with your API domain
+      "dest": "https://crm.zdesquest.ru/api/$1"
     },
     {
       "src": "/(.*)",
