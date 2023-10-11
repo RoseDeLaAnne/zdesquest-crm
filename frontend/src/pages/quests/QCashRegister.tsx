@@ -100,31 +100,31 @@ const App: FC = () => {
       },
       countable: false,
     },
-    {
-      title: "статус",
-      dataIndex: "status",
-      key: "статус",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "статусу",
-      },
-      countable: false,
-      render: (status) => {
-        let color = "red";
-        let formattedStatus = status;
+    // {
+    //   title: "статус",
+    //   dataIndex: "status",
+    //   key: "статус",
+    //   isSorting: false,
+    //   searching: {
+    //     isSearching: false,
+    //     title: "статусу",
+    //   },
+    //   countable: false,
+    //   render: (status) => {
+    //     let color = "red";
+    //     let formattedStatus = status;
 
-        if (status === "reset") {
-          color = "green";
-          formattedStatus = "обнулено";
-        } else if (status === "not_reset") {
-          color = "red";
-          formattedStatus = `не обнулено`;
-        }
+    //     if (status === "reset") {
+    //       color = "green";
+    //       formattedStatus = "обнулено";
+    //     } else if (status === "not_reset") {
+    //       color = "red";
+    //       formattedStatus = `не обнулено`;
+    //     }
 
-        return <Tag color={color}>{formattedStatus}</Tag>;
-      },
-    },
+    //     return <Tag color={color}>{formattedStatus}</Tag>;
+    //   },
+    // },
   ];
 
   return (

@@ -22,6 +22,7 @@ import useWindowWidthAndCollapsed from "../../useWindowWidthAndCollapsed";
 
 // constants
 import { layoutMarginLeft, rangePickerFormat } from "../../constants";
+import dayjs from "dayjs";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -83,6 +84,7 @@ const MainFC: FC = ({
                     onChange={rangePickerHandleChange}
                     format={rangePickerFormat}
                     className="m-w100"
+                    defaultValue={[dayjs(), dayjs()]}
                   />
                 )}
                 {isAddEntry === true && (

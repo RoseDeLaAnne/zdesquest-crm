@@ -35,6 +35,7 @@ import CDrawer from "../UI/Drawer";
 import { localStorageRemoveItem } from "../../assets/utilities/jwt";
 
 import { useAuth } from "../../provider/authProdiver";
+import dayjs from "dayjs";
 
 const TableFC: FC = ({
   defaultOpenKeys,
@@ -157,6 +158,7 @@ const TableFC: FC = ({
 
   let title = "";
   const breadcrumbItemsLength = breadcrumbItems.length;
+  
   if (breadcrumbItemsLength !== 1) {
     if (isCancel === false && isCreate === false) {
       title = `${breadcrumbItems[breadcrumbItems.length - 2].title} | ${
@@ -444,7 +446,10 @@ const TableFC: FC = ({
   }, [defaultValuesFormItems, form]);
 
   useEffect(() => {
-    getEntries(null, null);
+    if (breadcrumbItems[breadcrumbItems.length - 1].title === 'касса') {
+      getEntries(dayjs().format("DD-MM-YYYY"), dayjs().format("DD-MM-YYYY"))
+    } else {
+    getEntries(null, null); }
   }, []);
 
   return (
