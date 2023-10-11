@@ -12,5 +12,6 @@
   ],
   "rewrites":  [
     {"source": "/(.*)", "destination": "/"}
+    {"source": "/api/(.*)", "destination": "https://crm.zdesquest.ru/api/$1"}
   ]
 }
