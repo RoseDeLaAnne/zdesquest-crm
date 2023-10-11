@@ -1,5 +1,5 @@
 {
   "routes": [
-    { "src": "/.*", "dest": "https://crm.zdesquest.ru" }
+    { "src": "/api", "dest": "https://crm.zdesquest.ru" }
   ]
 }
