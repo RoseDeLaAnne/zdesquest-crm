@@ -6,7 +6,7 @@ import { Tag } from "antd";
 import { TableOutlined } from "@ant-design/icons";
 
 // components
-import TemplateTable from "../../components/template/Table";
+import TemplateTable from "../../components/template/Table1";
 
 // hooks
 import useQuestForm from "../../hooks/useQuestForm";

@@ -23,7 +23,7 @@ urlpatterns = [
     path("users/<str:rname>/", views.UsersByRole),
     path("roles/", views.Roles),
     path("quests/", views.Quests),
-    path("quests-with-special-versions/", views.QuestsWithSpecailVersions),
+    path("quests-with-spec-versions/", views.QuestsWithSpecailVersions),
     path("quest-versions/", views.QuestVersions),
     path("stquests/", views.STQuests),
     path("stexpenses/", views.STExpenses),

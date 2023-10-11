@@ -387,6 +387,8 @@ const TableFC: FC = ({
         Object.entries(value).filter(([key, val]) => val !== "" && val !== null)
     );
 
+    const localValue = value
+
     const sum =
       parseInt(cleanedData.actor_second_actor ? cleanedData.actor_second_actor : 0) +
       parseInt(cleanedData.add_players ? cleanedData.add_players : 0) +
@@ -406,35 +408,43 @@ const TableFC: FC = ({
       parseInt(cleanedData.cash_delivery ? cleanedData.cash_delivery : 0) -
       parseInt(cleanedData.cashless_delivery ? cleanedData.cashless_delivery : 0);
 
-    if (noname1 === noname2) {
+    
+    const arrayToCheck = ['room_sum', 'prepayment', 'photomagnets_quantity', 'night_game', 'easy_work', 'discount_sum', 'cashless_payment', 'cashless_delivery', 'cash_payment', 'cash_delivery', 'birthday_congr', 'add_players', 'actor_second_actor']; // Replace with your array of keys to check
+
+    for (let key in localValue) {
+      if (arrayToCheck.includes(key) && localValue[key] === undefined) {
+        localValue[key] = 0;
+      }
+    }
+
+    // if (noname1 === noname2) {
       // alert("equal");
-      const response = await postFunction(value);
-      if (response.status === 201) {
-        messageApi.open({
-          type: "success",
-          content: "запись создана",
-        });
-        if (dates.length !== 0) {
-          getEntries(
-            dates[0].format("DD-MM-YYYY"),
-            dates[1].format("DD-MM-YYYY")
-          );
-        } else {
-          getEntries(null, null);
-        }
+    const response = await postFunction(localValue);
+    if (response.status === 201) {
+      messageApi.open({
+        type: "success",
+        content: "запись создана",
+      });
+      if (dates.length !== 0) {
+        getEntries(
+          dates[0].format("DD-MM-YYYY"),
+          dates[1].format("DD-MM-YYYY")
+        );
       } else {
-        messageApi.open({
-          type: "error",
-          content: "запись не создана",
-        });
+        getEntries(null, null);
       }
     } else {
-      // alert("not equal");
       messageApi.open({
         type: "error",
-        content: "неверно",
+        content: "запись не создана",
       });
     }
+    // } else {
+    //   messageApi.open({
+    //     type: "error",
+    //     content: "неверно",
+    //   });
+    // }
     // } catch (error) {
       // messageApi.open({
       //   type: "error",

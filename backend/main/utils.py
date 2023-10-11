@@ -18,9 +18,7 @@ def create_qincome(data, entry):
     if ("photomagnets_quantity") in data:
         photomagnets_promo = int(data["photomagnets_quantity"]) // 2
         photomagnets_not_promo = int(data["photomagnets_quantity"]) - photomagnets_promo
-        photomagnets_sum = photomagnets_not_promo * 250 + photomagnets_promo * 150
-
-    
+        photomagnets_sum = photomagnets_not_promo * 250 + photomagnets_promo * 150    
 
     local_data = {
         "date": formatted_date,
@@ -28,6 +26,8 @@ def create_qincome(data, entry):
         "stquest": entry,
         "quest": quest,
     }
+
+    local_data['game'] = int(data['quest_cost']) + int(data['add_players']) + int(data['easy_work']) + int(data['night_game']) - int(data['discount_sum'])
 
     if "actor_second_actor" in data:
         new_data = {
@@ -99,17 +99,17 @@ def create_qincome(data, entry):
         }
         local_data.update(new_data)
 
-    if (
-        ("prepayment" in data)
-        and ("cashless_payment" in data)
-        and ("cashless_delivery" in data)
-    ):
-        new_data = {
-            "paid_non_cash": int(data["prepayment"])
-            + int(data["cashless_payment"])
-            - int(data["cashless_delivery"]),
-        }
-        local_data.update(new_data)
+    # if (
+    #     ("prepayment" in data)
+    #     and ("cashless_payment" in data)
+    #     and ("cashless_delivery" in data)
+    # ):
+    new_data = {
+        "paid_non_cash": int(data["prepayment"])
+        + int(data["cashless_payment"])
+        - int(data["cashless_delivery"]),
+    }
+    local_data.update(new_data)
 
     qincome = QIncome(**local_data)
     qincome.save()
