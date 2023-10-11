@@ -14,6 +14,10 @@ import ATQuests from "../pages/additional-tables/Quests";
 import ATEditQuests from "../pages/additional-tables/EditQuests";
 import ATQuestVersions from "../pages/additional-tables/QuestVersions";
 import ATEditQuestVersions from "../pages/additional-tables/EditQuestVersions";
+import ATSTExpenseCategories from "../pages/additional-tables/ATSTExpenseCategories";
+import ATSTExpenseSubCategories from "../pages/additional-tables/ATSTExpenseSubCategories";
+import ATEditSTExpenseCategories from "../pages/additional-tables/ATSTExpenseCategories";
+import ATEditSTExpenseSubCategories from "../pages/additional-tables/ATSTExpenseSubCategories";
 
 // source-tables
 import STQuests from "../pages/source-tables/Quests";
@@ -75,6 +79,22 @@ const Routes = () => {
         {
           path: "/users/edit/:id",
           element: <EditUsers />,
+        },
+        {
+          path: "/additional-tables/stexpense-categories",
+          element: <ATSTExpenseCategories />,
+        },
+        {
+          path: "/additional-tables/stexpense-categories/edit/:id",
+          element: <ATEditSTExpenseCategories />,
+        },
+        {
+          path: "/additional-tables/stexpense-subcategories",
+          element: <ATSTExpenseSubCategories />,
+        },
+        {
+          path: "/additional-tables/stexpense-subcategories/edit/:id",
+          element: <ATEditSTExpenseSubCategories />,
         },
         {
           path: "/additional-tables/quests",

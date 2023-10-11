@@ -208,18 +208,18 @@ const App: FC = ({
         "/additional-tables",
         <TableOutlined />,
         [
-          // getItem(
-          //   "категории расходов",
-          //   "additionalTablesSTExpenseCategories",
-          //   "/additional-tables/stexpense-categories",
-          //   <QuestionOutlined />
-          // ),
-          // getItem(
-          //   "подкатегории расходов",
-          //   "additionalTablesSTExpenseSubCategories",
-          //   "/additional-tables/stexpense-subcategories",
-          //   <QuestionOutlined />
-          // ),
+          getItem(
+            "категории расходов",
+            "additionalTablesSTExpenseCategories",
+            "/additional-tables/stexpense-categories",
+            <QuestionOutlined />
+          ),
+          getItem(
+            "подкатегории расходов",
+            "additionalTablesSTExpenseSubCategories",
+            "/additional-tables/stexpense-subcategories",
+            <QuestionOutlined />
+          ),
           getItem(
             "квесты",
             "additionalTablesQuests",
