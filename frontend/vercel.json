@@ -12,6 +12,15 @@
   ],
   "rewrites":  [
     {"source": "/(.*)", "destination": "/"}
-    {"source": "/api/(.*)", "destination": "https://crm.zdesquest.ru/api/$1"}
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "https://your-api-domain.com/api/$1" // Replace with your API domain
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
   ]
 }
