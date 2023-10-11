@@ -12,15 +12,5 @@
   ],
   "rewrites":  [
     {"source": "/(.*)", "destination": "/"}
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "https://crm.zdesquest.ru/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
   ]
 }
