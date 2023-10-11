@@ -2190,7 +2190,7 @@ def CreateSTQuest(request):
                 "stquest": entry,
             }).save()
 
-        if "cash_payment" in data and "cash_delivery" in data:
+        if "cash_payment" in data or "cash_delivery" in data:
             create_qcash_register_from_stquest(data, entry)
 
         if ("is_video_review" in data):

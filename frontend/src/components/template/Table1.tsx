@@ -412,7 +412,7 @@ const TableFC: FC = ({
     const arrayToCheck = ['room_sum', 'prepayment', 'photomagnets_quantity', 'night_game', 'easy_work', 'discount_sum', 'cashless_payment', 'cashless_delivery', 'cash_payment', 'cash_delivery', 'birthday_congr', 'add_players', 'actor_second_actor']; // Replace with your array of keys to check
 
     for (let key in localValue) {
-      if (arrayToCheck.includes(key) && localValue[key] === undefined) {
+      if (arrayToCheck.includes(key) && (localValue[key] === undefined || localValue[key] === '')) {
         localValue[key] = 0;
       }
     }

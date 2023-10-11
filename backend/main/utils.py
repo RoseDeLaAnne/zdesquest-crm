@@ -29,6 +29,8 @@ def create_qincome(data, entry):
 
     local_data['game'] = int(data['quest_cost']) + int(data['add_players']) + int(data['easy_work']) + int(data['night_game']) - int(data['discount_sum'])
 
+    local_data[]
+
     if "actor_second_actor" in data:
         new_data = {
             "actor": int(data["actor_second_actor"]),
@@ -93,11 +95,11 @@ def create_qincome(data, entry):
         new_data = {"photomagnets": int(photomagnets_sum)}
         local_data.update(new_data)
 
-    if ("cash_payment" in data) and ("cash_delivery" in data):
-        new_data = {
-            "paid_cash": int(data["cash_payment"]) - int(data["cash_delivery"]),
-        }
-        local_data.update(new_data)
+    # if ("cash_payment" in data) and ("cash_delivery" in data):
+    new_data = {
+        "paid_cash": int(data["cash_payment"]) - int(data["cash_delivery"]),
+    }
+    local_data.update(new_data)
 
     # if (
     #     ("prepayment" in data)
