@@ -19,7 +19,7 @@ import {
 // components
 import TemplateTable from "../../components/template/Table";
 
-const App: FC = () => {
+const QCashRegisterFC: FC = () => {
   const initialBreadcrumbItems = [
     {
       icon: TableOutlined,
@@ -154,4 +154,4 @@ const App: FC = () => {
   );
 };
 
-export default App;
+export default QCashRegisterFC;

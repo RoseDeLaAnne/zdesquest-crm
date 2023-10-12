@@ -11,7 +11,11 @@ def date_to_timestamp(date):
 
 def create_qincome(data, entry):
     formatted_date = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
-    formatted_time = datetime.fromisoformat(data['time'].replace('Z', '')).time()
+    formatted_time_without_3_hours = datetime.fromisoformat(data['time'].replace('Z', '')).time()
+    formatted_time = (
+            datetime.combine(datetime.min, formatted_time_without_3_hours)
+            + timedelta(hours=3)
+        ).time()
 
     quest = Quest.objects.get(id=data["quest"])
 
@@ -29,7 +33,8 @@ def create_qincome(data, entry):
 
     local_data['game'] = int(data['quest_cost']) + int(data['add_players']) + int(data['easy_work']) + int(data['night_game']) - int(data['discount_sum'])
 
-    local_data[]
+    local_data['paid_cash'] = int(data['cash_payment']) - int(data['cash_delivery'])
+    local_data['paid_non_cash'] = int(data['cashless_payment']) - int(data['cashless_delivery']) + int(data['prepayment'])
 
     if "actor_second_actor" in data:
         new_data = {
@@ -161,7 +166,6 @@ def create_travel(entry):
         users.extend(stquest.actors.all())
     users = list(set(users))
     for user in users:
-        # print(user)
         stquests_by_user = STQuest.objects.filter(date=stquest_date).filter(
             Q(administrator=user) | Q(animator=user) | Q(actors__in=[user])
         )

@@ -50,7 +50,8 @@ const App: FC = () => {
       breadcrumbItems={initialBreadcrumbItems}
       title={"зарплаты"}
       isDatePicker={true}
-      fetchFunction={isSuperUser ? getSalaries : getCurrentSalaries}
+      // fetchFunction={isSuperUser === true ? getSalaries : getCurrentSalaries}
+      fetchFunction={getSalaries}
       initialPackedTableDataColumn={initialPackedTableDataColumn}
       isUseParams={true}
       tableScroll={null}

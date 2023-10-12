@@ -21,6 +21,8 @@ class QuestVersion(models.Model):
     
     cost_weekdays = models.IntegerField(blank=True, null=True)
     cost_weekends = models.IntegerField(blank=True, null=True)
+    # cost_weekdays_with_package = models.IntegerField(blank=True, null=True)
+    # cost_weekends_with_package = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -32,6 +34,8 @@ class Quest(models.Model):
 
     cost_weekdays = models.IntegerField(blank=True, null=True)
     cost_weekends = models.IntegerField(blank=True, null=True)
+    cost_weekdays_with_package = models.IntegerField(blank=True, null=True)
+    cost_weekends_with_package = models.IntegerField(blank=True, null=True)
 
     administrator_rate = models.IntegerField()
     actor_rate = models.IntegerField()
@@ -43,7 +47,7 @@ class Quest(models.Model):
     versions = models.ManyToManyField(QuestVersion, blank=True)
 
     def save(self, *args, **kwargs):
-        self.animator_rate = self.actor_rate + 50
+        self.animator_rate = int(self.actor_rate) + 50
         super().save(*args, **kwargs)
 
     def __str__(self):

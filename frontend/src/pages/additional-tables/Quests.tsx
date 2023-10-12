@@ -77,6 +77,39 @@ const ATQuests: FC = () => {
       isCountable: false,
     },
     {
+      title: "стоимость квеста в будние дни (пакет)",
+      dataIndex: "cost_weekdays_with_package",
+      key: "cost_weekdays_with_package",
+      isSorting: true,
+      searching: {
+        isSearching: true,
+        title: "",
+      },
+      isCountable: false,
+    },
+    {
+      title: "стоимость квеста в выходные дни (пакет)",
+      dataIndex: "cost_weekends_with_package",
+      key: "cost_weekends_with_package",
+      isSorting: true,
+      searching: {
+        isSearching: true,
+        title: "",
+      },
+      isCountable: false,
+    },
+    {
+      title: "ставка администратора",
+      dataIndex: "administrator_rate",
+      key: "administrator_rate",
+      isSorting: true,
+      searching: {
+        isSearching: true,
+        title: "",
+      },
+      isCountable: false,
+    },
+    {
       title: "ставка актера",
       dataIndex: "actor_rate",
       key: "actor_rate",
@@ -173,7 +206,7 @@ const ATQuests: FC = () => {
       addEntryTitle={"новый квест"}
       isCancel={false}
       isCreate={false}
-      tableScroll={null}
+      tableScroll={2500}
       tableDateColumn={null}
       initialPackedTableColumns={initialPackedTableColumns}
       tableIsOperation={true}

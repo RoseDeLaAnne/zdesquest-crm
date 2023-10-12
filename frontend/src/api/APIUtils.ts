@@ -1,12 +1,13 @@
 import axios from "axios";
 
-// const url = 'http://127.0.0.1:8000'
 const url2 = 'https://crm.zdesquest.ru'
+const url3 = url2
+// const url3 = 'http://127.0.0.1:8000'
 
 // GET
 export const getQuestProfit = async (id: number) => {
   try {
-    const url = `${url2}/api/quest-profit/${id}/`;
+    const url = `${url3}/api/quest-profit/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -16,7 +17,7 @@ export const getQuestProfit = async (id: number) => {
 
 export const getUsers = async () => {
   try {
-    const url = `${url2}/api/users/`;
+    const url = `${url3}/api/users/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -26,7 +27,7 @@ export const getUsers = async () => {
 
 export const getCurrentUser = async () => {
   try {
-    const url = `${url2}/api/user/current/`;
+    const url = `${url3}/api/user/current/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -38,9 +39,9 @@ export const getUserSTQuests = async (startDate: string, endDate: string) => {
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `${url2}/api/user/stquests/?start_date=${startDate}&end_date=${endDate}`;
+      url = `${url3}/api/user/stquests/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `${url2}/api/user/stquests/`;
+      url = `${url3}/api/user/stquests/`;
     }
     const response = await axios.get(url);
     return response;
@@ -51,7 +52,7 @@ export const getUserSTQuests = async (startDate: string, endDate: string) => {
 
 export const getUsersByRole = async (roleName: string) => {
   try {
-    const url = `${url2}/api/users/${roleName}/`;
+    const url = `${url3}/api/users/${roleName}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -61,7 +62,7 @@ export const getUsersByRole = async (roleName: string) => {
 
 export const getRoles = async () => {
   try {
-    const url = `${url2}/api/roles/`;
+    const url = `${url3}/api/roles/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -71,7 +72,7 @@ export const getRoles = async () => {
 
 export const getQuests = async () => {
   try {
-    const url = `${url2}/api/quests/`;
+    const url = `${url3}/api/quests/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -81,7 +82,7 @@ export const getQuests = async () => {
 
 export const getQuestsWithSpecVersions = async () => {
   try {
-    const url = `${url2}/api/quests-with-spec-versions/`;
+    const url = `${url3}/api/quests-with-spec-versions/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -91,7 +92,7 @@ export const getQuestsWithSpecVersions = async () => {
 
 export const getQuestVersions = async () => {
   try {
-    const url = `${url2}/api/quest-versions/`;
+    const url = `${url3}/api/quest-versions/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -103,9 +104,9 @@ export const getSTQuests = async (startDate: string, endDate: string) => {
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `${url2}/api/stquests/?start_date=${startDate}&end_date=${endDate}`;
+      url = `${url3}/api/stquests/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `${url2}/api/stquests/`;
+      url = `${url3}/api/stquests/`;
     }
     const response = await axios.get(url);
     return response;
@@ -118,9 +119,9 @@ export const getSTExpenses = async (startDate: string, endDate: string) => {
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `${url2}/api/stexpenses/?start_date=${startDate}&end_date=${endDate}`;
+      url = `${url3}/api/stexpenses/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `${url2}/api/stexpenses/`;
+      url = `${url3}/api/stexpenses/`;
     }
     const response = await axios.get(url);
     return response;
@@ -136,9 +137,9 @@ export const getSTBonusesPenalties = async (
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `${url2}/api/stbonuses-penalties/?start_date=${startDate}&end_date=${endDate}`;
+      url = `${url3}/api/stbonuses-penalties/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `${url2}/api/stbonuses-penalties/`;
+      url = `${url3}/api/stbonuses-penalties/`;
     }
     const response = await axios.get(url);
     return response;
@@ -149,7 +150,7 @@ export const getSTBonusesPenalties = async (
 
 export const getSTExpenseCategories = async () => {
   try {
-    const url = `${url2}/api/stexpense-categories/`;
+    const url = `${url3}/api/stexpense-categories/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -159,7 +160,7 @@ export const getSTExpenseCategories = async () => {
 
 export const getSTExpenseSubCategories = async () => {
   try {
-    const url = `${url2}/api/stexpense-sub-categories/`;
+    const url = `${url3}/api/stexpense-sub-categories/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -175,9 +176,9 @@ export const getQuestIncomes = async (
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `${url2}/api/quest/${id}/incomes/?start_date=${startDate}&end_date=${endDate}`;
+      url = `${url3}/api/quest/${id}/incomes/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `${url2}/api/quest/${id}/incomes/`;
+      url = `${url3}/api/quest/${id}/incomes/`;
     }
     const response = await axios.get(url);
     return response;
@@ -194,9 +195,9 @@ export const getQuestExpenses = async (
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `${url2}/api/quest/${id}/expenses/?start_date=${startDate}&end_date=${endDate}`;
+      url = `${url3}/api/quest/${id}/expenses/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `${url2}/api/quest/${id}/expenses/`;
+      url = `${url3}/api/quest/${id}/expenses/`;
     }
     const response = await axios.get(url);
     return response;
@@ -209,9 +210,9 @@ export const getSalaries = async (startDate: string, endDate: string) => {
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `${url2}/api/salaries/?start_date=${startDate}&end_date=${endDate}`;
+      url = `${url3}/api/salaries/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `${url2}/api/salaries/`;
+      url = `${url3}/api/salaries/`;
     }
     const response = await axios.get(url);
     return response;
@@ -224,9 +225,9 @@ export const getCurrentSalaries = async (startDate: string, endDate: string) => 
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `${url2}/api/salaries/current/?start_date=${startDate}&end_date=${endDate}`;
+      url = `${url3}/api/salaries/current/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `${url2}/api/salaries/current/`;
+      url = `${url3}/api/salaries/current/`;
     }
     const response = await axios.get(url);
     return response;
@@ -243,9 +244,9 @@ export const getQuestCashRegister = async (
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `${url2}/api/quest/${id}/cash-register/?start_date=${startDate}&end_date=${endDate}`;
+      url = `${url3}/api/quest/${id}/cash-register/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `${url2}/api/quest/${id}/cash-register/`;
+      url = `${url3}/api/quest/${id}/cash-register/`;
     }
     const response = await axios.get(url);
     return response;
@@ -256,7 +257,7 @@ export const getQuestCashRegister = async (
 
 export const toggleQuestCashRegister = async (id: number) => {
   try {
-    const url = `${url2}/api/toggle/cash-register/${id}/`;
+    const url = `${url3}/api/toggle/cash-register/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -272,9 +273,9 @@ export const getWorkCardExpenses = async (
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `${url2}/api/quest/${id}/work-card-expenses/?start_date=${startDate}&end_date=${endDate}`;
+      url = `${url3}/api/quest/${id}/work-card-expenses/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `${url2}/api/quest/${id}/work-card-expenses/`;
+      url = `${url3}/api/quest/${id}/work-card-expenses/`;
     }
     const response = await axios.get(url);
     return response;
@@ -291,9 +292,9 @@ export const getExpensesFromTheir = async (
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `${url2}/api/quest/${id}/expenses-from-their/?start_date=${startDate}&end_date=${endDate}`;
+      url = `${url3}/api/quest/${id}/expenses-from-their/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `${url2}/api/quest/${id}/expenses-from-their/`;
+      url = `${url3}/api/quest/${id}/expenses-from-their/`;
     }
     const response = await axios.get(url);
     return response;
@@ -310,9 +311,9 @@ export const getQVideos = async (
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `${url2}/api/quest/${id}/videos/?start_date=${startDate}&end_date=${endDate}`;
+      url = `${url3}/api/quest/${id}/videos/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `${url2}/api/quest/${id}/videos/`;
+      url = `${url3}/api/quest/${id}/videos/`;
     }
     const res = await axios.get(url);
     return res;
@@ -323,7 +324,7 @@ export const getQVideos = async (
 
 export const toggleExpensesFromTheir = async (id: number) => {
   try {
-    const url = `${url2}/api/toggle/expenses-from-their/${id}/`;
+    const url = `${url3}/api/toggle/expenses-from-their/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -334,7 +335,7 @@ export const toggleExpensesFromTheir = async (id: number) => {
 // GET, PUT, DELETE
 export const getUser = async (id: number) => {
   try {
-    const url = `${url2}/api/user/${id}/`;
+    const url = `${url3}/api/user/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -344,7 +345,7 @@ export const getUser = async (id: number) => {
 
 export const putUser = async (id: number, value: object) => {
   try {
-    const url = `${url2}/api/user/${id}/`;
+    const url = `${url3}/api/user/${id}/`;
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
@@ -354,7 +355,7 @@ export const putUser = async (id: number, value: object) => {
 
 export const deleteUser = async (id: number) => {
   try {
-    const url = `${url2}/api/user/${id}/`;
+    const url = `${url3}/api/user/${id}/`;
     const response = await axios.delete(url);
     return response;
   } catch (error) {
@@ -364,7 +365,7 @@ export const deleteUser = async (id: number) => {
 
 export const getQuest = async (id: number) => {
   try {
-    const url = `${url2}/api/quest/${id}/`;
+    const url = `${url3}/api/quest/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -374,7 +375,7 @@ export const getQuest = async (id: number) => {
 
 export const putQuest = async (id: number, value: object) => {
   try {
-    const url = `${url2}/api/quest/${id}/`;
+    const url = `${url3}/api/quest/${id}/`;
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
@@ -384,7 +385,7 @@ export const putQuest = async (id: number, value: object) => {
 
 export const deleteQuest = async (id: number) => {
   try {
-    const url = `${url2}/api/quest/${id}/`;
+    const url = `${url3}/api/quest/${id}/`;
     const response = await axios.delete(url);
     return response;
   } catch (error) {
@@ -394,7 +395,7 @@ export const deleteQuest = async (id: number) => {
 
 export const getQuestVersion = async (id: number) => {
   try {
-    const url = `${url2}/api/quest-version/${id}/`;
+    const url = `${url3}/api/quest-version/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -404,7 +405,7 @@ export const getQuestVersion = async (id: number) => {
 
 export const putQuestVersion = async (id: number, value: object) => {
   try {
-    const url = `${url2}/api/quest-version/${id}/`;
+    const url = `${url3}/api/quest-version/${id}/`;
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
@@ -414,7 +415,7 @@ export const putQuestVersion = async (id: number, value: object) => {
 
 export const deleteQuestVersion = async (id: number) => {
   try {
-    const url = `${url2}/api/quest-version/${id}/`;
+    const url = `${url3}/api/quest-version/${id}/`;
     const response = await axios.delete(url);
     return response;
   } catch (error) {
@@ -424,7 +425,7 @@ export const deleteQuestVersion = async (id: number) => {
 
 export const getSTQuest = async (stqid: number) => {
   try {
-    const url = `${url2}/api/stquest/${stqid}/`;
+    const url = `${url3}/api/stquest/${stqid}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -434,7 +435,7 @@ export const getSTQuest = async (stqid: number) => {
 
 export const putSTQuest = async (id: number, value: object) => {
   try {
-    const url = `${url2}/api/stquest/${id}/`;
+    const url = `${url3}/api/stquest/${id}/`;
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
@@ -444,7 +445,7 @@ export const putSTQuest = async (id: number, value: object) => {
 
 export const deleteSTQuest = async (id: number) => {
   try {
-    const url = `${url2}/api/stquest/${id}/`;
+    const url = `${url3}/api/stquest/${id}/`;
     const response = await axios.delete(url);
     return response;
   } catch (error) {
@@ -454,7 +455,7 @@ export const deleteSTQuest = async (id: number) => {
 
 export const getSTExpense = async (id: number) => {
   try {
-    const url = `${url2}/api/stexpense/${id}/`;
+    const url = `${url3}/api/stexpense/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -464,7 +465,7 @@ export const getSTExpense = async (id: number) => {
 
 export const putSTExpense = async (id: number, value: object) => {
   try {
-    const url = `${url2}/api/stexpense/${id}/`;
+    const url = `${url3}/api/stexpense/${id}/`;
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
@@ -474,7 +475,7 @@ export const putSTExpense = async (id: number, value: object) => {
 
 export const deleteSTExpense = async (id: number) => {
   try {
-    const url = `${url2}/api/stexpense/${id}/`;
+    const url = `${url3}/api/stexpense/${id}/`;
     const response = await axios.delete(url);
     return response;
   } catch (error) {
@@ -484,7 +485,7 @@ export const deleteSTExpense = async (id: number) => {
 
 export const getSTBonusPenalty = async (id: number) => {
   try {
-    const url = `${url2}/api/stbonus-penalty/${id}/`;
+    const url = `${url3}/api/stbonus-penalty/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -494,7 +495,7 @@ export const getSTBonusPenalty = async (id: number) => {
 
 export const putSTBonusPenalty = async (id: number, value: object) => {
   try {
-    const url = `${url2}/api/stbonus-penalty/${id}/`;
+    const url = `${url3}/api/stbonus-penalty/${id}/`;
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
@@ -504,7 +505,7 @@ export const putSTBonusPenalty = async (id: number, value: object) => {
 
 export const deleteSTBonusPenalty = async (id: number) => {
   try {
-    const url = `${url2}/api/stbonus-penalty/${id}/`;
+    const url = `${url3}/api/stbonus-penalty/${id}/`;
     const response = await axios.delete(url);
     return response;
   } catch (error) {
@@ -514,7 +515,7 @@ export const deleteSTBonusPenalty = async (id: number) => {
 
 export const getSTExpenseCategory = async (id: number) => {
   try {
-    const url = `${url2}/api/stexpense-category/${id}/`;
+    const url = `${url3}/api/stexpense-category/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -524,7 +525,7 @@ export const getSTExpenseCategory = async (id: number) => {
 
 export const putSTExpenseCategory = async (id: number, value: object) => {
   try {
-    const url = `${url2}/api/stexpense-category/${id}/`;
+    const url = `${url3}/api/stexpense-category/${id}/`;
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
@@ -534,7 +535,7 @@ export const putSTExpenseCategory = async (id: number, value: object) => {
 
 export const deleteSTExpenseCategory = async (id: number) => {
   try {
-    const url = `${url2}/api/stexpense-category/${id}/`;
+    const url = `${url3}/api/stexpense-category/${id}/`;
     const response = await axios.delete(url);
     return response;
   } catch (error) {
@@ -544,7 +545,7 @@ export const deleteSTExpenseCategory = async (id: number) => {
 
 export const getSTExpenseSubCategory = async (id: number) => {
   try {
-    const url = `${url2}/api/stexpense-subcategory/${id}/`;
+    const url = `${url3}/api/stexpense-subcategory/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -554,7 +555,7 @@ export const getSTExpenseSubCategory = async (id: number) => {
 
 export const putSTExpenseSubCategory = async (id: number, value: object) => {
   try {
-    const url = `${url2}/api/stexpense-subcategory/${id}/`;
+    const url = `${url3}/api/stexpense-subcategory/${id}/`;
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
@@ -564,7 +565,7 @@ export const putSTExpenseSubCategory = async (id: number, value: object) => {
 
 export const deleteSTExpenseSubCategory = async (id: number) => {
   try {
-    const url = `${url2}/api/stexpense-subcategory/${id}/`;
+    const url = `${url3}/api/stexpense-subcategory/${id}/`;
     const response = await axios.delete(url);
     return response;
   } catch (error) {
@@ -575,7 +576,7 @@ export const deleteSTExpenseSubCategory = async (id: number) => {
 // POST
 export const token = async (value: object) => {
   try {
-    const url = `${url2}/api/token/`;
+    const url = `${url3}/api/token/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
@@ -585,7 +586,7 @@ export const token = async (value: object) => {
 
 export const tokenRefresh = async (value: object) => {
   try {
-    const url = `${url2}/api/token/refresh/`;
+    const url = `${url3}/api/token/refresh/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
@@ -595,7 +596,7 @@ export const tokenRefresh = async (value: object) => {
 
 export const postUser = async (value: object) => {
   try {
-    const url = `${url2}/api/create/user/`;
+    const url = `${url3}/api/create/user/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
@@ -605,7 +606,7 @@ export const postUser = async (value: object) => {
 
 export const postQuest = async (value: object) => {
   try {
-    const url = `${url2}/api/create/quest/`;
+    const url = `${url3}/api/create/quest/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
@@ -615,7 +616,7 @@ export const postQuest = async (value: object) => {
 
 export const postQuestVersion = async (value: object) => {
   try {
-    const url = `${url2}/api/create/quest-version/`;
+    const url = `${url3}/api/create/quest-version/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
@@ -625,7 +626,7 @@ export const postQuestVersion = async (value: object) => {
 
 export const postSTQuest = async (value: object) => {
   try {
-    const url = `${url2}/api/create/stquest/`;
+    const url = `${url3}/api/create/stquest/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
@@ -635,7 +636,7 @@ export const postSTQuest = async (value: object) => {
 
 export const postSTExpense = async (value: object) => {
   try {
-    const url = `${url2}/api/create/stexpense/`;
+    const url = `${url3}/api/create/stexpense/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
@@ -645,7 +646,7 @@ export const postSTExpense = async (value: object) => {
 
 export const postSTBonusPenalty = async (value: object) => {
   try {
-    const url = `${url2}/api/create/stbonus-penalty/`;
+    const url = `${url3}/api/create/stbonus-penalty/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
@@ -655,7 +656,7 @@ export const postSTBonusPenalty = async (value: object) => {
 
 export const postSTExpenseCategory = async (value: object) => {
   try {
-    const url = `${url2}/api/create/stexpense-category/`;
+    const url = `${url3}/api/create/stexpense-category/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
@@ -665,7 +666,7 @@ export const postSTExpenseCategory = async (value: object) => {
 
 export const postSTExpenseSubCategory = async (value: object) => {
   try {
-    const url = `${url2}/api/create/stexpense-subcategory/`;
+    const url = `${url3}/api/create/stexpense-subcategory/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {

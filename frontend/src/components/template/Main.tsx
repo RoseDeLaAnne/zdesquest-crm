@@ -54,12 +54,6 @@ const MainFC: FC = ({
 
   const [messageApi, contextHolder] = message.useMessage();
 
-  const [defaultValueRangePicker, setDefaultValueRangePicker] = useState([])
-
-  if (breadcrumbItems[breadcrumbItems.length - 1].title === 'касса') {
-    setDefaultValueRangePicker([dayjs(), dayjs()])
-  }
-
   return (
     <Layout hasSider>
       <CSider
@@ -90,7 +84,7 @@ const MainFC: FC = ({
                     onChange={rangePickerHandleChange}
                     format={rangePickerFormat}
                     className="m-w100"
-                    defaultValue={defaultValueRangePicker}
+                    defaultValue={breadcrumbItems[breadcrumbItems.length - 1].title === 'касса' ? [dayjs(), dayjs()] : ''}
                   />
                 )}
                 {isAddEntry === true && (

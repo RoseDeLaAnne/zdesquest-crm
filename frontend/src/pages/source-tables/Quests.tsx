@@ -482,71 +482,83 @@ const STQuests: FC = () => {
 
       setSelectedQuest(quest);
 
-      if (isPackage === false) {
-        switch (quest.name) {
-          case "ДСР":
-            setTitlesFormItems({
-              actor_second_actor: "asda",
-            });            
-            break;
-          case "У57":
-            setNotVisibleFormItems(["actor_second_actor"]);
-            break;
-          case "Тьма":
-            setTitlesFormItems({
-              actor_second_actor: "второй актер",
-            });
-            break;
-          case "Дом Монстров":
-            setTitlesFormItems({
-              actor_second_actor: "аниматор",
-            });
-            break;
-          case "Они":
-            setTitlesFormItems({
-              actor_second_actor: "второй актер",
-            });
-            break;
-          case "Квартира 404":
-            setNotVisibleFormItems(["actor_second_actor"]);
-            break;
-          case "ОСК":
-            setTitlesFormItems({
-              actor_second_actor: "аниматор",
-            });
-            break;
-          case "Проклятые":
-            setNotVisibleFormItems(["actor_second_actor"]);
-            break;
-          case "Логово Ведьмы":
-            setTitlesFormItems({
-              actor_second_actor: "аниматор",
-            });
-            break;
-          case "Обитель Зла":
-            setNotVisibleFormItems(["actor_second_actor"]);
-            break;
-          case "Покайся во грехе":
-            setNotVisibleFormItems(["actor_second_actor"]);
-            break;
-          default:
-            setNotVisibleFormItems([]);
-            break;
-        }
-  
-        // if (quest.address === 'Афанасьева, 13') {
-        //   setNotVisibleFormItems(['photomagnets_quantity']);
-        // }
-      }
+      // if (isPackage === false) {
+      //   switch (quest.name) {
+      //     case "ДСР":
+      //       setTitlesFormItems({
+      //         actor_second_actor: "asda",
+      //       });            
+      //       break;
+      //     case "У57":
+      //       setNotVisibleFormItems(["actor_second_actor"]);
+      //       break;
+      //     case "Тьма":
+      //       setTitlesFormItems({
+      //         actor_second_actor: "второй актер",
+      //       });
+      //       break;
+      //     case "Дом Монстров":
+      //       setTitlesFormItems({
+      //         actor_second_actor: "аниматор",
+      //       });
+      //       break;
+      //     case "Они":
+      //       setTitlesFormItems({
+      //         actor_second_actor: "второй актер",
+      //       });
+      //       break;
+      //     case "Квартира 404":
+      //       setNotVisibleFormItems(["actor_second_actor"]);
+      //       break;
+      //     case "ОСК":
+      //       setTitlesFormItems({
+      //         actor_second_actor: "аниматор",
+      //       });
+      //       break;
+      //     case "Проклятые":
+      //       setNotVisibleFormItems(["actor_second_actor"]);
+      //       break;
+      //     case "Логово Ведьмы":
+      //       setTitlesFormItems({
+      //         actor_second_actor: "аниматор",
+      //       });
+      //       break;
+      //     case "Обитель Зла":
+      //       setNotVisibleFormItems(["actor_second_actor"]);
+      //       break;
+      //     case "Покайся во грехе":
+      //       setNotVisibleFormItems(["actor_second_actor"]);
+      //       break;
+      //     default:
+      //       setNotVisibleFormItems([]);
+      //       break;
+      //   }
+
+      //   // if (quest.address === 'Афанасьева, 13') {
+      //   //   setNotVisibleFormItems(['photomagnets_quantity']);
+      //   // }
+      // }
 
       if (isWeekend === true) {
-        setDefaultValuesFormItems({
-          quest_cost: selectedQuest.cost_weekends,
-        });
+        if (isPackage === false) {
+          setDefaultValuesFormItems({
+            quest_cost: selectedQuest.cost_weekends,
+          });
+        } else if (isPackage === true) {
+          setDefaultValuesFormItems({
+            quest_cost: selectedQuest.cost_weekends_with_package,
+          })
+        }
       } else if (isWeekend === false) {
-        setDefaultValuesFormItems({
-          quest_cost: selectedQuest.cost_weekdays,
-        });
+        if (isPackage === false) {
+          setDefaultValuesFormItems({
+            quest_cost: selectedQuest.cost_weekdays,
+          });
+        } else if (isPackage === true) {
+          setDefaultValuesFormItems({
+            quest_cost: selectedQuest.cost_weekdays_with_package,
+          });
+        }
       }
     } else if (name === "is_package") {
       setIsPackage(value.target.checked)
@@ -579,14 +591,26 @@ const STQuests: FC = () => {
       if (Object.keys(selectedQuest).length !== 0) {
         if (dayOfWeek === 0 || dayOfWeek === 6) {
           setIsWeekend(true)
-          setDefaultValuesFormItems({
-            quest_cost: selectedQuest.cost_weekends,
-          });
+          if (isPackage === false) {
+            setDefaultValuesFormItems({
+              quest_cost: selectedQuest.cost_weekends,
+            });
+          } else if (isPackage === true) {
+            setDefaultValuesFormItems({
+              quest_cost: selectedQuest.cost_weekends_with_package,
+            });
+          }
         } else {
           setIsWeekend(false)
-          setDefaultValuesFormItems({
-            quest_cost: selectedQuest.cost_weekdays,
-          });
+          if (isPackage === false) {
+            setDefaultValuesFormItems({
+              quest_cost: selectedQuest.cost_weekdays,
+            });
+          } else if (isPackage === true) {
+            setDefaultValuesFormItems({
+              quest_cost: selectedQuest.cost_weekdays_with_package,
+            });
+          }
         }
       }
     }
