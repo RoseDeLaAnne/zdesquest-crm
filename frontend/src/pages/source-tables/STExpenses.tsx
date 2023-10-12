@@ -156,7 +156,7 @@ const STExpensesFC: FC = () => {
       isCountable: false,
       render: (_, { paid_tax }) => (
         <>
-          {paid_tax.map((el) => {
+          {paid_tax && paid_tax.map((el) => {
             return (
               <Tag color="orange" key={el.id}>
                 {el.name}
@@ -164,7 +164,7 @@ const STExpensesFC: FC = () => {
             );
           })}
         </>
-      ),
+      )
     },
   ];
 

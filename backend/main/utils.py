@@ -29,9 +29,14 @@ def create_qincome(data, entry):
         "time": formatted_time,
         "stquest": entry,
         "quest": quest,
+        "is_package": data['is_package']
     }
 
     local_data['game'] = int(data['quest_cost']) + int(data['add_players']) + int(data['easy_work']) + int(data['night_game']) - int(data['discount_sum'])
+    # local_data['game'] = {
+    #     "value": int(data['quest_cost']) + int(data['add_players']) + int(data['easy_work']) + int(data['night_game']) - int(data['discount_sum']),
+    #     "tooltip": 'Пакет'
+    # }
 
     local_data['paid_cash'] = int(data['cash_payment']) - int(data['cash_delivery'])
     local_data['paid_non_cash'] = int(data['cashless_payment']) - int(data['cashless_delivery']) + int(data['prepayment'])
@@ -176,6 +181,7 @@ def create_travel(entry):
                 "name": "Проезд",
                 "user": user,
                 "stquest": stquests_by_user[0],
+                "sub_category": 'actor'
             }
             QSalary(**travel_data).save()
             QSalary(**travel_data).save()
@@ -186,6 +192,7 @@ def create_travel(entry):
                 "name": "Проезд",
                 "user": user,
                 "stquest": stquests_by_user[0],
+                "sub_category": 'actor'
             }
             travel_data_prev = {
                 "date": stquests_by_user[len(stquests_by_user) - 1].date.strftime(
@@ -195,6 +202,7 @@ def create_travel(entry):
                 "name": "Проезд",
                 "user": user,
                 "stquest": stquests_by_user[len(stquests_by_user) - 1],
+                "sub_category": 'actor'
             }
             QSalary(**travel_data_now).save()
             QSalary(**travel_data_prev).save()
@@ -222,6 +230,7 @@ def create_travel(entry):
                         "name": "Проезд",
                         "user": user,
                         "stquest": stquest_by_user,
+                        "sub_category": 'actor'
                     }
                     travel_data_prev = {
                         "date": prev_stquest_by_user.date.strftime("%Y-%m-%d"),
@@ -229,6 +238,7 @@ def create_travel(entry):
                         "name": "Проезд",
                         "user": user,
                         "stquest": prev_stquest_by_user,
+                        "sub_category": 'actor'
                     }
                     QSalary(**travel_data_now).save()
                     QSalary(**travel_data_prev).save()
@@ -241,6 +251,7 @@ def create_travel(entry):
                         "name": "Проезд",
                         "user": user,
                         "stquest": prev_stquest_by_user,
+                        "sub_category": 'actor'
                     }
                     QSalary(**travel_data_prev).save()
 

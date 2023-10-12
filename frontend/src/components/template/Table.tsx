@@ -441,6 +441,8 @@ const TableFC: FC = ({
     }
   }
 
+  console.log(tableColumns)
+
   useEffect(() => {
     form.setFieldsValue(defaultValuesFormItems);
   }, [defaultValuesFormItems, form]);

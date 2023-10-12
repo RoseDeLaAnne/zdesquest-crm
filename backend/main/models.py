@@ -56,7 +56,7 @@ class Quest(models.Model):
 
 class STExpenseCategory(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    # latin_name = models.CharField(max_length=255, unique=True)
+    latin_name = models.CharField(max_length=255, unique=True, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -64,7 +64,7 @@ class STExpenseCategory(models.Model):
 
 class STExpenseSubCategory(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    # latin_name = models.CharField(max_length=255, unique=True)
+    latin_name = models.CharField(max_length=255, unique=True, blank=True, null=True)
 
     category = models.ForeignKey(
         STExpenseCategory, on_delete=models.CASCADE, blank=True, null=True
@@ -321,6 +321,8 @@ class QIncome(models.Model):
 
     quest = models.ForeignKey(Quest, on_delete=models.SET_NULL, blank=True, null=True)
 
+    is_package = models.BooleanField(default=False)
+
     stquest = models.ForeignKey(
         STQuest, on_delete=models.CASCADE, blank=True, null=True
     )
@@ -344,6 +346,8 @@ class QSalary(models.Model):
     stquest = models.ForeignKey(
         STQuest, on_delete=models.CASCADE, blank=True, null=True
     )
+
+    sub_category = models.CharField(max_length=255, default='')
 
     def __str__(self):
         return str(self.date)

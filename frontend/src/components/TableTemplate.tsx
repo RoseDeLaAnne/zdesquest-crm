@@ -341,27 +341,42 @@ const App: FC = ({
   //   },
   // ];
   const newTableHead = tableHead.map((column) => {
-    return {
-      title: column.title,
-      children: column.children.map((child) => {
-        return {
-          title: child.title,
-          dataIndex: child.dataIndex,
-          key: child.dataIndex,
-          render: (text) => (
-            <Tooltip
-              title={<div dangerouslySetInnerHTML={{ __html: text.tooltip }} />}
-              placement="topLeft"
-            >
-              <div>{text.sum}</div>
-            </Tooltip>
-          ),
-        };
-      }),
-    };
+    if (column.children) {
+      return {
+        title: column.title,
+        children: column.children.map((child) => {
+          return {
+            title: child.title,
+            dataIndex: child.dataIndex,
+            key: child.dataIndex,
+            render: (text) => (
+              <Tooltip
+                title={<div dangerouslySetInnerHTML={{ __html: text.tooltip }} />}
+                placement="topLeft"
+              >
+                <div>{text.value}</div>
+              </Tooltip>
+            ),
+          };
+        }),
+      };
+    } else {
+      return {
+        title: column.title,
+        dataIndex: column.dataIndex,
+        key: column.dataIndex,
+        render: (text) => (
+          <Tooltip
+            title={<div dangerouslySetInnerHTML={{ __html: text.tooltip }} />}
+            placement="topLeft"
+          >
+            <div>{text.value}</div>
+          </Tooltip>
+        ),
+      };
+    }
   });
 
-  console.log(newTableHead);
   if (tableColumnWithHead) {
     tableColumns = [
       ...initialUnpackedTableColumns,
@@ -383,6 +398,7 @@ const App: FC = ({
       },
     ];
   }
+  console.log(tableColumns)
   const handleDelete = async (key: React.Key) => {
     const response = await deleteFunction(key);
     if (response.status === 200) {

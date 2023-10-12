@@ -29,7 +29,7 @@ const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {
           if (dataSourceColumns.status !== "reset" && dataSourceColumns.status !== "paid") {
             total.forEach((totalEach) => {
               if (totalEach.total !== null && isObj) {
-                totalEach.total += dataSourceColumns[totalEach.key].sum;
+                totalEach.total += dataSourceColumns[totalEach.key].value;
               } else if (totalEach.total !== null && !isObj) {
                 totalEach.total += dataSourceColumns[totalEach.key];
               }

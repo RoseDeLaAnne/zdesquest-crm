@@ -4,7 +4,7 @@ import React, { FC, useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 
 // antd
-import { Tag } from "antd";
+import { Tag, Tooltip } from "antd";
 // antd | icons
 import {
   QuestionOutlined,
@@ -77,7 +77,21 @@ const QIncomesFC: FC = () => {
         isSearching: false,
         title: "",
       },
-      isCountable: true,
+      isCountable: false,
+      render: (game) => {
+        if (game.tooltip !== "") {
+          return (
+            <Tooltip
+              title={<div dangerouslySetInnerHTML={{ __html: game.tooltip }} />}
+              placement="topLeft"
+            >
+              <div>{game.value}</div>
+            </Tooltip>
+          );
+        } else {
+          return <div>{game.value}</div>;
+        }
+      },
     },
     {
       title: "комната",

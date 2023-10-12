@@ -278,11 +278,11 @@ const App: FC = ({
               title={<div dangerouslySetInnerHTML={{ __html: obj.tooltip }} />}
               placement="topLeft"
             >
-              <div>{obj.sum}</div>
+              <div>{obj.value}</div>
             </Tooltip>
           );
         } else {
-          return <div>{obj.sum}</div>;
+          return <div>{obj.value}</div>;
         }
       },
     };

@@ -125,9 +125,20 @@ class STBonusPenaltySerializer(ModelSerializer):
 
     class Meta:
         model = STBonusPenalty
-        fields = "__all__"
+        fields = '__all__'
 
         depth = 1
+
+
+class QSalarySerializer(ModelSerializer):
+    key = serializers.CharField(max_length=255, source="id")
+    date = CustomDateFormatField()
+
+    class Meta:
+        model = QSalary
+        fields = ['date', 'amount', 'name', 'sub_category', 'id', 'key', 'user']
+
+        # depth = 1
 
 
 # class STBonusSerializer(ModelSerializer):
@@ -274,3 +285,11 @@ class QVideoSerializer(ModelSerializer):
         fields = "__all__"
 
         depth = 1
+
+class ChildSerializer(serializers.Serializer):
+        value = serializers.IntegerField()
+        tooltip = serializers.CharField()
+
+class SummarySerializer(serializers.Serializer):
+    date = serializers.CharField()
+    children = ChildSerializer(many=True)
