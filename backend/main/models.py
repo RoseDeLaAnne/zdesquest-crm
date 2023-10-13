@@ -146,35 +146,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.username
 
 
-class STExpense(models.Model):
-    PAID_FROM = [
-        ("work_card", "Рабочая карта"),
-        ("their", "Свои"),
-        ("cash_register", "Касса"),
-    ]
-
-    date = models.DateField()
-
-    name = models.CharField(max_length=255)
-    amount = models.IntegerField()
-
-    paid_tax = models.ManyToManyField(User, blank=True, related_name="paid_tax_users")
-
-    sub_category = models.ForeignKey(
-        STExpenseSubCategory, on_delete=models.SET_NULL, blank=True, null=True
-    )
-
-    quests = models.ManyToManyField(Quest, blank=True)
-
-    paid_from = models.CharField(choices=PAID_FROM, default="work_card", max_length=255)
-
-    who_paid = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
-    who_paid_amount = models.IntegerField(blank=True, null=True)
-
-    attachment = models.FileField(upload_to="photos/", blank=True, null=True)
-
-    def __str__(self):
-        return str(self.date)
 
 
 class STQuest(models.Model):
@@ -284,6 +255,42 @@ class STQuest(models.Model):
 
         return str(self.quest)
 
+class STExpense(models.Model):
+    PAID_FROM = [
+        ("work_card", "Рабочая карта"),
+        ("their", "Свои"),
+        ("cash_register", "Касса"),
+    ]
+
+    date = models.DateField()
+
+    name = models.CharField(max_length=255)
+    amount = models.IntegerField()
+
+    paid_tax = models.ManyToManyField(User, blank=True, related_name="paid_tax_users")
+
+    sub_category = models.ForeignKey(
+        STExpenseSubCategory, on_delete=models.SET_NULL, blank=True, null=True
+    )
+
+    quests = models.ManyToManyField(Quest, blank=True)
+    quest = models.ForeignKey(Quest, on_delete=models.SET_NULL, blank=True, null=True, related_name="quest_stexpense")
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="user_stexpense")
+
+    # paid_from = models.CharField(choices=PAID_FROM, default="work_card", max_length=255)
+    paid_from = models.CharField(choices=PAID_FROM, blank=True, null=True, max_length=255)
+
+    who_paid = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name="who_paid_st_expense")
+    who_paid_amount = models.IntegerField(blank=True, null=True)
+
+    attachment = models.FileField(upload_to="photos/", blank=True, null=True)
+
+    stquest = models.ForeignKey(STQuest, on_delete=models.CASCADE, blank=True, null=True)
+
+    def __str__(self):
+        return str(self.date)
+
 
 class STBonusPenalty(models.Model):
     TYPE = [
@@ -310,6 +317,7 @@ class QIncome(models.Model):
     date = models.DateField()
     time = models.TimeField()
     game = models.IntegerField(default=0)
+    # game_tooltip = models.CharField(default='', max_length=255)
     room = models.IntegerField(default=0)
     video = models.IntegerField(default=0)
     photomagnets = models.IntegerField(default=0)
@@ -328,7 +336,7 @@ class QIncome(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        self.total = self.game + self.room + self.video + self.photomagnets + self.actor
+        self.total = int(self.game) + int(self.room) + int(self.video) + int(self.photomagnets) + int(self.actor)
         super().save(*args, **kwargs)
 
     def __str__(self):

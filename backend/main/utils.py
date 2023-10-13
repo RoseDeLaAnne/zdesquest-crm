@@ -19,112 +19,221 @@ def create_qincome(data, entry):
 
     quest = Quest.objects.get(id=data["quest"])
 
-    if ("photomagnets_quantity") in data:
-        photomagnets_promo = int(data["photomagnets_quantity"]) // 2
-        photomagnets_not_promo = int(data["photomagnets_quantity"]) - photomagnets_promo
-        photomagnets_sum = photomagnets_not_promo * 250 + photomagnets_promo * 150    
 
-    local_data = {
-        "date": formatted_date,
-        "time": formatted_time,
-        "stquest": entry,
-        "quest": quest,
-        "is_package": data['is_package']
-    }
+    if quest.special_versions.exists():
+        for special_version in quest.special_versions.all():
+            if ("photomagnets_quantity") in data:
+                photomagnets_promo = int(data["photomagnets_quantity"]) // 2
+                photomagnets_not_promo = int(data["photomagnets_quantity"]) - photomagnets_promo
+                photomagnets_sum = photomagnets_not_promo * 250 + photomagnets_promo * 150    
 
-    local_data['game'] = int(data['quest_cost']) + int(data['add_players']) + int(data['easy_work']) + int(data['night_game']) - int(data['discount_sum'])
-    # local_data['game'] = {
-    #     "value": int(data['quest_cost']) + int(data['add_players']) + int(data['easy_work']) + int(data['night_game']) - int(data['discount_sum']),
-    #     "tooltip": 'Пакет'
-    # }
-
-    local_data['paid_cash'] = int(data['cash_payment']) - int(data['cash_delivery'])
-    local_data['paid_non_cash'] = int(data['cashless_payment']) - int(data['cashless_delivery']) + int(data['prepayment'])
-
-    if "actor_second_actor" in data:
-        new_data = {
-            "actor": int(data["actor_second_actor"]),
-        }
-        local_data.update(new_data)
-
-    if "room_sum" in data:
-        new_room_sum = 0
-        if (quest.name == 'Проклятые' or quest.name == 'Логово Ведьмы'):
-            new_room_sum_for_room404 = (data["room_sum"]-100)/2
-            new_room_sum = data["room_sum"] - new_room_sum_for_room404
-            new_data = {"room": new_room_sum}
-
-            quest_room404 = Quest.objects.get(name="Квартира 404")
-            local_data_for404 = {
+            local_data = {
                 "date": formatted_date,
                 "time": formatted_time,
                 "stquest": entry,
-                "quest": quest_room404,
-                "room": new_room_sum_for_room404
+                "quest": special_version,
+                "is_package": data['is_package']
             }
-            qincome2 = QIncome(**local_data_for404)
-            qincome2.save()
 
-            if ("is_package" in data):
-                new_game_sum = data["quest_cost"] - 250
-                new_sum_for_room404 = 250
-                local_data_for_package = {
+            # local_data['game'] = (int(data['quest_cost']) + int(data['add_players']) + int(data['easy_work']) + int(data['night_game']) - int(data['discount_sum'])) / 2
+            sum_for_game = (int(data['quest_cost']) + int(data['add_players']) + int(data['easy_work']) + int(data['night_game']) - int(data['discount_sum'])) / 2
+            local_data['game'] = (int(data['quest_cost']) + int(data['add_players']) + int(data['easy_work']) + int(data['night_game']) - int(data['discount_sum'])) / 2
+            # local_data['game_tooltip'] = f"{special_version} - {sum_for_game/2}"
+
+            local_data['paid_cash'] = int(data['cash_payment']) - int(data['cash_delivery'])
+            local_data['paid_non_cash'] = int(data['cashless_payment']) - int(data['cashless_delivery']) + int(data['prepayment'])
+
+            if "actor_second_actor" in data:
+                new_data = {
+                    "actor": int(data["actor_second_actor"]),
+                }
+                local_data.update(new_data)
+
+            if "room_sum" in data:
+                new_room_sum = 0
+                if (quest.name == 'Проклятые' or quest.name == 'Логово Ведьмы'):
+                    new_room_sum_for_room404 = (data["room_sum"]-100)/2
+                    new_room_sum = data["room_sum"] - new_room_sum_for_room404
+                    new_data = {"room": new_room_sum}
+
+                    quest_room404 = Quest.objects.get(name="Квартира 404")
+                    local_data_for404 = {
+                        "date": formatted_date,
+                        "time": formatted_time,
+                        "stquest": entry,
+                        "quest": quest_room404,
+                        "room": new_room_sum_for_room404
+                    }
+                    qincome2 = QIncome(**local_data_for404)
+                    qincome2.save()
+
+                    if ("is_package" in data):
+                        new_game_sum = data["quest_cost"] - 250
+                        new_sum_for_room404 = 250
+                        local_data_for_package = {
+                            "date": formatted_date,
+                            "time": formatted_time,
+                            "stquest": entry,
+                            "quest": quest_room404,
+                            "game": new_game_sum
+                            # "game": {
+                                # "tooltip": "Пакет",
+                                # "value": new_game_sum,
+                            # }
+                        }
+                        local_data_for404_package = {
+                            "date": formatted_date,
+                            "time": formatted_time,
+                            "stquest": entry,
+                            "quest": quest_room404,
+                            "room": new_sum_for_room404
+                        }
+                        QIncome(**local_data_for_package).save()
+                        QIncome(**local_data_for404_package).save()
+
+                    # else:
+
+                else:
+                    new_data = {"room": int(data["room_sum"])}
+                
+                local_data.update(new_data)
+
+
+            if "video" in data:
+                new_data = {"video": int(data["video"])}
+                local_data.update(new_data)
+
+            if "photomagnets_quantity" in data:
+                new_data = {"photomagnets": int(photomagnets_sum)}
+                local_data.update(new_data)
+
+            # if ("cash_payment" in data) and ("cash_delivery" in data):
+            new_data = {
+                "paid_cash": (int(data["cash_payment"]) - int(data["cash_delivery"]))/2,
+            }
+            local_data.update(new_data)
+
+            # if (
+            #     ("prepayment" in data)
+            #     and ("cashless_payment" in data)
+            #     and ("cashless_delivery" in data)
+            # ):
+            new_data = {
+                "paid_non_cash": (int(data["prepayment"])
+                + int(data["cashless_payment"])
+                - int(data["cashless_delivery"]))/2,
+            }
+            local_data.update(new_data)
+
+            qincome = QIncome(**local_data)
+            qincome.save()
+    else:
+        if ("photomagnets_quantity") in data:
+            photomagnets_promo = int(data["photomagnets_quantity"]) // 2
+            photomagnets_not_promo = int(data["photomagnets_quantity"]) - photomagnets_promo
+            photomagnets_sum = photomagnets_not_promo * 250 + photomagnets_promo * 150    
+
+        local_data = {
+            "date": formatted_date,
+            "time": formatted_time,
+            "stquest": entry,
+            "quest": quest,
+            "is_package": data['is_package']
+        }
+
+        local_data['game'] = (int(data['quest_cost']) + int(data['add_players']) + int(data['easy_work']) + int(data['night_game']) - int(data['discount_sum'])) / 2
+        # local_data['game'] = {
+        #     "value": int(data['quest_cost']) + int(data['add_players']) + int(data['easy_work']) + int(data['night_game']) - int(data['discount_sum']),
+        #     "tooltip": ""
+        # }
+
+        local_data['paid_cash'] = int(data['cash_payment']) - int(data['cash_delivery'])
+        local_data['paid_non_cash'] = int(data['cashless_payment']) - int(data['cashless_delivery']) + int(data['prepayment'])
+
+        if "actor_second_actor" in data:
+            new_data = {
+                "actor": int(data["actor_second_actor"]),
+            }
+            local_data.update(new_data)
+
+        if "room_sum" in data:
+            new_room_sum = 0
+            if (quest.name == 'Проклятые' or quest.name == 'Логово Ведьмы'):
+                new_room_sum_for_room404 = (data["room_sum"]-100)/2
+                new_room_sum = data["room_sum"] - new_room_sum_for_room404
+                new_data = {"room": new_room_sum}
+
+                quest_room404 = Quest.objects.get(name="Квартира 404")
+                local_data_for404 = {
                     "date": formatted_date,
                     "time": formatted_time,
                     "stquest": entry,
                     "quest": quest_room404,
-                    "game": new_game_sum
-                    # "game": {
-                        # "tooltip": "Пакет",
-                        # "value": new_game_sum,
-                    # }
+                    "room": new_room_sum_for_room404
                 }
-                local_data_for404_package = {
-                    "date": formatted_date,
-                    "time": formatted_time,
-                    "stquest": entry,
-                    "quest": quest_room404,
-                    "room": new_sum_for_room404
-                }
-                QIncome(**local_data_for_package).save()
-                QIncome(**local_data_for404_package).save()
+                qincome2 = QIncome(**local_data_for404)
+                qincome2.save()
 
-            # else:
+                if ("is_package" in data):
+                    new_game_sum = data["quest_cost"] - 250
+                    new_sum_for_room404 = 250
+                    local_data_for_package = {
+                        "date": formatted_date,
+                        "time": formatted_time,
+                        "stquest": entry,
+                        "quest": quest_room404,
+                        "game": new_game_sum
+                        # "game": {
+                            # "tooltip": "Пакет",
+                            # "value": new_game_sum,
+                        # }
+                    }
+                    local_data_for404_package = {
+                        "date": formatted_date,
+                        "time": formatted_time,
+                        "stquest": entry,
+                        "quest": quest_room404,
+                        "room": new_sum_for_room404
+                    }
+                    QIncome(**local_data_for_package).save()
+                    QIncome(**local_data_for404_package).save()
 
-        else:
-            new_data = {"room": int(data["room_sum"])}
-        
+                # else:
+
+            else:
+                new_data = {"room": int(data["room_sum"])}
+            
+            local_data.update(new_data)
+
+
+        if "video" in data:
+            new_data = {"video": int(data["video"])}
+            local_data.update(new_data)
+
+        if "photomagnets_quantity" in data:
+            new_data = {"photomagnets": int(photomagnets_sum)}
+            local_data.update(new_data)
+
+        # if ("cash_payment" in data) and ("cash_delivery" in data):
+        new_data = {
+            "paid_cash": int(data["cash_payment"]) - int(data["cash_delivery"]),
+        }
         local_data.update(new_data)
 
-
-    if "video" in data:
-        new_data = {"video": int(data["video"])}
+        # if (
+        #     ("prepayment" in data)
+        #     and ("cashless_payment" in data)
+        #     and ("cashless_delivery" in data)
+        # ):
+        new_data = {
+            "paid_non_cash": int(data["prepayment"])
+            + int(data["cashless_payment"])
+            - int(data["cashless_delivery"]),
+        }
         local_data.update(new_data)
 
-    if "photomagnets_quantity" in data:
-        new_data = {"photomagnets": int(photomagnets_sum)}
-        local_data.update(new_data)
-
-    # if ("cash_payment" in data) and ("cash_delivery" in data):
-    new_data = {
-        "paid_cash": int(data["cash_payment"]) - int(data["cash_delivery"]),
-    }
-    local_data.update(new_data)
-
-    # if (
-    #     ("prepayment" in data)
-    #     and ("cashless_payment" in data)
-    #     and ("cashless_delivery" in data)
-    # ):
-    new_data = {
-        "paid_non_cash": int(data["prepayment"])
-        + int(data["cashless_payment"])
-        - int(data["cashless_delivery"]),
-    }
-    local_data.update(new_data)
-
-    qincome = QIncome(**local_data)
-    qincome.save()
+        qincome = QIncome(**local_data)
+        qincome.save()
 
 
 def create_qcash_register_from_stquest(data, entry):
@@ -157,7 +266,7 @@ def create_qcash_register_from_stexpense(data):
     cash_register.save()
 
 
-def create_travel(entry):
+def create_travel(entry, quest):
     stquest_date = entry.date
     salaries_to_delete = QSalary.objects.filter(Q(name="Проезд") & Q(date=stquest_date))
     salaries_to_delete.delete()
@@ -170,10 +279,13 @@ def create_travel(entry):
         users.append(stquest.animator)
         users.extend(stquest.actors.all())
     users = list(set(users))
+    users = [item for item in users if item is not None]
     for user in users:
-        stquests_by_user = STQuest.objects.filter(date=stquest_date).filter(
+        stquests_by_user = STQuest.objects.filter(date=stquest_date).order_by("date", "time").filter(
             Q(administrator=user) | Q(animator=user) | Q(actors__in=[user])
         )
+        # print(user)
+        # print(stquests_by_user)
         if len(stquests_by_user) == 1:
             travel_data = {
                 "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
@@ -185,6 +297,26 @@ def create_travel(entry):
             }
             QSalary(**travel_data).save()
             QSalary(**travel_data).save()
+            STExpense(**{
+                "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
+                "amount": 25,
+                "name": "Проезд",
+                "user": user,
+                "stquest": stquests_by_user[0],
+                "quest": quest,
+                "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
+            }).save()
+            # expense1.quests.set(Quest.objects.filter(id__in=quest))
+            STExpense(**{
+                "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
+                "amount": 25,
+                "name": "Проезд",
+                "user": user,
+                "stquest": stquests_by_user[0],
+                "quest": quest,
+                "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
+            }).save()
+            # expense2.quests.set(Quest.objects.filter(id__in=quest))
         elif len(stquests_by_user) >= 2:
             travel_data_now = {
                 "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
@@ -206,12 +338,38 @@ def create_travel(entry):
             }
             QSalary(**travel_data_now).save()
             QSalary(**travel_data_prev).save()
+            # STExpense(**{
+            #     "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
+            #     "amount": 25,
+            #     "name": "Проезд",
+            #     "user": user,
+            #     "stquest": stquests_by_user[0],
+            #     "quest": quest,
+            #     "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
+            # }).save()
+            # # expense3.quests.set(Quest.objects.filter(id__in=quest))
+            # STExpense(**{
+            #     "date": stquests_by_user[len(stquests_by_user) - 1].date.strftime(
+            #         "%Y-%m-%d"
+            #     ),
+            #     "amount": 25,
+            #     "name": "Проезд",
+            #     "user": user,
+            #     "stquest": stquests_by_user[len(stquests_by_user) - 1],
+            #     "quest": quest,
+            #     "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
+            # }).save()
+            # # expense4.quests.set(Quest.objects.filter(id__in=quest))
 
         prev_stquest_by_user = None
         for index, stquest_by_user in enumerate(stquests_by_user):
+            
             if index == 0:
                 prev_stquest_by_user = stquest_by_user
             if prev_stquest_by_user != stquest_by_user:
+                # print(user)
+                # print(prev_stquest_by_user.time)
+                # print(stquest_by_user.time)
                 new_prev_entry_time = (
                     datetime.combine(
                         prev_stquest_by_user.date, prev_stquest_by_user.time
@@ -224,6 +382,7 @@ def create_travel(entry):
                     - prep_time
                 )
                 if new_now_entry_time - new_prev_entry_time >= timedelta(hours=2):
+                    
                     travel_data_now = {
                         "date": stquest_by_user.date.strftime("%Y-%m-%d"),
                         "amount": 25,
@@ -242,6 +401,26 @@ def create_travel(entry):
                     }
                     QSalary(**travel_data_now).save()
                     QSalary(**travel_data_prev).save()
+                    STExpense(**{
+                        "date": stquest_by_user.date.strftime("%Y-%m-%d"),
+                        "amount": 25,
+                        "name": "Проезд",
+                        "user": user,
+                        "stquest": stquest_by_user,
+                        "quest": quest,
+                        "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
+                    }).save()
+                    # expense5.quests.set(Quest.objects.filter(id__in=quest))
+                    STExpense(**{
+                        "date": prev_stquest_by_user.date.strftime("%Y-%m-%d"),
+                        "amount": 25,
+                        "name": "Проезд",
+                        "user": user,
+                        "stquest": prev_stquest_by_user,
+                        "quest": quest,
+                        "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
+                    }).save()
+                    # expense6.quests.set(Quest.objects.filter(id__in=quest))
                 elif (
                     stquest_by_user.quest.address != prev_stquest_by_user.quest.address
                 ):
@@ -254,6 +433,16 @@ def create_travel(entry):
                         "sub_category": 'actor'
                     }
                     QSalary(**travel_data_prev).save()
+                    STExpense(**{
+                        "date": prev_stquest_by_user.date.strftime("%Y-%m-%d"),
+                        "amount": 25,
+                        "name": "Проезд",
+                        "user": user,
+                        "stquest": stquest_by_user,
+                        "quest": quest,
+                        "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
+                    }).save()
+                    # expense7.quests.set(Quest.objects.filter(id__in=quest))
 
             prev_stquest_by_user = stquest_by_user
 

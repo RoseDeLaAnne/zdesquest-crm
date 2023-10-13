@@ -11,7 +11,7 @@ import {
 } from "@ant-design/icons";
 
 // api
-import { getQuests, postQuest, deleteQuest } from "../../api/APIUtils";
+import { getQuests, postQuest, deleteQuest, getQuestsWithSpecVersions } from "../../api/APIUtils";
 
 // components
 import TemplateTable from "../../components/template/Table";
@@ -210,7 +210,7 @@ const ATQuests: FC = () => {
       tableDateColumn={null}
       initialPackedTableColumns={initialPackedTableColumns}
       tableIsOperation={true}
-      getFunction={getQuests}
+      getFunction={getQuestsWithSpecVersions}
       deleteFunction={deleteQuest}
       postFunction={postQuest}
       isUseParams={false}
