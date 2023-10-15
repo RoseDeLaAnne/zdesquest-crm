@@ -10,7 +10,6 @@ from .managers import UserManager
 
 class Role(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    # latin_name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
@@ -18,11 +17,11 @@ class Role(models.Model):
 
 class QuestVersion(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    
-    cost_weekdays = models.IntegerField(blank=True, null=True)
-    cost_weekends = models.IntegerField(blank=True, null=True)
-    # cost_weekdays_with_package = models.IntegerField(blank=True, null=True)
-    # cost_weekends_with_package = models.IntegerField(blank=True, null=True)
+
+    cost_weekdays = models.IntegerField(default=0)
+    cost_weekends = models.IntegerField(default=0)
+    cost_weekdays_with_package = models.IntegerField(default=0)
+    cost_weekends_with_package = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -30,24 +29,24 @@ class QuestVersion(models.Model):
 
 class Quest(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    address = models.CharField(max_length=255)
+    address = models.CharField(max_length=255, default="")
 
-    cost_weekdays = models.IntegerField(blank=True, null=True)
-    cost_weekends = models.IntegerField(blank=True, null=True)
-    cost_weekdays_with_package = models.IntegerField(blank=True, null=True)
-    cost_weekends_with_package = models.IntegerField(blank=True, null=True)
+    cost_weekdays = models.IntegerField(default=0)
+    cost_weekends = models.IntegerField(default=0)
+    cost_weekdays_with_package = models.IntegerField(default=0)
+    cost_weekends_with_package = models.IntegerField(default=0)
 
-    administrator_rate = models.IntegerField()
-    actor_rate = models.IntegerField()
-    animator_rate = models.IntegerField(blank=True, null=True)
+    administrator_rate = models.IntegerField(default=0)
+    actor_rate = models.IntegerField(default=0)
+    animator_rate = models.IntegerField()
 
-    duration_minute = models.IntegerField(blank=True, null=True)
+    duration_minute = models.IntegerField(default=0)
 
     special_versions = models.ManyToManyField("self", blank=True, symmetrical=False)
     versions = models.ManyToManyField(QuestVersion, blank=True)
 
     def save(self, *args, **kwargs):
-        self.animator_rate = int(self.actor_rate) + 50
+        self.animator_rate = self.actor_rate + 50
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -56,7 +55,7 @@ class Quest(models.Model):
 
 class STExpenseCategory(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    latin_name = models.CharField(max_length=255, unique=True, blank=True, null=True)
+    latin_name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
@@ -64,7 +63,7 @@ class STExpenseCategory(models.Model):
 
 class STExpenseSubCategory(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    latin_name = models.CharField(max_length=255, unique=True, blank=True, null=True)
+    latin_name = models.CharField(max_length=255, unique=True)
 
     category = models.ForeignKey(
         STExpenseCategory, on_delete=models.CASCADE, blank=True, null=True
@@ -76,12 +75,7 @@ class STExpenseSubCategory(models.Model):
 
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(verbose_name=_("Логин"), max_length=255, unique=True)
-    email = models.EmailField(
-        verbose_name=_("Адрес электронной почты"),
-        unique=True,
-        blank=True,
-        null=True,
-    )
+    email = models.EmailField(verbose_name=_("Адрес электронной почты"), unique=True, blank=True, null=True)
     phone_number = models.CharField(
         verbose_name=_("Номер телефона"),
         max_length=18,
@@ -121,9 +115,15 @@ class User(AbstractBaseUser, PermissionsMixin):
         ),
         default=False,
     )
-    roles = models.ManyToManyField(Role, verbose_name=_("Роли"), blank=True)
+    roles = models.ManyToManyField(Role, verbose_name=_("Роли"))
 
-    quest = models.ForeignKey(Quest, on_delete=models.SET_NULL, blank=True, null=True, related_name="quest_user")
+    quest = models.ForeignKey(
+        Quest,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="user_quest",
+    )
 
     date_joined = models.DateTimeField(
         verbose_name=_("Дата регистрации"), default=timezone.now
@@ -132,25 +132,31 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name=_("Дата рождения"), blank=True, null=True
     )
 
-    range_staj_start = models.DateField(blank=True, null=True)
-    range_staj_end = models.DateField(blank=True, null=True)
+    internship_period_start = models.DateField(blank=True, null=True)
+    internship_period_end = models.DateField(blank=True, null=True)
 
-    quest_staj = models.ForeignKey(Quest, on_delete=models.SET_NULL, blank=True, null=True, related_name="quest_staf_user")
+    internship_quest = models.ForeignKey(
+        Quest,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="user_internship_quest",
+    )
 
+    # USERNAME_FIELD = "email"
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = []
 
     objects = UserManager()
 
     def __str__(self):
+        # return self.email
         return self.username
 
 
-
-
 class STQuest(models.Model):
-    date = models.DateField()
-    time = models.TimeField()
+    date = models.DateField(default=timezone.now)
+    time = models.TimeField(default=timezone.now)
     quest = models.ForeignKey(Quest, on_delete=models.SET_NULL, blank=True, null=True)
     quest_cost = models.IntegerField()
     add_players = models.IntegerField(default=0)
@@ -161,7 +167,7 @@ class STQuest(models.Model):
     room_sum_after = models.IntegerField(default=0)
     room_sum_total = models.IntegerField(default=0)
     room_quantity = models.IntegerField(default=0)
-    room_employee_name = models.ForeignKey( 
+    room_employee_name = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         blank=True,
@@ -232,16 +238,24 @@ class STQuest(models.Model):
         related_name="created_by",
     )
 
-    client_name = models.CharField(max_length=255, default='')
+    client_name = models.CharField(max_length=255, default="")
 
     def save(self, *args, **kwargs):
         self.room_sum_total = int(self.room_sum) + int(self.room_sum_after)
         self.video_total = int(self.video) + int(self.video_after)
-        self.photomagnets_quantity_total = int(self.photomagnets_quantity) + int(self.photomagnets_quantity_after)
+        self.photomagnets_quantity_total = int(self.photomagnets_quantity) + int(
+            self.photomagnets_quantity_after
+        )
         self.cash_payment_total = int(self.cash_payment) + int(self.cash_payment_after)
-        self.cashless_payment_total = int(self.cashless_payment) + int(self.cashless_payment_after)
-        self.cash_delivery_total = int(self.cash_delivery) + int(self.cash_delivery_after)
-        self.cashless_delivery_total = int(self.cashless_delivery) + int(self.cashless_delivery_after)
+        self.cashless_payment_total = int(self.cashless_payment) + int(
+            self.cashless_payment_after
+        )
+        self.cash_delivery_total = int(self.cash_delivery) + int(
+            self.cash_delivery_after
+        )
+        self.cashless_delivery_total = int(self.cashless_delivery) + int(
+            self.cashless_delivery_after
+        )
 
         # if (self.photomagnets_quantity):
         photomagnets_promo = self.photomagnets_quantity // 2
@@ -255,11 +269,12 @@ class STQuest(models.Model):
 
         return str(self.quest)
 
+
 class STExpense(models.Model):
     PAID_FROM = [
-        ("work_card", "Рабочая карта"),
-        ("their", "Свои"),
-        ("cash_register", "Касса"),
+        ("work_card", "рабочая карта"),
+        ("own", "свои"),
+        ("cash_register", "касса"),
     ]
 
     date = models.DateField()
@@ -274,19 +289,41 @@ class STExpense(models.Model):
     )
 
     quests = models.ManyToManyField(Quest, blank=True)
-    quest = models.ForeignKey(Quest, on_delete=models.SET_NULL, blank=True, null=True, related_name="quest_stexpense")
+    quest = models.ForeignKey(
+        Quest,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="quest_stexpense",
+    )
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="user_stexpense")
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="user_stexpense",
+    )
 
     # paid_from = models.CharField(choices=PAID_FROM, default="work_card", max_length=255)
-    paid_from = models.CharField(choices=PAID_FROM, blank=True, null=True, max_length=255)
+    paid_from = models.CharField(
+        choices=PAID_FROM, blank=True, null=True, max_length=255
+    )
 
-    who_paid = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name="who_paid_st_expense")
+    who_paid = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="who_paid_st_expense",
+    )
     who_paid_amount = models.IntegerField(blank=True, null=True)
 
     attachment = models.FileField(upload_to="photos/", blank=True, null=True)
 
-    stquest = models.ForeignKey(STQuest, on_delete=models.CASCADE, blank=True, null=True)
+    stquest = models.ForeignKey(
+        STQuest, on_delete=models.CASCADE, blank=True, null=True
+    )
 
     def __str__(self):
         return str(self.date)
@@ -294,16 +331,16 @@ class STExpense(models.Model):
 
 class STBonusPenalty(models.Model):
     TYPE = [
-        ("bonus", "Бонус"),
-        ("penalty", "Штраф"),
+        ("bonus", "бонус"),
+        ("penalty", "штраф"),
     ]
 
-    date = models.DateField()
+    date = models.DateField(default=timezone.now)
 
-    amount = models.IntegerField()
-    name = models.CharField(max_length=255)
+    type = models.CharField(max_length=255, choices=TYPE, default="bonus")
 
-    type = models.CharField(choices=TYPE, default="bonus", max_length=255)
+    amount = models.IntegerField(default=0)
+    name = models.CharField(max_length=255, default="")
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
@@ -314,8 +351,8 @@ class STBonusPenalty(models.Model):
 
 
 class QIncome(models.Model):
-    date = models.DateField()
-    time = models.TimeField()
+    date = models.DateField(default=timezone.now)
+    time = models.TimeField(default=timezone.now)
     game = models.IntegerField(default=0)
     # game_tooltip = models.CharField(default='', max_length=255)
     room = models.IntegerField(default=0)
@@ -336,7 +373,13 @@ class QIncome(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        self.total = int(self.game) + int(self.room) + int(self.video) + int(self.photomagnets) + int(self.actor)
+        self.total = (
+            int(self.game)
+            + int(self.room)
+            + int(self.video)
+            + int(self.photomagnets)
+            + int(self.actor)
+        )
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -355,7 +398,7 @@ class QSalary(models.Model):
         STQuest, on_delete=models.CASCADE, blank=True, null=True
     )
 
-    sub_category = models.CharField(max_length=255, default='')
+    sub_category = models.CharField(max_length=255, default="")
 
     def __str__(self):
         return str(self.date)
@@ -363,13 +406,13 @@ class QSalary(models.Model):
 
 class QCashRegister(models.Model):
     OPERATION = [
-        ("plus", "Плюс"),
-        ("minus", "Минус"),
+        ("plus", "плюс"),
+        ("minus", "минус"),
     ]
 
     STATUS = [
-        ("reset", "Обнулено"),
-        ("not_reset", "Не обнулено"),
+        ("reset", "обнулено"),
+        ("not_reset", "не обнулено"),
     ]
 
     date = models.DateField()
@@ -409,8 +452,8 @@ class WorkCardExpense(models.Model):
 
 class ExpenseFromTheir(models.Model):
     STATUS = [
-        ("paid", "Выплачено"),
-        ("not_paid", "Не выплачено"),
+        ("paid", "выплачено"),
+        ("not_paid", "не выплачено"),
     ]
 
     date = models.DateField()
@@ -432,8 +475,8 @@ class ExpenseFromTheir(models.Model):
 
 
 class QVideo(models.Model):
-    date = models.DateField()
-    time = models.TimeField()
+    date = models.DateField(default=timezone.now)
+    time = models.TimeField(default=timezone.now)
 
     client_name = models.CharField(max_length=255)
     sent = models.BooleanField()
@@ -443,7 +486,9 @@ class QVideo(models.Model):
     note = models.CharField(max_length=255, default="")
 
     quest = models.ForeignKey(Quest, on_delete=models.CASCADE, blank=True, null=True)
-    stquest = models.ForeignKey(STQuest, on_delete=models.CASCADE, blank=True, null=True)
+    stquest = models.ForeignKey(
+        STQuest, on_delete=models.CASCADE, blank=True, null=True
+    )
 
     def __str__(self):
         return str(self.date)

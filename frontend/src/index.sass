@@ -174,4 +174,9 @@ h1
   .custom-space
     flex-direction: column
 
-  
+.animated-input::placeholder
+  animation: typing 1s steps(30, end), blink-caret .5s step-end infinite
+  overflow: hidden
+  white-space: nowrap
+  width: 14ch
+  /* Adjust the width property to control how much of the placeholder is visible */

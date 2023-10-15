@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
+from django.contrib.auth.models import AnonymousUser
 
 from .models import *
 
@@ -14,8 +15,8 @@ class CustomDateFormatField(serializers.DateField):
 class UserSerializer(ModelSerializer):
     key = serializers.CharField(max_length=255, source="id")
     date_of_birth = CustomDateFormatField()
-    range_staj_start = CustomDateFormatField()
-    range_staj_end = CustomDateFormatField()
+    internship_period_start = CustomDateFormatField()
+    internship_period_end = CustomDateFormatField()
 
     class Meta:
         model = User
@@ -29,15 +30,20 @@ class UserSerializer(ModelSerializer):
             "first_name",
             "middle_name",
             "date_of_birth",
-            "range_staj_start",
-            "range_staj_end",
+            "internship_period_start",
+            "internship_period_end",
             "quest",
             "roles",
-            "quest_staj",
+            "internship_quest",
             "is_superuser",
         ]
 
         depth = 1
+
+    def to_representation(self, instance):
+        if not isinstance(instance, AnonymousUser):
+            return super().to_representation(instance)
+        return {}
 
 
 class RoleSerializer(ModelSerializer):

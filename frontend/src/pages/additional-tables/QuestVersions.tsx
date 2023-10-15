@@ -65,6 +65,28 @@ const ATQuestVersions: FC = () => {
       },
       isCountable: false,
     },
+    {
+      title: "стоимость квеста в будние дни (пакет)",
+      dataIndex: "cost_weekdays_with_package",
+      key: "cost_weekdays_with_package",
+      isSorting: true,
+      searching: {
+        isSearching: true,
+        title: "",
+      },
+      isCountable: false,
+    },
+    {
+      title: "стоимость квеста в выходные дни (пакет)",
+      dataIndex: "cost_weekends_with_package",
+      key: "cost_weekends_with_package",
+      isSorting: true,
+      searching: {
+        isSearching: true,
+        title: "",
+      },
+      isCountable: false,
+    },
   ];
 
   const [formItems, setFormItems] = useState([])

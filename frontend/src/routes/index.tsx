@@ -2,6 +2,10 @@ import { Link, Navigate, RouterProvider, createBrowserRouter } from "react-route
 import { useAuth } from "../provider/authProdiver";
 import { ProtectedRoute } from "./ProtectedRoute";
 
+import Test from "../pages/Test";
+import InputC from "../pages/InputC";
+import Test3 from "../pages/Test3";
+
 import Home from "../pages/Home";
 
 import Login from "../pages/authentication/Login";
@@ -71,6 +75,18 @@ const Routes = () => {
           // element: <Link to={'/users'}>to Users</Link>,
           element: <Home />,
           // element: <Navigate to="/users" />,
+        },
+        {
+          path: "/test",
+          element: <Test />,
+        },
+        {
+          path: "/inputc",
+          element: <InputC />,
+        },
+        {
+          path: "/test3",
+          element: <Test3 />,
         },
         {
           path: "/users",

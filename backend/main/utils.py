@@ -381,8 +381,7 @@ def create_travel(entry, quest):
                     datetime.combine(stquest_by_user.date, stquest_by_user.time)
                     - prep_time
                 )
-                if new_now_entry_time - new_prev_entry_time >= timedelta(hours=2):
-                    
+                if new_now_entry_time - new_prev_entry_time >= timedelta(hours=2):                    
                     travel_data_now = {
                         "date": stquest_by_user.date.strftime("%Y-%m-%d"),
                         "amount": 25,

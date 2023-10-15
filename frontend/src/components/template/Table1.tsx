@@ -433,6 +433,8 @@ const TableFC: FC = ({
       } else {
         getEntries(null, null);
       }
+
+      form.resetFields()
     } else {
       messageApi.open({
         type: "error",

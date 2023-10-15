@@ -1,6 +1,3 @@
-// libs
-import dayjs from "dayjs";
-
 import { FC, useState, useEffect } from "react";
 
 // antd
@@ -18,7 +15,6 @@ import useQuestForm from "../../hooks/useQuestForm";
 import {
   deleteSTQuest,
   getQuests,
-  getQuestsWithSpecVersions,
   getSTQuests,
   postSTQuest,
 } from "../../api/APIUtils";
@@ -477,9 +473,157 @@ const STQuests: FC = () => {
     getFormItems();
   }, []);
 
+  const [selectedQuest, setSelectedQuest] = useState({});
+
+  const [quests, setQuests] = useState([]);
+  const [isPackage, setIsPackage] = useState(false);
+  const [isWeekend, setIsWeekend] = useState(null);
+  const [notVisibleFormItems, setNotVisibleFormItems] = useState([]);
+  const [titlesFormItems, setTitlesFormItems] = useState({});
+  const [defaultValuesFormItems, setDefaultValuesFormItems] = useState({});
+
+  const formHandleOnChange = (value, name) => {
+    if (name === "quest") {
+      const quest = quests.find((el) => el.id === value);
+      setSelectedQuest(quest);
+
+      // if (isPackage === false) {
+      //   switch (quest.name) {
+      //     case "ДСР":
+      //       setTitlesFormItems({
+      //         actor_second_actor: "asda",
+      //       });
+      //       break;
+      //     case "У57":
+      //       setNotVisibleFormItems(["actor_second_actor"]);
+      //       break;
+      //     case "Тьма":
+      //       setTitlesFormItems({
+      //         actor_second_actor: "второй актер",
+      //       });
+      //       break;
+      //     case "Дом Монстров":
+      //       setTitlesFormItems({
+      //         actor_second_actor: "аниматор",
+      //       });
+      //       break;
+      //     case "Они":
+      //       setTitlesFormItems({
+      //         actor_second_actor: "второй актер",
+      //       });
+      //       break;
+      //     case "Квартира 404":
+      //       setNotVisibleFormItems(["actor_second_actor"]);
+      //       break;
+      //     case "ОСК":
+      //       setTitlesFormItems({
+      //         actor_second_actor: "аниматор",
+      //       });
+      //       break;
+      //     case "Проклятые":
+      //       setNotVisibleFormItems(["actor_second_actor"]);
+      //       break;
+      //     case "Логово Ведьмы":
+      //       setTitlesFormItems({
+      //         actor_second_actor: "аниматор",
+      //       });
+      //       break;
+      //     case "Обитель Зла":
+      //       setNotVisibleFormItems(["actor_second_actor"]);
+      //       break;
+      //     case "Покайся во грехе":
+      //       setNotVisibleFormItems(["actor_second_actor"]);
+      //       break;
+      //     default:
+      //       setNotVisibleFormItems([]);
+      //       break;
+      //   }
+
+      //   // if (quest.address === 'Афанасьева, 13') {
+      //   //   setNotVisibleFormItems(['photomagnets_quantity']);
+      //   // }
+      // }
+
+      if (isWeekend === true) {
+        if (isPackage === false) {
+          setDefaultValuesFormItems({
+            quest_cost: selectedQuest.cost_weekends,
+          });
+        } else if (isPackage === true) {
+          setDefaultValuesFormItems({
+            quest_cost: selectedQuest.cost_weekends_with_package,
+          });
+        }
+      } else if (isWeekend === false) {
+        if (isPackage === false) {
+          setDefaultValuesFormItems({
+            quest_cost: selectedQuest.cost_weekdays,
+          });
+        } else if (isPackage === true) {
+          setDefaultValuesFormItems({
+            quest_cost: selectedQuest.cost_weekdays_with_package,
+          });
+        }
+      }
+    } else if (name === "is_package") {
+      setIsPackage(value.target.checked);
+      if (value.target.checked) {
+        const names = formItems.reduce((accumulator, currentGroup) => {
+          currentGroup.items.forEach((item) => {
+            accumulator.push(item.name);
+          });
+          return accumulator;
+        }, []);
+        // const visibleNames = [
+        //   "quest",
+        //   "is_package",
+        //   "is_video_review",
+        //   "date",
+        //   "time",
+        //   "quest_cost",
+        //   "administrator"
+        // ];
+        // const filteredArray = names.filter(
+        //   (item) => !visibleNames.includes(item)
+        // );
+        setNotVisibleFormItems(["birthday_congr", "video"]);
+      } else {
+        setNotVisibleFormItems([]);
+      }
+    } else if (name === "date") {
+      const selectedDate = new Date(value);
+      const dayOfWeek = selectedDate.getDay();
+      if (Object.keys(selectedQuest).length !== 0) {
+        if (dayOfWeek === 0 || dayOfWeek === 6) {
+          setIsWeekend(true);
+          if (isPackage === false) {
+            setDefaultValuesFormItems({
+              quest_cost: selectedQuest.cost_weekends,
+            });
+          } else if (isPackage === true) {
+            setDefaultValuesFormItems({
+              quest_cost: selectedQuest.cost_weekends_with_package,
+            });
+          }
+        } else {
+          setIsWeekend(false);
+          if (isPackage === false) {
+            setDefaultValuesFormItems({
+              quest_cost: selectedQuest.cost_weekdays,
+            });
+          } else if (isPackage === true) {
+            setDefaultValuesFormItems({
+              quest_cost: selectedQuest.cost_weekdays_with_package,
+            });
+          }
+        }
+      }
+    }
+  };
+
   const fetchQuests = async () => {
     try {
-      const response = await getQuestsWithSpecVersions();
+      const response = await getQuests();
       if (response.status === 200) {
         setQuests(response.data);
       }
@@ -491,108 +635,6 @@ const STQuests: FC = () => {
   useEffect(() => {
     fetchQuests();
   }, []);
-
-  const [selectedQuest, setSelectedQuest] = useState(null);
-  const [isPackage, setIsPackage] = useState(false);
-  const [isWeekend, setIsWeekend] = useState(dayjs().day() === 0 || dayjs().day() === 6);
-
-  const [quests, setQuests] = useState([]);
-  const [notVisibleFormItems, setNotVisibleFormItems] = useState([]);
-  const [titlesFormItems, setTitlesFormItems] = useState({});
-  const [defaultValuesFormItems, setDefaultValuesFormItems] = useState({});
-
-  const formHandleOnChange = (value, name) => {
-    if (name === "quest") {
-      const quest = quests.find((el) => el.id === value);
-      setSelectedQuest(quest);
-
-      if (isWeekend) {
-        if (isPackage) {
-          setDefaultValuesFormItems({
-            quest_cost: quest.cost_weekends_with_package,
-          });
-        } else {
-          setDefaultValuesFormItems({
-            quest_cost: quest.cost_weekends,
-          });
-        }
-      } else {
-        if (isPackage) {
-          setDefaultValuesFormItems({
-            quest_cost: quest.cost_weekdays_with_package,
-          });
-        } else {
-          setDefaultValuesFormItems({
-            quest_cost: quest.cost_weekdays,
-          });
-        }
-      }
-    }
-    if (name === "is_package") {
-      setIsPackage(value.target.checked);
-
-      if (value.target.checked) {
-        setNotVisibleFormItems(['birthday_congr', 'video']);
-      } else {
-        setNotVisibleFormItems([]);
-      }
-
-      if (selectedQuest !== null && selectedQuest !== undefined) {
-        if (isWeekend) {
-          if (value.target.checked) {
-            setDefaultValuesFormItems({
-              quest_cost: selectedQuest.cost_weekends_with_package,
-            });
-          } else {
-            setDefaultValuesFormItems({
-              quest_cost: selectedQuest.cost_weekends,
-            });
-          }
-        } else {
-          if (value.target.checked) {
-            setDefaultValuesFormItems({
-              quest_cost: selectedQuest.cost_weekdays_with_package,
-            });
-          } else {
-            setDefaultValuesFormItems({
-              quest_cost: selectedQuest.cost_weekdays,
-            });
-          }
-        }
-      }
-    }
-    if (name === "date") {
-      const selectedDate = new Date(value);
-      const dayOfWeek = selectedDate.getDay();
-      if (selectedQuest !== null && selectedQuest !== undefined) {
-        if (dayOfWeek === 0 || dayOfWeek === 6) {
-          setIsWeekend(true);
-
-          if (isPackage) {
-            setDefaultValuesFormItems({
-              quest_cost: selectedQuest.cost_weekends_with_package,
-            });
-          } else {
-            setDefaultValuesFormItems({
-              quest_cost: selectedQuest.cost_weekends,
-            });
-          }
-        } else {
-          setIsWeekend(false);
-
-          if (isPackage) {
-            setDefaultValuesFormItems({
-              quest_cost: selectedQuest.cost_weekdays_with_package,
-            });
-          } else {
-            setDefaultValuesFormItems({
-              quest_cost: selectedQuest.cost_weekdays,
-            });
-          }
-        }
-      }
-    }
-  };
 
   return (
     <TemplateTable

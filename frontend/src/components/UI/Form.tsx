@@ -9,6 +9,7 @@ import {
   Row,
   Select,
   Input,
+  InputNumber,
   Checkbox,
   Upload,
 } from "antd";
@@ -22,9 +23,9 @@ import {
   timePickerFormat,
 } from "../../constants";
 
-import locale from 'antd/es/date-picker/locale/ru_RU';
+import locale from "antd/es/date-picker/locale/ru_RU";
 
-import 'dayjs/locale/ru';
+import "dayjs/locale/ru";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -81,18 +82,20 @@ const FormFC: FC = ({ items, form, onFinish, handleOnChange }) => {
                   />
                 ) : innerItem.element.name === "DatePicker" ? (
                   <DatePicker
+                    defaultValue={innerItem.element.defaultValue}
                     locale={locale}
                     format={datePickerFormat}
-                    style={{ width: "100%" }}
                     onChange={(selectedValues) =>
                       handleOnChange(selectedValues, innerItem.name)
                     }
+                    style={{ width: "100%" }}
                   />
                 ) : innerItem.element.name === "TimePicker" ? (
                   <TimePicker
+                    defaultValue={innerItem.element.defaultValue}
                     format={timePickerFormat}
-                    style={{ width: "100%" }}
                     minuteStep={minuteStep}
+                    style={{ width: "100%" }}
                   />
                 ) : innerItem.element.name === "RangePicker" ? (
                   <RangePicker
@@ -108,14 +111,30 @@ const FormFC: FC = ({ items, form, onFinish, handleOnChange }) => {
                     {innerItem.placeholder}
                   </Checkbox>
                 ) : innerItem.element.name === "Upload" ? (
-                  <Upload action="/upload.do" listType="picture-card" maxCount={1}>
+                  <Upload
+                    action="/upload.do"
+                    listType="picture-card"
+                    maxCount={1}
+                  >
                     <div>
                       <PlusOutlined />
                       <div style={{ marginTop: 8 }}>Upload</div>
                     </div>
                   </Upload>
+                ) : innerItem.element.name === "InputNumber" ? (
+                  <InputNumber
+                    defaultValue={innerItem.element.defaultValue}
+                    placeholder={innerItem.placeholder}
+                    onChange={(selectedValues) =>
+                      handleOnChange(selectedValues, innerItem.name)
+                    }
+                    style={{ width: '100%' }}
+                  />
                 ) : (
-                  <Input placeholder={innerItem.placeholder} />
+                  <Input
+                    defaultValue={innerItem.element.defaultValue}
+                    placeholder={innerItem.placeholder}
+                  />
                 )}
               </Form.Item>
             </Col>
