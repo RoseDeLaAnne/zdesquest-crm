@@ -279,33 +279,18 @@ class STExpense(models.Model):
 
     date = models.DateField()
 
-    name = models.CharField(max_length=255)
-    amount = models.IntegerField()
-
-    paid_tax = models.ManyToManyField(User, blank=True, related_name="paid_tax_users")
+    name = models.CharField(max_length=255, default=0)
+    amount = models.IntegerField(default=0)
+    description = models.CharField(max_length=255, default=0)
 
     sub_category = models.ForeignKey(
         STExpenseSubCategory, on_delete=models.SET_NULL, blank=True, null=True
     )
 
     quests = models.ManyToManyField(Quest, blank=True)
-    quest = models.ForeignKey(
-        Quest,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name="quest_stexpense",
-    )
 
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-        related_name="user_stexpense",
-    )
+    employees = models.ManyToManyField(User, blank=True, related_name="employees_users")
 
-    # paid_from = models.CharField(choices=PAID_FROM, default="work_card", max_length=255)
     paid_from = models.CharField(
         choices=PAID_FROM, blank=True, null=True, max_length=255
     )
@@ -317,13 +302,18 @@ class STExpense(models.Model):
         null=True,
         related_name="who_paid_st_expense",
     )
-    who_paid_amount = models.IntegerField(blank=True, null=True)
-
     attachment = models.FileField(upload_to="photos/", blank=True, null=True)
 
     stquest = models.ForeignKey(
         STQuest, on_delete=models.CASCADE, blank=True, null=True
     )
+
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, blank=True, null=True, related_name='stexpense_user'
+    ) 
+    quest = models.ForeignKey(
+        Quest, on_delete=models.SET_NULL, blank=True, null=True, related_name='stexpense_quest'
+    ) 
 
     def __str__(self):
         return str(self.date)
@@ -399,6 +389,10 @@ class QSalary(models.Model):
     )
 
     sub_category = models.CharField(max_length=255, default="")
+
+    st_expense = models.ForeignKey(
+        STExpense, on_delete=models.CASCADE, blank=True, null=True
+    )
 
     def __str__(self):
         return str(self.date)

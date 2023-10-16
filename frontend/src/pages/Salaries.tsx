@@ -54,7 +54,7 @@ const App: FC = () => {
       fetchFunction={getSalaries}
       initialPackedTableDataColumn={initialPackedTableDataColumn}
       isUseParams={true}
-      tableScroll={null}
+      tableScroll={{ x: 1500 }}
       tableIsObj={true}
     />
   );

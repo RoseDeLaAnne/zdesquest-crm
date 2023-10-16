@@ -11,7 +11,7 @@ import {
 } from "@ant-design/icons";
 
 // components
-import TemplateTable from "../../components/template/Table";
+import TemplateTable from "../../components/template/Table11";
 
 // api
 import {
@@ -168,6 +168,8 @@ const STExpensesFC: FC = () => {
     },
   ];
 
+  const [notVisibleFormItems, setNotVisibleFormItems] = useState([]);
+  const [defaultValuesFormItems, setDefaultValuesFormItems] = useState({});
   const [formItems, setFormItems] = useState([])
   const getFormItems = async () => {
     const res = await getSTExpensesFormItems()
@@ -177,7 +179,23 @@ const STExpensesFC: FC = () => {
     getFormItems();
   }, [])
 
-  const formHandleOnChange = () => {}
+  const formHandleOnChange = (value, name) => {
+    // if (name === 'name') {
+    //   if (value === 'taxi') {
+    //     setNotVisibleFormItems(['paid_tax', 'who_paid'])
+    //   } else {
+    //     setNotVisibleFormItems(['paid_tax'])
+    //   }
+    // }
+
+    // if (name === 'paid_from') {
+    //   if (value === 'own') {
+    //     setNotVisibleFormItems(['paid_tax', 'who_paid'])
+    //   } else {
+    //     setNotVisibleFormItems(['who_paid'])
+    //   }
+    // }
+  }
 
   return (
     <TemplateTable
@@ -199,6 +217,8 @@ const STExpensesFC: FC = () => {
       isAddEntry={true}
       drawerTitle={"создать новую запись"}
       formItems={formItems}
+      notVisibleFormItems={notVisibleFormItems}
+      defaultValuesFormItems={defaultValuesFormItems}
       formHandleOnChange={formHandleOnChange}
     />
   );

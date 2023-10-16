@@ -18,6 +18,25 @@ export const rangePickerFormat = datePickerFormat;
 export const timePickerFormat = "HH:mm";
 export const minuteStep = 15;
 
+const optionsNameOfExpense = [
+  {
+    label: "такси",
+    value: "taxi",
+  },
+  {
+    label: "ремонтные работы",
+    value: "renovation_work",
+  },
+  {
+    label: "обед",
+    value: "lunch",
+  },
+  {
+    label: "расходники",
+    value: "consumables",
+  },
+];
+
 const optionsPaidFrom = [
   {
     label: "с рабочей карты",
@@ -902,8 +921,8 @@ export const getSTExpensesFormItems = async () => {
           isRequired: true,
           placeholder: "пожалуйста, введите логин",
           element: {
-            name: "Input",
-            options: [],
+            name: "Select",
+            options: optionsNameOfExpense,
             multiple: null,
             defaultValue: null,
           },
@@ -919,6 +938,26 @@ export const getSTExpensesFormItems = async () => {
           element: {
             name: "Input",
             options: [],
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 24,
+          name: "description",
+          label: "описание расхода",
+          isRequired: true,
+          placeholder: "пожалуйста, введите логин",
+          element: {
+            name: "Input",
+            options: null,
             multiple: null,
             defaultValue: null,
           },
@@ -1002,7 +1041,7 @@ export const getSTExpensesFormItems = async () => {
           spanXS: 24,
           spanSM: 24,
           spanMD: 24,
-          name: "paid_tax",
+          name: "employees",
           label: "кто уехал",
           isRequired: false,
           placeholder: "пожалуйста, введите логин",
@@ -1024,7 +1063,7 @@ export const getSTExpensesFormItems = async () => {
           spanMD: 24,
           name: "attachment",
           label: "приложение",
-          isRequired: true,
+          isRequired: false,
           placeholder: "пожалуйста, введите логин",
           element: {
             name: "Upload",

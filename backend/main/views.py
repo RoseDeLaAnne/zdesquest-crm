@@ -982,7 +982,7 @@ def QuestExpenses(request, id):
             amount = entry.amount
 
             if (entry.sub_category.name != 'Администратор' and entry.sub_category.name != 'Актер'):
-                print('not admin and not actor')
+                # print('not admin and not actor')
                 amount_quantity = len(entry.quests.all())
                 amount = int(entry.amount / amount_quantity)
                 old_amount = entry.amount
@@ -1565,7 +1565,6 @@ def Salaries(request):
 
         salaries = QSalary.objects.select_related("user").order_by("date")
         bonuses_penalties = STBonusPenalty.objects.select_related("user").order_by("date")
-        bonuses_penalties = STBonusPenalty.objects.select_related("user").order_by("date")
 
         if start_date and end_date:
             salaries = salaries.filter(date__range=(start_date, end_date))
@@ -2140,6 +2139,7 @@ def VSTExpense(request, id):
             expense.date = formatted_date
             expense.amount = data["amount"]
             expense.name = data["name"]
+            expense.description = data["description"]
             expense.sub_category = sub_category
             expense.paid_from = data["paid_from"]
             expense.who_paid = who_paid
@@ -2557,11 +2557,11 @@ def CreateSTExpense(request):
     if request.method == "POST":
         # try:
         data = json.loads(request.body)
-        base64_data = data['attachment'][0]['thumbUrl'].split(',')[1]
-        image_data = base64.b64decode(base64_data)
+        # base64_data = data['attachment'][0]['thumbUrl'].split(',')[1]
+        # image_data = base64.b64decode(base64_data)
 
         # Define the file path where the image will be saved
-        file_path = 'path/to/save/image.jpg'  # Specify your desired file path here
+        # file_path = 'path/to/save/image.jpg'  # Specify your desired file path here
 
         # Save the image to the specified path
         
@@ -2574,6 +2574,7 @@ def CreateSTExpense(request):
             "date": formatted_date,
             "amount": data["amount"],
             "name": data["name"],
+            "description": data["description"],
             "sub_category": sub_category,
             "paid_from": data['paid_from'],
             # "who_paid": who_paid,
@@ -2592,9 +2593,9 @@ def CreateSTExpense(request):
 
         expense.save()
 
-        with open(file_path, 'rb') as f:
-            django_file = File(f)
-            expense.attachment.save(file_path, django_file, save=True)
+        # with open(file_path, 'rb') as f:
+        #     django_file = File(f)
+        #     expense.attachment.save(file_path, django_file, save=True)
 
         if "quests" in data:
             quests = Quest.objects.filter(id__in=data["quests"])
@@ -2637,17 +2638,18 @@ def CreateSTExpense(request):
                     cash_register = ExpenseFromTheir(**local_data)
                     cash_register.save()
 
-        if "paid_tax" in data:
-            paid_tax = User.objects.filter(id__in=data["paid_tax"])
-            expense.paid_tax.set(paid_tax)
+        if "employees" in data:
+            employees = User.objects.filter(id__in=data["employees"])
+            expense.employees.set(employees)
 
-        # for salaries taxi
-        # if (data['name'] == 'Такси'):            
-        #     paid_tax = User.objects.filter(id__in=data["paid_tax"])
-        #     for paid_tax_user in paid_tax:
-        #         qsalaries = QSalary.objects.filter(Q(date=formatted_date) & Q(name='Проезд') & Q(user=paid_tax_user)).order_by("-stquest__time")
-        #         if (len(qsalaries) != 0):
-        #             qsalaries[0].delete()
+            # for salaries taxi
+            if (data['name'] == 'taxi'):            
+                employees = User.objects.filter(id__in=data["employees"])
+                for employee in employees:
+                    qsalaries = QSalary.objects.filter(Q(date=formatted_date) & Q(name='Проезд') & Q(user=employee)).order_by("-stquest__time")
+                    if (len(qsalaries) != 0):
+                        qsalaries[0].delete()
+                        # qsalaries[0].
 
         # if "quests" in data:
         #     quests = Quest.objects.filter(id__in=data["quests"])
@@ -2802,15 +2804,15 @@ def CreateSTQuest(request):
                 "stquest": entry,
                 "sub_category": 'administrator'
             }).save()
-            STExpense(**{
-                "date": formatted_date,
-                "amount": 200,
-                "name": "Видео после",
-                "user": administrator,
-                "stquest": entry,
-                "quest": quest,
-                "sub_category": STExpenseSubCategory.objects.get(latin_name='administrator')
-            }).save()
+            # STExpense(**{
+            #     "date": formatted_date,
+            #     "amount": 200,
+            #     "name": "Видео после",
+            #     "user": administrator,
+            #     "stquest": entry,
+            #     "quest": quest,
+            #     "sub_category": STExpenseSubCategory.objects.get(latin_name='administrator')
+            # }).save()
 
         if ("employee_with_staj" in data):
             employees = User.objects.filter(id__in=data['employee_with_staj'])
@@ -2823,15 +2825,15 @@ def CreateSTQuest(request):
                     "stquest": entry,
                     "sub_category": 'actor'
                 }).save()
-                STExpense(**{
-                    "date": formatted_date,
-                    "amount": 250,
-                    "name": "Игра",
-                    "user": employee,
-                    "stquest": entry,
-                    "quest": quest,
-                    "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
-                }).save()
+                # STExpense(**{
+                #     "date": formatted_date,
+                #     "amount": 250,
+                #     "name": "Игра",
+                #     "user": employee,
+                #     "stquest": entry,
+                #     "quest": quest,
+                #     "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
+                # }).save()
 
         if (("video" in data and data['video'] != 0) or (data['is_video_review'] == True) or ('video_after' in data)) and ("client_name" in data) or (data['is_package'] == True):
             # if () or (data['is_package']):
@@ -2856,15 +2858,15 @@ def CreateSTQuest(request):
                 "stquest": entry,
                 "sub_category": 'actor'
             }).save()
-            STExpense(**{
-                "date": formatted_date,
-                "amount": quest.animator_rate,
-                "name": "Игра",
-                "user": animator_local,
-                "stquest": entry,
-                "quest": quest,
-                "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
-            }).save()
+            # STExpense(**{
+            #     "date": formatted_date,
+            #     "amount": quest.animator_rate,
+            #     "name": "Игра",
+            #     "user": animator_local,
+            #     "stquest": entry,
+            #     "quest": quest,
+            #     "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
+            # }).save()
         
         if "administrator" in data:
             # local_admin = User.objects.get(id=data['administrator'])
@@ -2876,15 +2878,15 @@ def CreateSTQuest(request):
                 "stquest": entry,
                 "sub_category": 'administrator'
             }).save()
-            STExpense(**{
-                "date": formatted_date,
-                "amount": quest.administrator_rate,
-                "name": "Игра",
-                "user": administrator,
-                "stquest": entry,
-                "quest": quest,
-                "sub_category": STExpenseSubCategory.objects.get(latin_name='administrator')
-            }).save()
+            # STExpense(**{
+            #     "date": formatted_date,
+            #     "amount": quest.administrator_rate,
+            #     "name": "Игра",
+            #     "user": administrator,
+            #     "stquest": entry,
+            #     "quest": quest,
+            #     "sub_category": STExpenseSubCategory.objects.get(latin_name='administrator')
+            # }).save()
             
         if data['is_package'] == True:
             QSalary(**{
@@ -2911,33 +2913,33 @@ def CreateSTQuest(request):
                 "stquest": entry,
                 "sub_category": 'administrator'
             }).save()
-            STExpense(**{
-                "date": formatted_date,
-                "amount": 100,
-                "name": "Видео",
-                "user": administrator,
-                "stquest": entry,
-                "quest": quest,
-                "sub_category": STExpenseSubCategory.objects.get(latin_name='administrator')
-            }).save()
-            STExpense(**{
-                "date": formatted_date,
-                "amount": 100,
-                "name": "Бонус за пакет",
-                "user": administrator,
-                "stquest": entry,
-                "quest": quest,
-                "sub_category": STExpenseSubCategory.objects.get(latin_name='administrator')
-            }).save()
-            STExpense(**{
-                "date": formatted_date,
-                "amount": 30,
-                "name": "Фотомагнит акц.",
-                "user": administrator,
-                "stquest": entry,
-                "quest": quest,
-                "sub_category": STExpenseSubCategory.objects.get(latin_name='administrator')
-            }).save()
+            # STExpense(**{
+            #     "date": formatted_date,
+            #     "amount": 100,
+            #     "name": "Видео",
+            #     "user": administrator,
+            #     "stquest": entry,
+            #     "quest": quest,
+            #     "sub_category": STExpenseSubCategory.objects.get(latin_name='administrator')
+            # }).save()
+            # STExpense(**{
+            #     "date": formatted_date,
+            #     "amount": 100,
+            #     "name": "Бонус за пакет",
+            #     "user": administrator,
+            #     "stquest": entry,
+            #     "quest": quest,
+            #     "sub_category": STExpenseSubCategory.objects.get(latin_name='administrator')
+            # }).save()
+            # STExpense(**{
+            #     "date": formatted_date,
+            #     "amount": 30,
+            #     "name": "Фотомагнит акц.",
+            #     "user": administrator,
+            #     "stquest": entry,
+            #     "quest": quest,
+            #     "sub_category": STExpenseSubCategory.objects.get(latin_name='administrator')
+            # }).save()
 
         if data['night_game'] != 0:
             if "administrator" in data:
@@ -2951,15 +2953,15 @@ def CreateSTQuest(request):
                     "sub_category": 'administrator'
                 }
                 QSalary(**night_game_salary_data_administrator).save()
-                STExpense(**{
-                    "date": formatted_date,
-                    "amount": 100,
-                    "name": "Ночная игра",
-                    "user": administrator,
-                    "stquest": entry,
-                    "quest": quest,
-                    "sub_category": STExpenseSubCategory.objects.get(latin_name='administrator')
-                }).save()
+                # STExpense(**{
+                #     "date": formatted_date,
+                #     "amount": 100,
+                #     "name": "Ночная игра",
+                #     "user": administrator,
+                #     "stquest": entry,
+                #     "quest": quest,
+                #     "sub_category": STExpenseSubCategory.objects.get(latin_name='administrator')
+                # }).save()
             if "animator" in data:
                 animator = User.objects.get(id=data['animator'])
                 QSalary(**{
@@ -2970,15 +2972,15 @@ def CreateSTQuest(request):
                     "stquest": entry,
                     "sub_category": 'actor'
                 }).save()
-                STExpense(**{
-                    "date": formatted_date,
-                    "amount": 100,
-                    "name": "Ночная игра",
-                    "user": animator,
-                    "stquest": entry,
-                    "quest": quest,
-                    "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
-                }).save()
+                # STExpense(**{
+                #     "date": formatted_date,
+                #     "amount": 100,
+                #     "name": "Ночная игра",
+                #     "user": animator,
+                #     "stquest": entry,
+                #     "quest": quest,
+                #     "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
+                # }).save()
 
         if "actors" in data:
             count_easy_work += actors.count()
@@ -2994,15 +2996,15 @@ def CreateSTQuest(request):
                         "sub_category": 'actor'
                     }
                     QSalary(**night_game_salary_data).save()
-                    STExpense(**{
-                        "date": formatted_date,
-                        "amount": 100,
-                        "name": "Ночная игра",
-                        "user": actor,
-                        "stquest": entry,
-                        "quest": quest,
-                        "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
-                    }).save()
+                    # STExpense(**{
+                    #     "date": formatted_date,
+                    #     "amount": 100,
+                    #     "name": "Ночная игра",
+                    #     "user": actor,
+                    #     "stquest": entry,
+                    #     "quest": quest,
+                    #     "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
+                    # }).save()
 
                 if data['easy_work'] != 0:
                     easy_work_salary_data = {
@@ -3014,15 +3016,15 @@ def CreateSTQuest(request):
                         "sub_category": 'actor'
                     }
                     QSalary(**easy_work_salary_data).save()
-                    STExpense(**{
-                        "date": formatted_date,
-                        "amount": int(data["easy_work"]) / count_easy_work,
-                        "name": "Простой",
-                        "user": actor,
-                        "stquest": entry,
-                        "quest": quest,
-                        "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
-                    }).save()
+                    # STExpense(**{
+                    #     "date": formatted_date,
+                    #     "amount": int(data["easy_work"]) / count_easy_work,
+                    #     "name": "Простой",
+                    #     "user": actor,
+                    #     "stquest": entry,
+                    #     "quest": quest,
+                    #     "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
+                    # }).save()
 
                 game_salary_data = {
                     "date": formatted_date,
@@ -3033,15 +3035,15 @@ def CreateSTQuest(request):
                     "sub_category": 'actor'
                 }
                 QSalary(**game_salary_data).save()
-                STExpense(**{
-                    "date": formatted_date,
-                    "amount": quest.actor_rate,
-                    "name": "Игра",
-                    "user": actor,
-                    "stquest": entry,
-                    "quest": quest,
-                    "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
-                }).save()
+                # STExpense(**{
+                #     "date": formatted_date,
+                #     "amount": quest.actor_rate,
+                #     "name": "Игра",
+                #     "user": actor,
+                #     "stquest": entry,
+                #     "quest": quest,
+                #     "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
+                # }).save()
 
         if "actors_half" in data:
             count_easy_work += actors.count()
@@ -3057,15 +3059,15 @@ def CreateSTQuest(request):
                         "sub_category": 'actor',
                     }
                     QSalary(**night_game_salary_data).save()
-                    STExpense(**{
-                        "date": formatted_date,
-                        "amount": 100,
-                        "name": "Ночная игра",
-                        "user": actor,
-                        "stquest": entry,
-                        "quest": quest,
-                        "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
-                    }).save()
+                    # STExpense(**{
+                    #     "date": formatted_date,
+                    #     "amount": 100,
+                    #     "name": "Ночная игра",
+                    #     "user": actor,
+                    #     "stquest": entry,
+                    #     "quest": quest,
+                    #     "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
+                    # }).save()
 
                 if data['easy_work'] != 0:
                     easy_work_salary_data = {
@@ -3077,15 +3079,15 @@ def CreateSTQuest(request):
                         "sub_category": 'actor',
                     }
                     QSalary(**easy_work_salary_data).save()
-                    STExpense(**{
-                        "date": formatted_date,
-                        "amount": int(data["easy_work"]) / count_easy_work,
-                        "name": "Простой",
-                        "user": actor,
-                        "stquest": entry,
-                        "quest": quest,
-                        "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
-                    }).save()
+                    # STExpense(**{
+                    #     "date": formatted_date,
+                    #     "amount": int(data["easy_work"]) / count_easy_work,
+                    #     "name": "Простой",
+                    #     "user": actor,
+                    #     "stquest": entry,
+                    #     "quest": quest,
+                    #     "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
+                    # }).save()
 
                 game_salary_data = {
                     "date": formatted_date,
@@ -3096,15 +3098,15 @@ def CreateSTQuest(request):
                     "sub_category": 'actor'
                 }
                 QSalary(**game_salary_data).save()
-                STExpense(**{
-                    "date": formatted_date,
-                    "amount": quest.actor_rate / 2,
-                    "name": "Игра",
-                    "user": actor,
-                    "stquest": entry,
-                    "quest": quest,
-                    "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
-                }).save()
+                # STExpense(**{
+                #     "date": formatted_date,
+                #     "amount": quest.actor_rate / 2,
+                #     "name": "Игра",
+                #     "user": actor,
+                #     "stquest": entry,
+                #     "quest": quest,
+                #     "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
+                # }).save()
 
         return JsonResponse({"message": "Запись успешно создана"}, status=201)
 

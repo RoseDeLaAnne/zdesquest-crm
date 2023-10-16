@@ -478,8 +478,8 @@ const STQuests: FC = () => {
   const [quests, setQuests] = useState([]);
   const [isPackage, setIsPackage] = useState(false);
   const [isWeekend, setIsWeekend] = useState(null);
-  const [notVisibleFormItems, setNotVisibleFormItems] = useState([]);
   const [titlesFormItems, setTitlesFormItems] = useState({});
+  const [notVisibleFormItems, setNotVisibleFormItems] = useState([]);
   const [defaultValuesFormItems, setDefaultValuesFormItems] = useState({});
 
   const formHandleOnChange = (value, name) => {
