@@ -459,16 +459,17 @@ const TableFC: FC = ({
         Object.entries(value).filter(([key, val]) => val !== "" && val !== null)
     );
     const res = await getSTQuest(stQuestKey)
-    // cleanedData.quest = res.data.quest.id
-    // cleanedData.quest_cost = res.data.quest_cost
-    // cleanedData.administrator = res.data.administrator.id
-    // cleanedData.video = (cleanedData.video ? parseInt(cleanedData.video) : 0) + parseInt(res.data.video)
-    // cleanedData.photomagnets_quantity = (cleanedData.photomagnets_quantity ? parseInt(cleanedData.photomagnets_quantity) : 0) + parseInt(res.data.photomagnets_quantity)
-    // cleanedData.room_sum = (cleanedData.room_sum ? parseInt(cleanedData.room_sum) : 0) + parseInt(res.data.room_sum)
-    // cleanedData.cash_delivery = (cleanedData.cash_delivery ? parseInt(cleanedData.cash_delivery) : 0) + parseInt(res.data.cash_delivery)
-    // cleanedData.cash_payment = (cleanedData.cash_payment ? parseInt(cleanedData.cash_payment) : 0) + parseInt(res.data.cash_payment)
-    // cleanedData.cashless_delivery = (cleanedData.cashless_delivery ? parseInt(cleanedData.cashless_delivery) : 0) + parseInt(res.data.cashless_delivery)
-    // cleanedData.cashless_payment = (cleanedData.cashless_payment ? parseInt(cleanedData.cashless_payment) : 0) + parseInt(res.data.cashless_payment)
+
+    cleanedData.quest = res.data.quest.id
+    cleanedData.quest_cost = res.data.quest_cost
+    cleanedData.administrator = res.data.administrator.id
+    cleanedData.video_after = (cleanedData.video ? parseInt(cleanedData.video) : 0) + parseInt(res.data.video)
+    cleanedData.photomagnets_quantity_after = (cleanedData.photomagnets_quantity ? parseInt(cleanedData.photomagnets_quantity) : 0) + parseInt(res.data.photomagnets_quantity)
+    cleanedData.room_sum_after = (cleanedData.room_sum ? parseInt(cleanedData.room_sum) : 0) + parseInt(res.data.room_sum)
+    cleanedData.cash_delivery_after = (cleanedData.cash_delivery ? parseInt(cleanedData.cash_delivery) : 0) + parseInt(res.data.cash_delivery)
+    cleanedData.cash_payment_after = (cleanedData.cash_payment ? parseInt(cleanedData.cash_payment) : 0) + parseInt(res.data.cash_payment)
+    cleanedData.cashless_delivery_after = (cleanedData.cashless_delivery ? parseInt(cleanedData.cashless_delivery) : 0) + parseInt(res.data.cashless_delivery)
+    cleanedData.cashless_payment_after = (cleanedData.cashless_payment ? parseInt(cleanedData.cashless_payment) : 0) + parseInt(res.data.cashless_payment)
 
     function setUndefinedOrNullToZero(obj) {
       for (const key in obj) {

@@ -239,7 +239,11 @@ def create_qcash_register_from_stexpense(data):
     cash_register.save()
 
 
-def create_travel(entry):
+def create_travel(entry, quest):
+    quest_id = quest.id
+    quests = Quest.objects.filter(id=quest_id)
+    print(quests)
+
     stquest_date = entry.date
     salaries_to_delete = QSalary.objects.filter(Q(name="Проезд") & Q(date=stquest_date))
     salaries_to_delete.delete()
@@ -252,15 +256,11 @@ def create_travel(entry):
         users.append(stquest.animator)
         users.extend(stquest.actors.all())
     users = list(set(users))
-    print(users)
     users = [item for item in users if item is not None]
-    print(users)
     for user in users:
         stquests_by_user = STQuest.objects.filter(date=stquest_date).order_by("date", "time").filter(
             Q(administrator=user) | Q(animator=user) | Q(actors__in=[user])
         )
-        # print(user)
-        # print(stquests_by_user)
         if len(stquests_by_user) == 1:
             travel_data = {
                 "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
@@ -272,26 +272,28 @@ def create_travel(entry):
             }
             QSalary(**travel_data).save()
             QSalary(**travel_data).save()
-            # STExpense(**{
-            #     "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
-            #     "amount": 25,
-            #     "name": "Проезд",
-            #     "user": user,
-            #     "stquest": stquests_by_user[0],
-            #     "quest": quest,
-            #     "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
-            # }).save()
-            # expense1.quests.set(Quest.objects.filter(id__in=quest))
-            # STExpense(**{
-            #     "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
-            #     "amount": 25,
-            #     "name": "Проезд",
-            #     "user": user,
-            #     "stquest": stquests_by_user[0],
-            #     "quest": quest,
-            #     "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
-            # }).save()
-            # expense2.quests.set(Quest.objects.filter(id__in=quest))
+            expense1 = STExpense(**{
+                "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
+                "amount": 25,
+                "name": "Проезд",
+                "user": user,
+                "stquest": stquests_by_user[0],
+                "quest": quest,
+                "sub_category": STExpenseSubCategory.objects.get(latin_name='salary')
+            })
+            expense1.save()
+            expense1.quests.set(quests)
+            expense2 = STExpense(**{
+                "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
+                "amount": 25,
+                "name": "Проезд",
+                "user": user,
+                "stquest": stquests_by_user[0],
+                "quest": quest,
+                "sub_category": STExpenseSubCategory.objects.get(latin_name='salary')
+            })
+            expense2.save()
+            expense2.quests.set(quests)
         elif len(stquests_by_user) >= 2:
             travel_data_now = {
                 "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
@@ -320,7 +322,7 @@ def create_travel(entry):
             #     "user": user,
             #     "stquest": stquests_by_user[0],
             #     "quest": quest,
-            #     "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
+            #     "sub_category": STExpenseSubCategory.objects.get(latin_name='salary')
             # }).save()
             # # expense3.quests.set(Quest.objects.filter(id__in=quest))
             # STExpense(**{
@@ -332,7 +334,7 @@ def create_travel(entry):
             #     "user": user,
             #     "stquest": stquests_by_user[len(stquests_by_user) - 1],
             #     "quest": quest,
-            #     "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
+            #     "sub_category": STExpenseSubCategory.objects.get(latin_name='salary')
             # }).save()
             # # expense4.quests.set(Quest.objects.filter(id__in=quest))
 
@@ -375,26 +377,28 @@ def create_travel(entry):
                     }
                     QSalary(**travel_data_now).save()
                     QSalary(**travel_data_prev).save()
-                    # STExpense(**{
-                    #     "date": stquest_by_user.date.strftime("%Y-%m-%d"),
-                    #     "amount": 25,
-                    #     "name": "Проезд",
-                    #     "user": user,
-                    #     "stquest": stquest_by_user,
-                    #     "quest": quest,
-                    #     "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
-                    # }).save()
-                    # expense5.quests.set(Quest.objects.filter(id__in=quest))
-                    # STExpense(**{
-                    #     "date": prev_stquest_by_user.date.strftime("%Y-%m-%d"),
-                    #     "amount": 25,
-                    #     "name": "Проезд",
-                    #     "user": user,
-                    #     "stquest": prev_stquest_by_user,
-                    #     "quest": quest,
-                    #     "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
-                    # }).save()
-                    # expense6.quests.set(Quest.objects.filter(id__in=quest))
+                    expense3 = STExpense(**{
+                        "date": stquest_by_user.date.strftime("%Y-%m-%d"),
+                        "amount": 25,
+                        "name": "Проезд",
+                        "user": user,
+                        "stquest": stquest_by_user,
+                        "quest": quest,
+                        "sub_category": STExpenseSubCategory.objects.get(latin_name='salary')
+                    })
+                    expense3.save()
+                    expense3.quests.set(quests)
+                    expense4 = STExpense(**{
+                        "date": prev_stquest_by_user.date.strftime("%Y-%m-%d"),
+                        "amount": 25,
+                        "name": "Проезд",
+                        "user": user,
+                        "stquest": prev_stquest_by_user,
+                        "quest": quest,
+                        "sub_category": STExpenseSubCategory.objects.get(latin_name='salary')
+                    })
+                    expense4.save()
+                    expense4.quests.set(quests)
                 elif (
                     stquest_by_user.quest.address != prev_stquest_by_user.quest.address
                 ):
@@ -407,16 +411,17 @@ def create_travel(entry):
                         "sub_category": 'actor'
                     }
                     QSalary(**travel_data_prev).save()
-                    # STExpense(**{
-                    #     "date": prev_stquest_by_user.date.strftime("%Y-%m-%d"),
-                    #     "amount": 25,
-                    #     "name": "Проезд",
-                    #     "user": user,
-                    #     "stquest": stquest_by_user,
-                    #     "quest": quest,
-                    #     "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
-                    # }).save()
-                    # expense7.quests.set(Quest.objects.filter(id__in=quest))
+                    expense5 = STExpense(**{
+                        "date": prev_stquest_by_user.date.strftime("%Y-%m-%d"),
+                        "amount": 25,
+                        "name": "Проезд",
+                        "user": user,
+                        "stquest": stquest_by_user,
+                        "quest": quest,
+                        "sub_category": STExpenseSubCategory.objects.get(latin_name='salary')
+                    })
+                    expense5.save()
+                    expense5.quests.set(quests)
 
             prev_stquest_by_user = stquest_by_user
 

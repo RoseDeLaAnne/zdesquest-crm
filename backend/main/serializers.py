@@ -142,9 +142,10 @@ class QSalarySerializer(ModelSerializer):
 
     class Meta:
         model = QSalary
-        fields = ['date', 'amount', 'name', 'sub_category', 'id', 'key', 'user']
+        
+        fields = ['date', 'amount', 'name', 'id', 'key', 'user']
 
-        # depth = 1
+        depth = 1
 
 
 # class STBonusSerializer(ModelSerializer):

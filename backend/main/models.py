@@ -286,8 +286,7 @@ class STExpense(models.Model):
     sub_category = models.ForeignKey(
         STExpenseSubCategory, on_delete=models.SET_NULL, blank=True, null=True
     )
-
-    quests = models.ManyToManyField(Quest, blank=True)
+    quests = models.ManyToManyField(Quest, blank=True, related_name="stexpense_quests")
 
     employees = models.ManyToManyField(User, blank=True, related_name="employees_users")
 
