@@ -9,7 +9,7 @@ import { Tag } from "antd";
 import { TableOutlined } from "@ant-design/icons";
 
 // components
-import TemplateTable from "../../components/template/Table1";
+import TemplateTable from "../../components/template/Table2";
 
 // hooks
 import useQuestForm from "../../hooks/useQuestForm";
@@ -21,10 +21,11 @@ import {
   getQuestsWithSpecVersions,
   getSTQuests,
   postSTQuest,
+  putSTQuest,
 } from "../../api/APIUtils";
 
 // constants
-import { getSTQuestFormItems } from "../../constants";
+import { getSTQuestFormItems, getSTQuestsFormItems2 } from "../../constants";
 
 const STQuests: FC = () => {
   const initialBreadcrumbItems = [
@@ -151,9 +152,9 @@ const STQuests: FC = () => {
       isCountable: true,
     },
     {
-      title: "actor_second_actor",
-      dataIndex: "actor_second_actor",
-      key: "actor_second_actor",
+      title: "actor_or_second_actor_or_animator",
+      dataIndex: "actor_or_second_actor_or_animator",
+      key: "actor_or_second_actor_or_animator",
       isSorting: false,
       searching: {
         isSearching: false,
@@ -473,8 +474,14 @@ const STQuests: FC = () => {
     const res = await getSTQuestFormItems();
     setFormItems(res);
   };
+  const [formItems2, setFormItems2] = useState([]);
+  const getFormItems2 = async () => {
+    const res = await getSTQuestsFormItems2();
+    setFormItems2(res);
+  };
   useEffect(() => {
     getFormItems();
+    getFormItems2();
   }, []);
 
   const fetchQuests = async () => {
@@ -527,6 +534,56 @@ const STQuests: FC = () => {
           });
         }
       }
+
+      // switch (quest.name) {
+      //   case "ДСР":
+      //     setTitlesFormItems({
+      //       actor_or_second_actor_or_animator: "asda",
+      //     });
+      //     break;
+      //   case "У57":
+      //     setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
+      //     break;
+      //   case "Тьма":
+      //     setTitlesFormItems({
+      //       actor_or_second_actor_or_animator: "второй актер",
+      //     });
+      //     break;
+      //   case "Дом Монстров":
+      //     setTitlesFormItems({
+      //       actor_or_second_actor_or_animator: "аниматор",
+      //     });
+      //     break;
+      //   case "Они":
+      //     setTitlesFormItems({
+      //       actor_or_second_actor_or_animator: "второй актер",
+      //     });
+      //     break;
+      //   case "Квартира 404":
+      //     setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
+      //     break;
+      //   case "ОСК":
+      //     setTitlesFormItems({
+      //       actor_or_second_actor_or_animator: "аниматор",
+      //     });
+      //     break;
+      //   case "Проклятые":
+      //     setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
+      //     break;
+      //   case "Логово Ведьмы":
+      //     setTitlesFormItems({
+      //       actor_or_second_actor_or_animator: "аниматор",
+      //     });
+      //     break;
+      //   case "Обитель Зла":
+      //     setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
+      //     break;
+      //   case "Покайся во грехе":
+      //     setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
+      //     break;
+      //   default:
+      //     // setNotVisibleFormItems([]);
+      //     break;
     }
     if (name === "is_package") {
       setIsPackage(value.target.checked);
@@ -594,6 +651,12 @@ const STQuests: FC = () => {
     }
   };
 
+  const formInitialValues = {
+    date: dayjs(),
+    time: dayjs().hour(9).startOf("hour"),
+    prepayment: 500
+  }
+
   return (
     <TemplateTable
       defaultOpenKeys={["sourceTables"]}
@@ -610,13 +673,17 @@ const STQuests: FC = () => {
       getFunction={getSTQuests}
       deleteFunction={deleteSTQuest}
       postFunction={postSTQuest}
+      putFunction={putSTQuest}
       isUseParams={false}
       isAddEntry={true}
       drawerTitle={"создать новую запись"}
       formItems={formItems}
+      formItems2={formItems2}
+      titlesFormItems={titlesFormItems}
       notVisibleFormItems={notVisibleFormItems}
       defaultValuesFormItems={defaultValuesFormItems}
       formHandleOnChange={formHandleOnChange}
+      formInitialValues={formInitialValues}
     />
   );
 };

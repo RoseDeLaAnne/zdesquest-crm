@@ -36,9 +36,9 @@ const normFile = (e: any) => {
 
 const { RangePicker } = DatePicker;
 
-const FormFC: FC = ({ items, form, onFinish, handleOnChange }) => {
+const FormFC: FC = ({ items, form, onFinish, handleOnChange, initialValues }) => {
   return (
-    <Form form={form} layout={"vertical"} requiredMark onFinish={onFinish}>
+    <Form form={form} layout={"vertical"} requiredMark onFinish={onFinish} initialValues={initialValues}>
       {items.map((item, index) => (
         <Row gutter={item.gutter} key={index}>
           {item.items.map((innerItem, innerIndex) => (

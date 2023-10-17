@@ -70,7 +70,7 @@ const EditFC: FC = ({
               key === "special_versions" ||
               key === "versions" ||
               key === "roles" ||
-              key === "quests"
+              key === "quests" || key === 'employees_first_time'
             ) {
               form.setFieldsValue({ [key]: value.map((el) => el.id) });
             } else {

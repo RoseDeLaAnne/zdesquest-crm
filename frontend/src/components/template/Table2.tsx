@@ -37,6 +37,9 @@ import { localStorageRemoveItem } from "../../assets/utilities/jwt";
 import { useAuth } from "../../provider/authProdiver";
 import { getSTQuest } from "../../api/APIUtils";
 
+import dayjs from "dayjs";
+import { datePickerFormat, timePickerFormat } from "../../constants";
+
 const TableFC: FC = ({
   defaultOpenKeys,
   defaultSelectedKeys,
@@ -314,9 +317,61 @@ const TableFC: FC = ({
   }
 
   const [stQuestKey, setSTQuestKey] = useState()
+  const [notVisibleFormItems2, setNotVisibleFormItems2] = useState([])
 
-  const handleAddData = (key) => {
+  let filteredUsersFormItems2 = formItems2;
+
+  const handleAddData = async (key) => {
     setSTQuestKey(key)
+    const res = await getSTQuest(key)
+    // const data = res.data
+
+    const cleanedData = Object.fromEntries(
+      Object.entries(res.data).filter(([key, val]) => val !== "" && val !== null)
+    );
+    for (const key in cleanedData) {
+      if (cleanedData.hasOwnProperty(key)) {
+        const value = cleanedData[key];
+
+        if (key === "date" || key === "date_of_birth") {
+          const date = dayjs(value, datePickerFormat);
+          form2.setFieldsValue({ [key]: date });              
+        } else if (key === "time") {
+          const time = dayjs(value, timePickerFormat);
+          form2.setFieldsValue({ [key]: time });
+        } else if (
+          key === "user" || key === "administrator" || key === "animator" || key === "created_by" || key === "room_employee_name" || key === "quest" || key === "user" || key === "who_paid" || key === "sub_category"
+        ) {
+          form2.setFieldsValue({ [key]: value !== null ? value.id : value });
+        } else if (
+          key === "actors" ||
+          key === "actors_half" ||
+          key === "special_versions" ||
+          key === "versions" ||
+          key === "roles" ||
+          key === "quests" || key === 'employees_first_time'
+        ) {
+          form2.setFieldsValue({ [key]: value.map((el) => el.id) });
+        } else {
+          form2.setFieldsValue({ [key]: value });
+        }
+    }
+    }
+
+    // if (data.video > 0) {
+    //   setNotVisibleFormItems2(['video'])
+    //   // setNotVisibleFormItems2(prev => [...prev, 'video'])
+    // }
+
+    // if (data.photomagnets_quantity) {
+    //   setNotVisibleFormItems2(prev => [...prev, 'photomagnets_quantity'])
+    // }
+
+    // if (data.room_employee_name) {
+    //   setNotVisibleFormItems2(prev => [...prev, 'room_employee_name'])
+    // }
+
+
     setDrawer2IsOpen(true);
     localStorage.setItem("drawer2IsOpen", "true");
   }
@@ -346,7 +401,7 @@ const TableFC: FC = ({
         render: (_, record: { key: React.Key }) =>
           tableDataSource.length >= 1 ? (
             <Space>
-              {/* <Link to={`edit/${record.key}`}>редактировать</Link> */}
+              <Link to={`edit/${record.key}`}>редактировать</Link>
               <Link onClick={() => handleAddData(record.key)}>добавить</Link>
               <Popconfirm
                 title="уверены, что хотите удалить?"
@@ -356,7 +411,8 @@ const TableFC: FC = ({
               </Popconfirm>
             </Space>
           ) : null,
-        width: 144,
+        // width: 144,
+        width: 256,
         fixed: "right",
       },
     ];
@@ -469,12 +525,14 @@ const TableFC: FC = ({
       (photomagnets_sum ? cleanedData.photomagnets_quantity : 0)
       // parseInt(value.quest_cost ? value.quest_cost : 0);
 
-    const noname1 = sum + parseInt(cleanedData.quest_cost) - parseInt(cleanedData.prepayment ? cleanedData.prepayment : 0);
-    const noname2 =
-      parseInt(cleanedData.cash_payment ? cleanedData.cash_payment : 0) +
-      parseInt(cleanedData.cashless_payment ? cleanedData.cashless_payment : 0) -
-      parseInt(cleanedData.cash_delivery ? cleanedData.cash_delivery : 0) -
-      parseInt(cleanedData.cashless_delivery ? cleanedData.cashless_delivery : 0);
+    // const noname1 = sum + parseInt(cleanedData.quest_cost) - parseInt(cleanedData.prepayment ? cleanedData.prepayment : 0);
+    // const noname2 =
+    //   parseInt(cleanedData.cash_payment ? cleanedData.cash_payment : 0) +
+    //   parseInt(cleanedData.cashless_payment ? cleanedData.cashless_payment : 0) -
+    //   parseInt(cleanedData.cash_delivery ? cleanedData.cash_delivery : 0) -
+    //   parseInt(cleanedData.cashless_delivery ? cleanedData.cashless_delivery : 0);
+    const noname1 = 0;
+    const noname2 = 0;
 
     if (noname1 === noname2) {
       const response = await postFunction(value);
@@ -596,7 +654,7 @@ const TableFC: FC = ({
         title={"добавить новую запись"}
         onClose={drawer2OnClose}
         open={drawer2IsOpen}
-        formItems={formItems2}
+        formItems={filteredUsersFormItems2}
         formForm={form2}
         formOnFinish={form2OnFinish}
         formHandleOnChange={form2HandleOnChange}

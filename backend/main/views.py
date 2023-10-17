@@ -103,7 +103,7 @@ def UserSTQuests(request):
                     "quest": "",
                     "quest_cost": 0,
                     "add_players": 0,
-                    "actor_second_actor": 0,
+                    "actor_or_second_actor_or_animator": 0,
                     "discount_sum": 0,
                     "discount_desc": "",
                     "room_sum": 0,
@@ -168,7 +168,7 @@ def UserSTQuests(request):
             }
             entry_dict[date_timestamp]["quest_cost"] += entry.quest_cost
             entry_dict[date_timestamp]["add_players"] += entry.add_players
-            entry_dict[date_timestamp]["actor_second_actor"] += entry.actor_second_actor
+            entry_dict[date_timestamp]["actor_or_second_actor_or_animator"] += entry.actor_or_second_actor_or_animator
             entry_dict[date_timestamp]["discount_sum"] += entry.discount_sum
             entry_dict[date_timestamp]["discount_desc"] = entry.discount_desc
             entry_dict[date_timestamp]["room_sum"] += entry.room_sum
@@ -227,7 +227,7 @@ def UserSTQuests(request):
                     },
                     "quest_cost": entry.quest_cost,
                     "add_players": entry.add_players,
-                    "actor_second_actor": entry.actor_second_actor,
+                    "actor_or_second_actor_or_animator": entry.actor_or_second_actor_or_animator,
                     "discount_sum": entry.discount_sum,
                     "discount_desc": entry.discount_desc,
                     "room_sum": entry.room_sum,
@@ -395,7 +395,7 @@ def STQuests(request):
                     "quest": "",
                     "quest_cost": 0,
                     "add_players": 0,
-                    "actor_second_actor": 0,
+                    "actor_or_second_actor_or_animator": 0,
                     "discount_sum": 0,
                     "discount_desc": "",
                     "room_sum": 0,
@@ -460,7 +460,7 @@ def STQuests(request):
             }
             entry_dict[date_timestamp]["quest_cost"] += entry.quest_cost
             entry_dict[date_timestamp]["add_players"] += entry.add_players
-            entry_dict[date_timestamp]["actor_second_actor"] += entry.actor_second_actor
+            entry_dict[date_timestamp]["actor_or_second_actor_or_animator"] += entry.actor_or_second_actor_or_animator
             entry_dict[date_timestamp]["discount_sum"] += entry.discount_sum
             entry_dict[date_timestamp]["discount_desc"] = entry.discount_desc
             entry_dict[date_timestamp]["room_sum"] += entry.room_sum
@@ -519,7 +519,7 @@ def STQuests(request):
                     },
                     "quest_cost": entry.quest_cost,
                     "add_players": entry.add_players,
-                    "actor_second_actor": entry.actor_second_actor,
+                    "actor_or_second_actor_or_animator": entry.actor_or_second_actor_or_animator,
                     "discount_sum": entry.discount_sum,
                     "discount_desc": entry.discount_desc,
                     "room_sum": entry.room_sum,
@@ -842,7 +842,9 @@ def QuestIncomes(request, id):
 
         income_dict = {}  # To track incomes by date
 
+
         for income in incomes:
+            tooltip = ''
             date_timestamp = date_to_timestamp(
                 income.date
             )  # Convert date to Unix timestamp
@@ -879,11 +881,24 @@ def QuestIncomes(request, id):
             # income_dict[date_timestamp]["game"] += income.game  # Update sums
             income_dict[date_timestamp]["game"]['value'] += income.game  # Update sums
             if (income.is_package == True):
-                income_dict[date_timestamp]["game"]['tooltip'] = "Пакет"
+                # income_dict[date_timestamp]["game"]['tooltip'] = "Пакет"
 
                 income_game = {
                     "value": income.game,
-                    "tooltip": "Пакет"
+                    "tooltip": tooltip + "Пакет"
+                }
+            if (income.discount_sum > 0):
+                # income_dict[date_timestamp]["game"]['tooltip'] = "Пакет"
+
+                income_game = {
+                    "value": income.game,
+                    "tooltip": tooltip + F"Скидка - {income.discount_sum} ({income.discount_desc})"
+                }
+
+            if (income.easy_work > 0):
+                income_game = {
+                    "value": income.game,
+                    "tooltip": tooltip + F"Простой - {income.easy_work}"
                 }
             income_dict[date_timestamp]["room"] += income.room
             income_dict[date_timestamp]["video"] += income.video
@@ -2171,15 +2186,46 @@ def VSTQuest(request, id):
         data1 = json.loads(request.body)
         data = {key: value for key, value in data1.items() if value not in ("", None)}
 
-        print(id)
-        
-        quest = Quest.objects.get(id=data["quest"])
-        administrator = User.objects.get(id=data["administrator"])        
+        entry_data = {}
 
+        if "date" in data:
+            formatted_date = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
+            entry_data.update({'date': formatted_date})
+        if "time" in data:
+            formatted_time_without_3_hours = datetime.fromisoformat(data['time'].replace('Z', '')).time()
+            formatted_time = (
+                datetime.combine(datetime.min, formatted_time_without_3_hours)
+                + timedelta(hours=3)
+            ).time()
+            entry_data.update({'time': formatted_time})
+        if "quest" in data:
+            quest = Quest.objects.get(id=data["quest"])
+            entry_data.update({'quest': quest})
+        if "administrator" in data:
+            administrator = User.objects.get(id=data["administrator"])
+            entry_data.update({'administrator': administrator})
+
+        count_easy_work = 1
+
+        stquest = STQuest.objects.get(id=id)
+        entry = STQuest.objects.get(id=id)
+        salaries_by_stquest = QSalary.objects.filter(stquest=stquest)
+        incomes_by_stquest = QIncome.objects.filter(stquest=stquest)
+        cash_register_by_stquest = QCashRegister.objects.filter(stquest=stquest)
+        
+
+        for salary_by_stquest in salaries_by_stquest:
+            salary_by_stquest.delete()
+            
+        for income_by_stquest in incomes_by_stquest:
+            income_by_stquest.delete()
+
+        for cash_register_by_stquest_one in cash_register_by_stquest:
+            cash_register_by_stquest_one.delete()
 
         optional_fields = [
             "add_players",
-            "actor_second_actor",
+            "actor_or_second_actor_or_animator",
             "discount_sum",
             "discount_desc",
             "room_sum",
@@ -2204,29 +2250,29 @@ def VSTQuest(request, id):
         new_data3 = {}
         new_data4 = {}
 
-        if "date" in data:
-            formatted_date = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
-            new_data01 = {
-                "date": formatted_date,
-            }
+        # if "date" in data:
+        #     formatted_date = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
+        #     new_data01 = {
+        #         "date": formatted_date,
+        #     }
 
-        if "time" in data:
-            formatted_time_without_3_hours = datetime.fromisoformat(data['time'].replace('Z', '')).time()
-            formatted_time = (
-                datetime.combine(datetime.min, formatted_time_without_3_hours)
-                + timedelta(hours=3)
-            ).time()
-            new_data02 = {
-                "time": formatted_time,
-            }
+        # if "time" in data:
+        #     formatted_time_without_3_hours = datetime.fromisoformat(data['time'].replace('Z', '')).time()
+        #     formatted_time = (
+        #         datetime.combine(datetime.min, formatted_time_without_3_hours)
+        #         + timedelta(hours=3)
+        #     ).time()
+        #     new_data02 = {
+        #         "time": formatted_time,
+        #     }
 
-        entry_data = {
-            "quest": quest,
-            # "date": formatted_date,
-            # "time": formatted_time,
-            "quest_cost": data["quest_cost"],
-            "administrator": administrator,
-        }
+        # entry_data = {
+        #     "quest": quest,
+        #     "date": formatted_date,
+        #     "time": formatted_time,
+        #     "quest_cost": data["quest_cost"],
+        #     "administrator": administrator,
+        # }
 
         if "animator" in data:
             animator = User.objects.get(id=data["animator"])
@@ -2268,12 +2314,166 @@ def VSTQuest(request, id):
         entry = STQuest.objects.get(id=id)
         for key, value in entry_data.items():
             setattr(entry, key, value)
-        entry.save()
+
+        entry.save()       
+
+        if "cash_payment" in data or "cash_delivery" in data:
+            create_qcash_register_from_stquest(data, entry)
+
         if "actors" in data:
             actors = User.objects.filter(id__in=data["actors"])
             entry.actors.set(actors)
         else:
             entry.actors.set([])
+        if "employees_first_time" in data:
+            employees_first_time = User.objects.filter(id__in=data['employees_first_time'])
+            entry.employees_first_time.set(employees_first_time)
+
+        create_travel(entry)
+        create_qincome(data, entry)
+
+        if "room_employee_name" in data:
+            QSalary(**{
+                "date": formatted_date,
+                "amount": 100,
+                "name": "Комната",
+                "user": room_employee_name,
+                "stquest": entry,
+                "sub_category": 'actor'
+            }).save()
+
+        if (data['is_video_review'] == True):
+            QSalary(**{
+                "date": formatted_date,
+                "amount": 50,
+                "name": "Видео отзыв",
+                "user": administrator,
+                "stquest": entry,
+                "sub_category": 'administrator'
+            }).save()
+
+        if ("video_after" in data):
+            QSalary(**{
+                "date": formatted_date,
+                "amount": 200,
+                "name": "Видео после",
+                "user": administrator,
+                "stquest": entry,
+                "sub_category": 'administrator'
+            }).save()
+        
+        if ("internship_quest" in data):
+            employees = User.objects.filter(id__in=data['internship_quest'])
+            for employee in employees:
+                QSalary(**{
+                    "date": formatted_date,
+                    "amount": 250,
+                    "name": "Игра",
+                    "user": employee,
+                    "stquest": entry,
+                    "sub_category": 'actor'
+                }).save()
+            
+        if "animator" in data:
+            animator_local = User.objects.get(id=data['animator'])
+            QSalary(**{
+                "date": formatted_date,
+                "amount": quest.animator_rate,
+                "name": "Игра",
+                "user": animator_local,
+                "stquest": entry,
+                "sub_category": 'actor'
+            }).save()
+
+        if "administrator" in data:
+            local_admin = User.objects.get(id=data['administrator'])
+            QSalary(**{
+                "date": formatted_date,
+                "amount": quest.administrator_rate,
+                "name": "Игра",
+                "user": local_admin,
+                "stquest": entry,
+                "sub_category": 'administrator'
+            }).save()
+
+        if data['is_package'] == True:
+            QSalary(**{
+                "date": formatted_date,
+                "amount": 100,
+                "name": "Видео",
+                "user": administrator,
+                "stquest": entry,
+                "sub_category": 'administrator'
+            }).save()
+            QSalary(**{
+                "date": formatted_date,
+                "amount": 100,
+                "name": "Бонус за пакет",
+                "user": administrator,
+                "stquest": entry,
+                "sub_category": 'administrator'
+            }).save()
+            QSalary(**{
+                "date": formatted_date,
+                "amount": 30,
+                "name": "Фотомагнит акц.",
+                "user": administrator,
+                "stquest": entry,
+                "sub_category": 'administrator'
+            }).save()
+
+        if data['night_game'] != 0:
+            if "administrator" in data:
+                administrator = User.objects.get(id=data['administrator'])
+                QSalary(**{
+                    "date": formatted_date,
+                    "amount": 100,
+                    "name": "Ночная игра",
+                    "user": administrator,
+                    "stquest": entry,
+                    "sub_category": 'administrator'
+                }).save()
+            if "animator" in data:
+                animator = User.objects.get(id=data['animator'])
+                QSalary(**{
+                    "date": formatted_date,
+                    "amount": 100,
+                    "name": "Ночная игра",
+                    "user": animator,
+                    "stquest": entry,
+                    "sub_category": 'actor'
+                }).save()
+
+        if "actors" in data:
+            actors = User.objects.filter(id__in=data["actors"])
+            count_easy_work += actors.count()
+            for actor in actors:
+                if data['night_game'] != 0:
+                    QSalary(**{
+                        "date": formatted_date,
+                        "amount": 100,
+                        "name": "Ночная игра",
+                        "user": actor,
+                        "stquest": entry,
+                        "sub_category": 'actor'
+                    }).save()
+                if data['easy_work'] != 0:
+                    QSalary(**{
+                        "date": formatted_date,
+                        "amount": int(data["easy_work"]) / count_easy_work,
+                        "name": "Простой",
+                        "user": actor,
+                        "stquest": entry,
+                        "sub_category": 'actor'
+                    }).save()
+                QSalary(**{
+                    "date": formatted_date,
+                    "amount": quest.actor_rate,
+                    "name": "Игра",
+                    "user": actor,
+                    "stquest": entry,
+                    "sub_category": 'actor'
+                }).save()
 
         return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
 
@@ -2693,7 +2893,7 @@ def CreateSTQuest(request):
 
         optional_fields = [
             "add_players",
-            "actor_second_actor",
+            "actor_or_second_actor_or_animator",
             "discount_sum",
             "discount_desc",
             "room_sum",
@@ -2750,6 +2950,10 @@ def CreateSTQuest(request):
         if "actors_half" in data:
             actors_half = User.objects.filter(id__in=data["actors_half"])
             entry.actors_half.set(actors_half)
+
+        if "employees_first_time" in data:
+            employees_first_time = User.objects.filter(id__in=data['employees_first_time'])
+            entry.employees_first_time.set(employees_first_time)
 
         create_travel(entry, quest)
         create_qincome(data, entry)
@@ -2814,8 +3018,8 @@ def CreateSTQuest(request):
             #     "sub_category": STExpenseSubCategory.objects.get(latin_name='administrator')
             # }).save()
 
-        if ("employee_with_staj" in data):
-            employees = User.objects.filter(id__in=data['employee_with_staj'])
+        if ("internship_quest" in data):
+            employees = User.objects.filter(id__in=data['internship_quest'])
             for employee in employees:
                 QSalary(**{
                     "date": formatted_date,
@@ -2869,7 +3073,7 @@ def CreateSTQuest(request):
             # }).save()
         
         if "administrator" in data:
-            # local_admin = User.objects.get(id=data['administrator'])
+            local_admin = User.objects.get(id=data['administrator'])
             QSalary(**{
                 "date": formatted_date,
                 "amount": quest.administrator_rate,
@@ -2944,15 +3148,14 @@ def CreateSTQuest(request):
         if data['night_game'] != 0:
             if "administrator" in data:
                 administrator = User.objects.get(id=data['administrator'])
-                night_game_salary_data_administrator = {
+                QSalary(**{
                     "date": formatted_date,
                     "amount": 100,
                     "name": "Ночная игра",
                     "user": administrator,
                     "stquest": entry,
                     "sub_category": 'administrator'
-                }
-                QSalary(**night_game_salary_data_administrator).save()
+                }).save()
                 # STExpense(**{
                 #     "date": formatted_date,
                 #     "amount": 100,
@@ -3107,6 +3310,7 @@ def CreateSTQuest(request):
                 #     "quest": quest,
                 #     "sub_category": STExpenseSubCategory.objects.get(latin_name='actor')
                 # }).save()
+                
 
         return JsonResponse({"message": "Запись успешно создана"}, status=201)
 

@@ -15,6 +15,7 @@ const DrawerFC: FC = ({
   formForm,
   formOnFinish,
   formHandleOnChange,
+  formInitialValues
 }) => {
   return (
     <Drawer
@@ -32,7 +33,7 @@ const DrawerFC: FC = ({
         </Space>
       }
     >
-      <CForm items={formItems} form={formForm} onFinish={formOnFinish} handleOnChange={formHandleOnChange} />
+      <CForm items={formItems} form={formForm} onFinish={formOnFinish} handleOnChange={formHandleOnChange} initialValues={formInitialValues} />
     </Drawer>
   );
 };

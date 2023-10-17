@@ -58,6 +58,7 @@ const TableFC: FC = ({
   notVisibleFormItems,
   defaultValuesFormItems,
   formHandleOnChange,
+  formInitialValues
 }) => {
   const { id } = isUseParams ? useParams() : { id: "" };
 
@@ -532,6 +533,7 @@ const TableFC: FC = ({
           formForm={form}
           formOnFinish={formOnFinish}
           formHandleOnChange={formHandleOnChange}
+          formInitialValues={formInitialValues}
         />
       )}
     </CMain>

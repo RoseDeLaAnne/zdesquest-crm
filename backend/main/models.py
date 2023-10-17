@@ -160,7 +160,7 @@ class STQuest(models.Model):
     quest = models.ForeignKey(Quest, on_delete=models.SET_NULL, blank=True, null=True)
     quest_cost = models.IntegerField()
     add_players = models.IntegerField(default=0)
-    actor_second_actor = models.IntegerField(default=0)
+    actor_or_second_actor_or_animator = models.IntegerField(default=0)
     discount_sum = models.IntegerField(default=0)
     discount_desc = models.CharField(default="", max_length=255)
     room_sum = models.IntegerField(default=0)
@@ -226,8 +226,8 @@ class STQuest(models.Model):
     cashless_delivery_total = models.IntegerField(default=0)
     prepayment = models.IntegerField(default=0)
 
-    employee_with_staj = models.ManyToManyField(
-        User, blank=True, related_name="employee_with_staj_stquest"
+    employees_first_time = models.ManyToManyField(
+        User, blank=True, related_name="employees_first_time_stquest"
     )
 
     created_by = models.ForeignKey(
@@ -345,6 +345,9 @@ class QIncome(models.Model):
     time = models.TimeField(default=timezone.now)
     game = models.IntegerField(default=0)
     # game_tooltip = models.CharField(default='', max_length=255)
+    discount_sum = models.IntegerField(default=0)
+    discount_desc = models.CharField(default='', max_length=255)
+    easy_work = models.IntegerField(default=0)
     room = models.IntegerField(default=0)
     video = models.IntegerField(default=0)
     photomagnets = models.IntegerField(default=0)
@@ -373,7 +376,7 @@ class QIncome(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return str(self.date)
+        return str(self.date) + ' ' + str(self.time) + ' ' + str(self.stquest.quest.name)
 
 
 class QSalary(models.Model):
