@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect } from "react";
 
 // react-router-dom
 import { Link, useParams } from "react-router-dom";
@@ -9,11 +9,9 @@ import { Tag } from "antd";
 import {
   QuestionOutlined,
   FallOutlined,
-  TableOutlined,
-  DeploymentUnitOutlined,
   RiseOutlined,
   VideoCameraOutlined,
-  MoneyCollectOutlined
+  MoneyCollectOutlined,
 } from "@ant-design/icons";
 
 // components
@@ -21,25 +19,26 @@ import TemplateTable from "../../components/template/Table";
 
 // api
 import {
-  getQuestExpenses,
+  getQuestCashRegister,
   getQuests,
+  getWorkCardExpenses,
 } from "../../api/APIUtils";
 
-const QExpensesFC: FC = () => {
+const QWorkCardExpensesFC: FC = () => {
   const { id } = useParams();
 
-  const [currentQuest, setCurrentQuest] = useState({})
-  const [quests, setQuests] = useState([])
+  const [currentQuest, setCurrentQuest] = useState({});
+  const [quests, setQuests] = useState([]);
   const fetchQuests = async () => {
-    const res = await getQuests()
+    const res = await getQuests();
     if (res.status === 200) {
-      setCurrentQuest(res.data.find(el => el.id === parseInt(id)))
-      setQuests(res.data)
+      setCurrentQuest(res.data.find((el) => el.id === parseInt(id)));
+      setQuests(res.data);
     }
-  }
+  };
   useEffect(() => {
-    fetchQuests()
-  }, [])
+    fetchQuests();
+  }, []);
 
   const initialBreadcrumbItems = [
     {
@@ -49,7 +48,7 @@ const QExpensesFC: FC = () => {
     },
     {
       icon: FallOutlined,
-      title: currentQuest.name ? currentQuest.name.toLowerCase() : '',
+      title: currentQuest.name ? currentQuest.name.toLowerCase() : "",
       menu: [
         {
           key: "1",
@@ -61,7 +60,7 @@ const QExpensesFC: FC = () => {
     },
     {
       icon: RiseOutlined,
-      title: "расходы",
+      title: "расходы с рабочей карты",
       menu: [
         {
           key: "1",
@@ -84,7 +83,7 @@ const QExpensesFC: FC = () => {
         {
           key: "4",
           icon: FallOutlined,
-          label: "расходы с раб. карты",
+          label: "расходы с рабочей карты",
           to: `/quests/${id}/work-card-expenses`,
         },
         {
@@ -103,36 +102,43 @@ const QExpensesFC: FC = () => {
     },
   ];
 
-  // const initialPackedTableColumns = [
-  //   {
-  //     title: "дата",
-  //     dataIndex: "date",
-  //     key: "date",
-  //     sorting: {
-  //       isSorting: true,
-  //       isDate: true,
-  //     },
-  //     searching: {
-  //       isSearching: true,
-  //       title: "",
-  //     },
-  //     countable: false,
-  //     width: 140,
-  //   },
-  // ];
+  const initialPackedTableColumns = [
+    {
+      title: "сумма",
+      dataIndex: "amount",
+      key: "amount",
+      isSorting: true,
+      searching: {
+        isSearching: true,
+        title: "сумме",
+      },
+      countable: true,
+    },
+    {
+      title: "описание",
+      dataIndex: "description",
+      key: "description",
+      isSorting: true,
+      searching: {
+        isSearching: true,
+        title: "описанию",
+      },
+      countable: false,
+    },
+  ];
 
   return (
     <TemplateTable
       defaultOpenKeys={["quests", `quests${id}`]}
-      defaultSelectedKeys={[`quests${id}Expenses`]}
+      defaultSelectedKeys={[`quests${id}WorkCardExpenses`]}
       breadcrumbItems={initialBreadcrumbItems}
       isRangePicker={true}
-      tableDateColumn={"date"}
-      // initialPackedTableColumns={initialPackedTableColumns}
-      getFunction={getQuestExpenses}
+      tableDateColumn={"date_time"}
+      initialPackedTableColumns={initialPackedTableColumns}
+      getFunction={getWorkCardExpenses}
       isUseParams={true}
     />
   );
 };
 
-export default QExpensesFC;
+export default QWorkCardExpensesFC;

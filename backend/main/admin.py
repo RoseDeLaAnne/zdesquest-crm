@@ -9,7 +9,6 @@ from .models import *
 
 class UserAdmin(UserAdmin):
     search_fields = (
-        "username",
         "email",
         "phone_number",
         "last_name",
@@ -20,7 +19,6 @@ class UserAdmin(UserAdmin):
     ordering = ("-date_joined",)
 
     list_display = (
-        "username",
         "email",
         "phone_number",
         "last_name",
@@ -48,7 +46,6 @@ class UserAdmin(UserAdmin):
             _("Персональная информация"),
             {
                 "fields": (
-                    "username",
                     "email",
                     "phone_number",
                     "last_name",
@@ -105,7 +102,6 @@ class UserAdmin(UserAdmin):
             _("Персональная информация"),
             {
                 "fields": (
-                    "username",
                     "email",
                     "phone_number",
                     "last_name",

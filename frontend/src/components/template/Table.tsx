@@ -12,6 +12,7 @@ import {
   Form,
   Button,
   Input,
+  Tooltip,
   Popconfirm,
   FloatButton,
   message,
@@ -36,6 +37,10 @@ import { localStorageRemoveItem } from "../../assets/utilities/jwt";
 
 import { useAuth } from "../../provider/authProdiver";
 import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
+import { datePickerFormat, timePickerFormat } from "../../constants";
+import { getSTQuest } from "../../api/APIUtils";
 
 const TableFC: FC = ({
   defaultOpenKeys,
@@ -52,10 +57,13 @@ const TableFC: FC = ({
   getFunction,
   deleteFunction,
   postFunction,
+  putFunction,
   isUseParams,
   isAddEntry,
   drawerTitle,
   formItems,
+  formItems2,
+  formInitialValues,
   notVisibleFormItems,
   defaultValuesFormItems,
   formHandleOnChange,
@@ -155,19 +163,23 @@ const TableFC: FC = ({
       ? localStorage.getItem("drawerIsOpen") === "true"
       : false
   );
+  const [drawer2IsOpen, setDrawer2IsOpen] = useState(
+    localStorage.getItem("drawer2IsOpen")
+      ? localStorage.getItem("drawer2IsOpen") === "true"
+      : false
+  );
 
   let title = "";
   const breadcrumbItemsLength = breadcrumbItems.length;
-  
   if (breadcrumbItemsLength !== 1) {
-    if (isCancel === false && isCreate === false) {
-      title = `${breadcrumbItems[breadcrumbItems.length - 2].title} | ${
-        breadcrumbItems[breadcrumbItems.length - 1].title
-      }`;
-    } else if (isCancel === true && isCreate === true) {
+    if (isCancel && isCreate) {      
       title = `${
-        breadcrumbItems[breadcrumbItems.length - 1].title
+        breadcrumbItems[breadcrumbItemsLength - 1].title
       } | редактирование`;
+    } else {
+      title = `${breadcrumbItems[breadcrumbItemsLength - 2].title} | ${
+        breadcrumbItems[breadcrumbItemsLength - 1].title
+      }`;
     }
   } else if (breadcrumbItemsLength === 1) {
     title = breadcrumbItems[0].title;
@@ -177,13 +189,16 @@ const TableFC: FC = ({
     setDrawerIsOpen(false);
     localStorage.setItem("drawerIsOpen", "false");
   };
+  const drawer2OnClose = () => {
+    setDrawer2IsOpen(false);
+    localStorage.setItem("drawer2IsOpen", "false");
+  };
   const addEntryHandleClick = () => {
     setDrawerIsOpen(true);
     localStorage.setItem("drawerIsOpen", "true");
   };
   const cancelHandleClick = () => {};
 
-  // const handleToggle = async (key: number) => {};
   const handleDelete = async (key: number) => {
     const res = await deleteFunction(key);
     if (res.status === 200) {
@@ -201,10 +216,13 @@ const TableFC: FC = ({
     }
   };
 
+  const form2HandleOnChange = () => {}
+
   const [dates, setDates] = useState([]);
   const [tableDataHead, setTableDataHead] = useState([]);
   const [tableDataSource, setTableDataSource] = useState([]);
   const [form] = Form.useForm();
+  const [form2] = Form.useForm();
 
   let tableColumns = [];
   let initialUnpackedTableDateColumn = {};
@@ -239,31 +257,72 @@ const TableFC: FC = ({
       let newColumn = {
         title: column.title,
         dataIndex: column.dataIndex,
-        key: column.key,
+        key: column.dataIndex,
       };
 
-      if (column.isSorting) {
+      if (column.sorting) {
         newColumn.sorter = {
           compare: (a, b) => a[column.dataIndex] - b[column.dataIndex],
         };
       }
 
-      if (column.searching.isSearching) {
+      if (column.searching) {
         newColumn = {
           ...newColumn,
-          ...getColumnSearchProps(column.dataIndex, column.searching.title),
+          ...getColumnSearchProps(column.dataIndex, column.searching),
         };
+      }
+
+      if (column.width) {
+        newColumn.width = column.width;
+      }
+
+      if (column.fixed) {
+        newColumn.fixed = column.fixed;
       }
 
       if (column.render) {
         newColumn.render = column.render;
       }
 
+      // if (column.isFiltering) {
+      //   newColumn.filters = [
+      //     { text: 'квартира 404', value: 'Квартира 404' },
+      //     { text: 'проклятые', value: 'Проклятые' },
+      //   ];
+      // }
+
       return newColumn;
     });
     tableCountingFields = initialPackedTableColumns
       .filter((column) => column.isCountable)
       .map((column) => column.key);
+  } else {
+    unpackedTableColumns = tableDataHead.map((column) => {
+      return {
+        title: column.title,
+        dataIndex: column.dataIndex,
+        key: column.key,
+        ...getColumnSearchProps(column.dataIndex, ""),
+        sorter: {
+          compare: (a, b) => a[column.dataIndex] - b[column.dataIndex],
+        },
+        render: (obj) => {
+          if (obj.tooltip !== "") {
+            return (
+              <Tooltip
+                title={<div dangerouslySetInnerHTML={{ __html: obj.tooltip }} />}
+                placement="bottomLeft"
+              >
+                <div>{obj.value}</div>
+              </Tooltip>
+            );
+          } else {
+            return <div>{obj.value}</div>;
+          }
+        },
+      };
+    });
   }
   if (tableDateColumn) {
     tableColumns = [
@@ -299,6 +358,65 @@ const TableFC: FC = ({
       ...unpackedTableColumns,
     ];
   }
+  const [stQuestKey, setSTQuestKey] = useState()
+  const [notVisibleFormItems2, setNotVisibleFormItems2] = useState([])
+
+  let filteredUsersFormItems2 = formItems2;
+
+  const handleAddData = async (key) => {
+    setSTQuestKey(key)
+    const res = await getSTQuest(key)
+    // const data = res.data
+
+    const cleanedData = Object.fromEntries(
+      Object.entries(res.data).filter(([key, val]) => val !== "" && val !== null)
+    );
+    for (const key in cleanedData) {
+      if (cleanedData.hasOwnProperty(key)) {
+        const value = cleanedData[key];
+
+        if (key === "date" || key === "date_of_birth") {
+          const date = dayjs(value, datePickerFormat);
+          form2.setFieldsValue({ [key]: date });              
+        } else if (key === "time") {
+          const time = dayjs(value, timePickerFormat);
+          form2.setFieldsValue({ [key]: time });
+        } else if (
+          key === "user" || key === "administrator" || key === "animator" || key === "created_by" || key === "room_employee_name" || key === "quest" || key === "user" || key === "who_paid" || key === "sub_category"
+        ) {
+          form2.setFieldsValue({ [key]: value !== null ? value.id : value });
+        } else if (
+          key === "actors" ||
+          key === "actors_half" ||
+          key === "special_versions" ||
+          key === "versions" ||
+          key === "roles" ||
+          key === "quests" || key === 'employees_first_time'
+        ) {
+          form2.setFieldsValue({ [key]: value.map((el) => el.id) });
+        } else {
+          form2.setFieldsValue({ [key]: value });
+        }
+    }
+    }
+
+    // if (data.video > 0) {
+    //   setNotVisibleFormItems2(['video'])
+    //   // setNotVisibleFormItems2(prev => [...prev, 'video'])
+    // }
+
+    // if (data.photomagnets_quantity) {
+    //   setNotVisibleFormItems2(prev => [...prev, 'photomagnets_quantity'])
+    // }
+
+    // if (data.room_employee_name) {
+    //   setNotVisibleFormItems2(prev => [...prev, 'room_employee_name'])
+    // }
+
+
+    setDrawer2IsOpen(true);
+    localStorage.setItem("drawer2IsOpen", "true");
+  }
   if (tableIsOperation === true) {
     tableColumns = [
       ...tableColumns,
@@ -325,6 +443,7 @@ const TableFC: FC = ({
         render: (_, record: { key: React.Key }) =>
           tableDataSource.length >= 1 ? (
             <Space>
+              <Link onClick={() => handleAddData(record.key)}>добавить</Link>
               <Link to={`edit/${record.key}`}>редактировать</Link>
               <Popconfirm
                 title="уверены, что хотите удалить?"
@@ -334,7 +453,8 @@ const TableFC: FC = ({
               </Popconfirm>
             </Space>
           ) : null,
-        width: 192,
+        // width: 144,
+        width: 256,
         fixed: "right",
       },
     ];
@@ -353,7 +473,6 @@ const TableFC: FC = ({
           const { head, body } = res.data;
           setTableDataHead(head);
           setTableDataSource(body);
-          // console.log('s')
         } else {
           setTableDataSource(res.data);
           // console.log('a')
@@ -376,6 +495,70 @@ const TableFC: FC = ({
   const tableIsObj = false;
 
   const [messageApi, contextHolder] = message.useMessage();
+  const form2OnFinish = async (value) => {
+    const cleanedData = Object.fromEntries(
+        Object.entries(value).filter(([key, val]) => val !== "" && val !== null)
+    );
+    const res = await getSTQuest(stQuestKey)
+
+    // console.log('1', res.data)
+    // console.log('2', value)
+
+    let mergeObj = Object.assign({}, res.data, value)
+
+    // console.log(mergeObj.quest)
+    mergeObj.quest = mergeObj.quest.id
+    mergeObj.administrator = mergeObj.administrator.id
+    mergeObj.created_by = mergeObj.created_by.id
+    mergeObj.date = dayjs(mergeObj.date, 'DD-MM-YYYY').format('YYYY-MM-DD[T]00:00:00.000[Z]');
+    mergeObj.time = dayjs(mergeObj.time, 'HH:mm:ss')
+    .utc()
+    .format('YYYY-01-01THH:mm:ss.000[Z]');
+    mergeObj.actors = mergeObj.actors.map(actor => {
+      return actor.id
+    })
+
+    cleanedData.quest = res.data.quest.id
+    cleanedData.quest_cost = res.data.quest_cost
+    cleanedData.administrator = res.data.administrator.id
+    cleanedData.video_after = (cleanedData.video ? parseInt(cleanedData.video) : 0) + parseInt(res.data.video)
+    cleanedData.photomagnets_quantity_after = (cleanedData.photomagnets_quantity ? parseInt(cleanedData.photomagnets_quantity) : 0) + parseInt(res.data.photomagnets_quantity)
+    cleanedData.room_sum_after = (cleanedData.room_sum ? parseInt(cleanedData.room_sum) : 0) + parseInt(res.data.room_sum)
+    cleanedData.cash_delivery_after = (cleanedData.cash_delivery ? parseInt(cleanedData.cash_delivery) : 0) + parseInt(res.data.cash_delivery)
+    cleanedData.cash_payment_after = (cleanedData.cash_payment ? parseInt(cleanedData.cash_payment) : 0) + parseInt(res.data.cash_payment)
+    cleanedData.cashless_delivery_after = (cleanedData.cashless_delivery ? parseInt(cleanedData.cashless_delivery) : 0) + parseInt(res.data.cashless_delivery)
+    cleanedData.cashless_payment_after = (cleanedData.cashless_payment ? parseInt(cleanedData.cashless_payment) : 0) + parseInt(res.data.cashless_payment)
+
+    function setUndefinedOrNullToZero(obj) {
+      for (const key in obj) {
+        if (obj[key] === undefined || obj[key] === null) {
+          obj[key] = 0;
+        }
+      }
+    }
+    setUndefinedOrNullToZero(cleanedData);
+
+    const res2 = await putFunction(stQuestKey, mergeObj)
+      if (res2.status === 200) {
+        messageApi.open({
+          type: "success",
+          content: "запись обновлена",
+        });
+        if (dates.length !== 0) {
+          getEntries(
+            dates[0].format("DD-MM-YYYY"),
+            dates[1].format("DD-MM-YYYY")
+          );
+        } else {
+          getEntries(null, null);
+        }
+      } else {
+        messageApi.open({
+          type: "error",
+          content: "запись не обновлена",
+        });
+      }
+  }
   const formOnFinish = async (value) => {
     try {
       const response = await postFunction(value);
@@ -441,17 +624,18 @@ const TableFC: FC = ({
     }
   }
 
-  console.log(tableColumns)
+  // console.log(tableColumns)
 
   useEffect(() => {
     form.setFieldsValue(defaultValuesFormItems);
   }, [defaultValuesFormItems, form]);
 
   useEffect(() => {
-    if (breadcrumbItems[breadcrumbItems.length - 1].title === 'касса') {
-      getEntries(dayjs().format("DD-MM-YYYY"), dayjs().format("DD-MM-YYYY"))
+    if (breadcrumbItems[breadcrumbItems.length - 1].title === "касса") {
+      getEntries(dayjs().format("DD-MM-YYYY"), dayjs().format("DD-MM-YYYY"));
     } else {
-    getEntries(null, null); }
+      getEntries(null, null);
+    }
   }, []);
 
   return (
@@ -484,12 +668,22 @@ const TableFC: FC = ({
           title={drawerTitle}
           onClose={drawerOnClose}
           open={drawerIsOpen}
-          formItems={filteredUsersFormItems}
           formForm={form}
-          formOnFinish={formOnFinish}
+          formItems={filteredUsersFormItems}
+          formInitialValues={formInitialValues}
           formHandleOnChange={formHandleOnChange}
+          formOnFinish={formOnFinish}
         />
       )}
+      <CDrawer
+        title={"добавить новую запись"}
+        onClose={drawer2OnClose}
+        open={drawer2IsOpen}
+        formItems={filteredUsersFormItems2}
+        formForm={form2}
+        formOnFinish={form2OnFinish}
+        formHandleOnChange={form2HandleOnChange}
+      />
     </CMain>
   );
 };

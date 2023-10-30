@@ -20,8 +20,6 @@ class QuestVersion(models.Model):
 
     cost_weekdays = models.IntegerField(default=0)
     cost_weekends = models.IntegerField(default=0)
-    cost_weekdays_with_package = models.IntegerField(default=0)
-    cost_weekends_with_package = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -29,7 +27,7 @@ class QuestVersion(models.Model):
 
 class Quest(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    address = models.CharField(max_length=255, default="")
+    address = models.CharField(max_length=255)
 
     cost_weekdays = models.IntegerField(default=0)
     cost_weekends = models.IntegerField(default=0)
@@ -40,7 +38,7 @@ class Quest(models.Model):
     actor_rate = models.IntegerField(default=0)
     animator_rate = models.IntegerField()
 
-    duration_minute = models.IntegerField(default=0)
+    duration_in_minute = models.IntegerField(default=0)
 
     special_versions = models.ManyToManyField("self", blank=True, symmetrical=False)
     versions = models.ManyToManyField(QuestVersion, blank=True)
@@ -74,8 +72,7 @@ class STExpenseSubCategory(models.Model):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(verbose_name=_("Логин"), max_length=255, unique=True)
-    email = models.EmailField(verbose_name=_("Адрес электронной почты"), unique=True, blank=True, null=True)
+    email = models.EmailField(verbose_name=_("Адрес электронной почты"), unique=True)
     phone_number = models.CharField(
         verbose_name=_("Номер телефона"),
         max_length=18,
@@ -85,13 +82,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
 
     last_name = models.CharField(
-        verbose_name=_("Фамилия"), max_length=255, blank=True, null=True
+        verbose_name=_("Фамилия"), max_length=255
     )
     first_name = models.CharField(
-        verbose_name=_("Имя"), max_length=255, blank=True, null=True
+        verbose_name=_("Имя"), max_length=255
     )
     middle_name = models.CharField(
-        verbose_name=_("Отчество"), max_length=255, blank=True, null=True
+        verbose_name=_("Отчество"), max_length=255
     )
 
     is_active = models.BooleanField(
@@ -143,15 +140,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         related_name="user_internship_quest",
     )
 
-    # USERNAME_FIELD = "email"
-    USERNAME_FIELD = "username"
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
     objects = UserManager()
 
     def __str__(self):
-        # return self.email
-        return self.username
+        return self.email
 
 
 class STQuest(models.Model):
@@ -397,7 +392,7 @@ class QSalary(models.Model):
     )
 
     def __str__(self):
-        return str(self.date)
+        return str(self.date) + ' ' + str(self.user) + ' ' + str(self.stquest)
 
 
 class QCashRegister(models.Model):

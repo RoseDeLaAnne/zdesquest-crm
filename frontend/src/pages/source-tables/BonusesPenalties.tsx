@@ -3,7 +3,7 @@ import { FC, useState, useEffect } from "react";
 // antd
 import { Tag } from "antd";
 // antd | icons
-import { TableOutlined } from "@ant-design/icons";
+import { TableOutlined, QuestionOutlined, FallOutlined, DeploymentUnitOutlined } from "@ant-design/icons";
 
 // components
 import TemplateTable from "../../components/template/Table";
@@ -25,24 +25,24 @@ const STQuests: FC = () => {
       to: "/source-tables",
     },
     {
-      icon: TableOutlined,
+      icon: DeploymentUnitOutlined,
       title: "бонусы/штрафы",
       menu: [
         {
           key: "1",
-          icon: TableOutlined,
+          icon: QuestionOutlined,
           label: "квесты",
           to: "/source-tables/quests",
         },
         {
           key: "2",
-          icon: TableOutlined,
+          icon: FallOutlined,
           label: "расходы",
           to: "/source-tables/expenses",
         },
         {
           key: "3",
-          icon: TableOutlined,
+          icon: DeploymentUnitOutlined,
           label: "бонусы/штрафы",
           to: "/source-tables/bonuses-penalties",
         },

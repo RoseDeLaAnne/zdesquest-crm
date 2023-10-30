@@ -26,7 +26,7 @@ const ATQuestVersions: FC = () => {
       to: "/additional-tables",
     },
     {
-      icon: TableOutlined,
+      icon: QuestionOutlined,
       title: "версии квестов",
     },
   ];

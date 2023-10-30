@@ -14,6 +14,8 @@ import {
   AppstoreAddOutlined,
   TableOutlined,
   DeploymentUnitOutlined,
+  VideoCameraOutlined,
+  MoneyCollectOutlined,
 } from "@ant-design/icons";
 
 // api
@@ -24,6 +26,7 @@ import { getQuests, getCurrentUser } from "../../api/APIUtils";
 
 // type
 import { MenuItem } from "../../assets/utilities/type";
+import { layoutMarginLeft, siderWidth } from "../../constants";
 
 // layout
 const { Sider, Header } = Layout;
@@ -52,45 +55,45 @@ const App: FC = ({
   function convertQuestToMenuItem(quest) {
     return getItem(
       quest.name,
-      `quests${quest.name}`,
-      `/quests/${quest.id}`,
+      `quests${quest.id}`,
+      null,
       <QuestionOutlined />,
       [
         getItem(
           "доходы",
-          `quests${quest.name}Incomes`,
+          `quests${quest.id}Incomes`,
           `/quests/${quest.id}/incomes`,
           <RiseOutlined />
         ),
         getItem(
           "расходы",
-          `quests${quest.name}Expenses`,
+          `quests${quest.id}Expenses`,
           `/quests/${quest.id}/expenses`,
           <FallOutlined />
         ),
         getItem(
           "касса",
-          `quests${quest.name}CashRegister`,
+          `quests${quest.id}CashRegister`,
           `/quests/${quest.id}/cash-register`,
-          <FallOutlined />
+          <MoneyCollectOutlined />
         ),
         getItem(
           "расходы с раб. карты",
-          `quests${quest.name}WorkCardExpenses`,
+          `quests${quest.id}WorkCardExpenses`,
           `/quests/${quest.id}/work-card-expenses`,
-          <DollarOutlined />
+          <FallOutlined />
         ),
         getItem(
           "расходы со своих",
-          `quests${quest.name}ExpensesFromTheir`,
-          `/quests/${quest.id}/expenses-from-their`,
-          <DollarOutlined />
+          `quests${quest.id}ExpensesFromOwn`,
+          `/quests/${quest.id}/expenses-from-own`,
+          <FallOutlined />
         ),
         getItem(
           "видео",
-          `quests${quest.name}Videos`,
+          `quests${quest.id}Videos`,
           `/quests/${quest.id}/videos`,
-          <DollarOutlined />
+          <VideoCameraOutlined />
         ),
       ]
     );
@@ -99,7 +102,7 @@ const App: FC = ({
   function getItem(
     label: React.ReactNode,
     key: React.Key,
-    to: string,
+    to: any,
     icon?: React.ReactNode,
     children?: MenuItem[],
     type?: "group"
@@ -109,9 +112,13 @@ const App: FC = ({
       icon,
       children,
       label: (
-        <Link to={to} className="menu__link">
-          {label}
-        </Link>
+        <>
+          {to ? (
+            <Link to={to} className="menu__link">
+              {label}
+            </Link>
+          ) : label}
+        </>
       ),
       type,
     } as MenuItem;
@@ -177,9 +184,9 @@ const App: FC = ({
     menuItems = [
       getItem("сотрудники", "users", "/users", <UserOutlined />),
       getItem(
-        "исх. таблицы",
+        "исходные таблицы",
         "sourceTables",
-        "/source-tables",
+        null,
         <TableOutlined />,
         [
           getItem(
@@ -203,23 +210,11 @@ const App: FC = ({
         ]
       ),
       getItem(
-        "доп. таблицы",
+        "дополнительные таблицы",
         "additionalTables",
-        "/additional-tables",
+        null,
         <TableOutlined />,
         [
-          getItem(
-            "категории расходов",
-            "additionalTablesSTExpenseCategories",
-            "/additional-tables/stexpense-categories",
-            <QuestionOutlined />
-          ),
-          getItem(
-            "подкатегории расходов",
-            "additionalTablesSTExpenseSubCategories",
-            "/additional-tables/stexpense-subcategories",
-            <QuestionOutlined />
-          ),
           getItem(
             "квесты",
             "additionalTablesQuests",
@@ -232,17 +227,34 @@ const App: FC = ({
             "/additional-tables/quest-versions",
             <QuestionOutlined />
           ),
+          getItem(
+            "категории расходов",
+            "additionalTablesSTExpenseCategories",
+            "/additional-tables/stexpense-categories",
+            <QuestionOutlined />
+          ),
+          getItem(
+            "подкатегории расходов",
+            "additionalTablesSTExpenseSubCategories",
+            "/additional-tables/stexpense-subcategories",
+            <QuestionOutlined />
+          ),
         ]
       ),
-      getItem("квесты", "quests", "/quests", <QuestionOutlined />, [
+      getItem("квесты", "quests", null, <QuestionOutlined />, [
         ...questsData.map(convertQuestToMenuItem),
       ]),
       getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
     ];
   } else {
     menuItems = [
-      getItem("таблицы", "tables", "/tables", <TableOutlined />, [
-        getItem("квесты", "tablesQuests", "/tables/quests", <QuestionOutlined />),
+      getItem("таблицы", "tables", null, <TableOutlined />, [
+        getItem(
+          "квесты",
+          "tablesQuests",
+          "/tables/quests",
+          <QuestionOutlined />
+        ),
         getItem(
           "расходы",
           "tablesExpenses",
@@ -250,7 +262,7 @@ const App: FC = ({
           <QuestionOutlined />
         ),
       ]),
-      getItem("формы", "forms", "/forms", <TableOutlined />, [
+      getItem("формы", "forms", null, <TableOutlined />, [
         getItem("квесты", "formsQuest", "/forms/quest", <QuestionOutlined />),
         getItem(
           "расходы",
@@ -272,6 +284,7 @@ const App: FC = ({
     <>
       <div className="desktop-version">
         <Sider
+          width={siderWidth}
           collapsible
           collapsed={collapsed}
           onCollapse={(value) => {

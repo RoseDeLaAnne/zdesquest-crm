@@ -4,7 +4,7 @@ import { ProtectedRoute } from "./ProtectedRoute";
 
 import Test from "../pages/Test";
 import InputC from "../pages/InputC";
-import Test3 from "../pages/Test3";
+import Test4 from "../pages/Test4";
 
 import Home from "../pages/Home";
 
@@ -18,18 +18,18 @@ import ATQuests from "../pages/additional-tables/Quests";
 import ATEditQuests from "../pages/additional-tables/EditQuests";
 import ATQuestVersions from "../pages/additional-tables/QuestVersions";
 import ATEditQuestVersions from "../pages/additional-tables/EditQuestVersions";
-import ATSTExpenseCategories from "../pages/additional-tables/ATSTExpenseCategories";
-import ATSTExpenseSubCategories from "../pages/additional-tables/ATSTExpenseSubCategories";
-import ATEditSTExpenseCategories from "../pages/additional-tables/ATSTExpenseCategories";
-import ATEditSTExpenseSubCategories from "../pages/additional-tables/ATSTExpenseSubCategories";
+import ATSTExpenseCategories from "../pages/additional-tables/STExpenseCategories";
+import ATSTExpenseSubCategories from "../pages/additional-tables/STExpenseSubCategories";
+import ATEditSTExpenseCategories from "../pages/additional-tables/STExpenseCategories";
+import ATEditSTExpenseSubCategories from "../pages/additional-tables/STExpenseSubCategories";
 
 // source-tables
 import STQuests from "../pages/source-tables/Quests";
 import STEditQuests from "../pages/source-tables/EditQuests";
-import STExpenses from "../pages/source-tables/STExpenses";
+import STExpenses from "../pages/source-tables/Expenses";
 import STEditExpenses from "../pages/source-tables/EditExpenses";
-import STBonusesPenalties from "../pages/source-tables/STBonusesPenalties";
-import STEditBonusesPenalties from "../pages/source-tables/STEditBonusesPenalties";
+import STBonusesPenalties from "../pages/source-tables/BonusesPenalties";
+import STEditBonusesPenalties from "../pages/source-tables/EditBonusesPenalties";
 
 // tables
 import TQuests from "../pages/tables/Quests";
@@ -40,12 +40,12 @@ import FQuest from "../pages/forms/FQuest";
 import FExpenses from "../pages/forms/Expenses";
 
 // quests
-import QIncomes from "../pages/quests/QIncomes";
+import QIncomes from "../pages/quests/Incomes";
 import QExpenses from "../pages/quests/Expenses";
-import QCashRegister from "../pages/quests/QCashRegister";
-import QWorkCardExpenses from "../pages/quests/QWorkCardExpenses";
-import QExpensesFromTheir from "../pages/quests/QExpensesFromTheir";
-import QVideos from "../pages/quests/QVideos";
+import QCashRegister from "../pages/quests/CashRegister";
+import QWorkCardExpenses from "../pages/quests/WorkCardExpenses";
+import QExpensesFromOwn from "../pages/quests/ExpensesFromOwn";
+import QVideos from "../pages/quests/Videos";
 
 import Salaries from "../pages/Salaries";
 
@@ -84,9 +84,13 @@ const Routes = () => {
           path: "/inputc",
           element: <InputC />,
         },
+        // {
+        //   path: "/test3",
+        //   element: <Test3 />,
+        // },
         {
-          path: "/test3",
-          element: <Test3 />,
+          path: "/test4",
+          element: <Test4 />,
         },
         {
           path: "/users",
@@ -185,8 +189,8 @@ const Routes = () => {
           element: <QWorkCardExpenses />,
         },
         {
-          path: "/quests/:id/expenses-from-their",
-          element: <QExpensesFromTheir />,
+          path: "/quests/:id/expenses-from-own",
+          element: <QExpensesFromOwn />,
         },
         {
           path: "/quests/:id/videos",

@@ -1,63 +1,32 @@
 import React, { FC, useEffect, useState } from "react";
 
 // antd | icons
-import { TableOutlined } from "@ant-design/icons";
+import { DollarOutlined } from "@ant-design/icons";
+
+// components
+import TemplateTable from "../components/template/Table";
 
 // api
 import { getCurrentSalaries, getCurrentUser, getSalaries } from "../api/APIUtils";
 
-// components
-import TableTemplate2 from "../components/TableTemplate2";
-
-const App: FC = () => {
+const SalariesFC: FC = () => {
   const initialBreadcrumbItems = [
     {
-      icon: TableOutlined,
+      icon: DollarOutlined,
       title: "зарплаты",
       to: "/salaries",
     },
-  ];
-
-  const initialPackedTableDataColumn = {
-    title: "дата",
-    dataIndex: "date",
-    key: "date",
-    width: 112,
-    isSorting: true,
-    searching: {
-      isSearching: true,
-      title: "дате",
-    },
-    fixed: "left",
-  };
-
-  const [isSuperUser, setIsSuperUser] = useState(false)
-
-  const fetchCurrentUser = async () => {
-    const res = await getCurrentUser()
-    setIsSuperUser(res.data.is_superuser)
-  }
-
-  useEffect(() => {
-    fetchCurrentUser()
-  }, [])
-  
+  ];  
 
   return (
-    <TableTemplate2
+    <TemplateTable
       defaultOpenKeys={[]}
       defaultSelectedKeys={["salaries"]}
       breadcrumbItems={initialBreadcrumbItems}
-      title={"зарплаты"}
-      isDatePicker={true}
-      // fetchFunction={isSuperUser === true ? getSalaries : getCurrentSalaries}
-      fetchFunction={getSalaries}
-      initialPackedTableDataColumn={initialPackedTableDataColumn}
-      isUseParams={true}
-      tableScroll={{ x: 1500 }}
-      tableIsObj={true}
+      isRangePicker={true}
+      getFunction={getSalaries}
     />
   );
 };
 
-export default App;
+export default SalariesFC;

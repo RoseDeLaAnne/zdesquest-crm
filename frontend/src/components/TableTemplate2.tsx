@@ -70,6 +70,7 @@ import { IFC } from "../assets/utilities/interface";
 import { dateFormat } from "../constants/dateFormat";
 import { localStorageRemoveItem } from "../assets/utilities/jwt";
 import { useAuth } from "../provider/authProdiver";
+import { getQuestExpenses, getSTExpense } from "../api/APIUtils";
 
 const { Content, Sider } = Layout;
 const { Title, Text } = Typography;
@@ -206,6 +207,8 @@ const App: FC = ({
       const response = isUseParams
         ? await fetchFunction(startDate, endDate, id)
         : await fetchFunction(startDate, endDate);
+
+      // const response = await getQuestExpenses(null, null, 1)
 
       if (response.status === 200) {       
         if (!isTableDataHead) {

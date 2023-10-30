@@ -3,6 +3,7 @@ import { FC, ReactNode, useState, useEffect } from "react";
 // antd
 import {
   Typography,
+  Skeleton,
   Layout,
   Space,
   Button,
@@ -52,7 +53,11 @@ const MainFC: FC = ({
   const [windowSize, { collapsed, toggleCollapsed }] =
     useWindowWidthAndCollapsed();
 
-  const [messageApi, contextHolder] = message.useMessage();
+  // const [messageApi, contextHolder] = message.useMessage();
+
+  useEffect(() => {
+    document.title = title;
+  }, []);
 
   return (
     <Layout hasSider>
@@ -74,7 +79,7 @@ const MainFC: FC = ({
             background: colorBgContainer,
           }}
         >
-          {contextHolder}
+          {/* {contextHolder} */}
           <div className="main__header">
             <Title>{title}</Title>
             {(isRangePicker === true || isAddEntry === true) && (
@@ -84,7 +89,12 @@ const MainFC: FC = ({
                     onChange={rangePickerHandleChange}
                     format={rangePickerFormat}
                     className="m-w100"
-                    defaultValue={breadcrumbItems[breadcrumbItems.length - 1].title === 'касса' ? [dayjs(), dayjs()] : ''}
+                    defaultValue={
+                      breadcrumbItems[breadcrumbItems.length - 1].title ===
+                      "касса"
+                        ? [dayjs(), dayjs()]
+                        : ""
+                    }
                   />
                 )}
                 {isAddEntry === true && (
@@ -106,7 +116,7 @@ const MainFC: FC = ({
                 )}
                 {isCreate === true && (
                   <Button onClick={() => form.submit()} type="primary">
-                    создать
+                    редактировать
                   </Button>
                 )}
               </Space>

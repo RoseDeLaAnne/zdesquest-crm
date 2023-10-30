@@ -284,7 +284,7 @@ export const getWorkCardExpenses = async (
   }
 };
 
-export const getExpensesFromTheir = async (
+export const getExpensesFromOwn = async (
   startDate: string,
   endDate: string,
   id: number
@@ -292,9 +292,9 @@ export const getExpensesFromTheir = async (
   try {
     let url;
     if (startDate !== null && endDate !== null) {
-      url = `${url3}/api/quest/${id}/expenses-from-their/?start_date=${startDate}&end_date=${endDate}`;
+      url = `${url3}/api/quest/${id}/expenses-from-own/?start_date=${startDate}&end_date=${endDate}`;
     } else {
-      url = `${url3}/api/quest/${id}/expenses-from-their/`;
+      url = `${url3}/api/quest/${id}/expenses-from-own/`;
     }
     const response = await axios.get(url);
     return response;

@@ -11,7 +11,12 @@ import {
 } from "@ant-design/icons";
 
 // api
-import { getQuests, postQuest, deleteQuest, getQuestsWithSpecVersions } from "../../api/APIUtils";
+import {
+  getQuests,
+  postQuest,
+  deleteQuest,
+  getQuestsWithSpecVersions,
+} from "../../api/APIUtils";
 
 // components
 import TemplateTable from "../../components/template/Table";
@@ -26,7 +31,7 @@ const ATQuests: FC = () => {
       to: "/additional-tables",
     },
     {
-      icon: TableOutlined,
+      icon: QuestionOutlined,
       title: "квесты",
     },
   ];
@@ -177,8 +182,8 @@ const ATQuests: FC = () => {
     },
     {
       title: "продолжительность квеста в минутах",
-      dataIndex: "duration_minute",
-      key: "duration_minute",
+      dataIndex: "duration_in_minute",
+      key: "duration_in_minute",
       isSorting: true,
       searching: {
         isSearching: true,

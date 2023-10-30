@@ -3,7 +3,7 @@ import { FC, useState, useEffect } from "react";
 // antd
 import { Tag } from "antd";
 // antd | icons
-import { TableOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 
 // components
 import TemplateTable from "../components/template/Table";
@@ -13,103 +13,61 @@ import { deleteUser, getUsers, postUser } from "../api/APIUtils";
 
 import { getUsersFormItems } from "../constants";
 
-
 const UsersFC: FC = () => {
   const initialBreadcrumbItems = [
     {
-      icon: TableOutlined,
+      icon: UserOutlined,
       title: "сотрудники",
     },
   ];
 
   const initialPackedTableColumns = [
     {
-      title: "логин",
-      dataIndex: "username",
-      key: "username",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "логину",
-      },
-      isCountable: false,
-    },
-    {
-      title: "электронная почта",
-      dataIndex: "email",
-      key: "email",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "электронной почте",
-      },
-      isCountable: false,
-    },
-    {
-      title: "номер телефона",
-      dataIndex: "phone_number",
-      key: "phone_number",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "номеру телефона",
-      },
-      isCountable: false,
-    },
-    {
       title: "имя",
       dataIndex: "first_name",
-      key: "first_name",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "имени",
-      },
-      isCountable: false,
+      sorting: true,
+      searching: "имени",
+      width: 144,
+      fixed: "left",
     },
     {
       title: "фамилия",
       dataIndex: "last_name",
-      key: "last_name",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "фамилии",
-      },
-      isCountable: false,
+      sorting: true,
+      searching: "фамилии",
+      width: 144,
     },
     {
       title: "отчество",
       dataIndex: "middle_name",
-      key: "middle_name",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "отчеству",
-      },
-      isCountable: false,
+      sorting: true,
+      searching: "отчеству",
+      width: 144,
+    },
+    {
+      title: "электронная почта",
+      dataIndex: "email",
+      sorting: true,
+      searching: "электронной почте",
+      width: 192,
+    },
+    {
+      title: "номер телефона",
+      dataIndex: "phone_number",
+      sorting: true,
+      searching: "номеру телефона",
+      width: 180,
     },
     {
       title: "дата рождения",
       dataIndex: "date_of_birth",
-      key: "date_of_birth",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "дате рождения",
-      },
-      isCountable: false,
+      sorting: true,
+      searching: "дате рождения",
     },
     {
       title: "квест",
       dataIndex: "quest",
-      key: "quest",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
+      filtering: "quests",
       render: (quest) => {
         if (quest !== null) {
           return <Tag color="orange">{quest.name}</Tag>;
@@ -121,13 +79,7 @@ const UsersFC: FC = () => {
     {
       title: "роли",
       dataIndex: "roles",
-      key: "roles",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
+      filtering: "roles",
       render: (_, { roles }) => (
         <>
           {roles.map((role) => {
@@ -143,78 +95,69 @@ const UsersFC: FC = () => {
     {
       title: "начала стажировки",
       dataIndex: "internship_period_start",
-      key: "internship_period_start",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
     },
     {
       title: "окончание стажировки",
       dataIndex: "internship_period_end",
-      key: "internship_period_end",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
     },
     {
       title: "квест стажировочные",
       dataIndex: "internship_quest",
-      key: "internship_quest",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
-      render: (quest_staj) => {
-        if (quest_staj !== null) {
-          return <Tag color="orange">{quest_staj.name}</Tag>;
+      render: (internship_quest) => {
+        if (internship_quest !== null) {
+          return <Tag color="orange">{internship_quest.name}</Tag>;
         } else {
           return null;
         }
       },
     },
+    {
+      title: "активен",
+      dataIndex: "is_active",
+      render: (is_active) => {
+        let color = "red";
+        let formattedText = "";
+
+        if (is_active) {
+          color = "green";
+          formattedText = "да";
+        } else {
+          color = "red";
+          formattedText = "нет";
+        }
+
+        return <Tag color={color}>{formattedText}</Tag>;
+      },
+    },
   ];
 
-  const [formItems, setFormItems] = useState([])
+  const [formItems, setFormItems] = useState([]);
   const getFormItems = async () => {
-    const res = await getUsersFormItems()
-    setFormItems(res)
-  }
+    const res = await getUsersFormItems();
+    setFormItems(res);
+  };
   useEffect(() => {
     getFormItems();
-  }, [])
-  
+  }, []);
 
   const formHandleOnChange = () => {};
 
   return (
     <TemplateTable
       defaultOpenKeys={["users"]}
-      defaultSelectedKeys={[]}
+      defaultSelectedKeys={["users"]}
       breadcrumbItems={initialBreadcrumbItems}
-      isRangePicker={false}
       addEntryTitle={"новый сотрудник"}
-      isCancel={false}
-      isCreate={false}
-      tableScroll={null}
-      tableDateColumn={null}
       initialPackedTableColumns={initialPackedTableColumns}
       tableIsOperation={true}
       getFunction={getUsers}
       deleteFunction={deleteUser}
       postFunction={postUser}
-      isUseParams={false}
       isAddEntry={true}
       drawerTitle={"добавить нового сотрудника"}
       formItems={formItems}
       formHandleOnChange={formHandleOnChange}
+      tableScroll={{ x: 2250 }}
     />
   );
 };

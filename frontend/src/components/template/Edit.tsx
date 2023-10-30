@@ -1,7 +1,7 @@
 // libs
 import dayjs from "dayjs";
 
-import { FC, useRef, useState, useEffect } from "react";
+import { FC, useEffect } from "react";
 
 // react-router-dom
 import { useNavigate, Link, useParams } from "react-router-dom";
@@ -20,8 +20,6 @@ const EditFC: FC = ({
   defaultOpenKeys,
   defaultSelectedKeys,
   breadcrumbItems,
-  isCancel,
-  isCreate,
   getFunction,
   putFunction,
   isUseParams,

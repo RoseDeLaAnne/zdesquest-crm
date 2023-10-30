@@ -52,43 +52,43 @@ const App: FC = ({
   function convertQuestToMenuItem(quest) {
     return getItem(
       quest.name,
-      `quests${quest.name}`,
+      `quests${quest.id}`,
       `/quests/${quest.id}`,
       <QuestionOutlined />,
       [
         getItem(
           "доходы",
-          `quests${quest.name}Incomes`,
+          `quests${quest.id}Incomes`,
           `/quests/${quest.id}/incomes`,
           <RiseOutlined />
         ),
         getItem(
           "расходы",
-          `quests${quest.name}Expenses`,
+          `quests${quest.id}Expenses`,
           `/quests/${quest.id}/expenses`,
           <FallOutlined />
         ),
         getItem(
           "касса",
-          `quests${quest.name}CashRegister`,
+          `quests${quest.id}CashRegister`,
           `/quests/${quest.id}/cash-register`,
           <FallOutlined />
         ),
         getItem(
           "расходы с раб. карты",
-          `quests${quest.name}WorkCardExpenses`,
+          `quests${quest.id}WorkCardExpenses`,
           `/quests/${quest.id}/work-card-expenses`,
           <DollarOutlined />
         ),
         getItem(
           "расходы со своих",
-          `quests${quest.name}ExpensesFromTheir`,
+          `quests${quest.id}ExpensesFromTheir`,
           `/quests/${quest.id}/expenses-from-their`,
           <DollarOutlined />
         ),
         getItem(
           "видео",
-          `quests${quest.name}Videos`,
+          `quests${quest.id}Videos`,
           `/quests/${quest.id}/videos`,
           <DollarOutlined />
         ),
@@ -109,9 +109,13 @@ const App: FC = ({
       icon,
       children,
       label: (
-        <Link to={to} className="menu__link">
-          {label}
-        </Link>
+        <>
+          {to ? (
+            <Link to={to} className="menu__link">
+              {label}
+            </Link>
+          ) : null}
+        </>
       ),
       type,
     } as MenuItem;
@@ -242,7 +246,12 @@ const App: FC = ({
   } else {
     menuItems = [
       getItem("таблицы", "tables", "/tables", <TableOutlined />, [
-        getItem("квесты", "tablesQuests", "/tables/quests", <QuestionOutlined />),
+        getItem(
+          "квесты",
+          "tablesQuests",
+          "/tables/quests",
+          <QuestionOutlined />
+        ),
         getItem(
           "расходы",
           "tablesExpenses",

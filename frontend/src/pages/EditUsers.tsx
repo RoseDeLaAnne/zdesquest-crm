@@ -1,10 +1,7 @@
-import { FC, useState, useEffect, useRef } from "react";
-
-// react-router-dom
-import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
+import { FC, useState, useEffect } from "react";
 
 // antd | icons
-import { TableOutlined } from "@ant-design/icons";
+import { UserOutlined, EditOutlined } from "@ant-design/icons";
 
 // components
 import TemplateEdit from "../components/template/Edit.tsx";
@@ -12,17 +9,18 @@ import TemplateEdit from "../components/template/Edit.tsx";
 // api
 import { getUser, putUser } from "../api/APIUtils";
 
+// constants
 import { getUsersFormItems } from "../constants/index.ts";
 
 const EditUsersFC: FC = () => {
   const initialBreadcrumbItems = [
     {
-      icon: TableOutlined,
+      icon: UserOutlined,
       title: "сотрудники",
       to: "/users",
     },
     {
-      icon: TableOutlined,
+      icon: EditOutlined,
       title: "редактирование",
     },
   ];
@@ -45,8 +43,6 @@ const EditUsersFC: FC = () => {
       putFunction={putUser}
       isUseParams={true}
       formItems={formItems}
-      // visibleFormItems={visibleFormItems}
-      // handleOnChange={handleOnChange}
     />
   );
 };

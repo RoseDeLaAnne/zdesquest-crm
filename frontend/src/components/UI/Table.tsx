@@ -5,12 +5,10 @@ import { Typography, Table } from "antd";
 
 const { Text } = Typography;
 
-const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {
-  // console.log(dataSource)
-  
+const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {  
   return (
     <Table
-      scroll={{ x: scroll }}
+      scroll={scroll}
       columns={columns}
       dataSource={dataSource}
       bordered

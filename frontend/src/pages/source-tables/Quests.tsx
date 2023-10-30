@@ -6,13 +6,15 @@ import { FC, useState, useEffect } from "react";
 // antd
 import { Tag } from "antd";
 // antd | icons
-import { TableOutlined } from "@ant-design/icons";
+import {
+  TableOutlined,
+  QuestionOutlined,
+  FallOutlined,
+  DeploymentUnitOutlined,
+} from "@ant-design/icons";
 
 // components
-import TemplateTable from "../../components/template/Table2";
-
-// hooks
-import useQuestForm from "../../hooks/useQuestForm";
+import TemplateTable from "../../components/template/Table";
 
 // api
 import {
@@ -27,32 +29,31 @@ import {
 // constants
 import { getSTQuestFormItems, getSTQuestsFormItems2 } from "../../constants";
 
-const STQuests: FC = () => {
+const STQuestsFC: FC = () => {
   const initialBreadcrumbItems = [
     {
       icon: TableOutlined,
       title: "исходные таблицы",
-      to: "/source-tables",
     },
     {
-      icon: TableOutlined,
+      icon: QuestionOutlined,
       title: "квесты",
       menu: [
         {
           key: "1",
-          icon: TableOutlined,
+          icon: QuestionOutlined,
           label: "квесты",
           to: "/source-tables/quests",
         },
         {
           key: "2",
-          icon: TableOutlined,
+          icon: FallOutlined,
           label: "расходы",
           to: "/source-tables/expenses",
         },
         {
           key: "3",
-          icon: TableOutlined,
+          icon: DeploymentUnitOutlined,
           label: "бонусы/штрафы",
           to: "/source-tables/bonuses-penalties",
         },
@@ -64,13 +65,6 @@ const STQuests: FC = () => {
     {
       title: "квест",
       dataIndex: "quest",
-      key: "quest",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "стоимости квеста",
-      },
-      isCountable: false,
       render: (quest) => {
         if (quest !== null) {
           return <Tag color="black">{quest.name}</Tag>;
@@ -78,17 +72,11 @@ const STQuests: FC = () => {
           return null;
         }
       },
+      minWidth: 256,
     },
     {
-      title: "package",
+      title: "пакет",
       dataIndex: "is_package",
-      key: "is_package",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
       render: (is_package) => {
         let color = "red";
         let formattedIsPackage = "";
@@ -105,15 +93,8 @@ const STQuests: FC = () => {
       },
     },
     {
-      title: "is_video_review",
+      title: "видео отзыв",
       dataIndex: "is_video_review",
-      key: "is_video_review",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
       render: (is_video_review) => {
         let color = "red";
         let formattedIsTravel = "";
@@ -132,187 +113,22 @@ const STQuests: FC = () => {
     {
       title: "стоимость квеста",
       dataIndex: "quest_cost",
-      key: "quest_cost",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "стоимости квеста",
-      },
-      isCountable: true,
+      sorting: true,
+      searching: "стоимости квеста",
+      countable: true,
     },
     {
-      title: "add_players",
-      dataIndex: "add_players",
-      key: "add_players",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
+      title: "имя клиента",
+      dataIndex: "client_name",
     },
     {
-      title: "actor_or_second_actor_or_animator",
-      dataIndex: "actor_or_second_actor_or_animator",
-      key: "actor_or_second_actor_or_animator",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
-    },
-    {
-      title: "discount_sum",
-      dataIndex: "discount_sum",
-      key: "discount_sum",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
-    },
-    {
-      title: "discount_desc",
-      dataIndex: "discount_desc",
-      key: "discount_desc",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
-    },
-    {
-      title: "room_sum",
-      dataIndex: "room_sum",
-      key: "room_sum",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
-    },
-    {
-      title: "room_quantity",
-      dataIndex: "room_quantity",
-      key: "room_quantity",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
-    },
-    {
-      title: "room_employee_name",
-      dataIndex: "room_employee_name",
-      key: "room_employee_name",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
-      render: (room_employee_name) => {
-        if (room_employee_name !== null) {
-          return (
-            <Tag color="black">
-              {room_employee_name.last_name} {room_employee_name.first_name}{" "}
-              {room_employee_name.middle_name
-                ? room_employee_name.middle_name
-                : ""}
-            </Tag>
-          );
-        } else {
-          return null;
-        }
-      },
-    },
-    {
-      title: "video",
-      dataIndex: "video",
-      key: "video",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
-    },
-    {
-      title: "photomagnets_quantity",
-      dataIndex: "photomagnets_quantity",
-      key: "photomagnets_quantity",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
-    },
-    {
-      title: "photomagnets_sum",
-      dataIndex: "photomagnets_sum",
-      key: "photomagnets_sum",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
-    },
-    {
-      title: "birthday_congr",
-      dataIndex: "birthday_congr",
-      key: "birthday_congr",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
-    },
-    {
-      title: "easy_work",
-      dataIndex: "easy_work",
-      key: "easy_work",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
-    },
-    {
-      title: "night_game",
-      dataIndex: "night_game",
-      key: "night_game",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
-    },
-    {
-      title: "administrator",
+      title: "администратор",
       dataIndex: "administrator",
-      key: "administrator",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
       render: (administrator) => {
         if (administrator !== null) {
           return (
             <Tag color="black">
-              {administrator.last_name} {administrator.first_name}{" "}
-              {administrator.middle_name ? administrator.middle_name : ""}
+              {administrator.last_name} {administrator.first_name}
             </Tag>
           );
         } else {
@@ -321,22 +137,14 @@ const STQuests: FC = () => {
       },
     },
     {
-      title: "actors",
+      title: "актеры",
       dataIndex: "actors",
-      key: "actors",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
       render: (_, { actors }) => (
         <>
           {actors.map((actor) => {
             return (
               <Tag color="black" key={actor.id}>
-                {actor.last_name} {actor.first_name}{" "}
-                {actor.middle_name ? actor.middle_name : ""}
+                {actor.last_name} {actor.first_name}
               </Tag>
             );
           })}
@@ -344,22 +152,117 @@ const STQuests: FC = () => {
       ),
     },
     {
-      title: "actors_half",
-      dataIndex: "actors_half",
-      key: "actors_half",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
+      title: "наличный расчет",
+      dataIndex: "cash_payment",
+      countable: true,
+    },
+    {
+      title: "безналичный расчет",
+      dataIndex: "cashless_payment",
+      countable: true,
+    },
+    {
+      title: "сдача наличными",
+      dataIndex: "cash_delivery",
+      countable: true,
+    },
+    {
+      title: "сдача безналичными",
+      dataIndex: "cashless_delivery",
+      countable: true,
+    },
+    {
+      title: "предоплата",
+      dataIndex: "prepayment",
+      countable: true,
+    },
+    {
+      title: "сотрудник комнаты",
+      dataIndex: "room_employee_name",
+      render: (room_employee_name) => {
+        if (room_employee_name !== null) {
+          return (
+            <Tag color="black">
+              {room_employee_name.last_name} {room_employee_name.first_name}
+            </Tag>
+          );
+        } else {
+          return null;
+        }
       },
-      isCountable: false,
+    },
+    {
+      title: "аниматор",
+      dataIndex: "animator",
+      render: (animator) => {
+        if (animator !== null) {
+          return (
+            <Tag color="black">
+              {animator.last_name} {animator.first_name}
+            </Tag>
+          );
+        } else {
+          return null;
+        }
+      },
+    },
+    {
+      title: "актеры/второй актер/аниматор",
+      dataIndex: "actor_or_second_actor_or_animator",
+      countable: true,
+    },
+    {
+      title: "дополнительные игроки",
+      dataIndex: "add_players",
+    },
+    {
+      title: "сумма комнат",
+      dataIndex: "room_sum",
+      countable: true,
+    },
+    {
+      title: "сумма видео",
+      dataIndex: "video",
+      countable: true,
+    },
+    {
+      title: "ночная игра",
+      dataIndex: "night_game",
+      countable: true,
+    },
+    {
+      title: "простой",
+      dataIndex: "easy_work",
+      countable: true,
+    },
+    {
+      title: "поздравление именинника",
+      dataIndex: "birthday_congr",
+      countable: true,
+    },
+    {
+      title: "количество фотомагнитов",
+      dataIndex: "photomagnets_quantity",
+      countable: true,
+    },
+    {
+      title: "сумма скидки",
+      dataIndex: "discount_sum",
+      countable: true,
+    },
+    {
+      title: "описание скидки",
+      dataIndex: "discount_desc",
+    },
+    {
+      title: "актеры (50%)",
+      dataIndex: "actors_half",
       render: (_, { actors_half }) => (
         <>
           {actors_half.map((actor_half) => {
             return (
               <Tag color="black" key={actor_half.id}>
-                {actor_half.last_name} {actor_half.first_name}{" "}
-                {actor_half.middle_name ? actor_half.middle_name : ""}
+                {actor_half.last_name} {actor_half.first_name}
               </Tag>
             );
           })}
@@ -367,105 +270,19 @@ const STQuests: FC = () => {
       ),
     },
     {
-      title: "animator",
-      dataIndex: "animator",
-      key: "animator",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
-      render: (animator) => {
-        if (animator !== null) {
-          return (
-            <Tag color="black">
-              {animator.last_name} {animator.first_name}{" "}
-              {animator.middle_name ? animator.middle_name : ""}
-            </Tag>
-          );
-        } else {
-          return null;
-        }
-      },
-    },
-    {
-      title: "cash_payment",
-      dataIndex: "cash_payment",
-      key: "cash_payment",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
-    },
-    {
-      title: "cashless_payment",
-      dataIndex: "cashless_payment",
-      key: "cashless_payment",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
-    },
-    {
-      title: "cash_delivery",
-      dataIndex: "cash_delivery",
-      key: "cash_delivery",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
-    },
-    {
-      title: "cashless_delivery",
-      dataIndex: "cashless_delivery",
-      key: "cashless_delivery",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
-    },
-    {
-      title: "prepayment",
-      dataIndex: "prepayment",
-      key: "prepayment",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
-    },
-    {
-      title: "created_by",
-      dataIndex: "created_by",
-      key: "created_by",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
-      render: (created_by) => {
-        if (created_by !== null) {
-          return (
-            <Tag color="black">
-              {created_by.last_name} {created_by.first_name}{" "}
-              {created_by.middle_name ? created_by.middle_name : ""}
-            </Tag>
-          );
-        } else {
-          return null;
-        }
-      },
+      title: "сотрудники, которые играют в первый раз",
+      dataIndex: "employees_first_time",
+      render: (_, { employees_first_time }) => (
+        <>
+          {employees_first_time.map((employee_first_time) => {
+            return (
+              <Tag color="black" key={employee_first_time.id}>
+                {employee_first_time.last_name} {employee_first_time.first_name}
+              </Tag>
+            );
+          })}
+        </>
+      ),
     },
   ];
 
@@ -501,7 +318,9 @@ const STQuests: FC = () => {
 
   const [selectedQuest, setSelectedQuest] = useState(null);
   const [isPackage, setIsPackage] = useState(false);
-  const [isWeekend, setIsWeekend] = useState(dayjs().day() === 0 || dayjs().day() === 6);
+  const [isWeekend, setIsWeekend] = useState(
+    dayjs().day() === 0 || dayjs().day() === 6
+  );
 
   const [quests, setQuests] = useState([]);
   const [notVisibleFormItems, setNotVisibleFormItems] = useState([]);
@@ -534,62 +353,12 @@ const STQuests: FC = () => {
           });
         }
       }
-
-      // switch (quest.name) {
-      //   case "ДСР":
-      //     setTitlesFormItems({
-      //       actor_or_second_actor_or_animator: "asda",
-      //     });
-      //     break;
-      //   case "У57":
-      //     setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
-      //     break;
-      //   case "Тьма":
-      //     setTitlesFormItems({
-      //       actor_or_second_actor_or_animator: "второй актер",
-      //     });
-      //     break;
-      //   case "Дом Монстров":
-      //     setTitlesFormItems({
-      //       actor_or_second_actor_or_animator: "аниматор",
-      //     });
-      //     break;
-      //   case "Они":
-      //     setTitlesFormItems({
-      //       actor_or_second_actor_or_animator: "второй актер",
-      //     });
-      //     break;
-      //   case "Квартира 404":
-      //     setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
-      //     break;
-      //   case "ОСК":
-      //     setTitlesFormItems({
-      //       actor_or_second_actor_or_animator: "аниматор",
-      //     });
-      //     break;
-      //   case "Проклятые":
-      //     setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
-      //     break;
-      //   case "Логово Ведьмы":
-      //     setTitlesFormItems({
-      //       actor_or_second_actor_or_animator: "аниматор",
-      //     });
-      //     break;
-      //   case "Обитель Зла":
-      //     setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
-      //     break;
-      //   case "Покайся во грехе":
-      //     setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
-      //     break;
-      //   default:
-      //     // setNotVisibleFormItems([]);
-      //     break;
     }
     if (name === "is_package") {
       setIsPackage(value.target.checked);
 
       if (value.target.checked) {
-        setNotVisibleFormItems(['birthday_congr', 'video']);
+        setNotVisibleFormItems(["birthday_congr", "video"]);
       } else {
         setNotVisibleFormItems([]);
       }
@@ -654,8 +423,8 @@ const STQuests: FC = () => {
   const formInitialValues = {
     date: dayjs(),
     time: dayjs().hour(9).startOf("hour"),
-    prepayment: 500
-  }
+    prepayment: 500,
+  };
 
   return (
     <TemplateTable
@@ -666,7 +435,7 @@ const STQuests: FC = () => {
       addEntryTitle={"новая запись"}
       isCancel={false}
       isCreate={false}
-      tableScroll={5000}
+      tableScroll={{ x: 6000 }}
       tableDateColumn={"date_time"}
       initialPackedTableColumns={initialPackedTableColumns}
       tableIsOperation={true}
@@ -674,7 +443,6 @@ const STQuests: FC = () => {
       deleteFunction={deleteSTQuest}
       postFunction={postSTQuest}
       putFunction={putSTQuest}
-      isUseParams={false}
       isAddEntry={true}
       drawerTitle={"создать новую запись"}
       formItems={formItems}
@@ -688,4 +456,4 @@ const STQuests: FC = () => {
   );
 };
 
-export default STQuests;
+export default STQuestsFC;

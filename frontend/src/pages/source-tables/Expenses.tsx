@@ -11,7 +11,8 @@ import {
 } from "@ant-design/icons";
 
 // components
-import TemplateTable from "../../components/template/Table11";
+// import TemplateTable from "../../components/template/Table11";
+import TemplateTable from "../../components/template/Table";
 
 // api
 import {
@@ -23,34 +24,31 @@ import {
 // constants
 import { getSTExpensesFormItems } from "../../constants";
 
-const backendUrl = "http://127.0.0.1:8000";
-
 const STExpensesFC: FC = () => {
   const initialBreadcrumbItems = [
     {
       icon: TableOutlined,
       title: "исходные таблицы",
-      to: "/source-tables",
     },
     {
-      icon: TableOutlined,
-      title: "квесты",
+      icon: FallOutlined,
+      title: "расходы",
       menu: [
         {
           key: "1",
-          icon: TableOutlined,
+          icon: QuestionOutlined,
           label: "квесты",
           to: "/source-tables/quests",
         },
         {
           key: "2",
-          icon: TableOutlined,
+          icon: FallOutlined,
           label: "расходы",
           to: "/source-tables/expenses",
         },
         {
           key: "3",
-          icon: TableOutlined,
+          icon: DeploymentUnitOutlined,
           label: "бонусы/штрафы",
           to: "/source-tables/bonuses-penalties",
         },
@@ -62,35 +60,19 @@ const STExpensesFC: FC = () => {
     {
       title: "наименование расхода",
       dataIndex: "name",
-      key: "name",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      isCountable: false,
+      sorting: true,
+      searching: "наименованию расхода",
     },
     {
       title: "сумма расхода",
       dataIndex: "amount",
-      key: "amount",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      isCountable: true,
+      sorting: true,
+      searching: "наименованию расхода",
+      countable: true,
     },
     {
       title: "квесты",
       dataIndex: "quests",
-      key: "quests",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
       render: (_, { quests }) => (
         <>
           {quests.map((quest) => {
@@ -106,19 +88,11 @@ const STExpensesFC: FC = () => {
     {
       title: "кто оплатил",
       dataIndex: "who_paid",
-      key: "who_paid",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
       render: (who_paid) => {
         if (who_paid !== null) {
           return (
             <Tag color="black">
-              {who_paid.last_name} {who_paid.first_name}{" "}
-              {who_paid.middle_name ? who_paid.middle_name : ""}
+              {who_paid.last_name} {who_paid.first_name} {who_paid.middle_name}
             </Tag>
           );
         } else {
@@ -130,12 +104,12 @@ const STExpensesFC: FC = () => {
     //   title: "приложение",
     //   dataIndex: "attachment",
     //   key: "attachment",
-    //   isSorting: false,
+    //   sorting: false,
     //   searching: {
     //     isSearching: false,
     //     title: "",
     //   },
-    //   isCountable: false,
+    //   countable: false,
     //   render: (text, record) => (
     //     <Image
     //       src={`${backendUrl}${record.image}`}
@@ -147,37 +121,31 @@ const STExpensesFC: FC = () => {
     {
       title: "кто уехали",
       dataIndex: "paid_tax",
-      key: "paid_tax",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
       render: (_, { paid_tax }) => (
         <>
-          {paid_tax && paid_tax.map((el) => {
-            return (
-              <Tag color="orange" key={el.id}>
-                {el.name}
-              </Tag>
-            );
-          })}
+          {paid_tax &&
+            paid_tax.map((el) => {
+              return (
+                <Tag color="orange" key={el.id}>
+                  {el.name}
+                </Tag>
+              );
+            })}
         </>
-      )
+      ),
     },
   ];
 
   const [notVisibleFormItems, setNotVisibleFormItems] = useState([]);
   const [defaultValuesFormItems, setDefaultValuesFormItems] = useState({});
-  const [formItems, setFormItems] = useState([])
+  const [formItems, setFormItems] = useState([]);
   const getFormItems = async () => {
-    const res = await getSTExpensesFormItems()
-    setFormItems(res)
-  }
+    const res = await getSTExpensesFormItems();
+    setFormItems(res);
+  };
   useEffect(() => {
     getFormItems();
-  }, [])
+  }, []);
 
   const formHandleOnChange = (value, name) => {
     // if (name === 'name') {
@@ -187,7 +155,6 @@ const STExpensesFC: FC = () => {
     //     setNotVisibleFormItems(['paid_tax'])
     //   }
     // }
-
     // if (name === 'paid_from') {
     //   if (value === 'own') {
     //     setNotVisibleFormItems(['paid_tax', 'who_paid'])
@@ -195,7 +162,7 @@ const STExpensesFC: FC = () => {
     //     setNotVisibleFormItems(['who_paid'])
     //   }
     // }
-  }
+  };
 
   return (
     <TemplateTable
@@ -204,16 +171,12 @@ const STExpensesFC: FC = () => {
       breadcrumbItems={initialBreadcrumbItems}
       isRangePicker={true}
       addEntryTitle={"новая запись"}
-      isCancel={false}
-      isCreate={false}
-      tableScroll={null}
       tableDateColumn={"date"}
       initialPackedTableColumns={initialPackedTableColumns}
       tableIsOperation={true}
       getFunction={getSTExpenses}
       deleteFunction={deleteSTExpense}
       postFunction={postSTExpense}
-      isUseParams={false}
       isAddEntry={true}
       drawerTitle={"создать новую запись"}
       formItems={formItems}

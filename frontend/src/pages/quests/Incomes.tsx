@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect } from "react";
 
 // react-router-dom
 import { Link, useParams } from "react-router-dom";
@@ -9,9 +9,13 @@ import { Tag, Tooltip } from "antd";
 import {
   QuestionOutlined,
   FallOutlined,
-  TableOutlined,
-  DeploymentUnitOutlined,
+  RiseOutlined,
+  VideoCameraOutlined,
+  MoneyCollectOutlined
 } from "@ant-design/icons";
+
+// components
+import TemplateTable from "../../components/template/Table";
 
 // api
 import {
@@ -25,19 +29,32 @@ import {
   getQuestIncomes,
 } from "../../api/APIUtils";
 
-// components
-import TemplateTable from "../../components/template/Table10";
-
 const QIncomesFC: FC = () => {
+  const { id } = useParams();
+
+  const [currentQuest, setCurrentQuest] = useState({})
+  const [quests, setQuests] = useState([])
+  const fetchQuests = async () => {
+    const res = await getQuests()
+    if (res.status === 200) {
+      setCurrentQuest(res.data.find(el => el.id === parseInt(id)))
+      setQuests(res.data)
+    }
+  }
+  useEffect(() => {
+    fetchQuests()
+  }, [])
+  
+
   const initialBreadcrumbItems = [
     {
-      icon: TableOutlined,
+      icon: QuestionOutlined,
       title: "квесты",
       to: "/quests",
     },
     {
       icon: FallOutlined,
-      title: "радуга",
+      title: currentQuest.name ? currentQuest.name.toLowerCase() : '',
       menu: [
         {
           key: "1",
@@ -48,20 +65,44 @@ const QIncomesFC: FC = () => {
       ],
     },
     {
-      icon: FallOutlined,
+      icon: RiseOutlined,
       title: "доходы",
       menu: [
         {
           key: "1",
-          icon: QuestionOutlined,
+          icon: RiseOutlined,
           label: "доходы",
-          to: "/quests/rainbow/incomes",
+          to: `/quests/${id}/incomes`,
         },
         {
           key: "2",
           icon: FallOutlined,
           label: "расходы",
-          to: "/quests/rainbow/expenses",
+          to: `/quests/${id}/expenses`,
+        },
+        {
+          key: "3",
+          icon: MoneyCollectOutlined,
+          label: "касса",
+          to: `/quests/${id}/cash-register`,
+        },
+        {
+          key: "4",
+          icon: FallOutlined,
+          label: "расходы с раб. карты",
+          to: `/quests/${id}/work-card-expenses`,
+        },
+        {
+          key: "5",
+          icon: FallOutlined,
+          label: "расходы со своих",
+          to: `/quests/${id}/expenses-from-own`,
+        },
+        {
+          key: "6",
+          icon: VideoCameraOutlined,
+          label: "видео",
+          to: `/quests/${id}/videos`,
         },
       ],
     },
@@ -71,13 +112,6 @@ const QIncomesFC: FC = () => {
     {
       title: "игра",
       dataIndex: "game",
-      key: "game",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
       render: (game) => {
         if (game.tooltip !== "") {
           return (
@@ -96,105 +130,50 @@ const QIncomesFC: FC = () => {
     {
       title: "комната",
       dataIndex: "room",
-      key: "room",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
+      countable: true,
     },
     {
       title: "видео",
       dataIndex: "video",
-      key: "video",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
+      countable: true,
     },
     {
       title: "фотомагниты",
       dataIndex: "photomagnets",
-      key: "photomagnets",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
+      countable: true,
     },
     {
       title: "актер",
       dataIndex: "actor",
-      key: "actor",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
+      countable: true,
     },
     {
       title: "итог",
       dataIndex: "total",
-      key: "total",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
+      countable: true,
     },
     {
-      title: "уплачено наличными",
+      title: "заплачено наличными",
       dataIndex: "paid_cash",
-      key: "paid_cash",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
+      countable: true,
     },
     {
-      title: "уплачено безналичными",
+      title: "заплачено безналичными",
       dataIndex: "paid_non_cash",
-      key: "paid_non_cash",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: true,
+      countable: true,
     },
   ];
 
   return (
     <TemplateTable
-      defaultOpenKeys={["quests", "questsРадуга"]}
-      defaultSelectedKeys={["questsРадугаIncomes"]}
+      defaultOpenKeys={["quests", `quests${id}`]}
+      defaultSelectedKeys={[`quests${id}Incomes`]}
       breadcrumbItems={initialBreadcrumbItems}
       isRangePicker={true}
-      addEntryTitle={null}
-      isCancel={false}
-      isCreate={false}
-      tableScroll={null}
       tableDateColumn={"date_time"}
       initialPackedTableColumns={initialPackedTableColumns}
-      tableIsOperation={false}
       getFunction={getQuestIncomes}
-      deleteFunction={null}
-      postFunction={null}
       isUseParams={true}
-      isAddEntry={null}
-      drawerTitle={null}
-      formItems={null}
-      notVisibleFormItems={null}
-      defaultValuesFormItems={null}
-      formHandleOnChange={null}
     />
   );
 };

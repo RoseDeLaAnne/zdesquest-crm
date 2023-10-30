@@ -659,7 +659,7 @@ const TableFC: FC = ({
         formForm={form2}
         formOnFinish={form2OnFinish}
         formHandleOnChange={form2HandleOnChange}
-    />
+      />
     </CMain>
   );
 };

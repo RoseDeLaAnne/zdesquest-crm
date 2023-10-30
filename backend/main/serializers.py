@@ -23,7 +23,6 @@ class UserSerializer(ModelSerializer):
         fields = [
             "key",
             "id",
-            "username",
             "email",
             "phone_number",
             "last_name",
@@ -35,15 +34,16 @@ class UserSerializer(ModelSerializer):
             "quest",
             "roles",
             "internship_quest",
+            "is_active",
             "is_superuser",
         ]
 
         depth = 1
 
-    def to_representation(self, instance):
-        if not isinstance(instance, AnonymousUser):
-            return super().to_representation(instance)
-        return {}
+    # def to_representation(self, instance):
+    #     if not isinstance(instance, AnonymousUser):
+    #         return super().to_representation(instance)
+    #     return {}
 
 
 class RoleSerializer(ModelSerializer):
@@ -139,13 +139,18 @@ class STBonusPenaltySerializer(ModelSerializer):
 class QSalarySerializer(ModelSerializer):
     key = serializers.CharField(max_length=255, source="id")
     date = CustomDateFormatField()
+    user = serializers.SerializerMethodField()
 
     class Meta:
         model = QSalary
         
-        fields = ['date', 'amount', 'name', 'id', 'key', 'user']
+        fields = ['date', 'amount', 'name', 'id', 'key', 'user', 'sub_category']
 
         depth = 1
+
+    def get_user(self, obj):
+        user = obj.user
+        return {"id": user.id, "username": user.username}
 
 
 # class STBonusSerializer(ModelSerializer):
