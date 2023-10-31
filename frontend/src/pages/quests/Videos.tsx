@@ -18,7 +18,7 @@ import {
 import TemplateTable from "../../components/template/Table";
 
 // api
-import { getQVideos, getQuests } from "../../api/APIUtils";
+import { getCurrentUser, getQVideos, getQuests } from "../../api/APIUtils";
 
 const QVideosFC: FC = () => {
   const { id } = useParams();
@@ -202,6 +202,18 @@ const QVideosFC: FC = () => {
     },
   ];
 
+  const [user, setUser] = useState([]);
+  const fetchUser = async () => {
+    const response = await getCurrentUser();
+    if (response.status === 200) {
+      setUser(response.data);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
   return (
     <TemplateTable
       defaultOpenKeys={["quests", `quests${id}`]}
@@ -211,7 +223,7 @@ const QVideosFC: FC = () => {
       tableDateColumn={"date_time"}
       initialPackedTableColumns={initialPackedTableColumns}
       getFunction={getQVideos}
-      isUseParams={true}
+      isUseParams={user.is_superuser ? true : false}
     />
   );
 };

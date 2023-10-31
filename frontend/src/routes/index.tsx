@@ -20,8 +20,8 @@ import ATQuestVersions from "../pages/additional-tables/QuestVersions";
 import ATEditQuestVersions from "../pages/additional-tables/EditQuestVersions";
 import ATSTExpenseCategories from "../pages/additional-tables/STExpenseCategories";
 import ATSTExpenseSubCategories from "../pages/additional-tables/STExpenseSubCategories";
-import ATEditSTExpenseCategories from "../pages/additional-tables/STExpenseCategories";
-import ATEditSTExpenseSubCategories from "../pages/additional-tables/STExpenseSubCategories";
+import ATEditSTExpenseCategories from "../pages/additional-tables/EditSTExpenseCategories";
+import ATEditSTExpenseSubCategories from "../pages/additional-tables/EditSTExpenseSubCategories";
 
 // source-tables
 import STQuests from "../pages/source-tables/Quests";
@@ -43,6 +43,8 @@ import FExpenses from "../pages/forms/Expenses";
 import QIncomes from "../pages/quests/Incomes";
 import QExpenses from "../pages/quests/Expenses";
 import QCashRegister from "../pages/quests/CashRegister";
+import QCashRegisterDeposited from "../pages/quests/CashRegisterDeposited";
+import QCashRegisterTaken from "../pages/quests/CashRegisterTaken";
 import QWorkCardExpenses from "../pages/quests/WorkCardExpenses";
 import QExpensesFromOwn from "../pages/quests/ExpensesFromOwn";
 import QVideos from "../pages/quests/Videos";
@@ -54,6 +56,10 @@ const Routes = () => {
 
   // Define public routes accessible to all users
   const routesForPublic = [
+    {
+      path: "/videos",
+      element: <QVideos />,
+    },
     {
       path: "/salaries",
       element: <Salaries />,
@@ -158,7 +164,7 @@ const Routes = () => {
         },
         {
           path: "/tables/quests",
-          element: <TQuests />,
+          element: <STQuests />,
         },
         {
           path: "/tables/expenses",
@@ -183,6 +189,14 @@ const Routes = () => {
         {
           path: "/quests/:id/cash-register",
           element: <QCashRegister />,
+        },
+        {
+          path: "/quests/:id/cash-register-deposited",
+          element: <QCashRegisterDeposited />,
+        },
+        {
+          path: "/quests/:id/cash-register-taken",
+          element: <QCashRegisterTaken />,
         },
         {
           path: "/quests/:id/work-card-expenses",

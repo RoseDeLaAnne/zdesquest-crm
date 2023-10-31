@@ -13,22 +13,22 @@ import { TableOutlined } from "@ant-design/icons";
 import TemplateEdit from "../../components/template/Edit.tsx";
 
 // api
-import { getQuest, getQuestVersion, getQuests, getSTQuest, putQuest, putQuestVersion, putSTQuest } from "../../api/APIUtils.ts";
+import { getQuest, getQuestVersion, getQuests, getQuestsWithSpecVersions, getSTQuest, putQuest, putQuestVersion, putSTQuest } from "../../api/APIUtils.ts";
 
 // constants
-import { getQuestVersionsFormItems, getQuestsFormItems, getSTQuestFormItems } from "../../constants/index.ts";
+import { getQuestVersionsFormItems, getQuestsFormItems, getSTQuestFormItems, getSTQuestsFormItems2 } from "../../constants/index.ts";
 
 const EditUsersFC: FC = () => {
   const initialBreadcrumbItems = [
     {
       icon: TableOutlined,
-      title: "дополнительные таблицы",
-      to: "/additional-tables",
+      title: "исходные таблицы",
+      to: "/source-tables",
     },
     {
       icon: TableOutlined,
       title: "квесты",
-      to: "/additional-tables/quests",
+      to: "/source-tables/quests",
     },
     {
       icon: TableOutlined,

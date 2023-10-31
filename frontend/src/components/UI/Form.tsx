@@ -133,6 +133,9 @@ const FormFC: FC = ({ items, form, onFinish, handleOnChange, initialValues }) =>
                 ) : (
                   <Input
                     defaultValue={innerItem.element.defaultValue}
+                    onChange={(event) =>
+                      handleOnChange(event.target.value, innerItem.name)
+                    }
                     placeholder={innerItem.placeholder}
                   />
                 )}

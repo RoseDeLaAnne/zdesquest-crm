@@ -255,6 +255,44 @@ export const getQuestCashRegister = async (
   }
 };
 
+export const getQuestCashRegisterDeposited = async (
+  startDate: string,
+  endDate: string,
+  id: number
+) => {
+  try {
+    let url;
+    if (startDate !== null && endDate !== null) {
+      url = `${url3}/api/quest/${id}/cash-register-deposited/?start_date=${startDate}&end_date=${endDate}`;
+    } else {
+      url = `${url3}/api/quest/${id}/cash-register-deposited/`;
+    }
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getQuestCashRegisterTaken = async (
+  startDate: string,
+  endDate: string,
+  id: number
+) => {
+  try {
+    let url;
+    if (startDate !== null && endDate !== null) {
+      url = `${url3}/api/quest/${id}/cash-register-taken/?start_date=${startDate}&end_date=${endDate}`;
+    } else {
+      url = `${url3}/api/quest/${id}/cash-register-taken/`;
+    }
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const toggleQuestCashRegister = async (id: number) => {
   try {
     const url = `${url3}/api/toggle/cash-register/${id}/`;
@@ -667,6 +705,16 @@ export const postSTExpenseCategory = async (value: object) => {
 export const postSTExpenseSubCategory = async (value: object) => {
   try {
     const url = `${url3}/api/create/stexpense-subcategory/`;
+    const response = await axios.post(url, value);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const postQCashRegister = async (value: object) => {
+  try {
+    const url = `${url3}/api/create/cash-register/`;
     const response = await axios.post(url, value);
     return response;
   } catch (error) {

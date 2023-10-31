@@ -35,57 +35,18 @@ const ATQuestVersions: FC = () => {
     {
       title: "название",
       dataIndex: "name",
-      key: "name",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
     },
     {
       title: "стоимость квеста в будние дни",
       dataIndex: "cost_weekdays",
-      key: "cost_weekdays",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      isCountable: false,
+      sorting: true,
+      searching: "",
     },
     {
       title: "стоимость квеста в выходные дни",
       dataIndex: "cost_weekends",
-      key: "cost_weekends",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      isCountable: false,
-    },
-    {
-      title: "стоимость квеста в будние дни (пакет)",
-      dataIndex: "cost_weekdays_with_package",
-      key: "cost_weekdays_with_package",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      isCountable: false,
-    },
-    {
-      title: "стоимость квеста в выходные дни (пакет)",
-      dataIndex: "cost_weekends_with_package",
-      key: "cost_weekends_with_package",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      isCountable: false,
+      sorting: true,
+      searching: "",
     },
   ];
 

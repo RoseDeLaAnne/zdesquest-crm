@@ -33,6 +33,8 @@ urlpatterns = [
     path("quest/<int:id>/incomes/", views.QuestIncomes),
     path("quest/<int:id>/expenses/", views.QuestExpenses),
     path("quest/<int:id>/cash-register/", views.VQCashRegister),
+    path("quest/<int:id>/cash-register-deposited/", views.VQCashRegisterDeposited),
+    path("quest/<int:id>/cash-register-taken/", views.VQCashRegisterTaken),
     path("quest/<int:id>/work-card-expenses/", views.QWorkCardExpenses),
     path("quest/<int:id>/expenses-from-own/", views.QExpensesFromOwn),
     path("quest/<int:id>/videos/", views.QVideos),
@@ -61,4 +63,5 @@ urlpatterns = [
     path("create/stbonus-penalty/", views.CreateSTBonusPenalty),
     path("create/stexpense-category/", views.CreateSTExpenseCategory),
     path("create/stexpense-subcategory/", views.CreateSTExpenseSubCategory),
+    path("create/cash-register/", views.CreateQCashRegister),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

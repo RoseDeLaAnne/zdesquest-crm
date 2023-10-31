@@ -18,13 +18,26 @@ const SalariesFC: FC = () => {
     },
   ];  
 
+  const [user, setUser] = useState([]);
+  const fetchUser = async () => {
+    const response = await getCurrentUser();
+    if (response.status === 200) {
+      setUser(response.data);
+    }
+  };
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
   return (
     <TemplateTable
       defaultOpenKeys={[]}
       defaultSelectedKeys={["salaries"]}
       breadcrumbItems={initialBreadcrumbItems}
       isRangePicker={true}
-      getFunction={getSalaries}
+      tableDateColumn={"date"}
+      getFunction={user.is_superuser ? getSalaries : getCurrentSalaries}
+      tableScroll={{ x: 1000 }}
     />
   );
 };

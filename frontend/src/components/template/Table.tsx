@@ -37,7 +37,7 @@ import { localStorageRemoveItem } from "../../assets/utilities/jwt";
 
 import { useAuth } from "../../provider/authProdiver";
 import dayjs from "dayjs";
-import utc from 'dayjs/plugin/utc';
+import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 import { datePickerFormat, timePickerFormat } from "../../constants";
 import { getSTQuest } from "../../api/APIUtils";
@@ -67,6 +67,9 @@ const TableFC: FC = ({
   notVisibleFormItems,
   defaultValuesFormItems,
   formHandleOnChange,
+  operationIsAdd,
+  operationIsEdit,
+  operationIsDelete,
 }) => {
   const { id } = isUseParams ? useParams() : { id: "" };
 
@@ -172,7 +175,7 @@ const TableFC: FC = ({
   let title = "";
   const breadcrumbItemsLength = breadcrumbItems.length;
   if (breadcrumbItemsLength !== 1) {
-    if (isCancel && isCreate) {      
+    if (isCancel && isCreate) {
       title = `${
         breadcrumbItems[breadcrumbItemsLength - 1].title
       } | редактирование`;
@@ -216,7 +219,7 @@ const TableFC: FC = ({
     }
   };
 
-  const form2HandleOnChange = () => {}
+  const form2HandleOnChange = () => {};
 
   const [dates, setDates] = useState([]);
   const [tableDataHead, setTableDataHead] = useState([]);
@@ -233,7 +236,7 @@ const TableFC: FC = ({
       title: "дата",
       dataIndex: tableDateColumn,
       key: tableDateColumn,
-      width: 112,
+      width: 140,
       sorter: (a, b) => {
         const dateA = new Date(a.date.split(".").reverse().join("-"));
         const dateB = new Date(b.date.split(".").reverse().join("-"));
@@ -295,8 +298,8 @@ const TableFC: FC = ({
       return newColumn;
     });
     tableCountingFields = initialPackedTableColumns
-      .filter((column) => column.isCountable)
-      .map((column) => column.key);
+      .filter((column) => column.countable)
+      .map((column) => column.dataIndex);
   } else {
     unpackedTableColumns = tableDataHead.map((column) => {
       return {
@@ -311,7 +314,9 @@ const TableFC: FC = ({
           if (obj.tooltip !== "") {
             return (
               <Tooltip
-                title={<div dangerouslySetInnerHTML={{ __html: obj.tooltip }} />}
+                title={
+                  <div dangerouslySetInnerHTML={{ __html: obj.tooltip }} />
+                }
                 placement="bottomLeft"
               >
                 <div>{obj.value}</div>
@@ -358,18 +363,20 @@ const TableFC: FC = ({
       ...unpackedTableColumns,
     ];
   }
-  const [stQuestKey, setSTQuestKey] = useState()
-  const [notVisibleFormItems2, setNotVisibleFormItems2] = useState([])
+  const [stQuestKey, setSTQuestKey] = useState();
+  const [notVisibleFormItems2, setNotVisibleFormItems2] = useState([]);
 
   let filteredUsersFormItems2 = formItems2;
 
   const handleAddData = async (key) => {
-    setSTQuestKey(key)
-    const res = await getSTQuest(key)
+    setSTQuestKey(key);
+    const res = await getSTQuest(key);
     // const data = res.data
 
     const cleanedData = Object.fromEntries(
-      Object.entries(res.data).filter(([key, val]) => val !== "" && val !== null)
+      Object.entries(res.data).filter(
+        ([key, val]) => val !== "" && val !== null
+      )
     );
     for (const key in cleanedData) {
       if (cleanedData.hasOwnProperty(key)) {
@@ -377,12 +384,20 @@ const TableFC: FC = ({
 
         if (key === "date" || key === "date_of_birth") {
           const date = dayjs(value, datePickerFormat);
-          form2.setFieldsValue({ [key]: date });              
+          form2.setFieldsValue({ [key]: date });
         } else if (key === "time") {
           const time = dayjs(value, timePickerFormat);
           form2.setFieldsValue({ [key]: time });
         } else if (
-          key === "user" || key === "administrator" || key === "animator" || key === "created_by" || key === "room_employee_name" || key === "quest" || key === "user" || key === "who_paid" || key === "sub_category"
+          key === "user" ||
+          key === "administrator" ||
+          key === "animator" ||
+          key === "created_by" ||
+          key === "room_employee_name" ||
+          key === "quest" ||
+          key === "user" ||
+          key === "who_paid" ||
+          key === "sub_category"
         ) {
           form2.setFieldsValue({ [key]: value !== null ? value.id : value });
         } else if (
@@ -391,13 +406,14 @@ const TableFC: FC = ({
           key === "special_versions" ||
           key === "versions" ||
           key === "roles" ||
-          key === "quests" || key === 'employees_first_time'
+          key === "quests" ||
+          key === "employees_first_time"
         ) {
           form2.setFieldsValue({ [key]: value.map((el) => el.id) });
         } else {
           form2.setFieldsValue({ [key]: value });
         }
-    }
+      }
     }
 
     // if (data.video > 0) {
@@ -413,11 +429,10 @@ const TableFC: FC = ({
     //   setNotVisibleFormItems2(prev => [...prev, 'room_employee_name'])
     // }
 
-
     setDrawer2IsOpen(true);
     localStorage.setItem("drawer2IsOpen", "true");
-  }
-  if (tableIsOperation === true) {
+  };
+  if (tableIsOperation) {
     tableColumns = [
       ...tableColumns,
       {
@@ -443,18 +458,24 @@ const TableFC: FC = ({
         render: (_, record: { key: React.Key }) =>
           tableDataSource.length >= 1 ? (
             <Space>
-              <Link onClick={() => handleAddData(record.key)}>добавить</Link>
-              <Link to={`edit/${record.key}`}>редактировать</Link>
-              <Popconfirm
+              {operationIsAdd ? (
+                <Link onClick={() => handleAddData(record.key)}>добавить</Link>
+              ) : null}
+              {operationIsEdit ? (
+                <Link to={`edit/${record.key}`}>редактировать</Link>
+              ) : null}
+              {operationIsDelete ? (
+                <Popconfirm
                 title="уверены, что хотите удалить?"
                 onConfirm={() => handleDelete(record.key)}
               >
                 <a>удалить</a>
               </Popconfirm>
+              ) : null}
             </Space>
           ) : null,
-        // width: 144,
-        width: 256,
+        // width: operationIsAdd && operationIsEdit ? 256 : 192,
+        width: operationIsAdd ? 104 : operationIsEdit && operationIsAdd ? 256 : 192,
         fixed: "right",
       },
     ];
@@ -497,37 +518,56 @@ const TableFC: FC = ({
   const [messageApi, contextHolder] = message.useMessage();
   const form2OnFinish = async (value) => {
     const cleanedData = Object.fromEntries(
-        Object.entries(value).filter(([key, val]) => val !== "" && val !== null)
+      Object.entries(value).filter(([key, val]) => val !== "" && val !== null)
     );
-    const res = await getSTQuest(stQuestKey)
+    const res = await getSTQuest(stQuestKey);
 
     // console.log('1', res.data)
     // console.log('2', value)
 
-    let mergeObj = Object.assign({}, res.data, value)
+    let mergeObj = Object.assign({}, res.data, value);
 
     // console.log(mergeObj.quest)
-    mergeObj.quest = mergeObj.quest.id
-    mergeObj.administrator = mergeObj.administrator.id
-    mergeObj.created_by = mergeObj.created_by.id
-    mergeObj.date = dayjs(mergeObj.date, 'DD-MM-YYYY').format('YYYY-MM-DD[T]00:00:00.000[Z]');
-    mergeObj.time = dayjs(mergeObj.time, 'HH:mm:ss')
-    .utc()
-    .format('YYYY-01-01THH:mm:ss.000[Z]');
-    mergeObj.actors = mergeObj.actors.map(actor => {
-      return actor.id
-    })
+    mergeObj.quest = mergeObj.quest.id;
+    mergeObj.administrator = mergeObj.administrator.id;
+    mergeObj.created_by = mergeObj.created_by.id;
+    mergeObj.date = dayjs(mergeObj.date, "DD-MM-YYYY").format(
+      "YYYY-MM-DD[T]00:00:00.000[Z]"
+    );
+    mergeObj.time = dayjs(mergeObj.time, "HH:mm:ss")
+      .utc()
+      .format("YYYY-01-01THH:mm:ss.000[Z]");
+    mergeObj.actors = mergeObj.actors.map((actor) => {
+      return actor.id;
+    });
 
-    cleanedData.quest = res.data.quest.id
-    cleanedData.quest_cost = res.data.quest_cost
-    cleanedData.administrator = res.data.administrator.id
-    cleanedData.video_after = (cleanedData.video ? parseInt(cleanedData.video) : 0) + parseInt(res.data.video)
-    cleanedData.photomagnets_quantity_after = (cleanedData.photomagnets_quantity ? parseInt(cleanedData.photomagnets_quantity) : 0) + parseInt(res.data.photomagnets_quantity)
-    cleanedData.room_sum_after = (cleanedData.room_sum ? parseInt(cleanedData.room_sum) : 0) + parseInt(res.data.room_sum)
-    cleanedData.cash_delivery_after = (cleanedData.cash_delivery ? parseInt(cleanedData.cash_delivery) : 0) + parseInt(res.data.cash_delivery)
-    cleanedData.cash_payment_after = (cleanedData.cash_payment ? parseInt(cleanedData.cash_payment) : 0) + parseInt(res.data.cash_payment)
-    cleanedData.cashless_delivery_after = (cleanedData.cashless_delivery ? parseInt(cleanedData.cashless_delivery) : 0) + parseInt(res.data.cashless_delivery)
-    cleanedData.cashless_payment_after = (cleanedData.cashless_payment ? parseInt(cleanedData.cashless_payment) : 0) + parseInt(res.data.cashless_payment)
+    cleanedData.quest = res.data.quest.id;
+    cleanedData.quest_cost = res.data.quest_cost;
+    cleanedData.administrator = res.data.administrator.id;
+    cleanedData.video_after =
+      (cleanedData.video ? parseInt(cleanedData.video) : 0) +
+      parseInt(res.data.video);
+    cleanedData.photomagnets_quantity_after =
+      (cleanedData.photomagnets_quantity
+        ? parseInt(cleanedData.photomagnets_quantity)
+        : 0) + parseInt(res.data.photomagnets_quantity);
+    cleanedData.room_sum_after =
+      (cleanedData.room_sum ? parseInt(cleanedData.room_sum) : 0) +
+      parseInt(res.data.room_sum);
+    cleanedData.cash_delivery_after =
+      (cleanedData.cash_delivery ? parseInt(cleanedData.cash_delivery) : 0) +
+      parseInt(res.data.cash_delivery);
+    cleanedData.cash_payment_after =
+      (cleanedData.cash_payment ? parseInt(cleanedData.cash_payment) : 0) +
+      parseInt(res.data.cash_payment);
+    cleanedData.cashless_delivery_after =
+      (cleanedData.cashless_delivery
+        ? parseInt(cleanedData.cashless_delivery)
+        : 0) + parseInt(res.data.cashless_delivery);
+    cleanedData.cashless_payment_after =
+      (cleanedData.cashless_payment
+        ? parseInt(cleanedData.cashless_payment)
+        : 0) + parseInt(res.data.cashless_payment);
 
     function setUndefinedOrNullToZero(obj) {
       for (const key in obj) {
@@ -538,29 +578,33 @@ const TableFC: FC = ({
     }
     setUndefinedOrNullToZero(cleanedData);
 
-    const res2 = await putFunction(stQuestKey, mergeObj)
-      if (res2.status === 200) {
-        messageApi.open({
-          type: "success",
-          content: "запись обновлена",
-        });
-        if (dates.length !== 0) {
-          getEntries(
-            dates[0].format("DD-MM-YYYY"),
-            dates[1].format("DD-MM-YYYY")
-          );
-        } else {
-          getEntries(null, null);
-        }
+    const res2 = await putFunction(stQuestKey, mergeObj);
+    if (res2.status === 200) {
+      messageApi.open({
+        type: "success",
+        content: "запись обновлена",
+      });
+      if (dates.length !== 0) {
+        getEntries(
+          dates[0].format("DD-MM-YYYY"),
+          dates[1].format("DD-MM-YYYY")
+        );
       } else {
-        messageApi.open({
-          type: "error",
-          content: "запись не обновлена",
-        });
+        getEntries(null, null);
       }
-  }
+    } else {
+      messageApi.open({
+        type: "error",
+        content: "запись не обновлена",
+      });
+    }
+  };
+
   const formOnFinish = async (value) => {
     try {
+      if (breadcrumbItems[breadcrumbItems.length - 1].title == "касса") {
+        value["quest"] = parseInt(id);
+      }
       const response = await postFunction(value);
       if (response.status === 201) {
         messageApi.open({
@@ -632,11 +676,12 @@ const TableFC: FC = ({
 
   useEffect(() => {
     if (breadcrumbItems[breadcrumbItems.length - 1].title === "касса") {
-      getEntries(dayjs().format("DD-MM-YYYY"), dayjs().format("DD-MM-YYYY"));
+      // getEntries(dayjs().format("DD-MM-YYYY"), dayjs().format("DD-MM-YYYY"));
+      getEntries(null, null);
     } else {
       getEntries(null, null);
     }
-  }, []);
+  }, [id]);
 
   return (
     <CMain

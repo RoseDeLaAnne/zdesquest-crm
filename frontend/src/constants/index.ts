@@ -7,6 +7,7 @@ import {
   getQuests,
   getQuestsWithSpecVersions,
   getRoles,
+  getSTExpenseCategories,
   getSTExpenseSubCategories,
   getUsers,
 } from "../api/APIUtils";
@@ -35,6 +36,17 @@ const optionsNameOfExpense = [
   {
     label: "расходники",
     value: "consumables",
+  },
+];
+
+const optionsOperation = [
+  {
+    label: "внести",
+    value: "plus",
+  },
+  {
+    label: "забрать",
+    value: "minus",
   },
 ];
 
@@ -102,6 +114,21 @@ const fetchRoles = async () => {
 const fetchSubCategories = async () => {
   try {
     const res = await getSTExpenseSubCategories();
+    if (res.status === 200) {
+      const formattedOptions = res.data.map((el) => ({
+        label: el.name.toLowerCase(),
+        value: el.id,
+      }));
+
+      return formattedOptions;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+const fetchCategories = async () => {
+  try {
+    const res = await getSTExpenseCategories();
     if (res.status === 200) {
       const formattedOptions = res.data.map((el) => ({
         label: el.name.toLowerCase(),
@@ -676,7 +703,7 @@ export const getSTQuestFormItems = async () => {
           spanSM: 24,
           spanMD: 12,
           name: "actor_or_second_actor_or_animator",
-          label: "актеры/второй актер",
+          label: "актеры/второй актер/аниматор",
           isRequired: false,
           placeholder: "пожалуйста, введите стоимость квеста",
           element: {
@@ -914,6 +941,21 @@ export const getSTExpensesFormItems = async () => {
     {
       gutter: 16,
       items: [
+        // {
+        //   spanXS: 24,
+        //   spanSM: 24,
+        //   spanMD: 12,
+        //   name: "name",
+        //   label: "наименование расхода",
+        //   isRequired: true,
+        //   placeholder: "пожалуйста, введите логин",
+        //   element: {
+        //     name: "Select",
+        //     options: optionsNameOfExpense,
+        //     multiple: null,
+        //     defaultValue: null,
+        //   },
+        // },
         {
           spanXS: 24,
           spanSM: 24,
@@ -923,8 +965,8 @@ export const getSTExpensesFormItems = async () => {
           isRequired: true,
           placeholder: "пожалуйста, введите логин",
           element: {
-            name: "Select",
-            options: optionsNameOfExpense,
+            name: "Input",
+            options: null,
             multiple: null,
             defaultValue: null,
           },
@@ -1044,7 +1086,7 @@ export const getSTExpensesFormItems = async () => {
           spanSM: 24,
           spanMD: 24,
           name: "employees",
-          label: "кто уехал",
+          label: "сотрудники",
           isRequired: false,
           placeholder: "пожалуйста, введите логин",
           element: {
@@ -1056,26 +1098,26 @@ export const getSTExpensesFormItems = async () => {
         },
       ],
     },
-    {
-      gutter: 16,
-      items: [
-        {
-          spanXS: 24,
-          spanSM: 24,
-          spanMD: 24,
-          name: "attachment",
-          label: "приложение",
-          isRequired: false,
-          placeholder: "пожалуйста, введите логин",
-          element: {
-            name: "Upload",
-            options: [],
-            multiple: null,
-            defaultValue: null,
-          },
-        },
-      ],
-    },
+    // {
+    //   gutter: 16,
+    //   items: [
+    //     {
+    //       spanXS: 24,
+    //       spanSM: 24,
+    //       spanMD: 24,
+    //       name: "attachment",
+    //       label: "приложение",
+    //       isRequired: false,
+    //       placeholder: "пожалуйста, введите логин",
+    //       element: {
+    //         name: "Upload",
+    //         options: [],
+    //         multiple: null,
+    //         defaultValue: null,
+    //       },
+    //     },
+    //   ],
+    // },
   ];
 
   return formItems;
@@ -1486,6 +1528,202 @@ export const getQuestVersionsFormItems = async () => {
           name: "cost_weekends_with_package",
           label: "стоимость квеста в выходные дни (пакет)",
           isRequired: true,
+          placeholder: "пожалуйста, введите пароль",
+          element: {
+            name: "Input",
+            options: [],
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+      ],
+    },
+  ];
+
+  return formItems;
+};
+
+// getQuestVersionsFormItems
+export const getSTExpenseSubCategoriesFormItems = async () => {
+  const optionsCategories = await fetchCategories();
+
+  const formItems = [
+    {
+      gutter: 16,
+      items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 24,
+          name: "name",
+          label: "название подкатегории",
+          isRequired: true,
+          placeholder: "пожалуйста, введите логин",
+          element: {
+            name: "Input",
+            options: [],
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+      ],
+    },
+    // {
+    //   gutter: 16,
+    //   items: [
+    //     {
+    //       spanXS: 24,
+    //       spanSM: 24,
+    //       spanMD: 24,
+    //       name: "latin_name",
+    //       label: "название подкатегории (en)",
+    //       isRequired: true,
+    //       placeholder: "пожалуйста, введите логин",
+    //       element: {
+    //         name: "Input",
+    //         options: [],
+    //         multiple: null,
+    //         defaultValue: null,
+    //       },
+    //     },
+    //   ],
+    // },
+    {
+      gutter: 16,
+      items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 24,
+          name: "category",
+          label: "категория",
+          isRequired: true,
+          placeholder: "пожалуйста, введите логин",
+          element: {
+            name: "Select",
+            options: optionsCategories,
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+      ],
+    },
+  ];
+
+  return formItems;
+};
+
+// getSTExpenseCategoriesFormItems
+export const getSTExpenseCategoriesFormItems = async () => {
+  const formItems = [
+    {
+      gutter: 16,
+      items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 24,
+          name: "name",
+          label: "название категории",
+          isRequired: true,
+          placeholder: "пожалуйста, введите логин",
+          element: {
+            name: "Input",
+            options: [],
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+      ],
+    },
+    // {
+    //   gutter: 16,
+    //   items: [
+    //     {
+    //       spanXS: 24,
+    //       spanSM: 24,
+    //       spanMD: 24,
+    //       name: "latin_name",
+    //       label: "название категории (en)",
+    //       isRequired: true,
+    //       placeholder: "пожалуйста, введите логин",
+    //       element: {
+    //         name: "Input",
+    //         options: [],
+    //         multiple: null,
+    //         defaultValue: null,
+    //       },
+    //     },
+    //   ],
+    // }
+  ];
+
+  return formItems;
+};
+
+// getCashRegisterFormItems
+export const getCashRegisterFormItems = async () => {
+  const formItems = [
+    {
+      gutter: 16,
+      items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 12,
+          name: "date",
+          label: "дата",
+          isRequired: false,
+          placeholder: "пожалуйста, введите пароль",
+          element: {
+            name: "DatePicker",
+            options: [],
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 12,
+          name: "operation",
+          label: "операция",
+          isRequired: false,
+          placeholder: "пожалуйста, введите пароль",
+          element: {
+            name: "Select",
+            options: optionsOperation,
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 12,
+          name: "amount",
+          label: "значение",
+          isRequired: false,
+          placeholder: "пожалуйста, введите пароль",
+          element: {
+            name: "InputNumber",
+            options: [],
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 12,
+          name: "description",
+          label: "описание",
+          isRequired: false,
           placeholder: "пожалуйста, введите пароль",
           element: {
             name: "Input",

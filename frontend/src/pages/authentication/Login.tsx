@@ -50,8 +50,8 @@ const App: React.FC = () => {
       autoComplete="off"
     >
       <Form.Item<FieldType>
-        label="Username"
-        name="username"
+        label="Email"
+        name="email"
         rules={[{ required: true, message: "Please input your email!" }]}
       >
         <Input />

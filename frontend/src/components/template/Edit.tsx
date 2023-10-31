@@ -59,7 +59,7 @@ const EditFC: FC = ({
               const time = dayjs(value, timePickerFormat);
               form.setFieldsValue({ [key]: time });
             } else if (
-              key === "user" || key === "administrator" || key === "animator" || key === "created_by" || key === "room_employee_name" || key === "quest" || key === "user" || key === "who_paid" || key === "sub_category"
+              key === "user" || key === "administrator" || key === "animator" || key === "created_by" || key === "room_employee_name" || key === "quest" || key === "user" || key === "who_paid" || key === "sub_category" || key  === 'category'
             ) {
               form.setFieldsValue({ [key]: value !== null ? value.id : value });
             } else if (

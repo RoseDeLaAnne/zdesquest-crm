@@ -51,7 +51,7 @@ def create_qincome(data, entry):
     else:
         formatted_time = entry.time
 
-    print(data)
+    # print(data)
 
     if "quest" in data:
         quest = Quest.objects.get(id=data["quest"])

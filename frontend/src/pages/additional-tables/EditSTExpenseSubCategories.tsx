@@ -1,91 +1,22 @@
-import React, { FC, useState, useEffect, useRef } from "react";
+import { FC, useState, useEffect, useRef } from "react";
 
 // react-router-dom
 import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
 
-// antd
-import {
-  Typography,
-  Layout,
-  Menu,
-  Breadcrumb,
-  theme,
-  Col,
-  DatePicker,
-  Drawer,
-  Form,
-  Row,
-  Select,
-  Space,
-  Tag,
-  Button,
-  Input,
-  Table,
-  Popconfirm,
-  message,
-} from "antd";
-// antd | type
-import type { MenuProps, InputRef } from "antd";
-import type { ColumnType, ColumnsType } from "antd/es/table";
-import type {
-  FilterConfirmProps,
-  FilterValue,
-  SorterResult,
-} from "antd/es/table/interface";
 // antd | icons
-import {
-  HomeOutlined,
-  UserOutlined,
-  QuestionOutlined,
-  RiseOutlined,
-  FallOutlined,
-  DollarOutlined,
-  AppstoreAddOutlined,
-  TableOutlined,
-  PlusOutlined,
-  SearchOutlined,
-  DeploymentUnitOutlined,
-} from "@ant-design/icons";
-
-// libs
-import dayjs from "dayjs";
-
-import axios from "axios";
-
-// api
-import {
-  getSTExpenseCategories,
-  getSTExpenseSubCategory,
-  putSTExpenseSubCategory,
-} from "../../api/APIUtils";
+import { TableOutlined } from "@ant-design/icons";
 
 // components
-import EditTemplate from "../components/EditTemplate";
+import TemplateEdit from "../../components/template/Edit.tsx";
 
-const { Content, Sider } = Layout;
-const { Title, Text } = Typography;
-const { Option } = Select;
+// api
+import { getQuestVersion, getSTExpenseCategory, getSTExpenseSubCategory, putQuestVersion, putSTExpenseCategory, putSTExpenseSubCategory } from "../../api/APIUtils.ts";
 
-const App: FC = () => {
-  const [optionsSTExpenseCategories, setOptionsSTExpenseCategories] = useState(
-    []
-  );
-  const fetchSTExpenseCategories = async () => {
-    try {
-      const response = await getSTExpenseCategories();
-      if (response.status === 200) {
-        const formattedOptions = response.data.map((item) => ({
-          label: item.name.toLowerCase(),
-          value: item.name,
-        }));
-        setOptionsSTExpenseCategories(formattedOptions);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+// constants
+import { getQuestVersionsFormItems, getSTExpenseCategoriesFormItems, getSTExpenseSubCategoriesFormItems } from "../../constants/index.ts";
 
-  const sourceBreadcrumbItems = [
+const EditSTExpenseCategories: FC = () => {
+  const initialBreadcrumbItems = [
     {
       icon: TableOutlined,
       title: "дополнительные таблицы",
@@ -93,7 +24,7 @@ const App: FC = () => {
     },
     {
       icon: TableOutlined,
-      title: "подкатегории расходов",
+      title: "подкатегория расходов",
       to: "/additional-tables/stexpense-subcategories",
     },
     {
@@ -102,66 +33,26 @@ const App: FC = () => {
     },
   ];
 
-  const formItems = [
-    {
-      gutter: 16,
-      items: [
-        {
-          span: 24,
-          name: "name",
-          label: "название подкатегории",
-          rules: {
-            required: true,
-            message: "пожалуйста, введите название подкатегории",
-          },
-          item: {
-            name: "Input",
-            label: "",
-            placeholder: "пожалуйста, введите название подкатегории",
-            options: [],
-            multiple: null,
-          },
-        },
-      ],
-    },
-    {
-      gutter: 16,
-      items: [
-        {
-          span: 24,
-          name: "category",
-          label: "категория",
-          rules: {
-            required: true,
-            message: "пожалуйста, выберите категорию",
-          },
-          item: {
-            name: "Select",
-            label: "",
-            placeholder: "пожалуйста, выберите категорию",
-            options: optionsSTExpenseCategories,
-            multiple: null,
-          },
-        },
-      ],
-    },
-  ];
-
+  const [formItems, setFormItems] = useState([]);
+  const getFormItems = async () => {
+    const res = await getSTExpenseSubCategoriesFormItems();
+    setFormItems(res);
+  };
   useEffect(() => {
-    fetchSTExpenseCategories();
+    getFormItems();
   }, []);
 
   return (
-    <EditTemplate
+    <TemplateEdit
       defaultOpenKeys={["additionalTables"]}
       defaultSelectedKeys={["additionalTablesSTExpenseSubCategories"]}
-      breadcrumbItems={sourceBreadcrumbItems}
-      title={"доп. таблицы | подкатегории расходов | ред."}
-      fetchFunction={getSTExpenseSubCategory}
+      breadcrumbItems={initialBreadcrumbItems}
+      getFunction={getSTExpenseSubCategory}
       putFunction={putSTExpenseSubCategory}
+      isUseParams={true}
       formItems={formItems}
     />
   );
 };
 
-export default App;
+export default EditSTExpenseCategories;

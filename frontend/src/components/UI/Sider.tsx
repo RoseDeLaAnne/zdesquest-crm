@@ -78,6 +78,18 @@ const App: FC = ({
           <MoneyCollectOutlined />
         ),
         getItem(
+          "касса/внесено",
+          `quests${quest.id}CashRegisterDeposited`,
+          `/quests/${quest.id}/cash-register-deposited`,
+          <MoneyCollectOutlined />
+        ),
+        getItem(
+          "касса/забрано",
+          `quests${quest.id}CashRegisterTaken`,
+          `/quests/${quest.id}/cash-register-taken`,
+          <MoneyCollectOutlined />
+        ),
+        getItem(
           "расходы с раб. карты",
           `quests${quest.id}WorkCardExpenses`,
           `/quests/${quest.id}/work-card-expenses`,
@@ -248,29 +260,30 @@ const App: FC = ({
     ];
   } else {
     menuItems = [
-      getItem("таблицы", "tables", null, <TableOutlined />, [
+      getItem("исходные таблицы", "sourceTables", null, <TableOutlined />, [
         getItem(
           "квесты",
-          "tablesQuests",
-          "/tables/quests",
+          "sourceTablesQuests",
+          "/source-tables/quests",
           <QuestionOutlined />
         ),
         getItem(
           "расходы",
-          "tablesExpenses",
-          "/tables/expenses",
+          "sourceTablesExpenses",
+          "/source-tables/expenses",
           <QuestionOutlined />
         ),
       ]),
-      getItem("формы", "forms", null, <TableOutlined />, [
-        getItem("квесты", "formsQuest", "/forms/quest", <QuestionOutlined />),
-        getItem(
-          "расходы",
-          "formsExpense",
-          "/forms/expense",
-          <QuestionOutlined />
-        ),
-      ]),
+      // getItem("формы", "forms", null, <TableOutlined />, [
+      //   getItem("квесты", "formsQuest", "/forms/quest", <QuestionOutlined />),
+      //   getItem(
+      //     "расходы",
+      //     "formsExpense",
+      //     "/forms/expense",
+      //     <QuestionOutlined />
+      //   ),
+      // ]),
+      // getItem("видео", "videos", "/videos", <DollarOutlined />),
       getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
     ];
   }

@@ -178,7 +178,7 @@ const QExpensesFromOwnFC: FC = () => {
       defaultSelectedKeys={[`quests${id}ExpensesFromOwn`]}
       breadcrumbItems={initialBreadcrumbItems}
       isRangePicker={true}
-      tableDateColumn={"date_time"}
+      tableDateColumn={"date"}
       initialPackedTableColumns={initialPackedTableColumns}
       getFunction={getExpensesFromOwn}
       isUseParams={true}

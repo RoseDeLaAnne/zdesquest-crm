@@ -20,7 +20,10 @@ import {
   getSTExpenseCategories,
   postSTExpenseCategory,
   deleteSTExpenseCategory,
+  deleteSTExpenseSubCategory,
+  postSTExpenseSubCategory,
 } from "../../api/APIUtils";
+import { getSTExpenseCategoriesFormItems } from "../../constants";
 
 const STExpenseCategoriesFC: FC = () => {
   const initialBreadcrumbItems = [
@@ -35,45 +38,23 @@ const STExpenseCategoriesFC: FC = () => {
     },
   ];
 
-  // const initialPackedTableColumns = [
-  //   {
-  //     title: "название категории",
-  //     dataIndex: "name",
-  //     key: "name",
-  //     sorting: {
-  //       isSorting: true,
-  //       isDate: false,
-  //     },
-  //     searching: {
-  //       isSearching: true,
-  //       title: "названию категории",
-  //     },
-  //     countable: false,
-  //   },
-  // ];
-  // const formItems = [
-  //   {
-  //     gutter: 16,
-  //     items: [
-  //       {
-  //         span: 24,
-  //         name: "name",
-  //         label: "название категории",
-  //         rules: {
-  //           required: true,
-  //           message: "пожалуйста, введите название категории",
-  //         },
-  //         item: {
-  //           name: "Input",
-  //           label: "",
-  //           placeholder: "пожалуйста, введите название категории",
-  //           options: [],
-  //           multiple: null,
-  //         },
-  //       },
-  //     ],
-  //   },
-  // ];
+  const initialPackedTableColumns = [
+    {
+      title: "название категории",
+      dataIndex: "name",
+    },
+  ];
+
+  const [formItems, setFormItems] = useState([]);
+  const getFormItems = async () => {
+    const res = await getSTExpenseCategoriesFormItems();
+    setFormItems(res);
+  };
+  useEffect(() => {
+    getFormItems();
+  }, []);
+
+  const formHandleOnChange = () => {}
 
   return (
     <TemplateTable
@@ -81,9 +62,17 @@ const STExpenseCategoriesFC: FC = () => {
       defaultSelectedKeys={["additionalTablesSTExpenseCategories"]}
       breadcrumbItems={initialBreadcrumbItems}
       isRangePicker={true}
-      tableDateColumn={"date_time"}
-      // initialPackedTableColumns={initialPackedTableColumns}
-      // getFunction={getQuestIncomes}
+      isAddEntry={true}
+      addEntryTitle={"новая запись"}
+      drawerTitle={"создать новую запись"}
+      // tableDateColumn={"date_time"}
+      initialPackedTableColumns={initialPackedTableColumns}
+      getFunction={getSTExpenseCategories}
+      deleteFunction={deleteSTExpenseCategory}
+      postFunction={postSTExpenseCategory}
+      formItems={formItems}
+      tableIsOperation={true}
+      formHandleOnChange={formHandleOnChange}
     />
   );
 };

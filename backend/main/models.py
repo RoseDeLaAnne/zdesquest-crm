@@ -53,7 +53,7 @@ class Quest(models.Model):
 
 class STExpenseCategory(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    latin_name = models.CharField(max_length=255, unique=True)
+    # latin_name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
@@ -61,7 +61,7 @@ class STExpenseCategory(models.Model):
 
 class STExpenseSubCategory(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    latin_name = models.CharField(max_length=255, unique=True)
+    # latin_name = models.CharField(max_length=255, unique=True)
 
     category = models.ForeignKey(
         STExpenseCategory, on_delete=models.CASCADE, blank=True, null=True

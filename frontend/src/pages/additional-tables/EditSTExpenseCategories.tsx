@@ -1,76 +1,22 @@
-import React, { FC, useState, useEffect, useRef } from "react";
+import { FC, useState, useEffect, useRef } from "react";
 
 // react-router-dom
 import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
 
-// antd
-import {
-  Typography,
-  Layout,
-  Menu,
-  Breadcrumb,
-  theme,
-  Col,
-  DatePicker,
-  Drawer,
-  Form,
-  Row,
-  Select,
-  Space,
-  Tag,
-  Button,
-  Input,
-  Table,
-  Popconfirm,
-  message,
-} from "antd";
-// antd | type
-import type { MenuProps, InputRef } from "antd";
-import type { ColumnType, ColumnsType } from "antd/es/table";
-import type {
-  FilterConfirmProps,
-  FilterValue,
-  SorterResult,
-} from "antd/es/table/interface";
 // antd | icons
-import {
-  HomeOutlined,
-  UserOutlined,
-  QuestionOutlined,
-  RiseOutlined,
-  FallOutlined,
-  DollarOutlined,
-  AppstoreAddOutlined,
-  TableOutlined,
-  PlusOutlined,
-  SearchOutlined,
-  DeploymentUnitOutlined,
-} from "@ant-design/icons";
-
-// libs
-import dayjs from "dayjs";
-
-import axios from "axios";
-
-// api
-import {
-  getQuests,
-  getExpenseSubCategories,
-  getSTExpense,
-  putSTExpense,
-  getSTExpenseCategory,
-  putSTExpenseCategory,
-} from "../../api/APIUtils";
+import { TableOutlined } from "@ant-design/icons";
 
 // components
-import EditTemplate from "../components/EditTemplate";
+import TemplateEdit from "../../components/template/Edit.tsx";
 
-const { Content, Sider } = Layout;
-const { Title, Text } = Typography;
-const { Option } = Select;
+// api
+import { getQuestVersion, getSTExpenseCategory, putQuestVersion, putSTExpenseCategory } from "../../api/APIUtils.ts";
 
-const App: FC = () => {
-  const sourceBreadcrumbItems = [
+// constants
+import { getQuestVersionsFormItems, getSTExpenseCategoriesFormItems } from "../../constants/index.ts";
+
+const EditSTExpenseCategories: FC = () => {
+  const initialBreadcrumbItems = [
     {
       icon: TableOutlined,
       title: "дополнительные таблицы",
@@ -78,7 +24,7 @@ const App: FC = () => {
     },
     {
       icon: TableOutlined,
-      title: "категории расходов",
+      title: "категория расходов",
       to: "/additional-tables/stexpense-categories",
     },
     {
@@ -87,43 +33,26 @@ const App: FC = () => {
     },
   ];
 
-  const formItems = [
-    {
-      gutter: 16,
-      items: [
-        {
-          span: 24,
-          name: "name",
-          label: "название категории",
-          rules: {
-            required: true,
-            message: "пожалуйста, введите название категории",
-          },
-          item: {
-            name: "Input",
-            label: "",
-            placeholder: "пожалуйста, введите название категории",
-            options: [],
-            multiple: null,
-          },
-        },
-      ],
-    },
-  ];
-
-  useEffect(() => {}, []);
+  const [formItems, setFormItems] = useState([]);
+  const getFormItems = async () => {
+    const res = await getSTExpenseCategoriesFormItems();
+    setFormItems(res);
+  };
+  useEffect(() => {
+    getFormItems();
+  }, []);
 
   return (
-    <EditTemplate
+    <TemplateEdit
       defaultOpenKeys={["additionalTables"]}
       defaultSelectedKeys={["additionalTablesSTExpenseCategories"]}
-      breadcrumbItems={sourceBreadcrumbItems}
-      title={"доп. таблицы | категории расходов | ред."}
-      fetchFunction={getSTExpenseCategory}
+      breadcrumbItems={initialBreadcrumbItems}
+      getFunction={getSTExpenseCategory}
       putFunction={putSTExpenseCategory}
+      isUseParams={true}
       formItems={formItems}
     />
   );
 };
 
-export default App;
+export default EditSTExpenseCategories;

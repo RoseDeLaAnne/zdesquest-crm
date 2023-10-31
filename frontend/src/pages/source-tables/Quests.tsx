@@ -19,6 +19,7 @@ import TemplateTable from "../../components/template/Table";
 // api
 import {
   deleteSTQuest,
+  getCurrentUser,
   getQuests,
   getQuestsWithSpecVersions,
   getSTQuests,
@@ -312,8 +313,17 @@ const STQuestsFC: FC = () => {
     }
   };
 
+  const [user, setUser] = useState([]);
+  const fetchUser = async () => {
+    const response = await getCurrentUser();
+    if (response.status === 200) {
+      setUser(response.data);
+    }
+  };
+
   useEffect(() => {
     fetchQuests();
+    fetchUser();
   }, []);
 
   const [selectedQuest, setSelectedQuest] = useState(null);
@@ -452,6 +462,9 @@ const STQuestsFC: FC = () => {
       defaultValuesFormItems={defaultValuesFormItems}
       formHandleOnChange={formHandleOnChange}
       formInitialValues={formInitialValues}
+      operationIsAdd={true}
+      operationIsEdit={user.is_superuser ? true : false}
+      operationIsDelete={user.is_superuser ? true : false}
     />
   );
 };

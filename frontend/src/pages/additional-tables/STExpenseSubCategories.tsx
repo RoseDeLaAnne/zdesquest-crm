@@ -20,35 +20,10 @@ import {
   postSTExpenseSubCategory,
   deleteSTExpenseSubCategory,
 } from "../../api/APIUtils";
+import { getSTExpenseSubCategoriesFormItems } from "../../constants";
 
 
 const STExpenseSubCategories: FC = () => {
-  const [optionsSTExpenseCategories, setOptionsSTExpenseCategories] = useState(
-    []
-  );
-  const [filtersSTExpenseCategories, setFiltersSTExpenseCategories] = useState(
-    []
-  );
-  const fetchSTExpenseCategories = async () => {
-    try {
-      const response = await getSTExpenseCategories();
-      if (response.status === 200) {
-        const formattedOptions = response.data.map((item) => ({
-          label: item.name.toLowerCase(),
-          value: item.name,
-        }));
-        const formattedFilters = response.data.map((item) => ({
-          text: item.name.toLowerCase(),
-          value: item.name,
-        }));
-        setOptionsSTExpenseCategories(formattedOptions);
-        setFiltersSTExpenseCategories(formattedFilters);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const initialBreadcrumbItems = [
     {
       icon: TableOutlined,
@@ -61,89 +36,32 @@ const STExpenseSubCategories: FC = () => {
     },
   ];
 
-  // const initialPackedTableColumns = [
-  //   {
-  //     title: "название подкатегории",
-  //     dataIndex: "name",
-  //     key: "name",
-  //     sorting: {
-  //       isSorting: true,
-  //       isDate: false,
-  //     },
-  //     searching: {
-  //       isSearching: true,
-  //       title: "названию подкатегории",
-  //     },
-  //     countable: false,
-  //   },
-  //   {
-  //     title: "категория",
-  //     dataIndex: "category",
-  //     key: "category",
-  //     filters: filtersSTExpenseCategories,
-  //     onFilter: (value: string, record) =>
-  //       record.category.name.startsWith(value),
-  //     filterSearch: true,
-  //     sorting: {
-  //       isSorting: false,
-  //       isDate: false,
-  //     },
-  //     searching: {
-  //       isSearching: false,
-  //       title: "",
-  //     },
-  //     countable: false,
-  //     render: (category) => <Tag color="black">{category.name}</Tag>,
-  //   },
-  // ];
-  // const formItems = [
-  //   {
-  //     gutter: 16,
-  //     items: [
-  //       {
-  //         span: 24,
-  //         name: "name",
-  //         label: "название подкатегории",
-  //         rules: {
-  //           required: true,
-  //           message: "пожалуйста, введите название подкатегории",
-  //         },
-  //         item: {
-  //           name: "Input",
-  //           label: "",
-  //           placeholder: "пожалуйста, введите название подкатегории",
-  //           options: [],
-  //           multiple: null,
-  //         },
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     gutter: 16,
-  //     items: [
-  //       {
-  //         span: 24,
-  //         name: "category",
-  //         label: "категория",
-  //         rules: {
-  //           required: true,
-  //           message: "пожалуйста, выберите категорию",
-  //         },
-  //         item: {
-  //           name: "Select",
-  //           label: "",
-  //           placeholder: "пожалуйста, выберите категорию",
-  //           options: optionsSTExpenseCategories,
-  //           multiple: null,
-  //         },
-  //       },
-  //     ],
-  //   },
-  // ];
+  const initialPackedTableColumns = [
+    {
+      title: "название подкатегории",
+      dataIndex: "name",
+    },
+    // {
+    //   title: "название подкатегории (en)",
+    //   dataIndex: "latin_name",
+    // },
+    {
+      title: "категория",
+      dataIndex: "category",
+      render: (category) => <Tag color="black">{category.name}</Tag>,
+    },
+  ];
 
-  // useEffect(() => {
-  //   fetchSTExpenseCategories();
-  // }, []);
+  const [formItems, setFormItems] = useState([]);
+  const getFormItems = async () => {
+    const res = await getSTExpenseSubCategoriesFormItems();
+    setFormItems(res);
+  };
+  useEffect(() => {
+    getFormItems();
+  }, []);
+
+  const formHandleOnChange = () => {}
 
   return (
     <TemplateTable
@@ -151,9 +69,16 @@ const STExpenseSubCategories: FC = () => {
       defaultSelectedKeys={["additionalTablesSTExpenseSubCategories"]}
       breadcrumbItems={initialBreadcrumbItems}
       isRangePicker={true}
-      tableDateColumn={"date_time"}
-      // initialPackedTableColumns={initialPackedTableColumns}
-      // getFunction={getQuestIncomes}
+      isAddEntry={true}
+      addEntryTitle={"новая запись"}
+      drawerTitle={"создать новую запись"}
+      initialPackedTableColumns={initialPackedTableColumns}
+      getFunction={getSTExpenseSubCategories}
+      deleteFunction={deleteSTExpenseSubCategory}
+      postFunction={postSTExpenseSubCategory}
+      formItems={formItems}
+      tableIsOperation={true}
+      formHandleOnChange={formHandleOnChange}
     />
   );
 };

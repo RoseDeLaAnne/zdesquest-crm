@@ -40,112 +40,61 @@ const ATQuests: FC = () => {
     {
       title: "название",
       dataIndex: "name",
-      key: "name",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      isCountable: false,
+      sorting: true,
+      searching: "",
     },
     {
       title: "адрес",
       dataIndex: "address",
-      key: "address",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      isCountable: false,
+      sorting: true,
+      searching: "",
     },
     {
       title: "стоимость квеста в будние дни",
       dataIndex: "cost_weekdays",
-      key: "cost_weekdays",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      isCountable: false,
+      sorting: true,
+      searching: "",
     },
     {
       title: "стоимость квеста в выходные дни",
       dataIndex: "cost_weekends",
-      key: "cost_weekends",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      isCountable: false,
+      sorting: true,
+      searching: "",
     },
     {
       title: "стоимость квеста в будние дни (пакет)",
       dataIndex: "cost_weekdays_with_package",
-      key: "cost_weekdays_with_package",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      isCountable: false,
+      sorting: true,
+      searching: "",
     },
     {
       title: "стоимость квеста в выходные дни (пакет)",
       dataIndex: "cost_weekends_with_package",
-      key: "cost_weekends_with_package",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      isCountable: false,
+      sorting: true,
+      searching: "",
     },
     {
       title: "ставка администратора",
       dataIndex: "administrator_rate",
-      key: "administrator_rate",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      isCountable: false,
+      sorting: true,
+      searching: "",
     },
     {
       title: "ставка актера",
       dataIndex: "actor_rate",
-      key: "actor_rate",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      isCountable: false,
+      sorting: true,
+      searching: "",
     },
     {
       title: "ставка аниматора",
       dataIndex: "animator_rate",
-      key: "animator_rate",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      isCountable: false,
+      sorting: true,
+      searching: "",
     },
     {
       title: "специальные версии",
       dataIndex: "special_versions",
-      key: "special_versions",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
+
       render: (_, { special_versions }) => (
         <>
           {special_versions.map((special_version) => {
@@ -161,13 +110,7 @@ const ATQuests: FC = () => {
     {
       title: "версии",
       dataIndex: "versions",
-      key: "versions",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
+
       render: (_, { versions }) => (
         <>
           {versions.map((version) => {
@@ -183,13 +126,8 @@ const ATQuests: FC = () => {
     {
       title: "продолжительность квеста в минутах",
       dataIndex: "duration_in_minute",
-      key: "duration_in_minute",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "",
-      },
-      isCountable: false,
+      sorting: true,
+      searching: "",
     },
   ];
 

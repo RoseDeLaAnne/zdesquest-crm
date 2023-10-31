@@ -1027,7 +1027,7 @@ def QuestExpenses(request, id):
         sub_categories = []
         all_sub_categories = STExpenseSubCategory.objects.all()
         for all_sub_category in all_sub_categories:
-            sub_categories.append(all_sub_category.latin_name)
+            sub_categories.append(all_sub_category.id)
 
         quest = Quest.objects.get(id=id)
         salaries = QSalary.objects.filter(stquest__quest=quest)
@@ -1052,6 +1052,38 @@ def QuestExpenses(request, id):
             "head": [{"title": "Зарплаты", "dataIndex": "salary", "key": "salary"}],
             "body": [],
         }
+        category_subcategories = defaultdict(list)
+
+        sub_categories2 = STExpenseSubCategory.objects.all()
+        # Iterate through sub-categories to create category structure
+        for sub_category in sub_categories2:
+            category_id = sub_category.category.id
+            category_name = sub_category.category.name
+            sub_category_name = sub_category.name
+            sub_category_data_index = str(sub_category.id)
+            sub_category_key = str(sub_category.id)
+
+            # Update the category's sub-categories list
+            category_subcategories[category_name].append(
+                {
+                    "title": sub_category_name,
+                    "dataIndex": sub_category_data_index,
+                    "key": sub_category_key,
+                }
+            )
+        for category_name, sub_category_list in category_subcategories.items():
+            category_data = {
+                "title": category_name,
+            }
+
+            if len(sub_category_list) == 1:
+                # If there's only one sub-category, simplify the structure
+                sub_category = sub_category_list[0]
+                category_data.update(sub_category)
+            else:
+                category_data["children"] = sub_category_list
+
+            # result["head"].append(category_data)
         user_data = defaultdict(list)
         total_salary = sum(item["amount"] for item in data)
 
@@ -1130,7 +1162,7 @@ def QuestExpenses99(request, id):
         user_data_map = {user.id: UserSerializer(user).data for user in users}
 
         head_data = [
-            {"title": user.first_name, "dataIndex": user.username, "key": user.username}
+            {"title": user.first_name, "dataIndex": str(user.id), "key": str(user.id)}
             for user in users
         ]
 
@@ -1143,7 +1175,7 @@ def QuestExpenses99(request, id):
                 merged_data[date_str] = {"id": salary.id, "date": date_str}
 
             for user in users:
-                username = user.username
+                username = user.id
                 if username not in merged_data[date_str]:
                     merged_data[date_str][username] = {
                         "value": 0,
@@ -1151,15 +1183,15 @@ def QuestExpenses99(request, id):
                     }
 
             if salary.user:
-                if salary.user.username not in merged_data[date_str]:
-                    merged_data[date_str][salary.user.username] = {
+                if salary.user.id not in merged_data[date_str]:
+                    merged_data[date_str][salary.user.id] = {
                         "value": salary.amount,
                         "tooltip": {
                             item_name: {"count": 1, "total_amount": salary.amount}
                         },
                     }
                 else:
-                    child = merged_data[date_str][salary.user.username]
+                    child = merged_data[date_str][salary.user.id]
                     child["value"] += salary.amount
                     if item_name in child["tooltip"]:
                         child["tooltip"][item_name]["count"] += 1
@@ -1178,7 +1210,7 @@ def QuestExpenses99(request, id):
                 merged_data[date_str] = {"id": bp.id, "date": date_str}
 
             for user in users:
-                username = user.username
+                username = user.id
                 if username not in merged_data[date_str]:
                     merged_data[date_str][username] = {
                         "value": 0,
@@ -1187,32 +1219,32 @@ def QuestExpenses99(request, id):
 
             if bp.user:
                 if bp.type == "bonus":
-                    merged_data[date_str][bp.user.username]["value"] += bp.amount
-                    if item_name in merged_data[date_str][bp.user.username]["tooltip"]:
-                        merged_data[date_str][bp.user.username]["tooltip"][item_name][
+                    merged_data[date_str][bp.user.id]["value"] += bp.amount
+                    if item_name in merged_data[date_str][bp.user.id]["tooltip"]:
+                        merged_data[date_str][bp.user.id]["tooltip"][item_name][
                             "count"
                         ] += 1
-                        merged_data[date_str][bp.user.username]["tooltip"][item_name][
+                        merged_data[date_str][bp.user.id]["tooltip"][item_name][
                             "total_amount"
                         ] += bp.amount
                     else:
-                        merged_data[date_str][bp.user.username]["tooltip"][
+                        merged_data[date_str][bp.user.id]["tooltip"][
                             item_name
                         ] = {
                             "count": 1,
                             "total_amount": bp.amount,
                         }
                 elif bp.type == "penalty":
-                    merged_data[date_str][bp.user.username]["value"] -= bp.amount
-                    if item_name in merged_data[date_str][bp.user.username]["tooltip"]:
-                        merged_data[date_str][bp.user.username]["tooltip"][item_name][
+                    merged_data[date_str][bp.user.id]["value"] -= bp.amount
+                    if item_name in merged_data[date_str][bp.user.id]["tooltip"]:
+                        merged_data[date_str][bp.user.id]["tooltip"][item_name][
                             "count"
                         ] += 1
-                        merged_data[date_str][bp.user.username]["tooltip"][item_name][
+                        merged_data[date_str][bp.user.id]["tooltip"][item_name][
                             "total_amount"
                         ] -= bp.amount
                     else:
-                        merged_data[date_str][bp.user.username]["tooltip"][
+                        merged_data[date_str][bp.user.id]["tooltip"][
                             item_name
                         ] = {
                             "count": 1,
@@ -1918,6 +1950,68 @@ def VQCashRegister(request, id):
         serializer = QCashRegisterSerializer(cash_register, many=True)
 
         return Response(serializer.data)
+@api_view(["GET"])
+def VQCashRegisterDeposited(request, id):
+    if request.method == "GET":
+        start_date_param = request.query_params.get("start_date")
+        end_date_param = request.query_params.get("end_date")
+
+        try:
+            start_date = (
+                datetime.strptime(start_date_param, "%d-%m-%Y").date()
+                if start_date_param
+                else None
+            )
+            end_date = (
+                datetime.strptime(end_date_param, "%d-%m-%Y").date()
+                if end_date_param
+                else None
+            )
+        except ValueError:
+            return JsonResponse(
+                {"error": "Invalid date format. Please use DD-MM-YYYY."}, status=400
+            )
+
+        quest = Quest.objects.get(id=id)
+        cash_register = QCashRegister.objects.filter(Q(quest=quest) & Q(operation='plus')).order_by("date")
+
+        if start_date and end_date:
+            cash_register = cash_register.filter(date__range=(start_date, end_date))
+
+        serializer = QCashRegisterSerializer(cash_register, many=True)
+
+        return Response(serializer.data)
+@api_view(["GET"])
+def VQCashRegisterTaken(request, id):
+    if request.method == "GET":
+        start_date_param = request.query_params.get("start_date")
+        end_date_param = request.query_params.get("end_date")
+
+        try:
+            start_date = (
+                datetime.strptime(start_date_param, "%d-%m-%Y").date()
+                if start_date_param
+                else None
+            )
+            end_date = (
+                datetime.strptime(end_date_param, "%d-%m-%Y").date()
+                if end_date_param
+                else None
+            )
+        except ValueError:
+            return JsonResponse(
+                {"error": "Invalid date format. Please use DD-MM-YYYY."}, status=400
+            )
+
+        quest = Quest.objects.get(id=id)
+        cash_register = QCashRegister.objects.filter(Q(quest=quest) & Q(operation='minus')).order_by("date")
+
+        if start_date and end_date:
+            cash_register = cash_register.filter(date__range=(start_date, end_date))
+
+        serializer = QCashRegisterSerializer(cash_register, many=True)
+
+        return Response(serializer.data)
 
 
 @api_view(["GET"])
@@ -1974,9 +2068,14 @@ def Salaries(request):
         ]
 
         merged_data = {}
+        user_taxi = {}
+
+        for user in users:
+            user_taxi[user.id] = False
+        
         for salary in salaries:
             date_str = salary.date.strftime("%d.%m.%Y")
-            item_name = salary.name
+            item_name = salary.name            
 
             if date_str not in merged_data:
                 merged_data[date_str] = {"id": salary.id, "date": date_str}
@@ -1989,6 +2088,11 @@ def Salaries(request):
                         "tooltip": {},
                     }
 
+            a1 = STExpense.objects.filter(Q(name="Такси") & Q(employees=salary.user))
+
+            if (len(a1) != 0):
+                user_taxi[salary.user.id] = True
+
             if salary.user:
                 if salary.user.id not in merged_data[date_str]:
                     merged_data[date_str][salary.user.id] = {
@@ -2000,14 +2104,192 @@ def Salaries(request):
                 else:
                     child = merged_data[date_str][salary.user.id]
                     child["value"] += salary.amount
-                    if item_name in child["tooltip"]:
-                        child["tooltip"][item_name]["count"] += 1
-                        child["tooltip"][item_name]["total_amount"] += salary.amount
+                    if item_name == 'Проезд' and user_taxi[salary.user.id] == True:  # Adjust the counting for 'Проезд'
+                        child["value"] -= 12.5
+                        if item_name in child["tooltip"] and child["tooltip"][item_name]["count"] >= 2:
+                            child["tooltip"][item_name]["count"] += 1
+                            child["tooltip"][item_name]["total_amount"] += salary.amount
+                        else:
+                            child["tooltip"][item_name] = {
+                                "count": 1,
+                                "total_amount": salary.amount,
+                            }
                     else:
-                        child["tooltip"][item_name] = {
+                        if item_name in child["tooltip"]:
+                            child["tooltip"][item_name]["count"] += 1
+                            child["tooltip"][item_name]["total_amount"] += salary.amount
+                        else:
+                            child["tooltip"][item_name] = {
+                                "count": 1,
+                                "total_amount": salary.amount,
+                            }
+
+        for bp in bonuses_penalties:
+            date_str = bp.date.strftime("%d.%m.%Y")
+            item_name = bp.name
+
+            if date_str not in merged_data:
+                merged_data[date_str] = {"id": bp.id, "date": date_str}
+
+            for user in users:
+                id = user.id
+                if id not in merged_data[date_str]:
+                    merged_data[date_str][id] = {
+                        "value": 0,
+                        "tooltip": {},
+                    }
+
+            if bp.user:
+                if bp.type == "bonus":
+                    merged_data[date_str][bp.user.id]["value"] += bp.amount
+                    if item_name in merged_data[date_str][bp.user.id]["tooltip"]:
+                        merged_data[date_str][bp.user.id]["tooltip"][item_name][
+                            "count"
+                        ] += 1
+                        merged_data[date_str][bp.user.id]["tooltip"][item_name][
+                            "total_amount"
+                        ] += bp.amount
+                    else:
+                        merged_data[date_str][bp.user.id]["tooltip"][item_name] = {
                             "count": 1,
-                            "total_amount": salary.amount,
+                            "total_amount": bp.amount,
                         }
+                elif bp.type == "penalty":
+                    merged_data[date_str][bp.user.id]["value"] -= bp.amount
+                    if item_name in merged_data[date_str][bp.user.id]["tooltip"]:
+                        merged_data[date_str][bp.user.id]["tooltip"][item_name][
+                            "count"
+                        ] += 1
+                        merged_data[date_str][bp.user.id]["tooltip"][item_name][
+                            "total_amount"
+                        ] -= bp.amount
+                    else:
+                        merged_data[date_str][bp.user.id]["tooltip"][item_name] = {
+                            "count": 1,
+                            "total_amount": -bp.amount,
+                        }
+
+        body_data = []
+        print(merged_data)
+        for date_str, date_data in merged_data.items():
+            user_data = {
+                "id": date_data["id"],
+                "key": str(date_data["id"]),
+                "date": date_data["date"],
+            }
+
+            for id, data in date_data.items():
+                if id not in ("id", "date"):
+                    user_data[id] = {
+                        "value": data["value"],
+                        "tooltip": "<br />".join(
+                            [
+                                f"{item_data['total_amount']}р. - {item_data['count']} {item_name}"
+                                for item_name, item_data in data["tooltip"].items()
+                            ]
+                        ),
+                    }
+
+            body_data.append(user_data)
+
+        transformed_data = {"head": head_data, "body": body_data}
+        return Response(transformed_data)
+
+
+@api_view(["GET"])
+def SalariesCurrent(request):
+    if request.method == "GET":
+        start_date_param = request.query_params.get("start_date")
+        end_date_param = request.query_params.get("end_date")
+
+        try:
+            start_date = (
+                datetime.strptime(start_date_param, "%d-%m-%Y").date()
+                if start_date_param
+                else None
+            )
+            end_date = (
+                datetime.strptime(end_date_param, "%d-%m-%Y").date()
+                if end_date_param
+                else None
+            )
+        except ValueError:
+            return JsonResponse(
+                {"error": "Invalid date format. Please use DD-MM-YYYY."}, status=400
+            )
+
+        salaries = QSalary.objects.filter(user=request.user).select_related("user").order_by("date")
+        bonuses_penalties = STBonusPenalty.objects.select_related("user").order_by(
+            "date"
+        )
+
+        if start_date and end_date:
+            salaries = salaries.filter(date__range=(start_date, end_date))
+
+        users = [request.user]
+        user_data_map = {user.id: UserSerializer(user).data for user in users}
+
+        head_data = [
+            {"title": user.first_name, "dataIndex": str(user.id), "key": str(user.id)}
+            for user in users
+        ]
+
+        merged_data = {}
+        user_taxi = {}
+
+        for user in users:
+            user_taxi[user.id] = False
+        
+        for salary in salaries:
+            date_str = salary.date.strftime("%d.%m.%Y")
+            item_name = salary.name            
+
+            if date_str not in merged_data:
+                merged_data[date_str] = {"id": salary.id, "date": date_str}
+
+            for user in users:
+                id = user.id
+                if id not in merged_data[date_str]:
+                    merged_data[date_str][id] = {
+                        "value": 0,
+                        "tooltip": {},
+                    }
+
+            a1 = STExpense.objects.filter(Q(name="Такси") & Q(employees=salary.user))
+
+            if (len(a1) != 0):
+                user_taxi[salary.user.id] = True
+
+            if salary.user:
+                if salary.user.id not in merged_data[date_str]:
+                    merged_data[date_str][salary.user.id] = {
+                        "value": salary.amount,
+                        "tooltip": {
+                            item_name: {"count": 1, "total_amount": salary.amount}
+                        },
+                    }
+                else:
+                    child = merged_data[date_str][salary.user.id]
+                    child["value"] += salary.amount
+                    if item_name == 'Проезд' and user_taxi[salary.user.id] == True:  # Adjust the counting for 'Проезд'
+                        child["value"] -= 12.5
+                        if item_name in child["tooltip"] and child["tooltip"][item_name]["count"] >= 2:
+                            child["tooltip"][item_name]["count"] += 1
+                            child["tooltip"][item_name]["total_amount"] += salary.amount
+                        else:
+                            child["tooltip"][item_name] = {
+                                "count": 1,
+                                "total_amount": salary.amount,
+                            }
+                    else:
+                        if item_name in child["tooltip"]:
+                            child["tooltip"][item_name]["count"] += 1
+                            child["tooltip"][item_name]["total_amount"] += salary.amount
+                        else:
+                            child["tooltip"][item_name] = {
+                                "count": 1,
+                                "total_amount": salary.amount,
+                            }
 
         for bp in bonuses_penalties:
             date_str = bp.date.strftime("%d.%m.%Y")
@@ -2066,100 +2348,6 @@ def Salaries(request):
                 if id not in ("id", "date"):
                     user_data[id] = {
                         "value": data["value"],
-                        "tooltip": "<br />".join(
-                            [
-                                f"{item_data['total_amount']}р. - {item_data['count']} {item_name}"
-                                for item_name, item_data in data["tooltip"].items()
-                            ]
-                        ),
-                    }
-
-            body_data.append(user_data)
-
-        transformed_data = {"head": head_data, "body": body_data}
-        return Response(transformed_data)
-
-
-@api_view(["GET"])
-def SalariesCurrent(request):
-    if request.method == "GET":
-        start_date_param = request.query_params.get("start_date")
-        end_date_param = request.query_params.get("end_date")
-
-        try:
-            start_date = (
-                datetime.strptime(start_date_param, "%d-%m-%Y").date()
-                if start_date_param
-                else None
-            )
-            end_date = (
-                datetime.strptime(end_date_param, "%d-%m-%Y").date()
-                if end_date_param
-                else None
-            )
-        except ValueError:
-            return JsonResponse(
-                {"error": "Invalid date format. Please use DD-MM-YYYY."}, status=400
-            )
-
-        salaries = QSalary.objects.select_related("user").order_by("date")
-
-        if start_date and end_date:
-            salaries = salaries.filter(date__range=(start_date, end_date))
-
-        users = User.objects.filter(id=request.user.id)
-        user_data_map = {user.id: UserSerializer(user).data for user in users}
-
-        head_data = [
-            {"title": user.first_name, "dataIndex": user.username, "key": user.username}
-            for user in users
-        ]
-
-        merged_data = {}
-        for salary in salaries:
-            date_str = salary.date.strftime("%d.%m.%Y")
-            item_name = salary.name
-
-            if date_str not in merged_data:
-                merged_data[date_str] = {"id": salary.id, "date": date_str}
-
-            for user in users:
-                username = user.username
-                if username not in merged_data[date_str]:
-                    merged_data[date_str][username] = {
-                        "sum": 0,
-                        "tooltip": {},
-                    }
-
-            if salary.user.username not in merged_data[date_str]:
-                merged_data[date_str][salary.user.username] = {
-                    "sum": salary.amount,
-                    "tooltip": {item_name: {"count": 1, "total_amount": salary.amount}},
-                }
-            else:
-                child = merged_data[date_str][salary.user.username]
-                child["sum"] += salary.amount
-                if item_name in child["tooltip"]:
-                    child["tooltip"][item_name]["count"] += 1
-                    child["tooltip"][item_name]["total_amount"] += salary.amount
-                else:
-                    child["tooltip"][item_name] = {
-                        "count": 1,
-                        "total_amount": salary.amount,
-                    }
-
-        body_data = []
-        for date_str, date_data in merged_data.items():
-            user_data = {
-                "id": date_data["id"],
-                "key": str(date_data["id"]),
-                "date": date_data["date"],
-            }
-
-            for username, data in date_data.items():
-                if username not in ("id", "date"):
-                    user_data[username] = {
-                        "sum": data["sum"],
                         "tooltip": "<br />".join(
                             [
                                 f"{item_data['total_amount']}р. - {item_data['count']} {item_name}"
@@ -2374,7 +2562,6 @@ def QExpensesFromOwn(request, id):
                     "status": entry.status,
                     "quest": {
                         "id": entry.quest.id,
-                        "latin_name": entry.quest.latin_name,
                         "name": entry.quest.name,
                     },
                 }
@@ -2651,6 +2838,12 @@ def VSTQuest(request, id):
             "prepayment",
             "room_quantity",
             "video_after",
+            "photomagnets_quantity_after",
+            "room_sum_after",
+            "cash_delivery_after",
+            "cash_payment_after",
+            "cashless_delivery_after",
+            "cashless_payment_after",
         ]
 
         new_data01 = {}
@@ -3211,11 +3404,9 @@ def VSTExpenseSubCategory(request, id):
         try:
             data = json.loads(request.body)
 
-            category = STExpenseCategory.objects.get(name=data["category"])
-
             entry = STExpenseSubCategory.objects.get(id=id)
             entry.name = data["name"]
-            entry.category = category
+            entry.category = STExpenseCategory.objects.get(id=data["category"])
             entry.save()
 
             return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
@@ -4029,20 +4220,21 @@ def CreateSTBonusPenalty(request):
 @api_view(["POST"])
 def CreateSTExpenseCategory(request):
     if request.method == "POST":
-        try:
-            data = json.loads(request.body)
+        # try:
+        data = json.loads(request.body)
+        print(data)
 
-            entry_data = {
-                "name": data["name"],
-            }
+        entry_data = {
+            "name": data["name"],
+        }
 
-            entry = STExpenseCategory(**entry_data)
-            entry.save()
+        entry = STExpenseCategory(**entry_data)
+        entry.save()
 
-            return JsonResponse({"message": "Запись успешно создана"}, status=201)
+        return JsonResponse({"message": "Запись успешно создана"}, status=201)
 
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=400)
+        # except Exception as e:
+            # return JsonResponse({"error": str(e)}, status=400)
 
     else:
         return JsonResponse({"error": "Разрешены только POST-запросы"}, status=405)
@@ -4051,23 +4243,50 @@ def CreateSTExpenseCategory(request):
 @api_view(["POST"])
 def CreateSTExpenseSubCategory(request):
     if request.method == "POST":
-        try:
-            data = json.loads(request.body)
+        # try:
+        data = json.loads(request.body)
 
-            category = STExpenseCategory.objects.get(name=data["category"])
+        entry_data = {
+            "name": data["name"],
+            "category": STExpenseCategory.objects.get(id=data["category"]),
+        }
 
-            entry_data = {
-                "name": data["name"],
-                "category": category,
-            }
+        entry = STExpenseSubCategory(**entry_data)
+        entry.save()
 
-            entry = STExpenseSubCategory(**entry_data)
-            entry.save()
+        return JsonResponse({"message": "Запись успешно создана"}, status=201)
 
-            return JsonResponse({"message": "Запись успешно создана"}, status=201)
+        # except Exception as e:
+        #     return JsonResponse({"error": str(e)}, status=400)
 
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=400)
+    else:
+        return JsonResponse({"error": "Разрешены только POST-запросы"}, status=405)
+    
+
+@api_view(["POST"])
+def CreateQCashRegister(request):
+    if request.method == "POST":
+        # try:
+        data = create_non_empty_dict(request.body)
+
+        if data['operation'] == 'minus':
+            data['amount'] = -int(data['amount'])
+
+        entry_data = {
+            "date": convert_to_date(data['date']),
+            "amount": data["amount"],
+            "description": data["description"],
+            "operation": data['operation'],
+            "quest": Quest.objects.get(id=data['quest'])
+        }
+
+        entry = QCashRegister(**entry_data)
+        entry.save()
+
+        return JsonResponse({"message": "Запись успешно создана"}, status=201)
+
+        # except Exception as e:
+        #     return JsonResponse({"error": str(e)}, status=400)
 
     else:
         return JsonResponse({"error": "Разрешены только POST-запросы"}, status=405)

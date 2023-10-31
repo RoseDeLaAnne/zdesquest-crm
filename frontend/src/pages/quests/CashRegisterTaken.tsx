@@ -4,7 +4,7 @@ import { FC, useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 
 // antd
-import { Tag, Tooltip } from "antd";
+import { Tag } from "antd";
 // antd | icons
 import {
   QuestionOutlined,
@@ -19,17 +19,17 @@ import TemplateTable from "../../components/template/Table";
 
 // api
 import {
+  getQuestCashRegister,
+  getQuestCashRegisterDeposited,
+  getQuestCashRegisterTaken,
   getQuests,
-  getUsers,
-  postSTExpense,
-  getSTBonus,
-  getSTBonuses,
-  postSTBonus,
-  deleteSTBonus,
-  getQuestIncomes,
+  postQCashRegister,
+  toggleQuestCashRegister,
 } from "../../api/APIUtils";
+import { getCashRegisterFormItems } from "../../constants";
 
-const QIncomesFC: FC = () => {
+
+const QCashRegisterFC: FC = () => {
   const { id } = useParams();
 
   const [currentQuest, setCurrentQuest] = useState({})
@@ -66,7 +66,7 @@ const QIncomesFC: FC = () => {
     },
     {
       icon: RiseOutlined,
-      title: "доходы",
+      title: "касса",
       menu: [
         {
           key: "1",
@@ -110,72 +110,75 @@ const QIncomesFC: FC = () => {
 
   const initialPackedTableColumns = [
     {
-      title: "игра",
-      dataIndex: "game",
-      render: (game) => {
-        if (game.tooltip !== "") {
-          return (
-            <Tooltip
-              title={<div dangerouslySetInnerHTML={{ __html: game.tooltip }} />}
-              placement="topLeft"
-            >
-              <div>{game.value}</div>
-            </Tooltip>
-          );
-        } else {
-          return <div>{game.value}</div>;
+      title: "сумма",
+      dataIndex: "amount",
+      sorting: true,
+      searching: "сумме",
+      countable: true,
+      render: (amount) => {
+        let color = "black";
+        let formattedStatus = amount;
+
+        if (amount < 0) {
+          color = "red";
+        } else if (amount > 0) {
+          formattedStatus = `+${amount}`;
+          color = "green";
         }
+
+        return <Tag color={color}>{formattedStatus}</Tag>;
       },
+      
     },
     {
-      title: "комната",
-      dataIndex: "room",
-      countable: true,
+      title: "описание",
+      dataIndex: "description",
+      key: "description",
+      sorting: true,
+      searching: "описанию",
     },
-    {
-      title: "видео",
-      dataIndex: "video",
-      countable: true,
-    },
-    {
-      title: "фотомагниты",
-      dataIndex: "photomagnets",
-      countable: true,
-    },
-    {
-      title: "актер/второй актер/аниматор",
-      dataIndex: "actor",
-      countable: true,
-    },
-    {
-      title: "итог",
-      dataIndex: "total",
-      countable: true,
-    },
-    {
-      title: "заплачено наличными",
-      dataIndex: "paid_cash",
-      countable: true,
-    },
-    {
-      title: "заплачено безналичными",
-      dataIndex: "paid_non_cash",
-      countable: true,
-    },
+    // {
+    //   title: "статус",
+    //   dataIndex: "status",
+    //   key: "статус",
+    //   isSorting: false,
+    //   searching: {
+    //     isSearching: false,
+    //     title: "статусу",
+    //   },
+    //   countable: false,
+    //   render: (status) => {
+    //     let color = "red";
+    //     let formattedStatus = status;
+
+    //     if (status === "reset") {
+    //       color = "green";
+    //       formattedStatus = "обнулено";
+    //     } else if (status === "not_reset") {
+    //       color = "red";
+    //       formattedStatus = `не обнулено`;
+    //     }
+
+    //     return <Tag color={color}>{formattedStatus}</Tag>;
+    //   },
+    // },
   ];
+
+  const formHandleOnChange = () => {}
 
   return (
     <TemplateTable
       defaultOpenKeys={["quests", `quests${id}`]}
-      defaultSelectedKeys={[`quests${id}Incomes`]}
+      defaultSelectedKeys={[`quests${id}CashRegisterTaken`]}
       breadcrumbItems={initialBreadcrumbItems}
       isRangePicker={true}
-      tableDateColumn={"date_time"}
+      tableDateColumn={"date"}
       initialPackedTableColumns={initialPackedTableColumns}
-      getFunction={getQuestIncomes}
+      getFunction={getQuestCashRegisterTaken}
       isUseParams={true}
+      formHandleOnChange={formHandleOnChange}
     />
   );
 };
 
-export default QIncomesFC;
+export default QCashRegisterFC;

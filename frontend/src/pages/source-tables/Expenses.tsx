@@ -1,3 +1,6 @@
+// libs
+import dayjs from "dayjs";
+
 import { FC, useState, useEffect } from "react";
 
 // antd
@@ -17,6 +20,7 @@ import TemplateTable from "../../components/template/Table";
 // api
 import {
   deleteSTExpense,
+  getCurrentUser,
   getSTExpenses,
   postSTExpense,
 } from "../../api/APIUtils";
@@ -92,7 +96,7 @@ const STExpensesFC: FC = () => {
         if (who_paid !== null) {
           return (
             <Tag color="black">
-              {who_paid.last_name} {who_paid.first_name} {who_paid.middle_name}
+              {who_paid.last_name} {who_paid.first_name}
             </Tag>
           );
         } else {
@@ -119,15 +123,15 @@ const STExpensesFC: FC = () => {
     //   ),
     // },
     {
-      title: "кто уехали",
-      dataIndex: "paid_tax",
-      render: (_, { paid_tax }) => (
+      title: "сотрудники",
+      dataIndex: "employees",
+      render: (_, { employees }) => (
         <>
-          {paid_tax &&
-            paid_tax.map((el) => {
+          {employees &&
+            employees.map((employee) => {
               return (
-                <Tag color="orange" key={el.id}>
-                  {el.name}
+                <Tag color="orange" key={employee.id}>
+                  {employee.last_name} {employee.first_name}
                 </Tag>
               );
             })}
@@ -136,7 +140,9 @@ const STExpensesFC: FC = () => {
     },
   ];
 
-  const [notVisibleFormItems, setNotVisibleFormItems] = useState([]);
+  const [isTaxi, setIsTaxi] = useState(false);
+  const [isOwn, setIsOwn] = useState(false);
+  const [notVisibleFormItems, setNotVisibleFormItems] = useState(['who_paid', 'employees']);
   const [defaultValuesFormItems, setDefaultValuesFormItems] = useState({});
   const [formItems, setFormItems] = useState([]);
   const getFormItems = async () => {
@@ -148,20 +154,36 @@ const STExpensesFC: FC = () => {
   }, []);
 
   const formHandleOnChange = (value, name) => {
-    // if (name === 'name') {
-    //   if (value === 'taxi') {
-    //     setNotVisibleFormItems(['paid_tax', 'who_paid'])
-    //   } else {
-    //     setNotVisibleFormItems(['paid_tax'])
-    //   }
-    // }
-    // if (name === 'paid_from') {
-    //   if (value === 'own') {
-    //     setNotVisibleFormItems(['paid_tax', 'who_paid'])
-    //   } else {
-    //     setNotVisibleFormItems(['who_paid'])
-    //   }
-    // }
+    if (name === 'name') {
+      if (value === 'Такси' || value === 'такси') {
+        setNotVisibleFormItems(prevState => prevState.filter(item => item !== 'employees'));
+      } else {
+        // setNotVisibleFormItems(prevState => prevState.filter(item => item !== 'who_paid'));
+      }
+    }
+    if (name === 'paid_from') {
+      if (value === 'own') {
+        setNotVisibleFormItems(prevState => prevState.filter(item => item !== 'who_paid'));
+      } else {
+        
+      }
+    }
+  };
+
+  const [user, setUser] = useState([]);
+  const fetchUser = async () => {
+    const response = await getCurrentUser();
+    if (response.status === 200) {
+      setUser(response.data);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  const formInitialValues = {
+    date: dayjs(),
   };
 
   return (
@@ -173,7 +195,7 @@ const STExpensesFC: FC = () => {
       addEntryTitle={"новая запись"}
       tableDateColumn={"date"}
       initialPackedTableColumns={initialPackedTableColumns}
-      tableIsOperation={true}
+      tableIsOperation={user.is_superuser ? true : false}
       getFunction={getSTExpenses}
       deleteFunction={deleteSTExpense}
       postFunction={postSTExpense}
@@ -182,6 +204,7 @@ const STExpensesFC: FC = () => {
       formItems={formItems}
       notVisibleFormItems={notVisibleFormItems}
       defaultValuesFormItems={defaultValuesFormItems}
+      formInitialValues={formInitialValues}
       formHandleOnChange={formHandleOnChange}
     />
   );

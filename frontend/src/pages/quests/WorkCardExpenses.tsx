@@ -133,7 +133,7 @@ const QWorkCardExpensesFC: FC = () => {
       defaultSelectedKeys={[`quests${id}WorkCardExpenses`]}
       breadcrumbItems={initialBreadcrumbItems}
       isRangePicker={true}
-      tableDateColumn={"date_time"}
+      tableDateColumn={"date"}
       initialPackedTableColumns={initialPackedTableColumns}
       getFunction={getWorkCardExpenses}
       isUseParams={true}

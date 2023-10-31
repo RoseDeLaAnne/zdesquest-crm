@@ -21,8 +21,10 @@ import TemplateTable from "../../components/template/Table";
 import {
   getQuestCashRegister,
   getQuests,
+  postQCashRegister,
   toggleQuestCashRegister,
 } from "../../api/APIUtils";
+import { getCashRegisterFormItems } from "../../constants";
 
 
 const QCashRegisterFC: FC = () => {
@@ -108,12 +110,8 @@ const QCashRegisterFC: FC = () => {
     {
       title: "сумма",
       dataIndex: "amount",
-      key: "amount",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "сумме",
-      },
+      sorting: true,
+      searching: "сумме",
       countable: true,
       render: (amount) => {
         let color = "black";
@@ -128,17 +126,14 @@ const QCashRegisterFC: FC = () => {
 
         return <Tag color={color}>{formattedStatus}</Tag>;
       },
+      
     },
     {
       title: "описание",
       dataIndex: "description",
       key: "description",
-      isSorting: true,
-      searching: {
-        isSearching: true,
-        title: "описанию",
-      },
-      countable: false,
+      sorting: true,
+      searching: "описанию",
     },
     // {
     //   title: "статус",
@@ -167,6 +162,17 @@ const QCashRegisterFC: FC = () => {
     // },
   ];
 
+  const formHandleOnChange = () => {}
+
+  const [formItems, setFormItems] = useState([]);
+  const getFormItems = async () => {
+    const res = await getCashRegisterFormItems();
+    setFormItems(res);
+  };
+  useEffect(() => {
+    getFormItems();
+  }, []);
+
   return (
     <TemplateTable
       defaultOpenKeys={["quests", `quests${id}`]}
@@ -176,7 +182,13 @@ const QCashRegisterFC: FC = () => {
       tableDateColumn={"date"}
       initialPackedTableColumns={initialPackedTableColumns}
       getFunction={getQuestCashRegister}
+      postFunction={postQCashRegister}
       isUseParams={true}
+      isAddEntry={true}
+      addEntryTitle={"новая запись"}
+      drawerTitle={"создать новую запись"}
+      formItems={formItems}
+      formHandleOnChange={formHandleOnChange}
     />
   );
 };
