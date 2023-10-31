@@ -169,6 +169,8 @@ const STQuests: FC = () => {
       tableDateColumn={"date"}
       initialPackedTableColumns={initialPackedTableColumns}
       tableIsOperation={true}
+      operationIsEdit={true}
+      operationIsDelete={true}
       getFunction={getSTBonusesPenalties}
       deleteFunction={deleteSTBonusPenalty}
       postFunction={postSTBonusPenalty}

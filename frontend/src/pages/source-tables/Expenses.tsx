@@ -202,6 +202,8 @@ const STExpensesFC: FC = () => {
       tableDateColumn={"date"}
       initialPackedTableColumns={initialPackedTableColumns}
       tableIsOperation={user.is_superuser ? true : false}
+      operationIsEdit={true}
+      operationIsDelete={true}
       getFunction={getSTExpenses}
       deleteFunction={deleteSTExpense}
       postFunction={postSTExpense}

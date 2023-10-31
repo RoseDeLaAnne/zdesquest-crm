@@ -20,12 +20,12 @@ const EditUsersFC: FC = () => {
     {
       icon: TableOutlined,
       title: "дополнительные таблицы",
-      to: "/additional-tables",
+      to: "/source-tables",
     },
     {
       icon: TableOutlined,
-      title: "квесты",
-      to: "/additional-tables/quests",
+      title: "расходы",
+      to: "/source-tables/expenses",
     },
     {
       icon: TableOutlined,
@@ -47,7 +47,7 @@ const EditUsersFC: FC = () => {
   return (
     <TemplateEdit
       defaultOpenKeys={["sourceTables"]}
-      defaultSelectedKeys={["sourceTablesQuests"]}
+      defaultSelectedKeys={["sourceTablesExpenses"]}
       breadcrumbItems={initialBreadcrumbItems}
       getFunction={getSTExpense}
       putFunction={putSTExpense}
