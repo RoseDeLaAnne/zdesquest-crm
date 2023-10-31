@@ -104,6 +104,7 @@ class STExpenseSerializer(ModelSerializer):
             "key",
             "date",
             "name",
+            "description",
             "amount",
             "sub_category",
             "quests",

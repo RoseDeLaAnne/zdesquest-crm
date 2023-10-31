@@ -475,7 +475,7 @@ const TableFC: FC = ({
             </Space>
           ) : null,
         // width: operationIsAdd && operationIsEdit ? 256 : 192,
-        width: operationIsAdd ? 104 : operationIsEdit && operationIsAdd ? 256 : 192,
+        width: operationIsAdd && !operationIsEdit ? 104 : operationIsEdit && operationIsAdd ? 256 : 192,
         fixed: "right",
       },
     ];
