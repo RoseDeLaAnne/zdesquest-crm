@@ -164,6 +164,21 @@ def UserSTQuests(request):
 
                 # Append the serialized actor to the list
                 serialized_half_actors.append(serialized_half_actor)
+            serialized_employees_first_time = []
+            for (
+                employee_first_time
+            ) in (
+                entry.employees_first_time.all()
+            ):  # Assuming actors is a related manager (e.g., a ManyToManyField or ForeignKey)
+                serialized_half_actor = {
+                    "id": employee_first_time.id,
+                    "last_name": employee_first_time.last_name,
+                    "first_name": employee_first_time.first_name,
+                    "middle_name": employee_first_time.middle_name,
+                }
+
+                # Append the serialized actor to the list
+                serialized_employees_first_time.append(serialized_employees_first_time)
 
             entry_dict[date_timestamp]["quest"] = {
                 "id": entry.quest.id,
@@ -207,6 +222,9 @@ def UserSTQuests(request):
             }
             entry_dict[date_timestamp]["actors"] = serialized_actors
             entry_dict[date_timestamp]["actors_half"] = serialized_half_actors
+            entry_dict[date_timestamp][
+                "employees_first_time"
+            ] = serialized_employees_first_time
             entry_dict[date_timestamp]["animator"] = {
                 "id": entry.animator.id if entry.animator else None,
                 "last_name": entry.animator.last_name if entry.animator else None,
@@ -271,6 +289,7 @@ def UserSTQuests(request):
                     },
                     "actors": serialized_actors,
                     "actors_half": serialized_half_actors,
+                    "employees_first_time": serialized_employees_first_time,
                     "animator": {
                         "id": entry.animator.id if entry.animator else None,
                         "last_name": entry.animator.last_name
@@ -388,7 +407,11 @@ def STQuests(request):
         start_date_param = request.query_params.get("start_date", None)
         end_date_param = request.query_params.get("end_date", None)
 
-        entries = STQuest.objects.all().order_by("date")
+        entries = []
+        if (request.user.is_superuser == True):
+            entries = STQuest.objects.all().order_by("date")
+        else:
+            entries = STQuest.objects.filter(created_by=request.user).order_by("date")
 
         if start_date_param and end_date_param:
             try:
@@ -644,12 +667,44 @@ def STQuests(request):
 
 
 @api_view(["GET"])
+def UserSTExpenses(request):
+    if request.method == "GET":
+        start_date_param = request.query_params.get("start_date", None)
+        end_date_param = request.query_params.get("end_date", None)
+
+        expenses = STExpense.objects.filter(created_by=request.user).order_by("date")
+
+        if start_date_param and end_date_param:
+            try:
+                start_date = datetime.strptime(start_date_param, "%d-%m-%Y").date()
+                end_date = datetime.strptime(end_date_param, "%d-%m-%Y").date()
+
+                expenses = expenses.filter(date__range=(start_date, end_date))
+            except ValueError:
+                return Response(
+                    {
+                        "error": "Неверный формат даты. Пожалуйста, используйте ДД-ММ-ГГГГ."
+                    },
+                    status=400,
+                )
+
+        serializer = STExpenseSerializer(expenses, many=True)
+
+        return Response(serializer.data)
+    
+
+@api_view(["GET"])
 def STExpenses(request):
     if request.method == "GET":
         start_date_param = request.query_params.get("start_date", None)
         end_date_param = request.query_params.get("end_date", None)
 
-        expenses = STExpense.objects.all().order_by("date")
+        expenses = []
+
+        if (request.user.is_superuser == True):
+            expenses = STExpense.objects.all().order_by("date")
+        else:
+            expenses = STExpense.objects.filter(created_by=request.user).order_by("date")
 
         if start_date_param and end_date_param:
             try:
@@ -2050,15 +2105,27 @@ def Salaries(request):
                 {"error": "Invalid date format. Please use DD-MM-YYYY."}, status=400
             )
 
-        salaries = QSalary.objects.select_related("user").order_by("date")
-        bonuses_penalties = STBonusPenalty.objects.select_related("user").order_by(
-            "date"
-        )
+        salaries = []
+        bonuses_penalties = []
+        users = []
+
+        if (request.user.is_superuser == True):
+            salaries = QSalary.objects.select_related("user").order_by("date")
+            bonuses_penalties = STBonusPenalty.objects.select_related("user").order_by(
+                "date"
+            )
+            users = User.objects.all()
+        else:
+            salaries = QSalary.objects.filter(user=request.user).select_related("user").order_by("date")
+            bonuses_penalties = STBonusPenalty.objects.filter(user=request.user).select_related("user").order_by(
+                "date"
+            )
+            users = [request.user]
 
         if start_date and end_date:
             salaries = salaries.filter(date__range=(start_date, end_date))
 
-        users = User.objects.all()
+        
         user_data_map = {user.id: UserSerializer(user).data for user in users}
 
         head_data = [
@@ -3604,6 +3671,7 @@ def CreateSTExpense(request):
             "description": data["description"],
             "sub_category": sub_category,
             "paid_from": data["paid_from"],
+            "created_by": request.user,
             # "who_paid": who_paid,
             # "who_paid_amount": data["who_paid_amount"],
             # "image": request.data['image'][0]

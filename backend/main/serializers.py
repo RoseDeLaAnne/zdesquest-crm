@@ -111,6 +111,7 @@ class STExpenseSerializer(ModelSerializer):
             "paid_from",
             "who_paid",
             "employees",
+            "created_by",
             # "who_paid_amount",
             # "attachment",
         ]

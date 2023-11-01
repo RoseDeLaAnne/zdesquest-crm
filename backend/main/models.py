@@ -307,6 +307,14 @@ class STExpense(models.Model):
     ) 
     quest = models.ForeignKey(
         Quest, on_delete=models.SET_NULL, blank=True, null=True, related_name='stexpense_quest'
+    )
+
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="stexpense_created_by",
     ) 
 
     def __str__(self):

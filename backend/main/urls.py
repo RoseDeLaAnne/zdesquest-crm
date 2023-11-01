@@ -20,6 +20,7 @@ urlpatterns = [
     path("user/current/", views.UserCurrent),
     # path("user/<int:id>/", views.UserById),
     path("user/stquests/", views.UserSTQuests),
+    path("user/stexpenses/", views.UserSTExpenses),
     path("users/<str:rname>/", views.UsersByRole),
     path("roles/", views.Roles),
     path("quests/", views.Quests),

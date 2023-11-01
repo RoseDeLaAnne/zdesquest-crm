@@ -22,6 +22,7 @@ import {
   deleteSTExpense,
   getCurrentUser,
   getSTExpenses,
+  getUserSTExpenses,
   postSTExpense,
 } from "../../api/APIUtils";
 
@@ -204,7 +205,7 @@ const STExpensesFC: FC = () => {
       tableIsOperation={user.is_superuser ? true : false}
       operationIsEdit={true}
       operationIsDelete={true}
-      getFunction={getSTExpenses}
+      getFunction={user.is_superuser ? getSTExpenses : getUserSTExpenses}
       deleteFunction={deleteSTExpense}
       postFunction={postSTExpense}
       isAddEntry={true}

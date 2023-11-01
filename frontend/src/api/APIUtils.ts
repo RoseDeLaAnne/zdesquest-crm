@@ -50,6 +50,21 @@ export const getUserSTQuests = async (startDate: string, endDate: string) => {
   }
 };
 
+export const getUserSTExpenses = async (startDate: string, endDate: string) => {
+  try {
+    let url;
+    if (startDate !== null && endDate !== null) {
+      url = `${url3}/api/user/stexpenses/?start_date=${startDate}&end_date=${endDate}`;
+    } else {
+      url = `${url3}/api/user/stexpenses/`;
+    }
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getUsersByRole = async (roleName: string) => {
   try {
     const url = `${url3}/api/users/${roleName}/`;

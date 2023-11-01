@@ -38,8 +38,8 @@ const SalariesFC: FC = () => {
       breadcrumbItems={initialBreadcrumbItems}
       isRangePicker={true}
       tableDateColumn={"date"}
-      getFunction={user.is_superuser === true ? getCurrentSalaries : getSalaries}
-      // getFunction={getSalaries}
+      // getFunction={user.is_superuser ? getSalaries : getCurrentSalaries}
+      getFunction={getSalaries}
       tableScroll={{ x: 1000 }}
     />
   );
