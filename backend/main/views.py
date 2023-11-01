@@ -49,7 +49,6 @@ def Users(request):
         # else:
         #     return Response(status=401)
 
-
 @api_view(["GET"])
 # @permission_classes([IsAuthenticated])
 def UserCurrent(request):

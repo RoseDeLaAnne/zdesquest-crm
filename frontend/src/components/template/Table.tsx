@@ -280,9 +280,9 @@ const TableFC: FC = ({
         newColumn.width = column.width;
       }
 
-      if (column.fixed) {
-        newColumn.fixed = column.fixed;
-      }
+      // if (column.fixed) {
+      //   newColumn.fixed = column.fixed;
+      // }
 
       if (column.render) {
         newColumn.render = column.render;
