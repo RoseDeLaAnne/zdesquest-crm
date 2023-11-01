@@ -149,10 +149,12 @@ const ATQuests: FC = () => {
       addEntryTitle={"новый квест"}
       isCancel={false}
       isCreate={false}
-      tableScroll={2500}
+      tableScroll={{ x: 1750 }}
       tableDateColumn={null}
       initialPackedTableColumns={initialPackedTableColumns}
       tableIsOperation={true}
+      operationIsEdit={true}
+      operationIsDelete={true}
       getFunction={getQuestsWithSpecVersions}
       deleteFunction={deleteQuest}
       postFunction={postQuest}
