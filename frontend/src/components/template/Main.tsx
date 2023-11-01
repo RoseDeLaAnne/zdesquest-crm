@@ -89,12 +89,12 @@ const MainFC: FC = ({
                     onChange={rangePickerHandleChange}
                     format={rangePickerFormat}
                     className="m-w100"
-                    defaultValue={
-                      breadcrumbItems[breadcrumbItems.length - 1].title ===
-                      "касса"
-                        ? [dayjs(), dayjs()]
-                        : ""
-                    }
+                    // defaultValue={
+                    //   breadcrumbItems[breadcrumbItems.length - 1].title ===
+                    //   "касса"
+                    //     ? [dayjs(), dayjs()]
+                    //     : ""
+                    // }
                   />
                 )}
                 {isAddEntry === true && (

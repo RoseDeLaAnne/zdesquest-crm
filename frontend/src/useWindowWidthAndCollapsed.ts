@@ -26,6 +26,11 @@ function useWindowWidthAndCollapsed(): [WindowSize, CollapsedState] {
   };
 
   useEffect(() => {
+    if (window.innerWidth <= 1024) {
+      setCollapsed(true);
+      localStorage.setItem("collapsed", "true");
+    }
+
     function handleResize() {
       const newWidth = window.innerWidth;
       setWindowSize({ width: newWidth });

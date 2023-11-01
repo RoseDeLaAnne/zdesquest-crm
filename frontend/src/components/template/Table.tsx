@@ -243,7 +243,7 @@ const TableFC: FC = ({
         return dateA - dateB;
       },
       ...getColumnSearchProps("date", "дате"),
-      fixed: "left",
+      // fixed: "left",
     };
   } else if (tableDateColumn === "date_time") {
     initialUnpackedTableDateColumn = {
@@ -252,7 +252,7 @@ const TableFC: FC = ({
       key: tableDateColumn,
       width: 140,
       ...getColumnSearchProps("date_time", "дате/времени"),
-      fixed: "left",
+      // fixed: "left",
     };
   }
   if (initialPackedTableColumns) {
@@ -476,7 +476,7 @@ const TableFC: FC = ({
           ) : null,
         // width: operationIsAdd && operationIsEdit ? 256 : 192,
         width: operationIsAdd && !operationIsEdit ? 104 : operationIsEdit && operationIsAdd ? 256 : 192,
-        fixed: "right",
+        // fixed: "right",
       },
     ];
   }
@@ -637,6 +637,7 @@ const TableFC: FC = ({
   const logout = async () => {
     setAccess();
     localStorageRemoveItem(["refresh", "access"]);
+    window.location.href = '/login';
     // navigate("/", { replace: true });
   };
 

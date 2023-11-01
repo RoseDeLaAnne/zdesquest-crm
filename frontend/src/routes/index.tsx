@@ -56,14 +56,14 @@ const Routes = () => {
 
   // Define public routes accessible to all users
   const routesForPublic = [
-    {
-      path: "/videos",
-      element: <QVideos />,
-    },
-    {
-      path: "/salaries",
-      element: <Salaries />,
-    },
+    // {
+    //   path: "/videos",
+    //   element: <QVideos />,
+    // },
+    // {
+    //   path: "/salaries",
+    //   element: <Salaries />,
+    // },
   ];
 
   // Define routes accessible only to authenticated users
@@ -209,6 +209,14 @@ const Routes = () => {
         {
           path: "/quests/:id/videos",
           element: <QVideos />,
+        },
+        {
+          path: "/videos",
+          element: <QVideos />,
+        },
+        {
+          path: "/salaries",
+          element: <Salaries />,
         },
       ],
     },

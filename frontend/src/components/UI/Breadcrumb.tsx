@@ -17,7 +17,7 @@ const App: FC<IBreadcrumb> = ({ items }) => {
   const defaultSourceBreadcrumbItem = {
     icon: HomeOutlined,
     title: "главная",
-    to: "/",
+    // to: "/",
   };
   const sourceBreadcrumbItemsWithDefault = [
     defaultSourceBreadcrumbItem,

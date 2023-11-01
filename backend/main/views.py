@@ -2219,7 +2219,7 @@ def SalariesCurrent(request):
             )
 
         salaries = QSalary.objects.filter(user=request.user).select_related("user").order_by("date")
-        bonuses_penalties = STBonusPenalty.objects.select_related("user").order_by(
+        bonuses_penalties = STBonusPenalty.objects.filter(user=request.user).select_related("user").order_by(
             "date"
         )
 
@@ -2227,6 +2227,13 @@ def SalariesCurrent(request):
             salaries = salaries.filter(date__range=(start_date, end_date))
 
         users = [request.user]
+        # users = User.objects.all()
+
+        # if (request.user.is_superuser):
+        #     print('ih')
+        #     users = User.objects.all()
+        # else:    
+        #     users = [request.user]
         user_data_map = {user.id: UserSerializer(user).data for user in users}
 
         head_data = [
@@ -2239,6 +2246,8 @@ def SalariesCurrent(request):
 
         for user in users:
             user_taxi[user.id] = False
+
+        print(user_taxi)
         
         for salary in salaries:
             date_str = salary.date.strftime("%d.%m.%Y")

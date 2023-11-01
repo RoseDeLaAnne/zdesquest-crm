@@ -158,6 +158,8 @@ const UsersFC: FC = () => {
       formItems={formItems}
       formHandleOnChange={formHandleOnChange}
       tableScroll={{ x: 2250 }}
+      operationIsEdit={true}
+      operationIsDelete={true}
     />
   );
 };

@@ -23,6 +23,8 @@ const SalariesFC: FC = () => {
     const response = await getCurrentUser();
     if (response.status === 200) {
       setUser(response.data);
+
+      console.log(response.data.is_superuser)
     }
   };
   useEffect(() => {
@@ -36,7 +38,8 @@ const SalariesFC: FC = () => {
       breadcrumbItems={initialBreadcrumbItems}
       isRangePicker={true}
       tableDateColumn={"date"}
-      getFunction={user.is_superuser ? getSalaries : getCurrentSalaries}
+      // getFunction={user.is_superuser ? getSalaries : getCurrentSalaries}
+      getFunction={getCurrentSalaries}
       tableScroll={{ x: 1000 }}
     />
   );
