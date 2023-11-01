@@ -1503,41 +1503,41 @@ export const getQuestVersionsFormItems = async () => {
         },
       ],
     },
-    // {
-    //   gutter: 16,
-    //   items: [
-    //     {
-    //       spanXS: 24,
-    //       spanSM: 24,
-    //       spanMD: 12,
-    //       name: "cost_weekdays_with_package",
-    //       label: "стоимость квеста в будние дни (пакет)",
-    //       isRequired: true,
-    //       placeholder: "пожалуйста, введите логин",
-    //       element: {
-    //         name: "Input",
-    //         options: [],
-    //         multiple: null,
-    //         defaultValue: null,
-    //       },
-    //     },
-    //     {
-    //       spanXS: 24,
-    //       spanSM: 24,
-    //       spanMD: 12,
-    //       name: "cost_weekends_with_package",
-    //       label: "стоимость квеста в выходные дни (пакет)",
-    //       isRequired: true,
-    //       placeholder: "пожалуйста, введите пароль",
-    //       element: {
-    //         name: "Input",
-    //         options: [],
-    //         multiple: null,
-    //         defaultValue: null,
-    //       },
-    //     },
-    //   ],
-    // },
+    {
+      gutter: 16,
+      items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 12,
+          name: "cost_weekdays_with_package",
+          label: "стоимость квеста в будние дни (пакет)",
+          isRequired: true,
+          placeholder: "пожалуйста, введите логин",
+          element: {
+            name: "Input",
+            options: [],
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 12,
+          name: "cost_weekends_with_package",
+          label: "стоимость квеста в выходные дни (пакет)",
+          isRequired: true,
+          placeholder: "пожалуйста, введите пароль",
+          element: {
+            name: "Input",
+            options: [],
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+      ],
+    },
   ];
 
   return formItems;
