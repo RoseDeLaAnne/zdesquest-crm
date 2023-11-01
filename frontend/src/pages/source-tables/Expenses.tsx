@@ -214,6 +214,7 @@ const STExpensesFC: FC = () => {
       defaultValuesFormItems={defaultValuesFormItems}
       formInitialValues={formInitialValues}
       formHandleOnChange={formHandleOnChange}
+      tableScroll={{ x: 1500 }}
     />
   );
 };
