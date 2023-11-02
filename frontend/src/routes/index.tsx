@@ -83,6 +83,10 @@ const Routes = () => {
           // element: <Navigate to="/users" />,
         },
         {
+          path: "/login",
+          element: <Navigate to="/salaries" />,
+        },
+        {
           path: "/test",
           element: <Test />,
         },
