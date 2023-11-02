@@ -314,11 +314,12 @@ const STQuestsFC: FC = () => {
     }
   };
 
+  const [userId, setUserId] = useState([]);
   const [user, setUser] = useState([]);
   const fetchUser = async () => {
-    const response = await getCurrentUser();
-    if (response.status === 200) {
-      setUser(response.data);
+    const res = await getCurrentUser();
+    if (res.status === 200) {
+      setUser(res.data);      
     }
   };
 
@@ -433,7 +434,8 @@ const STQuestsFC: FC = () => {
 
   const formInitialValues = {
     date: dayjs(),
-    time: dayjs().hour(9).startOf("hour"),
+    time: dayjs().hour(dayjs().hour()).startOf("hour"),
+    // administrator: userId,
     prepayment: 500,
   };
 

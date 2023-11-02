@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 
 // api
 import {
+  getAllUsers,
   getQuestVersions,
   getQuests,
   getQuestsWithSpecVersions,
@@ -76,9 +77,9 @@ const optionsTypes = [
   },
 ];
 
-const fetchUsers = async () => {
+const fetchAllUsers = async () => {
   try {
-    const res = await getUsers();
+    const res = await getAllUsers();
     if (res.status === 200) {
       const formattedOptions = res.data.map((el) => ({
         label:
@@ -89,7 +90,23 @@ const fetchUsers = async () => {
           (el.middle_name ? el.middle_name.toLowerCase() : ""),
         value: el.id,
       }));
-      console.log(res.data);
+      return formattedOptions;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+const fetchUsers = async () => {
+  try {
+    const res = await getUsers();
+    if (res.status === 200) {
+      const formattedOptions = res.data.map((el) => ({
+        label:
+          el.first_name.toLowerCase() + " " + el.last_name.toLowerCase(),
+          // " " +
+          // (el.middle_name ? el.middle_name.toLowerCase() : ""),
+        value: el.id,
+      }));
       return formattedOptions;
     }
   } catch (error) {
@@ -164,6 +181,31 @@ const fetchQuestsWithSpecVersions = async () => {
         label: el.name.toLowerCase(),
         value: el.id,
       }));
+
+      // const newArr = res.data.map((el) => {
+      //   const mainQuest = {
+      //     id: el.id,
+      //     name: el.name
+      //   }
+
+      //   let versions = []
+
+      //   if (el.versions.length > 0) {
+      //     versions = el.versions.map((nestedEl) => ({
+      //       id: nestedEl.id,
+      //       name: nestedEl.name
+      //     }))
+      //   }
+
+      //   return [mainQuest, ...versions]
+      // })
+
+      // const flatData = newArr.flatMap((innerArray) => innerArray);
+
+      // const formattedOptions = flatData.map((el) => ({
+      //   label: el.name.toLowerCase(),
+      //   value: el.id,
+      // }));
 
       return formattedOptions;
     }
@@ -545,7 +587,7 @@ export const getSTQuestFormItems = async () => {
           name: "administrator",
           label: "администратор",
           isRequired: true,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, выберите администратора",
           element: {
             name: "Select",
             options: optionsUsers,
@@ -560,7 +602,7 @@ export const getSTQuestFormItems = async () => {
           name: "actors",
           label: "актеры",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, выберите актеров",
           element: {
             name: "Select",
             options: optionsUsers,
@@ -580,7 +622,7 @@ export const getSTQuestFormItems = async () => {
           name: "cash_payment",
           label: "наличный расчет",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, введите наличный расчет",
           element: {
             name: "InputNumber",
             options: null,
@@ -595,7 +637,7 @@ export const getSTQuestFormItems = async () => {
           name: "cashless_payment",
           label: "безналичный расчет",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, введите безналичный расчет",
           element: {
             name: "InputNumber",
             options: null,
@@ -615,7 +657,7 @@ export const getSTQuestFormItems = async () => {
           name: "cash_delivery",
           label: "сдача наличными",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, введите сдачу наличными",
           element: {
             name: "InputNumber",
             options: null,
@@ -630,7 +672,7 @@ export const getSTQuestFormItems = async () => {
           name: "cashless_delivery",
           label: "сдача безналичными",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, введите сдачу безналичными",
           element: {
             name: "InputNumber",
             options: null,
@@ -650,7 +692,7 @@ export const getSTQuestFormItems = async () => {
           name: "prepayment",
           label: "предоплата",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, введите предоплату",
           element: {
             name: "InputNumber",
             options: null,
@@ -670,7 +712,7 @@ export const getSTQuestFormItems = async () => {
           name: "room_employee_name",
           label: "сотрудник комнаты",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, выберите сотрудника комнаты",
           element: {
             name: "Select",
             options: optionsUsers,
@@ -685,7 +727,7 @@ export const getSTQuestFormItems = async () => {
           name: "animator",
           label: "аниматор",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, выберите аниматора",
           element: {
             name: "Select",
             options: optionsUsers,
@@ -705,7 +747,7 @@ export const getSTQuestFormItems = async () => {
           name: "actor_or_second_actor_or_animator",
           label: "актеры/второй актер/аниматор",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, введите актера/второго актера/аниматора",
           element: {
             name: "InputNumber",
             options: null,
@@ -720,7 +762,7 @@ export const getSTQuestFormItems = async () => {
           name: "add_players",
           label: "дополнительные игроки",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, введите дополнительные игроки",
           element: {
             name: "InputNumber",
             options: null,
@@ -740,7 +782,7 @@ export const getSTQuestFormItems = async () => {
           name: "room_sum",
           label: "сумма комнат",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, введите сумму комнат",
           element: {
             name: "InputNumber",
             options: null,
@@ -755,7 +797,7 @@ export const getSTQuestFormItems = async () => {
           name: "video",
           label: "сумма видео",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, введите сумму видео",
           element: {
             name: "InputNumber",
             options: null,
@@ -775,7 +817,7 @@ export const getSTQuestFormItems = async () => {
           name: "night_game",
           label: "ночная игра",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, введите ночную игру",
           element: {
             name: "InputNumber",
             options: null,
@@ -790,7 +832,7 @@ export const getSTQuestFormItems = async () => {
           name: "easy_work",
           label: "простой",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, введите простой",
           element: {
             name: "InputNumber",
             options: null,
@@ -810,7 +852,7 @@ export const getSTQuestFormItems = async () => {
           name: "birthday_congr",
           label: "поздравление именинника",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, введите поздравление именинника",
           element: {
             name: "InputNumber",
             options: null,
@@ -825,7 +867,7 @@ export const getSTQuestFormItems = async () => {
           name: "photomagnets_quantity",
           label: "количество фотомагнитов",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, введите количество фотомагнитов",
           element: {
             name: "InputNumber",
             options: null,
@@ -845,7 +887,7 @@ export const getSTQuestFormItems = async () => {
           name: "discount_sum",
           label: "сумма скидки",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, введите сумму скидки",
           element: {
             name: "InputNumber",
             options: null,
@@ -860,7 +902,7 @@ export const getSTQuestFormItems = async () => {
           name: "discount_desc",
           label: "описание скидки",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, введите описание скидки",
           element: {
             name: "Input",
             options: null,
@@ -881,7 +923,7 @@ export const getSTQuestFormItems = async () => {
           name: "actors_half",
           label: "актеры (50%)",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, выберите актеров (50%)",
           element: {
             name: "Select",
             options: optionsUsers,
@@ -896,7 +938,7 @@ export const getSTQuestFormItems = async () => {
           name: "employees_first_time",
           label: "сотрудники, которые играют в первый раз",
           isRequired: false,
-          placeholder: "пожалуйста, введите стоимость квеста",
+          placeholder: "пожалуйста, выбертие сотрудников, которые играют в первый раз",
           element: {
             name: "Select",
             options: optionsUsers,

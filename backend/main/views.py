@@ -39,10 +39,24 @@ from collections import defaultdict
 # GET
 @api_view(["GET"])
 # @permission_classes([IsAuthenticated])
-def Users(request):
+def AllUsers(request):
     if request.method == "GET":
         # if request.user.is_superuser:
         users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+
+        return Response(serializer.data)
+        # else:
+        #     return Response(status=401)
+
+
+# GET
+@api_view(["GET"])
+# @permission_classes([IsAuthenticated])
+def Users(request):
+    if request.method == "GET":
+        # if request.user.is_superuser:
+        users = User.objects.filter(is_superuser=False)
         serializer = UserSerializer(users, many=True)
 
         return Response(serializer.data)
@@ -363,6 +377,14 @@ def QuestsWithSpecailVersions(request):
         serializer = QuestSerializer(quests, many=True)
 
         return Response(serializer.data)
+    
+# @api_view(["GET"])
+# def QuestsWithSpecailVersionsAndVersions(request):
+#     if request.method == "GET":
+#         quests = QuestVersion.objects.all()
+#         serializer = QuestSerializer(quests, many=True)
+
+#         return Response(serializer.data)
 
 
 @api_view(["GET"])

@@ -15,6 +15,16 @@ export const getQuestProfit = async (id: number) => {
   }
 };
 
+export const getAllUsers = async () => {
+  try {
+    const url = `${url3}/api/all-users/`;
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getUsers = async () => {
   try {
     const url = `${url3}/api/users/`;

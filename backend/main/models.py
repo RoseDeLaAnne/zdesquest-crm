@@ -20,6 +20,8 @@ class QuestVersion(models.Model):
 
     cost_weekdays = models.IntegerField(default=0)
     cost_weekends = models.IntegerField(default=0)
+    cost_weekdays_with_package = models.IntegerField(default=0)
+    cost_weekends_with_package = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name

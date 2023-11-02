@@ -16,6 +16,7 @@ urlpatterns = [
     path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     # GET
+    path("all-users/", views.AllUsers),
     path("users/", views.Users),
     path("user/current/", views.UserCurrent),
     # path("user/<int:id>/", views.UserById),
@@ -25,6 +26,7 @@ urlpatterns = [
     path("roles/", views.Roles),
     path("quests/", views.Quests),
     path("quests-with-spec-versions/", views.QuestsWithSpecailVersions),
+    # path("quests-with-spec-versions-and-versions/", views.QuestsWithSpecailVersionsAndVersions    ),
     path("quest-versions/", views.QuestVersions),
     path("stquests/", views.STQuests),
     path("stexpenses/", views.STExpenses),

@@ -48,6 +48,18 @@ const ATQuestVersions: FC = () => {
       sorting: true,
       searching: "",
     },
+    {
+      title: "стоимость квеста в будние дни (пакет)",
+      dataIndex: "cost_weekdays_with_package",
+      sorting: true,
+      searching: "",
+    },
+    {
+      title: "стоимость квеста в выходные дни (пакет)",
+      dataIndex: "cost_weekends_with_package",
+      sorting: true,
+      searching: "",
+    },
   ];
 
   const [formItems, setFormItems] = useState([])
@@ -72,6 +84,8 @@ const ATQuestVersions: FC = () => {
       tableDateColumn={null}
       initialPackedTableColumns={initialPackedTableColumns}
       tableIsOperation={true}
+      operationIsDelete={true}
+      operationIsEdit={true}
       getFunction={getQuestVersions}
       deleteFunction={deleteQuestVersion}
       postFunction={postQuestVersion}
