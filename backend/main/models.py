@@ -38,7 +38,7 @@ class Quest(models.Model):
 
     administrator_rate = models.IntegerField(default=0)
     actor_rate = models.IntegerField(default=0)
-    animator_rate = models.IntegerField()
+    animator_rate = models.IntegerField(default=0)
 
     duration_in_minute = models.IntegerField(default=0)
 
@@ -55,7 +55,6 @@ class Quest(models.Model):
 
 class STExpenseCategory(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    # latin_name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
@@ -63,7 +62,6 @@ class STExpenseCategory(models.Model):
 
 class STExpenseSubCategory(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    # latin_name = models.CharField(max_length=255, unique=True)
 
     category = models.ForeignKey(
         STExpenseCategory, on_delete=models.CASCADE, blank=True, null=True
@@ -154,7 +152,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 class STQuest(models.Model):
     date = models.DateField(default=timezone.now)
     time = models.TimeField(default=timezone.now)
-    quest = models.ForeignKey(Quest, on_delete=models.SET_NULL, blank=True, null=True)
+    quest = models.ForeignKey(Quest, on_delete=models.DO_NOTHING, blank=True, null=True)
     quest_cost = models.IntegerField()
     add_players = models.IntegerField(default=0)
     actor_or_second_actor_or_animator = models.IntegerField(default=0)

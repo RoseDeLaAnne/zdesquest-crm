@@ -970,7 +970,7 @@ export const getSTExpensesFormItems = async () => {
           name: "date",
           label: "дата",
           isRequired: true,
-          placeholder: "пожалуйста, введите логин",
+          placeholder: "пожалуйста, выберите дату",
           element: {
             name: "DatePicker",
             options: [],
@@ -1020,7 +1020,7 @@ export const getSTExpensesFormItems = async () => {
           name: "amount",
           label: "сумма расхода",
           isRequired: true,
-          placeholder: "пожалуйста, введите пароль",
+          placeholder: "пожалуйста, введите сумму расхода",
           element: {
             name: "Input",
             options: [],
@@ -1040,7 +1040,7 @@ export const getSTExpensesFormItems = async () => {
           name: "description",
           label: "описание расхода",
           isRequired: true,
-          placeholder: "пожалуйста, введите логин",
+          placeholder: "пожалуйста, введите описание расхода",
           element: {
             name: "Input",
             options: null,
@@ -1060,7 +1060,7 @@ export const getSTExpensesFormItems = async () => {
           name: "sub_category",
           label: "подкатегория",
           isRequired: true,
-          placeholder: "пожалуйста, введите логин",
+          placeholder: "пожалуйста, выберите подкатегорию",
           element: {
             name: "Select",
             options: optionsSubCategories,
@@ -1075,7 +1075,7 @@ export const getSTExpensesFormItems = async () => {
           name: "quests",
           label: "квесты",
           isRequired: false,
-          placeholder: "пожалуйста, введите пароль",
+          placeholder: "пожалуйста, выберите квесты",
           element: {
             name: "Select",
             options: optionsQuests,
@@ -1095,7 +1095,7 @@ export const getSTExpensesFormItems = async () => {
           name: "paid_from",
           label: "оплачено",
           isRequired: true,
-          placeholder: "пожалуйста, введите логин",
+          placeholder: "пожалуйста, выберите как был оплачен",
           element: {
             name: "Select",
             options: optionsPaidFrom,
@@ -1110,7 +1110,7 @@ export const getSTExpensesFormItems = async () => {
           name: "who_paid",
           label: "оплатил",
           isRequired: false,
-          placeholder: "пожалуйста, введите пароль",
+          placeholder: "пожалуйста, выберите кто оплатил",
           element: {
             name: "Select",
             options: optionsUsers,
@@ -1130,7 +1130,7 @@ export const getSTExpensesFormItems = async () => {
           name: "employees",
           label: "сотрудники",
           isRequired: false,
-          placeholder: "пожалуйста, введите логин",
+          placeholder: "пожалуйста, выберите сотрудников",
           element: {
             name: "Select",
             options: optionsUsers,
