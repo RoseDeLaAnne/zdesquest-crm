@@ -983,6 +983,21 @@ export const getSTExpensesFormItems = async () => {
     {
       gutter: 16,
       items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 12,
+          name: "name",
+          label: "наименование расхода",
+          isRequired: true,
+          placeholder: "пожалуйста, выберите наименование расхода",
+          element: {
+            name: "Select",
+            options: optionsNameOfExpense,
+            multiple: null,
+            defaultValue: null,
+          },
+        },
         // {
         //   spanXS: 24,
         //   spanSM: 24,
@@ -992,27 +1007,12 @@ export const getSTExpensesFormItems = async () => {
         //   isRequired: true,
         //   placeholder: "пожалуйста, введите логин",
         //   element: {
-        //     name: "Select",
-        //     options: optionsNameOfExpense,
+        //     name: "Input",
+        //     options: null,
         //     multiple: null,
         //     defaultValue: null,
         //   },
         // },
-        {
-          spanXS: 24,
-          spanSM: 24,
-          spanMD: 12,
-          name: "name",
-          label: "наименование расхода",
-          isRequired: true,
-          placeholder: "пожалуйста, введите логин",
-          element: {
-            name: "Input",
-            options: null,
-            multiple: null,
-            defaultValue: null,
-          },
-        },
         {
           spanXS: 24,
           spanSM: 24,

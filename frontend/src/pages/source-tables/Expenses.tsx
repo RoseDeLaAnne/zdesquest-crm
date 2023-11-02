@@ -162,7 +162,7 @@ const STExpensesFC: FC = () => {
 
   const formHandleOnChange = (value, name) => {
     if (name === 'name') {
-      if (value === 'Такси' || value === 'такси') {
+      if (value === 'taxi') {
         setNotVisibleFormItems(prevState => prevState.filter(item => item !== 'employees'));
       } else {
         // setNotVisibleFormItems(prevState => prevState.filter(item => item !== 'who_paid'));
