@@ -107,7 +107,7 @@ export const getQuests = async () => {
 
 export const getQuestsWithSpecVersions = async () => {
   try {
-    const url = `${url3}/api/quests-with-spec-versions/`;
+    const url = `${url3}/api/quests-with-special-versions/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {
@@ -526,11 +526,18 @@ export const getSTExpense = async (id: number) => {
   }
 };
 
-export const putSTExpense = async (id: number, value: object) => {
+export const putSTExpense = async (id: number, value: object, files: any) => {
   try {
     const url = `${url3}/api/stexpense/${id}/`;
-    const response = await axios.put(url, value);
-    return response;
+    let formData = new FormData()
+    formData.append('json', JSON.stringify(value))
+    let res;
+    if (files) {
+      delete value.attachment      
+      formData.append('files', files)      
+    }
+    res = await axios.put(url, formData)
+    return res;
   } catch (error) {
     throw error;
   }
@@ -697,11 +704,18 @@ export const postSTQuest = async (value: object) => {
   }
 };
 
-export const postSTExpense = async (value: object) => {
+export const postSTExpense = async (value: object, files: any) => {
   try {
     const url = `${url3}/api/create/stexpense/`;
-    const response = await axios.post(url, value);
-    return response;
+    let formData = new FormData()
+    formData.append('json', JSON.stringify(value))
+    let res;    
+    if (files) {
+      delete value.attachment
+      formData.append('files', files)
+    }
+    res = await axios.post(url, formData)
+    return res;
   } catch (error) {
     throw error;
   }

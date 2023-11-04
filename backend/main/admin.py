@@ -151,7 +151,7 @@ admin.site.register(User, UserAdmin)
 admin.site.register(Role)
 
 admin.site.register(Quest)
-admin.site.register(QuestVersion)
+# admin.site.register(QuestVersion)
 admin.site.register(QIncome)
 # admin.site.register(QExpense)
 admin.site.register(QSalary)

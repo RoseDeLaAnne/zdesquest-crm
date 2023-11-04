@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 
 // antd
 import {
@@ -12,6 +12,7 @@ import {
   InputNumber,
   Checkbox,
   Upload,
+  Modal,
 } from "antd";
 // antd | icons
 import { PlusOutlined } from "@ant-design/icons";
@@ -27,18 +28,64 @@ import locale from "antd/es/date-picker/locale/ru_RU";
 
 import "dayjs/locale/ru";
 
-const normFile = (e: any) => {
-  if (Array.isArray(e)) {
-    return e;
-  }
-  return e?.fileList;
-};
-
 const { RangePicker } = DatePicker;
 
-const FormFC: FC = ({ items, form, onFinish, handleOnChange, initialValues }) => {
+const getBase64 = (file: RcFile): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+
+const FormFC: FC = ({
+  items,
+  fileList,
+  setFileList,
+  form,
+  onFinish,
+  handleOnChange,
+  initialValues,
+}) => {
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
+
+  const normFile = (e) => {
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e && e.fileList;
+  };
+
+  const handlePreview = async (file: UploadFile) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj as RcFile);
+    }
+
+    setPreviewImage(file.url || (file.preview as string));
+    setPreviewOpen(true);
+    setPreviewTitle(
+      file.name || file.url!.substring(file.url!.lastIndexOf("/") + 1)
+    );
+  };
+
+  const handleCancel = () => setPreviewOpen(false);
+
+  const handleBeforeUpload = (file) => {
+    // Custom logic to handle the file before uploading
+    console.log('Before upload:', file);
+    return false; // Prevent automatic upload
+  };
+
   return (
-    <Form form={form} layout={"vertical"} requiredMark onFinish={onFinish} initialValues={initialValues}>
+    <Form
+      form={form}
+      layout={"vertical"}
+      requiredMark
+      onFinish={onFinish}
+      initialValues={initialValues}
+    >
       {items.map((item, index) => (
         <Row gutter={item.gutter} key={index}>
           {item.items.map((innerItem, innerIndex) => (
@@ -56,7 +103,8 @@ const FormFC: FC = ({ items, form, onFinish, handleOnChange, initialValues }) =>
                   : {})}
                 {...(innerItem.element.name === "Upload"
                   ? { valuePropName: "fileList", getValueFromEvent: normFile }
-                  : {})}
+                  : // ? { valuePropName: "fileList" }
+                    {})}
                 {...(innerItem.element.name !== "Checkbox"
                   ? {
                       rules: [
@@ -111,16 +159,39 @@ const FormFC: FC = ({ items, form, onFinish, handleOnChange, initialValues }) =>
                     {innerItem.placeholder}
                   </Checkbox>
                 ) : innerItem.element.name === "Upload" ? (
-                  <Upload
-                    action="/upload.do"
-                    listType="picture-card"
-                    maxCount={1}
-                  >
-                    <div>
-                      <PlusOutlined />
-                      <div style={{ marginTop: 8 }}>Upload</div>
-                    </div>
-                  </Upload>
+                  <>
+                    <Upload
+                      name="logo"
+                      listType="picture-card"
+                      beforeUpload={handleBeforeUpload}
+                      fileList={fileList}
+                      onPreview={handlePreview}
+                      onChange={({ fileList: newFileList }) => {
+                        if (newFileList.length > 1) {
+                          newFileList.shift();
+                        }
+                        setFileList(newFileList);
+                      }}
+                      maxCount={1}
+                    >
+                      <div>
+                        <PlusOutlined />
+                        <div style={{ marginTop: 8 }}>Добавить</div>
+                      </div>
+                    </Upload>
+                    <Modal
+                      open={previewOpen}
+                      title={previewTitle}
+                      footer={null}
+                      onCancel={handleCancel}
+                    >
+                      <img
+                        alt="example"
+                        style={{ width: "100%" }}
+                        src={previewImage}
+                      />
+                    </Modal>
+                  </>
                 ) : innerItem.element.name === "InputNumber" ? (
                   <InputNumber
                     defaultValue={innerItem.element.defaultValue}
@@ -128,7 +199,7 @@ const FormFC: FC = ({ items, form, onFinish, handleOnChange, initialValues }) =>
                     onChange={(selectedValues) =>
                       handleOnChange(selectedValues, innerItem.name)
                     }
-                    style={{ width: '100%' }}
+                    style={{ width: "100%" }}
                   />
                 ) : (
                   <Input

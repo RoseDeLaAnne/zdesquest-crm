@@ -147,9 +147,9 @@ const STQuests: FC = () => {
       isCountable: true,
     },
     {
-      title: "actor_second_actor",
-      dataIndex: "actor_second_actor",
-      key: "actor_second_actor",
+      title: "actor_or_second_actor_or_animator",
+      dataIndex: "actor_or_second_actor_or_animator",
+      key: "actor_or_second_actor_or_animator",
       isSorting: false,
       searching: {
         isSearching: false,
@@ -488,55 +488,55 @@ const STQuests: FC = () => {
       setSelectedQuest(quest);
 
       // if (isPackage === false) {
-        // switch (quest.name) {
-        //   case "ДСР":
-        //     setTitlesFormItems({
-        //       actor_second_actor: "asda",
-        //     });
-        //     break;
-        //   case "У57":
-        //     setNotVisibleFormItems(["actor_second_actor"]);
-        //     break;
-        //   case "Тьма":
-        //     setTitlesFormItems({
-        //       actor_second_actor: "второй актер",
-        //     });
-        //     break;
-        //   case "Дом Монстров":
-        //     setTitlesFormItems({
-        //       actor_second_actor: "аниматор",
-        //     });
-        //     break;
-        //   case "Они":
-        //     setTitlesFormItems({
-        //       actor_second_actor: "второй актер",
-        //     });
-        //     break;
-        //   case "Квартира 404":
-        //     setNotVisibleFormItems(["actor_second_actor"]);
-        //     break;
-        //   case "ОСК":
-        //     setTitlesFormItems({
-        //       actor_second_actor: "аниматор",
-        //     });
-        //     break;
-        //   case "Проклятые":
-        //     setNotVisibleFormItems(["actor_second_actor"]);
-        //     break;
-        //   case "Логово Ведьмы":
-        //     setTitlesFormItems({
-        //       actor_second_actor: "аниматор",
-        //     });
-        //     break;
-        //   case "Обитель Зла":
-        //     setNotVisibleFormItems(["actor_second_actor"]);
-        //     break;
-        //   case "Покайся во грехе":
-        //     setNotVisibleFormItems(["actor_second_actor"]);
-        //     break;
-        //   default:
-        //     setNotVisibleFormItems([]);
-        //     break;
+      // switch (quest.name) {
+      //   case "ДСР":
+      //     setTitlesFormItems({
+      //       actor_or_second_actor_or_animator: "asda",
+      //     });
+      //     break;
+      //   case "У57":
+      //     setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
+      //     break;
+      //   case "Тьма":
+      //     setTitlesFormItems({
+      //       actor_or_second_actor_or_animator: "второй актер",
+      //     });
+      //     break;
+      //   case "Дом Монстров":
+      //     setTitlesFormItems({
+      //       actor_or_second_actor_or_animator: "аниматор",
+      //     });
+      //     break;
+      //   case "Они":
+      //     setTitlesFormItems({
+      //       actor_or_second_actor_or_animator: "второй актер",
+      //     });
+      //     break;
+      //   case "Квартира 404":
+      //     setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
+      //     break;
+      //   case "ОСК":
+      //     setTitlesFormItems({
+      //       actor_or_second_actor_or_animator: "аниматор",
+      //     });
+      //     break;
+      //   case "Проклятые":
+      //     setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
+      //     break;
+      //   case "Логово Ведьмы":
+      //     setTitlesFormItems({
+      //       actor_or_second_actor_or_animator: "аниматор",
+      //     });
+      //     break;
+      //   case "Обитель Зла":
+      //     setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
+      //     break;
+      //   case "Покайся во грехе":
+      //     setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
+      //     break;
+      //   default:
+      //     setNotVisibleFormItems([]);
+      //     break;
       //   }
 
       //   // if (quest.address === 'Афанасьева, 13') {

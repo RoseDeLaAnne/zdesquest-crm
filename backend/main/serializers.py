@@ -63,12 +63,12 @@ class QuestSerializer(ModelSerializer):
 
         depth = 1
 
-class QuestVersionSerializer(ModelSerializer):
-    key = serializers.CharField(max_length=255, source="id")
+# class QuestVersionSerializer(ModelSerializer):
+#     key = serializers.CharField(max_length=255, source="id")
 
-    class Meta:
-        model = QuestVersion
-        fields = "__all__"
+#     class Meta:
+#         model = QuestVersion
+#         fields = "__all__"
 
 
 class STQuestSerializer(ModelSerializer):
@@ -112,8 +112,8 @@ class STExpenseSerializer(ModelSerializer):
             "who_paid",
             "employees",
             "created_by",
+            "attachment",
             # "who_paid_amount",
-            # "attachment",
         ]
 
         depth = 1
@@ -204,6 +204,8 @@ class STExpenseCategorySerializer(ModelSerializer):
     class Meta:
         model = STExpenseCategory
         fields = "__all__"
+
+        depth = 1
 
 
 class STExpenseSubCategorySerializer(ModelSerializer):

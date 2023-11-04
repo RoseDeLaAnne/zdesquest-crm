@@ -29,6 +29,8 @@ import {
 // constants
 import { getSTExpensesFormItems } from "../../constants";
 
+const backendUrl = 'http://localhost:8000/'
+
 const STExpensesFC: FC = () => {
   const initialBreadcrumbItems = [
     {
@@ -111,24 +113,20 @@ const STExpensesFC: FC = () => {
         }
       },
     },
-    // {
-    //   title: "приложение",
-    //   dataIndex: "attachment",
-    //   key: "attachment",
-    //   sorting: false,
-    //   searching: {
-    //     isSearching: false,
-    //     title: "",
-    //   },
-    //   countable: false,
-    //   render: (text, record) => (
-    //     <Image
-    //       src={`${backendUrl}${record.image}`}
-    //       width={100}
-    //       height={64}
-    //     />
-    //   ),
-    // },
+    {
+      title: "приложение",
+      dataIndex: "attachment",
+      render: (value) => (
+        value ? (
+          <Image
+            src={`${backendUrl}${value}`}
+            width={100}
+            height={64}
+            className="object-fit_cover"
+          />
+        ) : null
+      ),
+    },
     {
       title: "сотрудники",
       dataIndex: "employees",
@@ -162,7 +160,7 @@ const STExpensesFC: FC = () => {
 
   const formHandleOnChange = (value, name) => {
     if (name === 'name') {
-      if (value === 'taxi') {
+      if (value === 'Такси') {
         setNotVisibleFormItems(prevState => prevState.filter(item => item !== 'employees'));
       } else {
         // setNotVisibleFormItems(prevState => prevState.filter(item => item !== 'who_paid'));
@@ -205,7 +203,7 @@ const STExpensesFC: FC = () => {
       tableIsOperation={user.is_superuser ? true : false}
       operationIsEdit={true}
       operationIsDelete={true}
-      getFunction={user.is_superuser ? getSTExpenses : getUserSTExpenses}
+      getFunction={getSTExpenses}
       deleteFunction={deleteSTExpense}
       postFunction={postSTExpense}
       isAddEntry={true}

@@ -12,7 +12,14 @@ import TemplateTable from "../../components/template/Table2";
 import useQuestForm from "../../hooks/useQuestForm";
 
 // api
-import { deleteSTQuest, getQuests, getSTQuests, getUserSTQuests, postSTQuest, putSTQuest } from "../../api/APIUtils";
+import {
+  deleteSTQuest,
+  getQuests,
+  getSTQuests,
+  getUserSTQuests,
+  postSTQuest,
+  putSTQuest,
+} from "../../api/APIUtils";
 
 // constants
 import { getSTQuestFormItems, getSTQuestsFormItems2 } from "../../constants";
@@ -142,9 +149,9 @@ const STQuests: FC = () => {
       isCountable: true,
     },
     {
-      title: "actor_second_actor",
-      dataIndex: "actor_second_actor",
-      key: "actor_second_actor",
+      title: "actor_or_second_actor_or_animator",
+      dataIndex: "actor_or_second_actor_or_animator",
+      key: "actor_or_second_actor_or_animator",
       isSorting: false,
       searching: {
         isSearching: false,
@@ -492,7 +499,7 @@ const STQuests: FC = () => {
         switch (quest.name) {
           case "ДСР":
             setTitlesFormItems({
-              actor_second_actor: "asda",
+              actor_or_second_actor_or_animator: "asda",
             });
             setNotVisibleFormItems([""]);
             break;
@@ -500,13 +507,13 @@ const STQuests: FC = () => {
             setNotVisibleFormItems([""]);
             break;
           case "Тьма":
-            setNotVisibleFormItems(["actor_second_actor"]);
+            setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
             break;
           case "ДМ":
             setNotVisibleFormItems(["animator"]);
             break;
           case "Они":
-            setNotVisibleFormItems(["actor_second_actor"]);
+            setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
             break;
           case "ОСК":
             setNotVisibleFormItems(["animator"]);
@@ -518,7 +525,7 @@ const STQuests: FC = () => {
             setNotVisibleFormItems([]);
             break;
         }
-  
+
         // if (quest.address === 'Афанасьева, 13') {
         //   setNotVisibleFormItems(['photomagnets_quantity']);
         // }
@@ -534,7 +541,7 @@ const STQuests: FC = () => {
         });
       }
     } else if (name === "is_package") {
-      setIsPackage(value.target.checked)
+      setIsPackage(value.target.checked);
       if (value.target.checked) {
         const names = formItems.reduce((accumulator, currentGroup) => {
           currentGroup.items.forEach((item) => {
@@ -549,12 +556,12 @@ const STQuests: FC = () => {
           "date",
           "time",
           "quest_cost",
-          "administrator"
+          "administrator",
         ];
         // const filteredArray = names.filter(
         //   (item) => !visibleNames.includes(item)
         // );
-        setNotVisibleFormItems(['birthday_congr', 'video']);
+        setNotVisibleFormItems(["birthday_congr", "video"]);
       } else {
         setNotVisibleFormItems([]);
       }
@@ -563,12 +570,12 @@ const STQuests: FC = () => {
       const dayOfWeek = selectedDate.getDay();
       if (Object.keys(selectedQuest).length !== 0) {
         if (dayOfWeek === 0 || dayOfWeek === 6) {
-          setIsWeekend(true)
+          setIsWeekend(true);
           setDefaultValuesFormItems({
             quest_cost: selectedQuest.cost_weekends,
           });
         } else {
-          setIsWeekend(false)
+          setIsWeekend(false);
           setDefaultValuesFormItems({
             quest_cost: selectedQuest.cost_weekdays,
           });

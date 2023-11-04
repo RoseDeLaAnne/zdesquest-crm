@@ -1,7 +1,7 @@
 // libs
 import dayjs from "dayjs";
 
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 
 // react-router-dom
 import { useNavigate, Link, useParams } from "react-router-dom";
@@ -26,8 +26,10 @@ const EditFC: FC = ({
   formItems,
   notVisibleFormItems,
   defaultValuesFormItems,
-  formHandleOnChange
+  formHandleOnChange,
 }) => {
+  const [fileList, setFileList] = useState([]);
+
   const { id } = isUseParams ? useParams() : { id: "" };
   const navigate = useNavigate();
 
@@ -46,7 +48,9 @@ const EditFC: FC = ({
 
       if (res.status === 200) {
         const cleanedData = Object.fromEntries(
-            Object.entries(res.data).filter(([key, val]) => val !== "" && val !== null)
+          Object.entries(res.data).filter(
+            ([key, val]) => val !== "" && val !== null
+          )
         );
         for (const key in cleanedData) {
           if (cleanedData.hasOwnProperty(key)) {
@@ -54,12 +58,21 @@ const EditFC: FC = ({
 
             if (key === "date" || key === "date_of_birth") {
               const date = dayjs(value, datePickerFormat);
-              form.setFieldsValue({ [key]: date });              
+              form.setFieldsValue({ [key]: date });
             } else if (key === "time") {
               const time = dayjs(value, timePickerFormat);
               form.setFieldsValue({ [key]: time });
             } else if (
-              key === "user" || key === "administrator" || key === "animator" || key === "created_by" || key === "room_employee_name" || key === "quest" || key === "user" || key === "who_paid" || key === "sub_category" || key  === 'category'
+              key === "user" ||
+              key === "administrator" ||
+              key === "animator" ||
+              key === "created_by" ||
+              key === "room_employee_name" ||
+              key === "quest" ||
+              key === "user" ||
+              key === "who_paid" ||
+              key === "sub_category" ||
+              key === "category"
             ) {
               form.setFieldsValue({ [key]: value !== null ? value.id : value });
             } else if (
@@ -68,13 +81,24 @@ const EditFC: FC = ({
               key === "special_versions" ||
               key === "versions" ||
               key === "roles" ||
-              key === "quests" || key === 'employees_first_time'
+              key === "quests" ||
+              key === "employees_first_time" ||
+              key === "employees"
             ) {
               form.setFieldsValue({ [key]: value.map((el) => el.id) });
+            } else if (key === "attachment") {
+              setFileList([
+                {
+                  uid: "-1",
+                  name: "attachment.jpg",
+                  status: "done",
+                  url: `http://localhost:8000${value}`,
+                },
+              ]);
             } else {
               form.setFieldsValue({ [key]: value });
             }
-        }
+          }
         }
       }
     } catch (error) {
@@ -85,7 +109,18 @@ const EditFC: FC = ({
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const formOnFinish = async (value: object) => {
-    try {      
+    // console.log(fileList[0])
+    // console.log(value)
+
+    // if (fileList[0].originFileObj) {
+    //   console.log('file')
+    // } else {
+    //   console.log('no file')
+    // }
+
+    // console.log(fileList)
+
+    try {
       if (value.date_of_birth) {
         const date = dayjs(value.date_of_birth);
         const updatedDate = date.add(1, "day");
@@ -95,8 +130,19 @@ const EditFC: FC = ({
         const updatedDate = date.add(1, "day");
         value.date = updatedDate;
       }
-      
-      const response = await putFunction(id, value);
+
+      let response;
+      if (fileList.length > 0) {
+        if (fileList[0].originFileObj) {
+          response = await putFunction(id, value, fileList[0].originFileObj);
+        } else {
+          response = await putFunction(id, value, {});
+        }
+      } else {
+        response = await putFunction(id, value);
+      }
+
+      // const response = await putFunction(id, value);
       if (response.status === 200) {
         messageApi.open({
           type: "success",
@@ -166,6 +212,8 @@ const EditFC: FC = ({
       {contextHolder}
       <CForm
         items={filteredUsersFormItems}
+        fileList={fileList}
+        setFileList={setFileList}
         form={form}
         onFinish={formOnFinish}
         handleOnChange={formHandleOnChange}

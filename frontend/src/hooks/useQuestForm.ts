@@ -6,7 +6,6 @@ import { getQuests } from "../api/APIUtils";
 // contants
 import { stquestsFormItems } from "../constants";
 
-
 interface Quest {
   // Define your quest properties here
   id: number;
@@ -60,7 +59,7 @@ const useQuestForm = (): QuestFormState => {
             setNotVisibleFormItems([""]);
             break;
           case "Тьма":
-            setNotVisibleFormItems(["actor_second_actor"]);
+            setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
             break;
           case "ДМ":
             setNotVisibleFormItems(["animator"]);

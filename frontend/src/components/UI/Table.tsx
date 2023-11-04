@@ -5,7 +5,42 @@ import { Typography, Table } from "antd";
 
 const { Text } = Typography;
 
-const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {  
+const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {
+  // const columns2 = [
+  //     {
+  //         "title": "Зарплаты",
+  //         "dataIndex": "salary",
+  //         "key": "salary"
+  //     },
+  //     {
+  //         "title": "Аренда",
+  //         "children": [
+  //             {
+  //                 "title": "Ставка",
+  //                 "dataIndex": "rate",
+  //                 "key": "rate"
+  //             },
+  //             {
+  //                 "title": "Коммунальные услуги",
+  //                 "dataIndex": "public_service",
+  //                 "key": "public_service"
+  //             }
+  //         ]
+  //     },
+  //     {
+  //         "title": "Прочие расходы",
+  //         "children": [
+  //             {
+  //                 "title": "Прочие расходы",
+  //                 "dataIndex": "other_expenses",
+  //                 "key": "other_expenses"
+  //             }
+  //         ]
+  //     }
+  // ]
+
+  console.log(columns)
+
   return (
     <Table
       scroll={scroll}
@@ -26,11 +61,14 @@ const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {
         }
 
         dataSource.forEach((dataSourceColumns) => {
-          if (dataSourceColumns.status !== "reset" && dataSourceColumns.status !== "paid") {
+          if (
+            dataSourceColumns.status !== "reset" &&
+            dataSourceColumns.status !== "paid"
+          ) {
             total.forEach((totalEach) => {
               if (totalEach.total !== null && isObj) {
                 totalEach.total += dataSourceColumns[totalEach.key].sum;
-              } else if (totalEach['key'] === 'game') {
+              } else if (totalEach["key"] === "game") {
                 totalEach.total += dataSourceColumns[totalEach.key].value;
               } else if (totalEach.total !== null && !isObj) {
                 totalEach.total += dataSourceColumns[totalEach.key];

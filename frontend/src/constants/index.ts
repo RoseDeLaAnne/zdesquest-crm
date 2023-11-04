@@ -24,19 +24,19 @@ export const minuteStep = 15;
 const optionsNameOfExpense = [
   {
     label: "такси",
-    value: "taxi",
+    value: "Такси",
   },
   {
     label: "ремонтные работы",
-    value: "renovation_work",
+    value: "Ремонтные работы",
   },
   {
     label: "обед",
-    value: "lunch",
+    value: "Обед",
   },
   {
     label: "расходники",
-    value: "consumables",
+    value: "Расходники",
   },
 ];
 
@@ -956,7 +956,7 @@ export const getSTQuestFormItems = async () => {
 // getSTExpensesFormItems
 export const getSTExpensesFormItems = async () => {
   const optionsUsers = await fetchUsers();
-  const optionsQuests = await fetchQuests();
+  const optionsQuests = await fetchQuestsWithSpecVersions();
   const optionsSubCategories = await fetchSubCategories();
 
   const formItems = [
@@ -1140,26 +1140,26 @@ export const getSTExpensesFormItems = async () => {
         },
       ],
     },
-    // {
-    //   gutter: 16,
-    //   items: [
-    //     {
-    //       spanXS: 24,
-    //       spanSM: 24,
-    //       spanMD: 24,
-    //       name: "attachment",
-    //       label: "приложение",
-    //       isRequired: false,
-    //       placeholder: "пожалуйста, введите логин",
-    //       element: {
-    //         name: "Upload",
-    //         options: [],
-    //         multiple: null,
-    //         defaultValue: null,
-    //       },
-    //     },
-    //   ],
-    // },
+    {
+      gutter: 16,
+      items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 24,
+          name: "attachment",
+          label: "приложение",
+          isRequired: false,
+          placeholder: "пожалуйста, введите логин",
+          element: {
+            name: "Upload",
+            options: [],
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+      ],
+    },
   ];
 
   return formItems;

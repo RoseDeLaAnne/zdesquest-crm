@@ -73,6 +73,8 @@ const TableFC: FC = ({
 }) => {
   const { id } = isUseParams ? useParams() : { id: "" };
 
+  const [fileList, setFileList] = useState([]);
+
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef<InputRef>(null);
@@ -605,7 +607,30 @@ const TableFC: FC = ({
       if (breadcrumbItems[breadcrumbItems.length - 1].title == "касса") {
         value["quest"] = parseInt(id);
       }
-      const response = await postFunction(value);
+      // let response;
+      // if (value.attachment) {
+      //   if (value.attachment.length > 0) {
+      //     response = await postFunction(value, value.attachment[0].originFileObj)
+      //   } else {
+      //     response = await postFunction(value);
+      //   }
+      // } else {
+      //   response = await postFunction(value);
+      // }
+
+      // console.log(fileList[0].originFileObj)
+
+      let response;
+      if (fileList.length > 0) {
+        if (fileList[0].originFileObj) {
+          response = await postFunction(value, fileList[0].originFileObj);
+        } else {
+          response = await postFunction(value, {});
+        }
+      } else {
+        response = await postFunction(value);
+      }
+
       if (response.status === 201) {
         messageApi.open({
           type: "success",
@@ -619,6 +644,7 @@ const TableFC: FC = ({
         } else {
           getEntries(null, null);
         }
+        form.resetFields()
       } else {
         messageApi.open({
           type: "error",
@@ -716,6 +742,8 @@ const TableFC: FC = ({
           open={drawerIsOpen}
           formForm={form}
           formItems={filteredUsersFormItems}
+          formFileList={fileList}
+          formSetFileList={setFileList}
           formInitialValues={formInitialValues}
           formHandleOnChange={formHandleOnChange}
           formOnFinish={formOnFinish}

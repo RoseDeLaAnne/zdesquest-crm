@@ -63,6 +63,7 @@ def Users(request):
         # else:
         #     return Response(status=401)
 
+
 @api_view(["GET"])
 # @permission_classes([IsAuthenticated])
 def UserCurrent(request):
@@ -364,7 +365,16 @@ def Roles(request):
 @api_view(["GET"])
 def Quests(request):
     if request.method == "GET":
-        quests = Quest.objects.filter(special_versions__isnull=True)
+        quests = Quest.objects.filter(Q(parent_quest__isnull=True) & Q(special_versions__isnull=True))
+        serializer = QuestSerializer(quests, many=True)
+
+        return Response(serializer.data)
+    
+
+@api_view(["GET"])
+def QuestsWithParentQuest(request):
+    if request.method == "GET":
+        quests = Quest.objects.filter(parent_quest__isnull=False)
         serializer = QuestSerializer(quests, many=True)
 
         return Response(serializer.data)
@@ -377,7 +387,8 @@ def QuestsWithSpecailVersions(request):
         serializer = QuestSerializer(quests, many=True)
 
         return Response(serializer.data)
-    
+
+
 # @api_view(["GET"])
 # def QuestsWithSpecailVersionsAndVersions(request):
 #     if request.method == "GET":
@@ -387,13 +398,13 @@ def QuestsWithSpecailVersions(request):
 #         return Response(serializer.data)
 
 
-@api_view(["GET"])
-def QuestVersions(request):
-    if request.method == "GET":
-        quest_versions = QuestVersion.objects.all()
-        serializer = QuestVersionSerializer(quest_versions, many=True)
+# @api_view(["GET"])
+# def QuestVersions(request):
+#     if request.method == "GET":
+#         quest_versions = QuestVersion.objects.all()
+#         serializer = QuestVersionSerializer(quest_versions, many=True)
 
-        return Response(serializer.data)
+#         return Response(serializer.data)
 
 
 # @api_view(["GET"])
@@ -430,7 +441,7 @@ def STQuests(request):
         end_date_param = request.query_params.get("end_date", None)
 
         entries = []
-        if (request.user.is_superuser == True):
+        if request.user.is_superuser == True:
             entries = STQuest.objects.all().order_by("date")
         else:
             entries = STQuest.objects.filter(created_by=request.user).order_by("date")
@@ -713,7 +724,7 @@ def UserSTExpenses(request):
         serializer = STExpenseSerializer(expenses, many=True)
 
         return Response(serializer.data)
-    
+
 
 @api_view(["GET"])
 def STExpenses(request):
@@ -723,10 +734,12 @@ def STExpenses(request):
 
         expenses = []
 
-        if (request.user.is_superuser == True):
+        if request.user.is_superuser == True:
             expenses = STExpense.objects.all().order_by("date")
         else:
-            expenses = STExpense.objects.filter(created_by=request.user).order_by("date")
+            expenses = STExpense.objects.filter(created_by=request.user).order_by(
+                "date"
+            )
 
         if start_date_param and end_date_param:
             try:
@@ -923,7 +936,7 @@ def VQuest(request, id):
 @api_view(["GET", "PUT", "DELETE"])
 def VQuestVersion(request, id):
     if request.method == "GET":
-        entry = QuestVersion.objects.get(id=id)
+        entry = Quest.objects.get(id=id)
         serializer = QuestVersionSerializer(entry, many=False)
 
         return Response(serializer.data)
@@ -932,7 +945,7 @@ def VQuestVersion(request, id):
         try:
             data = json.loads(request.body)
 
-            entry = QuestVersion.objects.get(id=id)
+            entry = Quest.objects.get(id=id)
             entry.name = data["name"]
             entry.cost_weekdays = data["cost_weekdays"]
             entry.cost_weekends = data["cost_weekends"]
@@ -946,7 +959,7 @@ def VQuestVersion(request, id):
             return JsonResponse({"error": str(e)}, status=400)
 
     if request.method == "DELETE":
-        entry = QuestVersion.objects.get(id=id)
+        entry = Quest.objects.get(id=id)
         entry.delete()
 
         return Response(status=200)
@@ -1080,6 +1093,500 @@ def QuestIncomes(request, id):
 
 @api_view(["GET"])
 def QuestExpenses(request, id):
+    if request.method == "GET":
+        start_date_param = request.query_params.get("start_date")
+        end_date_param = request.query_params.get("end_date")
+
+        try:
+            start_date = (
+                datetime.strptime(start_date_param, "%d-%m-%Y").date()
+                if start_date_param
+                else None
+            )
+            end_date = (
+                datetime.strptime(end_date_param, "%d-%m-%Y").date()
+                if end_date_param
+                else None
+            )
+        except ValueError:
+            return JsonResponse(
+                {"error": "Invalid date format. Please use DD-MM-YYYY."}, status=400
+            )
+
+        head = [{"title": "Зарплаты", "dataIndex": "salary", "key": "salary"}]
+        body = []
+        body_data = []
+
+        salaries_data = []
+        expenses_data = []
+
+        variable = {}
+
+        expenses_by_latin_name = {}
+
+        # for head
+        # categories = STExpenseCategory.objects.all()
+
+        # for category in categories:
+        #     if (len(category.sub_categories.all()) != 0):
+        #         children = []
+
+        #         sub_categories = category.sub_categories
+        #         for sub_category in sub_categories.all():
+        #             children.append({
+        #                 "title": sub_category.name,
+        #                 "dataIndex": sub_category.latin_name,
+        #                 "key": sub_category.latin_name,
+        #             })
+
+        #             expenses_by_latin_name[sub_category.latin_name] = {"tooltip": ''}
+        #             expenses_by_latin_name[sub_category.latin_name].update({"value": 0})
+
+        #         head.append({
+        #             "title": category.name,
+        #             "children": children
+        #         })
+        #     else:
+        #         head.append({
+        #             "title": category.name,
+        #             "dataIndex": category.latin_name,
+        #             "key": category.latin_name,
+        #         })
+
+        #         expenses_by_latin_name[category.latin_name] = {"tooltip": ''}
+        #         expenses_by_latin_name[category.latin_name].update({"value": 0})
+
+        sub_categories = STExpenseSubCategory.objects.all()
+
+        for sub_category in sub_categories:
+            sub_category_category_id = sub_category.category.id
+            categories = STExpenseCategory.objects.filter(id=sub_category_category_id)
+            for category in categories:
+                variable[category.name] = []
+
+        for sub_category in sub_categories:
+            sub_category_category_id = sub_category.category.id
+
+            categories = STExpenseCategory.objects.filter(id=sub_category_category_id)
+
+            for category in categories:
+                # print('category', category)
+                # print('sub_category', sub_category)
+
+                if category.latin_name == sub_category.latin_name:
+                    variable[category.name].append(
+                        {
+                            "title": category.name,
+                            "dataIndex": category.latin_name,
+                            "key": category.latin_name,
+                        }
+                    )
+                else:
+                    variable[category.name].append(
+                        {
+                            "title": sub_category.name,
+                            "dataIndex": sub_category.latin_name,
+                            "key": sub_category.latin_name,
+                        }
+                    )
+
+            # head.append(
+            #     {
+            #         "title": sub_category.name,
+            #         "dataIndex": sub_category.latin_name,
+            #         "key": sub_category.latin_name,
+            #     }
+            # )
+
+            expenses_by_latin_name[sub_category.latin_name] = {"tooltip": ""}
+            expenses_by_latin_name[sub_category.latin_name].update({"value": 0})
+
+        for item in variable.items():
+            item_key = item[0]
+            item_value = item[1]
+
+            # print(item_key)
+            # print(item_value)
+
+            if len(item_value) > 0:
+                head.append({"title": item_key, "children": item_value})
+            else:
+                head.append(
+                    {
+                        "title": item_key,
+                        "dataIndex": item_key,
+                        "key": item_key,
+                    }
+                )
+
+            # for nested_item_value in item_value:
+            #     print(item_key)
+            #     print(nested_item_value)
+
+            #     if item_key != nested_item_value['key']:
+            #         head.append(
+            #             {
+            #                 "title":
+            #             }
+            #         )
+
+        # for body
+        quest = Quest.objects.get(id=id)
+
+        salaries_dates = []
+        expenses_dates = []
+
+        salaries_by_date = {}
+        expenses_by_date = {}
+        # salaries_variable = {}
+
+        # salary_names_by_user_id = {}
+        salary_names_by_salary_date_user_id = {}
+
+        salaries = QSalary.objects.filter(stquest__quest=quest)
+        expenses = STExpense.objects.filter(quests=quest)
+
+        for salary in salaries:
+            salary_date = salary.date.strftime("%d.%m.%Y")
+            salaries_dates.append(salary_date)
+
+            salary_names_by_salary_date_user_id[salary_date] = {}
+            salaries_by_date[salary_date] = {}
+
+        for expense in expenses:
+            expense_date = expense.date.strftime("%d.%m.%Y")
+            expenses_dates.append(expense_date)
+
+            expenses_by_date[expense_date] = {}
+
+        for salary in salaries:
+            salary_date = salary.date.strftime("%d.%m.%Y")
+            salary_names_by_salary_date_user_id[salary_date].update({salary.user.id: []})
+
+        for expense in expenses:
+            expense_date = expense.date.strftime("%d.%m.%Y")
+
+            expenses_by_date[expense_date].update({expense.sub_category.latin_name: {'tooltip': '', 'value': 0}})
+
+        # for expense in expenses:
+            # expenses_dates.append(expense.date.strftime("%d.%m.%Y"))
+
+        salaries_dates = set(salaries_dates)
+        expenses_dates = set(expenses_dates)
+        print('salaries_dates', salaries_dates)
+        print('expenses_dates', expenses_dates)
+
+        # print(salaries_names_by_date)
+
+
+        # for item in head:
+        #     key = item['key']
+        #     body.append({str(salary_date): {key: {}}})
+
+        # print(salary_names_by_salary_date_user_id)
+
+        users = []
+        salary_names = []
+        for salary in salaries:
+            name = salary.name
+            users.append(
+                {
+                    "id": salary.user.id,
+                    "first_name": salary.user.first_name,
+                    "last_name": salary.user.last_name,
+                }
+            )
+            salary_names.append(name)
+        users = [dict(t) for t in {tuple(d.items()) for d in users}]
+        salary_names = set(salary_names)
+
+        # salary_by_date = {}
+
+        # print(salary_names_by_user_id)
+
+        for salary in salaries:
+            salary_date = salary.date.strftime("%d.%m.%Y")
+
+            if salary.name not in salary_names_by_salary_date_user_id[salary_date][salary.user.id]:
+                salary_names_by_salary_date_user_id[salary_date][salary.user.id].append(salary.name)
+
+            # if salary.name not in salary_names_by_user_id[salary.user.id]:
+            #     salary_names_by_user_id[salary.user.id].append(salary.name)
+
+            salaries_by_date[salary_date].update(
+                {
+                    salary.user.id: {
+                        "first_name": salary.user.first_name,
+                        "last_name": salary.user.last_name,
+                        "value": 0,
+                        "salary_data": {},
+                    }
+                }
+            ) 
+
+        # print(salary_names_by_salary_date_user_id)
+
+        # print(salaries_by_date)
+        # print(salary_names_by_user_id)
+
+        for salary in salaries:
+            salary_date = salary.date.strftime("%d.%m.%Y")
+
+            # print(salary_names_by_salary_date_user_id[salary_date].items())
+            # for item in salary_names_by_user_id.items():
+            for item in salary_names_by_salary_date_user_id[salary_date].items():
+                item_user_id = item[0]
+                item_salary_names = item[1]
+
+                for item_salary_name in item_salary_names:
+                    if item_user_id in salaries_by_date[salary_date]:
+                        salaries_by_date[salary_date][item_user_id]['salary_data'].update({item_salary_name: {'amount': 0, 'value': 0}})
+
+        for salary in salaries:
+            salary_date = salary.date.strftime("%d.%m.%Y")
+
+            salaries_by_date[salary_date][salary.user.id]['salary_data'][salary.name]['amount'] += 1
+            salaries_by_date[salary_date][salary.user.id]['salary_data'][salary.name]['value'] += salary.amount
+            salaries_by_date[salary_date][salary.user.id]['value'] += salary.amount
+
+        # print(salaries_by_date)
+
+        body_data_salary = {}
+        body_data_salary_tooltip = {}
+        body_data_salary_value = {}
+
+        for item in salaries_by_date.items():
+            item_date = item[0]
+
+            body_data_salary_tooltip[item_date] = ''
+            body_data_salary_value[item_date] = 0
+
+        for item in salaries_by_date.items():
+            item_date = item[0]
+            item_value = item[1]
+
+            # print(item_value.items())
+            # print(item_value.items())
+            
+
+            for item_value_item in item_value.items():
+                item_value_item_user_id = item_value_item[0]
+                item_value_item_value = item_value_item[1]
+
+                info = ''
+                for item_value_item_value_salary_data_item in item_value_item_value['salary_data'].items():
+                    item_value_item_value_salary_data_item_key = item_value_item_value_salary_data_item[0]
+                    item_value_item_value_salary_data_item_value = item_value_item_value_salary_data_item[1]
+
+                    info += f"{item_value_item_value_salary_data_item_value['value']}р. - {item_value_item_value_salary_data_item_value['amount']} {item_value_item_value_salary_data_item_key}<br />"
+
+                body_data_salary_tooltip[item_date] += f"{item_value_item_value['first_name']} {item_value_item_value['last_name']} - {item_value_item_value['value']}р.<br />{info}<br />"
+                body_data_salary_value[item_date] += item_value_item_value['value']
+
+            salaries_data.append(
+                {
+                    "date": item_date,
+                    "salary": {
+                        "tooltip": body_data_salary_tooltip[item_date],
+                        "value": body_data_salary_value[item_date]
+                    }
+                }
+            )
+        
+        expense_for = ['Такси', 'Обед']
+        for expense in expenses:
+            expense_date = expense.date.strftime("%d.%m.%Y")
+            expense_amount = expense.amount / len(expense.quests.all())
+            expense_total_amount = expense.amount
+            sub_category_latin_name = expense.sub_category.latin_name
+
+            sum_tooltip = ''
+            if (expense_amount == expense_total_amount):
+                sum_tooltip += f"{expense_total_amount}р."
+            else:
+                sum_tooltip += f"{expense_amount}р. ({expense_total_amount}р.)"
+
+            employees_tooltip = ''
+            for employee in expense.employees.all():
+                employees_tooltip += f"{employee.first_name} {employee.last_name}"
+
+            if (expense.name in expense_for):
+                expenses_by_date[expense_date][sub_category_latin_name]['tooltip'] += f"{sum_tooltip} - {expense.name} для {employees_tooltip}<br />"
+            else:
+                expenses_by_date[expense_date][sub_category_latin_name]['tooltip'] += f"{sum_tooltip} - {expense.name}<br />"
+            expenses_by_date[expense_date][sub_category_latin_name]['value'] += expense_total_amount
+
+            # print(expenses_by_date)
+
+        for expenses_by_date_item in expenses_by_date.items():
+            expenses_data.append(
+                {
+                    "date": expenses_by_date_item[0],
+                    "other_expenses": {
+                        'tooltip': expenses_by_date_item[1]['other_expenses']['tooltip'],
+                        'value': expenses_by_date_item[1]['other_expenses']['value']
+                    },
+                }
+            )
+
+        # print(salaries_by_date)
+        # print(expenses_by_date)
+
+        body_data2 = {}
+
+        arr_dates = ['03.11.2023', '04.11.2023', '05.11.2023']
+        sub_categories2 = ['salary', 'rate', 'public_service', 'other_expenses']
+
+        body_data2 = {arr_date: {sub_category2: {} for sub_category2 in sub_categories2} for arr_date in arr_dates}
+
+        print(body_data2)
+
+        for item in body_data2.items():
+            body_data.append(
+                {
+                    "date": item[0]
+                }
+            )
+
+        # for entry_date in entry_dates:
+        #     body.append(
+        #         {
+        #             "date": entry_date,
+        #             "salary": {}
+        #         }
+        #     )
+
+        # for item1 in salaries_data:
+        #     for item2 in expenses_data:
+        #         if item1['date'] == item2['date']:
+        #             merged_dict = {**item1, **item2}
+        #             body_data.append(merged_dict)
+
+        # print(merged_arr)
+
+        # print(expenses_by_latin_name)
+
+            # body_data[expense.sub_category.id]['tooltip'] = ''
+
+
+
+            # for salary_data_item in value['salary_data'].items():
+            #     salary_data_item_key = salary_data_item[0]
+            #     salary_data_item_value = salary_data_item[1]
+
+            #     if (salary_data_item_value['amount'] != 0):
+            #         info += f"{salary_data_item_value['value']}р. - {salary_data_item_value['amount']} {salary_data_item_key}<br />"
+
+            # body_data['salary']['tooltip'] += f"{value['first_name']} {value['last_name']} - {value['value']}р.<br />{info}<br />"
+
+        # for user in users:
+        #     user_id = user["id"]
+        #     first_name = user["first_name"]
+        #     last_name = user["last_name"]
+
+            # salary_by_date[user_id] = {"first_name": first_name}
+            # salary_by_date[user_id].update({"last_name": last_name})
+            # salary_by_date[user_id].update({"value": 0})
+            # salary_by_date[user_id].update({"salary_data": {}})
+
+            # for salary_name in salary_names:
+            #     salary_by_date[user_id]["salary_data"].update({salary_name: {'amount': 0, 'value': 0}})
+
+        # print("salary_by_user_id", salary_by_user_id)
+
+        # for salary_date in salaries_dates:
+        #     for user in users:
+        #         salary_by_date[salary_date] = []
+
+        # for salary_date in salaries_dates:
+        #     for user in users:
+        #         salary_by_date[salary_date].append(
+        #             {
+        #                 user["id"]: {
+        #                     "first_name": user["first_name"],
+        #                     "last_name": user["last_name"],
+        #                     "value": 0,
+        #                     "salary_data": {},
+        #                 }
+        #             }
+        #         )
+
+        # print('salary_by_date', salary_by_date)
+
+        # body_data = []
+        # for salary_date in salaries_dates:
+        #     body_data = [{
+        #         "date": salary_date
+        #     }]
+        #     body_data[salary_date]
+        # body_data["salary"] = {"tooltip": ""}
+        # body_data["salary"].update({"value": 0})
+        # for salary in salaries:
+        #     user_id = salary.user.id
+        #     name = salary.name
+        #     amount = salary.amount
+        #     body_data["salary"]["value"] += amount
+
+        #     salary_by_user_id[user_id]["salary_data"][name]['amount'] += 1
+        #     salary_by_user_id[user_id]["salary_data"][name]['value'] += amount
+        #     salary_by_user_id[user_id]["value"] += amount
+
+        # print("salary_by_user_id", salary_by_user_id)
+
+        # for item in salary_by_user_id.items():
+        #     user_id = item[0]
+        #     value = item[1]
+
+        #     info = ''
+        #     for salary_data_item in value['salary_data'].items():
+        #         salary_data_item_key = salary_data_item[0]
+        #         salary_data_item_value = salary_data_item[1]
+
+        #         if (salary_data_item_value['amount'] != 0):
+        #             info += f"{salary_data_item_value['value']}р. - {salary_data_item_value['amount']} {salary_data_item_key}<br />"
+
+        #     body_data['salary']['tooltip'] += f"{value['first_name']} {value['last_name']} - {value['value']}р.<br />{info}<br />"
+
+        # expense_for = ['Такси', 'Обед']
+        # for expense in expenses:
+        #     name = expense.name
+        #     quests = expense.quests
+        #     amount = expense.amount / len(quests.all())
+        #     total_amount = expense.amount
+        #     sub_category_latin_name = expense.sub_category.latin_name
+        #     employees = expense.employees
+
+        #     sum_tooltip = ''
+        #     if (amount == total_amount):
+        #         sum_tooltip += f"{total_amount}р."
+        #     else:
+        #         sum_tooltip += f"{amount}р. ({total_amount}р.)"
+
+        #     employees_tooltip = ''
+        #     for employee in employees.all():
+        #         employees_tooltip += f"{employee.first_name} {employee.last_name}"
+
+        #     if (name in expense_for):
+        #         expenses_by_latin_name[sub_category_latin_name]['tooltip'] += f"{sum_tooltip} - {name} для {employees_tooltip}<br />"
+        #     else:
+        #         expenses_by_latin_name[sub_category_latin_name]['tooltip'] += f"{sum_tooltip} - {name}<br />"
+        #     expenses_by_latin_name[sub_category_latin_name]['value'] += total_amount
+
+        #     print(expense.sub_category.id)
+        #     body_data[expense.sub_category.id]['tooltip'] = ''
+
+        # print("body_data", body_data)
+        # print(expenses_by_latin_name)
+        transformed_data = {
+            "head": head,
+            "body": body_data,
+        }
+
+        return Response(transformed_data)
+
+
+@api_view(["GET"])
+def QuestExpenses342(request, id):
     if request.method == "GET":
         start_date_param = request.query_params.get("start_date")
         end_date_param = request.query_params.get("end_date")
@@ -1304,9 +1811,7 @@ def QuestExpenses99(request, id):
                             "total_amount"
                         ] += bp.amount
                     else:
-                        merged_data[date_str][bp.user.id]["tooltip"][
-                            item_name
-                        ] = {
+                        merged_data[date_str][bp.user.id]["tooltip"][item_name] = {
                             "count": 1,
                             "total_amount": bp.amount,
                         }
@@ -1320,9 +1825,7 @@ def QuestExpenses99(request, id):
                             "total_amount"
                         ] -= bp.amount
                     else:
-                        merged_data[date_str][bp.user.id]["tooltip"][
-                            item_name
-                        ] = {
+                        merged_data[date_str][bp.user.id]["tooltip"][item_name] = {
                             "count": 1,
                             "total_amount": -bp.amount,
                         }
@@ -2026,6 +2529,8 @@ def VQCashRegister(request, id):
         serializer = QCashRegisterSerializer(cash_register, many=True)
 
         return Response(serializer.data)
+
+
 @api_view(["GET"])
 def VQCashRegisterDeposited(request, id):
     if request.method == "GET":
@@ -2049,7 +2554,9 @@ def VQCashRegisterDeposited(request, id):
             )
 
         quest = Quest.objects.get(id=id)
-        cash_register = QCashRegister.objects.filter(Q(quest=quest) & Q(operation='plus')).order_by("date")
+        cash_register = QCashRegister.objects.filter(
+            Q(quest=quest) & Q(operation="plus")
+        ).order_by("date")
 
         if start_date and end_date:
             cash_register = cash_register.filter(date__range=(start_date, end_date))
@@ -2057,6 +2564,8 @@ def VQCashRegisterDeposited(request, id):
         serializer = QCashRegisterSerializer(cash_register, many=True)
 
         return Response(serializer.data)
+
+
 @api_view(["GET"])
 def VQCashRegisterTaken(request, id):
     if request.method == "GET":
@@ -2080,7 +2589,9 @@ def VQCashRegisterTaken(request, id):
             )
 
         quest = Quest.objects.get(id=id)
-        cash_register = QCashRegister.objects.filter(Q(quest=quest) & Q(operation='minus')).order_by("date")
+        cash_register = QCashRegister.objects.filter(
+            Q(quest=quest) & Q(operation="minus")
+        ).order_by("date")
 
         if start_date and end_date:
             cash_register = cash_register.filter(date__range=(start_date, end_date))
@@ -2131,23 +2642,28 @@ def Salaries(request):
         bonuses_penalties = []
         users = []
 
-        if (request.user.is_superuser == True):
+        if request.user.is_superuser == True:
             salaries = QSalary.objects.select_related("user").order_by("date")
             bonuses_penalties = STBonusPenalty.objects.select_related("user").order_by(
                 "date"
             )
             users = User.objects.all()
         else:
-            salaries = QSalary.objects.filter(user=request.user).select_related("user").order_by("date")
-            bonuses_penalties = STBonusPenalty.objects.filter(user=request.user).select_related("user").order_by(
-                "date"
+            salaries = (
+                QSalary.objects.filter(user=request.user)
+                .select_related("user")
+                .order_by("date")
+            )
+            bonuses_penalties = (
+                STBonusPenalty.objects.filter(user=request.user)
+                .select_related("user")
+                .order_by("date")
             )
             users = [request.user]
 
         if start_date and end_date:
             salaries = salaries.filter(date__range=(start_date, end_date))
 
-        
         user_data_map = {user.id: UserSerializer(user).data for user in users}
 
         head_data = [
@@ -2160,10 +2676,10 @@ def Salaries(request):
 
         for user in users:
             user_taxi[user.id] = False
-        
+
         for salary in salaries:
             date_str = salary.date.strftime("%d.%m.%Y")
-            item_name = salary.name            
+            item_name = salary.name
 
             if date_str not in merged_data:
                 merged_data[date_str] = {"id": salary.id, "date": date_str}
@@ -2178,7 +2694,7 @@ def Salaries(request):
 
             a1 = STExpense.objects.filter(Q(name="Такси") & Q(employees=salary.user))
 
-            if (len(a1) != 0):
+            if len(a1) != 0:
                 user_taxi[salary.user.id] = True
 
             if salary.user:
@@ -2192,9 +2708,14 @@ def Salaries(request):
                 else:
                     child = merged_data[date_str][salary.user.id]
                     child["value"] += salary.amount
-                    if item_name == 'Проезд' and user_taxi[salary.user.id] == True:  # Adjust the counting for 'Проезд'
+                    if (
+                        item_name == "Проезд" and user_taxi[salary.user.id] == True
+                    ):  # Adjust the counting for 'Проезд'
                         child["value"] -= 12.5
-                        if item_name in child["tooltip"] and child["tooltip"][item_name]["count"] >= 2:
+                        if (
+                            item_name in child["tooltip"]
+                            and child["tooltip"][item_name]["count"] >= 2
+                        ):
                             child["tooltip"][item_name]["count"] += 1
                             child["tooltip"][item_name]["total_amount"] += salary.amount
                         else:
@@ -2306,9 +2827,15 @@ def SalariesCurrent(request):
                 {"error": "Invalid date format. Please use DD-MM-YYYY."}, status=400
             )
 
-        salaries = QSalary.objects.filter(user=request.user).select_related("user").order_by("date")
-        bonuses_penalties = STBonusPenalty.objects.filter(user=request.user).select_related("user").order_by(
-            "date"
+        salaries = (
+            QSalary.objects.filter(user=request.user)
+            .select_related("user")
+            .order_by("date")
+        )
+        bonuses_penalties = (
+            STBonusPenalty.objects.filter(user=request.user)
+            .select_related("user")
+            .order_by("date")
         )
 
         if start_date and end_date:
@@ -2320,7 +2847,7 @@ def SalariesCurrent(request):
         # if (request.user.is_superuser):
         #     print('ih')
         #     users = User.objects.all()
-        # else:    
+        # else:
         #     users = [request.user]
         user_data_map = {user.id: UserSerializer(user).data for user in users}
 
@@ -2336,10 +2863,10 @@ def SalariesCurrent(request):
             user_taxi[user.id] = False
 
         print(user_taxi)
-        
+
         for salary in salaries:
             date_str = salary.date.strftime("%d.%m.%Y")
-            item_name = salary.name            
+            item_name = salary.name
 
             if date_str not in merged_data:
                 merged_data[date_str] = {"id": salary.id, "date": date_str}
@@ -2354,7 +2881,7 @@ def SalariesCurrent(request):
 
             a1 = STExpense.objects.filter(Q(name="Такси") & Q(employees=salary.user))
 
-            if (len(a1) != 0):
+            if len(a1) != 0:
                 user_taxi[salary.user.id] = True
 
             if salary.user:
@@ -2368,9 +2895,14 @@ def SalariesCurrent(request):
                 else:
                     child = merged_data[date_str][salary.user.id]
                     child["value"] += salary.amount
-                    if item_name == 'Проезд' and user_taxi[salary.user.id] == True:  # Adjust the counting for 'Проезд'
+                    if (
+                        item_name == "Проезд" and user_taxi[salary.user.id] == True
+                    ):  # Adjust the counting for 'Проезд'
                         child["value"] -= 12.5
-                        if item_name in child["tooltip"] and child["tooltip"][item_name]["count"] >= 2:
+                        if (
+                            item_name in child["tooltip"]
+                            and child["tooltip"][item_name]["count"] >= 2
+                        ):
                             child["tooltip"][item_name]["count"] += 1
                             child["tooltip"][item_name]["total_amount"] += salary.amount
                         else:
@@ -2820,34 +3352,102 @@ def VSTExpense(request, id):
         return Response(serializer.data)
 
     if request.method == "PUT":
-        try:
-            data1 = json.loads(request.body)
-            data = {
-                key: value for key, value in data1.items() if value not in ("", None)
-            }
+        # try:
 
-            formatted_date = datetime.strptime(
-                data["date"], "%Y-%m-%dT%H:%M:%S.%fZ"
-            ).date()
-            sub_category = STExpenseSubCategory.objects.get(id=data["sub_category"])
+        data = json.loads(request.data["json"])
+
+        formatted_date = convert_to_date(data["date"])
+        sub_category = STExpenseSubCategory.objects.get(id=data["sub_category"])
+        quests = Quest.objects.filter(id__in=data["quests"])
+        who_paid = User.objects.get(id=data["who_paid"])
+
+        expense = STExpense.objects.get(id=id)
+        expense.date = formatted_date
+        expense.amount = data["amount"]
+        expense.name = data["name"]
+        expense.description = data["description"]
+        expense.sub_category = sub_category
+        expense.paid_from = data["paid_from"]
+        expense.who_paid = who_paid
+
+        if request.FILES:
+            expense.attachment = request.FILES["files"]
+        else:
+            if "files" not in request.data:
+                expense.attachment = None
+
+        expense.save()
+
+        if "quests" in data:
             quests = Quest.objects.filter(id__in=data["quests"])
-            who_paid = User.objects.get(id=data["who_paid"])
-
-            expense = STExpense.objects.get(id=id)
-            expense.date = formatted_date
-            expense.amount = data["amount"]
-            expense.name = data["name"]
-            expense.description = data["description"]
-            expense.sub_category = sub_category
-            expense.paid_from = data["paid_from"]
-            expense.who_paid = who_paid
-            expense.save()
             expense.quests.set(quests)
 
-            return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
+            cash_register = QCashRegister.objects.filter(stexpense=expense)
+            word_card_expense = WorkCardExpense.objects.filter(stexpense=expense)
+            expense_from_their = ExpenseFromTheir.objects.filter(stexpense=expense)
 
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=400)
+            for cash_register_one in cash_register:
+                cash_register_one.delete()
+            for word_card_expense_one in word_card_expense:
+                word_card_expense_one.delete()
+            for expense_from_their_one in expense_from_their:
+                expense_from_their_one.delete()
+
+            # for quest in quests:
+            #     if quest.parent_quest != None:
+            #         quest = Quest.objects.get(id=quest.parent_quest.id)
+
+            #     cash_register = QCashRegister.objects.filter()
+
+            for quest in quests:
+                if quest.parent_quest != None:
+                    quest = Quest.objects.get(id=quest.parent_quest.id)
+                
+
+                if data["paid_from"] == "cash_register":
+                    local_data = {
+                        "date": formatted_date,
+                        "amount": -int(data["amount"]),
+                        "description": data["name"],
+                        "quest": quest,
+                        "stexpense": expense,
+                    }
+
+                    cash_register = QCashRegister(**local_data)
+                    cash_register.save()
+                elif data["paid_from"] == "work_card":
+                    local_data = {
+                        "date": formatted_date,
+                        "amount": int(data["amount"]),
+                        "description": data["name"],
+                        "quest": quest,
+                        "stexpense": expense,
+                    }
+
+                    cash_register = WorkCardExpense(**local_data)
+                    cash_register.save()
+                elif data["paid_from"] == "own":
+                    who_paid = User.objects.get(id=data["who_paid"])
+                    local_data = {
+                        "date": formatted_date,
+                        "amount": int(data["amount"]),
+                        "description": data["name"],
+                        "who_paid": who_paid,
+                        "quest": quest,
+                        "stexpense": expense,
+                    }
+
+                    cash_register = ExpenseFromTheir(**local_data)
+                    cash_register.save()
+
+        if "employees" in data:
+            employees = User.objects.filter(id__in=data["employees"])
+            expense.employees.set(employees)
+
+        return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
+
+        # except Exception as e:
+        #     return JsonResponse({"error": str(e)}, status=400)
 
     if request.method == "DELETE":
         expense = STExpense.objects.get(id=id)
@@ -2869,6 +3469,12 @@ def VSTQuest(request, id):
         data = create_non_empty_dict(request.body)
 
         quest = Quest.objects.get(id=data["quest"])
+        if (quest.parent_quest != None):
+            quest.address = quest.parent_quest.address
+            quest.administrator_rate = quest.parent_quest.administrator_rate
+            quest.actor_rate = quest.parent_quest.actor_rate
+            quest.animator_rate = quest.parent_quest.animator_rate
+            quest.duration_in_minute = quest.parent_quest.duration_in_minute
 
         entry_data = {
             "quest_cost": data["quest_cost"],
@@ -2890,6 +3496,12 @@ def VSTQuest(request, id):
             entry_data.update({"time": formatted_time})
         if "quest" in data:
             quest = Quest.objects.get(id=data["quest"])
+            if (quest.parent_quest != None):
+                quest.address = quest.parent_quest.address
+                quest.administrator_rate = quest.parent_quest.administrator_rate
+                quest.actor_rate = quest.parent_quest.actor_rate
+                quest.animator_rate = quest.parent_quest.animator_rate
+                quest.duration_in_minute = quest.parent_quest.duration_in_minute
             entry_data.update({"quest": quest})
         if "administrator" in data:
             administrator = User.objects.get(id=data["administrator"])
@@ -3034,7 +3646,7 @@ def VSTQuest(request, id):
         create_travel(entry, quest)
         create_qincome(data, entry)
 
-        if (len(QVideo.objects.filter(stquest=entry)) == 0):
+        if len(QVideo.objects.filter(stquest=entry)) == 0:
             if (
                 (
                     ("video" in data and data["video"] != 0)
@@ -3674,16 +4286,9 @@ from django.core.files import File
 def CreateSTExpense(request):
     if request.method == "POST":
         # try:
-        data = json.loads(request.body)
-        # base64_data = data['attachment'][0]['thumbUrl'].split(',')[1]
-        # image_data = base64.b64decode(base64_data)
+        data = json.loads(request.data["json"])
 
-        # Define the file path where the image will be saved
-        # file_path = 'path/to/save/image.jpg'  # Specify your desired file path here
-
-        # Save the image to the specified path
-
-        formatted_date = datetime.strptime(data["date"], "%Y-%m-%dT%H:%M:%S.%fZ").date()
+        formatted_date = convert_to_date(data["date"])
         sub_category = STExpenseSubCategory.objects.get(id=data["sub_category"])
 
         expense_data = {
@@ -3694,30 +4299,26 @@ def CreateSTExpense(request):
             "sub_category": sub_category,
             "paid_from": data["paid_from"],
             "created_by": request.user,
-            # "who_paid": who_paid,
-            # "who_paid_amount": data["who_paid_amount"],
-            # "image": request.data['image'][0]
         }
 
         if "who_paid" in data:
-            who_paid = User.objects.get(id=data["who_paid"])
-            # expense_data['who_paid'] = who_paid
-            expense_data.update({"who_paid": who_paid})
+            expense_data.update({"who_paid": User.objects.get(id=data["who_paid"])})
+
         expense = STExpense(**expense_data)
 
-        # expense.attachment=image_file
+        if request.FILES:
+            expense.attachment = request.FILES["files"]
 
         expense.save()
-
-        # with open(file_path, 'rb') as f:
-        #     django_file = File(f)
-        #     expense.attachment.save(file_path, django_file, save=True)
 
         if "quests" in data:
             quests = Quest.objects.filter(id__in=data["quests"])
             expense.quests.set(quests)
 
             for quest in quests:
+                if quest.parent_quest != None:
+                    quest = Quest.objects.get(id=quest.parent_quest.id)
+
                 if data["paid_from"] == "cash_register":
                     local_data = {
                         "date": formatted_date,
@@ -3758,29 +4359,6 @@ def CreateSTExpense(request):
             employees = User.objects.filter(id__in=data["employees"])
             expense.employees.set(employees)
 
-            # for salaries taxi
-            if data["name"] == "taxi":
-                employees = User.objects.filter(id__in=data["employees"])
-                for employee in employees:
-                    qsalaries = QSalary.objects.filter(
-                        Q(date=formatted_date) & Q(name="Проезд") & Q(user=employee)
-                    ).order_by("-stquest__time")
-                    if len(qsalaries) != 0:
-                        qsalaries[0].delete()
-                        # qsalaries[0].
-
-        # if "quests" in data:
-        #     quests = Quest.objects.filter(id__in=data["quests"])
-        #     len_quests = len(quests)
-        #     for quest in quests:
-        #         STExpense(**{
-        #             "date": formatted_date,
-        #             "amount": int(data["amount"]) / len_quests,
-        #             "name": f"{data['name']} ({data['amount']})",
-        #             "sub_category": sub_category,
-        #         }).save()
-        # print(quest)
-
         return JsonResponse({"message": "Запись успешно создана"}, status=201)
 
         # except Exception as e:
@@ -3797,7 +4375,7 @@ def CreateSTQuest(request):
         # try:
         data = create_non_empty_dict(request.body)
 
-        formatted_date = convert_to_date(data['date'])
+        formatted_date = convert_to_date(data["date"])
         formatted_time_without_3_hours = datetime.fromisoformat(
             data["time"].replace("Z", "")
         ).time()
@@ -3806,9 +4384,19 @@ def CreateSTQuest(request):
             + timedelta(hours=3)
         ).time()
         quest = Quest.objects.get(id=data["quest"])
+
+        if (quest.parent_quest != None):
+            quest.address = quest.parent_quest.address
+            quest.administrator_rate = quest.parent_quest.administrator_rate
+            quest.actor_rate = quest.parent_quest.actor_rate
+            quest.animator_rate = quest.parent_quest.animator_rate
+            quest.duration_in_minute = quest.parent_quest.duration_in_minute
+
         administrator = User.objects.get(id=data["administrator"])
 
-        stquests = STQuest.objects.filter(Q(date=formatted_date) & Q(time=formatted_time) & Q(quest=quest))
+        stquests = STQuest.objects.filter(
+            Q(date=formatted_date) & Q(time=formatted_time) & Q(quest=quest)
+        )
 
         count_easy_work = 1
 
@@ -3854,7 +4442,6 @@ def CreateSTQuest(request):
         if "room_employee_name" in data:
             room_employee_name = User.objects.get(id=data["room_employee_name"])
             entry_data["room_employee_name"] = room_employee_name
-
         if ("photomagnets_quantity" in data) and (quest.address != "Афанасьева, 13"):
             entry_data["photomagnets_quantity"] = int(data["photomagnets_quantity"])
 
@@ -3864,7 +4451,7 @@ def CreateSTQuest(request):
 
         entry = STQuest(**entry_data)
 
-        if (len(stquests) == 0):
+        if len(stquests) == 0:
             entry.save()
             if "actors" in data:
                 actors = User.objects.filter(id__in=data["actors"])
@@ -3926,6 +4513,30 @@ def CreateSTQuest(request):
                 #     "quest": quest,
                 #     "sub_category": STExpenseSubCategory.objects.get(latin_name='salary')
                 # }).quests.add(quest).save()
+
+            if data['is_video_review'] == True:
+                QSalary(
+                    **{
+                        "date": formatted_date,
+                        "amount": 50,
+                        "name": "Видео отзыв",
+                        "user": administrator,
+                        "stquest": entry,
+                        "sub_category": "administrator",
+                    }
+                ).save()
+
+            if "video" in data:
+                QSalary(
+                    **{
+                        "date": formatted_date,
+                        "amount": 100,
+                        "name": "Сумма видео",
+                        "user": administrator,
+                        "stquest": entry,
+                        "sub_category": "administrator",
+                    }
+                ).save()
 
             if "video_after" in data:
                 QSalary(
@@ -4058,16 +4669,18 @@ def CreateSTQuest(request):
                         "sub_category": "administrator",
                     }
                 ).save()
-                QSalary(
-                    **{
-                        "date": formatted_date,
-                        "amount": 30,
-                        "name": "Фотомагнит акц.",
-                        "user": administrator,
-                        "stquest": entry,
-                        "sub_category": "administrator",
-                    }
-                ).save()
+
+                if (data['quest']['address'] != 'Афанасьева, 13'):
+                    QSalary(
+                        **{
+                            "date": formatted_date,
+                            "amount": 30,
+                            "name": "Фотомагнит акц.",
+                            "user": administrator,
+                            "stquest": entry,
+                            "sub_category": "administrator",
+                        }
+                    ).save()
                 # STExpense(**{
                 #     "date": formatted_date,
                 #     "amount": 100,
@@ -4332,7 +4945,7 @@ def CreateSTExpenseCategory(request):
         return JsonResponse({"message": "Запись успешно создана"}, status=201)
 
         # except Exception as e:
-            # return JsonResponse({"error": str(e)}, status=400)
+        # return JsonResponse({"error": str(e)}, status=400)
 
     else:
         return JsonResponse({"error": "Разрешены только POST-запросы"}, status=405)
@@ -4359,7 +4972,7 @@ def CreateSTExpenseSubCategory(request):
 
     else:
         return JsonResponse({"error": "Разрешены только POST-запросы"}, status=405)
-    
+
 
 @api_view(["POST"])
 def CreateQCashRegister(request):
@@ -4367,15 +4980,15 @@ def CreateQCashRegister(request):
         # try:
         data = create_non_empty_dict(request.body)
 
-        if data['operation'] == 'minus':
-            data['amount'] = -int(data['amount'])
+        if data["operation"] == "minus":
+            data["amount"] = -int(data["amount"])
 
         entry_data = {
-            "date": convert_to_date(data['date']),
+            "date": convert_to_date(data["date"]),
             "amount": data["amount"],
             "description": data["description"],
-            "operation": data['operation'],
-            "quest": Quest.objects.get(id=data['quest'])
+            "operation": data["operation"],
+            "quest": Quest.objects.get(id=data["quest"]),
         }
 
         entry = QCashRegister(**entry_data)

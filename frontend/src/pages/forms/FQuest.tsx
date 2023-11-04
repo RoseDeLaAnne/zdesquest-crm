@@ -62,7 +62,10 @@ import {
   putSTQuest,
 } from "../../api/APIUtils";
 
-import { getQuestsFormItems, getSTQuestFormItems } from "../../constants/index.ts";
+import {
+  getQuestsFormItems,
+  getSTQuestFormItems,
+} from "../../constants/index.ts";
 
 // components
 import TemplateCreate from "../../components/template/Create.tsx";
@@ -104,7 +107,7 @@ const QuestFC: FC = () => {
   const [defaultValuesFormItems, setDefaultValuesFormItems] = useState({});
 
   const formHandleOnChange = (value, name) => {
-    console.log('hello2')
+    console.log("hello2");
     if (name === "quest") {
       const quest = quests.find((el) => el.id === value);
 
@@ -119,13 +122,13 @@ const QuestFC: FC = () => {
             setNotVisibleFormItems([""]);
             break;
           case "Тьма":
-            setNotVisibleFormItems(["actor_second_actor"]);
+            setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
             break;
           case "ДМ":
             setNotVisibleFormItems(["animator"]);
             break;
           case "Они":
-            setNotVisibleFormItems(["actor_second_actor"]);
+            setNotVisibleFormItems(["actor_or_second_actor_or_animator"]);
             break;
           case "ОСК":
             setNotVisibleFormItems(["animator"]);
@@ -137,7 +140,7 @@ const QuestFC: FC = () => {
             setNotVisibleFormItems([]);
             break;
         }
-  
+
         // if (quest.address === 'Афанасьева, 13') {
         //   setNotVisibleFormItems(['photomagnets_quantity']);
         // }
@@ -153,7 +156,7 @@ const QuestFC: FC = () => {
         });
       }
     } else if (name === "is_package") {
-      setIsPackage(value.target.checked)
+      setIsPackage(value.target.checked);
       if (value.target.checked) {
         const names = formItems.reduce((accumulator, currentGroup) => {
           currentGroup.items.forEach((item) => {
@@ -173,7 +176,7 @@ const QuestFC: FC = () => {
         // const filteredArray = names.filter(
         //   (item) => !visibleNames.includes(item)
         // );
-        setNotVisibleFormItems(['birthday_congr', 'video']);
+        setNotVisibleFormItems(["birthday_congr", "video"]);
       } else {
         setNotVisibleFormItems([]);
       }
@@ -182,12 +185,12 @@ const QuestFC: FC = () => {
       const dayOfWeek = selectedDate.getDay();
       if (Object.keys(selectedQuest).length !== 0) {
         if (dayOfWeek === 0 || dayOfWeek === 6) {
-          setIsWeekend(true)
+          setIsWeekend(true);
           setDefaultValuesFormItems({
             quest_cost: selectedQuest.cost_weekends,
           });
         } else {
-          setIsWeekend(false)
+          setIsWeekend(false);
           setDefaultValuesFormItems({
             quest_cost: selectedQuest.cost_weekdays,
           });

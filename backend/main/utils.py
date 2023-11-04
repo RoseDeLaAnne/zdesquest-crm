@@ -37,7 +37,7 @@ def date_to_timestamp(date):
 
 def create_qincome(data, entry):
     if "date" in data:
-        formatted_date = convert_to_date(data['date'])
+        formatted_date = convert_to_date(data["date"])
     else:
         formatted_date = entry.date
     if "time" in data:
@@ -51,12 +51,116 @@ def create_qincome(data, entry):
     else:
         formatted_time = entry.time
 
-    # print(data)
-
     if "quest" in data:
         quest = Quest.objects.get(id=data["quest"])
 
-        if quest.special_versions.exists():
+        if quest.parent_quest != None:
+            if ("photomagnets_quantity") in data:
+                photomagnets_promo = int(data["photomagnets_quantity"]) // 2
+                photomagnets_not_promo = (
+                    int(data["photomagnets_quantity"]) - photomagnets_promo
+                )
+                photomagnets_sum = (
+                    photomagnets_not_promo * 250 + photomagnets_promo * 150
+                )
+
+            local_data = {
+                "date": formatted_date,
+                "time": formatted_time,
+                "stquest": entry,
+                "quest": Quest.objects.get(id=quest.parent_quest.id),
+            }
+
+            if "is_package" in data:
+                local_data.update({"is_package": data["is_package"]})
+
+            if "add_players" not in data:
+                data["add_players"] = 0
+            if "easy_work" not in data:
+                data["easy_work"] = 0
+            if "night_game" not in data:
+                data["night_game"] = 0
+            if "discount_sum" not in data:
+                data["discount_sum"] = 0
+            if "cash_payment" not in data:
+                data["cash_payment"] = 0
+            if "cash_delivery" not in data:
+                data["cash_delivery"] = 0
+            if "cashless_payment" not in data:
+                data["cashless_payment"] = 0
+            if "cashless_delivery" not in data:
+                data["cashless_delivery"] = 0
+            if "discount_desc" not in data:
+                data["discount_desc"] = ""
+
+            # local_data['game'] = (int(data['quest_cost']) + int(data['add_players']) + int(data['easy_work']) + int(data['night_game']) - int(data['discount_sum']))
+            local_data["game"] = (
+                int(data["quest_cost"])
+                + int(data["add_players"])
+                + int(data["easy_work"])
+                + int(data["night_game"])
+            )
+            # if local_data['discount_sum']:
+            # local_data['game_tooltip'] =
+            # local_data['game'] = {
+            #     "value": int(data['quest_cost']) + int(data['add_players']) + int(data['easy_work']) + int(data['night_game']) - int(data['discount_sum']),
+            #     "tooltip": ""
+            # }
+
+            local_data["discount_sum"] = int(data["discount_sum"])
+            local_data["discount_desc"] = data["discount_desc"]
+            local_data["easy_work"] = data["easy_work"]
+
+            local_data["paid_cash"] = int(data["cash_payment"]) - int(
+                data["cash_delivery"]
+            )
+            local_data["paid_non_cash"] = (
+                int(data["cashless_payment"])
+                - int(data["cashless_delivery"])
+                + int(data["prepayment"])
+            )
+
+            if "actor_or_second_actor_or_animator" in data:
+                new_data = {
+                    "actor": int(data["actor_or_second_actor_or_animator"]),
+                }
+                local_data.update(new_data)
+
+            if "room_sum" in data:
+                new_data = {"room": int(data["room_sum"])}
+
+                local_data.update(new_data)
+
+            if "video" in data:
+                new_data = {"video": int(data["video"])}
+                local_data.update(new_data)
+
+            if "photomagnets_quantity" in data:
+                new_data = {"photomagnets": int(photomagnets_sum)}
+                local_data.update(new_data)
+
+            # if ("cash_payment" in data) and ("cash_delivery" in data):
+            new_data = {
+                "paid_cash": int(data["cash_payment"]) - int(data["cash_delivery"]),
+            }
+            local_data.update(new_data)
+
+            # if (
+            #     ("prepayment" in data)
+            #     and ("cashless_payment" in data)
+            #     and ("cashless_delivery" in data)
+            # ):
+            new_data = {
+                "paid_non_cash": int(data["prepayment"])
+                + int(data["cashless_payment"])
+                - int(data["cashless_delivery"]),
+            }
+            local_data.update(new_data)
+
+            qincome = QIncome(**local_data)
+            qincome.save()
+
+        elif quest.special_versions.exists():
             for special_version in quest.special_versions.all():
                 if ("photomagnets_quantity") in data:
                     photomagnets_promo = int(data["photomagnets_quantity"]) // 2
@@ -118,9 +222,9 @@ def create_qincome(data, entry):
                     + int(data["prepayment"])
                 )
 
-                if "actor_second_actor" in data:
+                if "actor_or_second_actor_or_animator" in data:
                     new_data = {
-                        "actor": int(data["actor_second_actor"]),
+                        "actor": int(data["actor_or_second_actor_or_animator"]),
                     }
                     local_data.update(new_data)
 
@@ -273,9 +377,9 @@ def create_qincome(data, entry):
                 + int(data["prepayment"])
             )
 
-            if "actor_second_actor" in data:
+            if "actor_or_second_actor_or_animator" in data:
                 new_data = {
-                    "actor": int(data["actor_second_actor"]),
+                    "actor": int(data["actor_or_second_actor_or_animator"]),
                 }
                 local_data.update(new_data)
 
@@ -317,15 +421,22 @@ def create_qincome(data, entry):
 def create_qcash_register_from_stquest(data, entry):
     formatted_date = convert_to_date(data["date"])
 
+    quest = Quest.objects.get(id=data["quest"])
+    new_quest = quest
+
+    if (quest.parent_quest != None):
+        new_quest = Quest.objects.get(id=quest.parent_quest.id)
+
     local_data2 = {
         "date": formatted_date,
         "amount": int(data["cash_payment"]) - int(data["cash_delivery"]),
         "stquest": entry,
-        "quest": Quest.objects.get(id=data["quest"]),
+        "quest": new_quest,
     }
 
     cash_register = QCashRegister(**local_data2)
     cash_register.save()
+
 
 def create_qcash_register_from_stexpense(data):
     formatted_date = datetime.strptime(data["date"], "%Y-%m-%dT%H:%M:%S.%fZ").date()
@@ -342,8 +453,8 @@ def create_qcash_register_from_stexpense(data):
 
 
 def create_travel(entry, quest):
-    quest_id = quest.id
-    quests = Quest.objects.filter(id=quest_id)
+    # quest_id = quest.id
+    # quests = Quest.objects.filter(id=quest_id)
     # print(quests)
 
     stquest_date = entry.date
@@ -458,6 +569,14 @@ def create_travel(entry, quest):
                 # print(user)
                 # print(prev_stquest_by_user.time)
                 # print(stquest_by_user.time)
+                # if (stquest_by_user.quest.parent_quest != None):
+                #     stquest_by_user.quest.address = stquest_by_user.quest.parent_quest.address
+                #     stquest_by_user.quest.duration_in_minute = stquest_by_user.quest.parent_quest.duration_in_minute
+
+                # if (prev_stquest_by_user.quest.parent_quest != None):
+                #     prev_stquest_by_user.quest.address = prev_stquest_by_user.quest.parent_quest.address
+                #     prev_stquest_by_user.quest.duration_in_minute = prev_stquest_by_user.quest.parent_quest.duration_in_minute
+
                 new_prev_entry_time = (
                     datetime.combine(
                         prev_stquest_by_user.date, prev_stquest_by_user.time

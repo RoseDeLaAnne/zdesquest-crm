@@ -15,53 +15,57 @@ class Role(models.Model):
         return self.name
 
 
-class QuestVersion(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+# class QuestVersion(models.Model):
+#     name = models.CharField(max_length=255, unique=True)
 
-    cost_weekdays = models.IntegerField(default=0)
-    cost_weekends = models.IntegerField(default=0)
-    cost_weekdays_with_package = models.IntegerField(default=0)
-    cost_weekends_with_package = models.IntegerField(default=0)
+#     cost_weekdays = models.IntegerField(default=0)
+#     cost_weekends = models.IntegerField(default=0)
+#     cost_weekdays_with_package = models.IntegerField(default=0)
+#     cost_weekends_with_package = models.IntegerField(default=0)
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
 
 
 class Quest(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    address = models.CharField(max_length=255)
+    address = models.CharField(max_length=255, blank=True, null=True)
 
     cost_weekdays = models.IntegerField(default=0)
     cost_weekends = models.IntegerField(default=0)
-    cost_weekdays_with_package = models.IntegerField(default=0)
-    cost_weekends_with_package = models.IntegerField(default=0)
+    cost_weekdays_with_package = models.IntegerField(blank=True, null=True)
+    cost_weekends_with_package = models.IntegerField(blank=True, null=True)
 
-    administrator_rate = models.IntegerField(default=0)
-    actor_rate = models.IntegerField(default=0)
-    animator_rate = models.IntegerField(default=0)
+    administrator_rate = models.IntegerField(blank=True, null=True)
+    actor_rate = models.IntegerField(blank=True, null=True)
+    animator_rate = models.IntegerField(blank=True, null=True)
 
-    duration_in_minute = models.IntegerField(default=0)
+    duration_in_minute = models.IntegerField(blank=True, null=True)
 
-    special_versions = models.ManyToManyField("self", blank=True, symmetrical=False)
-    versions = models.ManyToManyField(QuestVersion, blank=True)
+    parent_quest = models.ForeignKey("self", on_delete=models.SET_NULL, blank=True, null=True, related_name="quest_parent_quest")
+    special_versions = models.ManyToManyField("self", blank=True, symmetrical=False, related_name="quest_special_versions")
+    # versions = models.ManyToManyField(QuestVersion, blank=True)
 
     def save(self, *args, **kwargs):
-        self.animator_rate = self.actor_rate + 50
+        if self.actor_rate is not None:
+            self.animator_rate = self.actor_rate + 50
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
-
-
+    
 class STExpenseCategory(models.Model):
     name = models.CharField(max_length=255, unique=True)
+    latin_name = models.CharField(max_length=255, unique=True, blank=True, null=True)
+
+    # sub_categories = models.ManyToManyField(STExpenseSubCategory, blank=True)
 
     def __str__(self):
         return self.name
 
-
 class STExpenseSubCategory(models.Model):
     name = models.CharField(max_length=255, unique=True)
+    latin_name = models.CharField(max_length=255, unique=True, blank=True, null=True)
 
     category = models.ForeignKey(
         STExpenseCategory, on_delete=models.CASCADE, blank=True, null=True
@@ -69,7 +73,6 @@ class STExpenseSubCategory(models.Model):
 
     def __str__(self):
         return self.name
-
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name=_("Адрес электронной почты"), unique=True)
@@ -153,6 +156,7 @@ class STQuest(models.Model):
     date = models.DateField(default=timezone.now)
     time = models.TimeField(default=timezone.now)
     quest = models.ForeignKey(Quest, on_delete=models.DO_NOTHING, blank=True, null=True)
+    # quest_version = models.ForeignKey(QuestVersion, on_delete=models.DO_NOTHING, blank=True, null=True)
     quest_cost = models.IntegerField()
     add_players = models.IntegerField(default=0)
     actor_or_second_actor_or_animator = models.IntegerField(default=0)
@@ -296,7 +300,7 @@ class STExpense(models.Model):
         null=True,
         related_name="who_paid_st_expense",
     )
-    attachment = models.FileField(upload_to="photos/", blank=True, null=True)
+    attachment = models.ImageField(upload_to="photos/", blank=True, null=True)
 
     stquest = models.ForeignKey(
         STQuest, on_delete=models.CASCADE, blank=True, null=True
