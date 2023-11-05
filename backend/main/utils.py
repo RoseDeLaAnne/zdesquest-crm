@@ -424,6 +424,9 @@ def create_qcash_register_from_stquest(data, entry):
     quest = Quest.objects.get(id=data["quest"])
     new_quest = quest
 
+    print(data["cash_payment"])
+    print(data["cash_delivery"])
+
     if (quest.parent_quest != None):
         new_quest = Quest.objects.get(id=quest.parent_quest.id)
 
@@ -435,7 +438,9 @@ def create_qcash_register_from_stquest(data, entry):
     }
 
     cash_register = QCashRegister(**local_data2)
-    cash_register.save()
+
+    if (int(data["cash_payment"]) != 0):
+        cash_register.save()
 
 
 def create_qcash_register_from_stexpense(data):
@@ -480,10 +485,10 @@ def create_travel(entry, quest):
         new_quest0 = stquests_by_user[0].quest
         new_questlen = stquests_by_user[len(stquests_by_user) - 1].quest
 
-        if stquests_by_user[0].quest.parent_quest != None:
-            new_quest0 = stquests_by_user[0].quest.parent_quest
-        if stquests_by_user[len(stquests_by_user) - 1].quest.parent_quest != None:
-            new_questlen = stquests_by_user[len(stquests_by_user) - 1].quest.parent_quest
+        if new_quest0.parent_quest != None:
+            new_quest0 = new_quest0.parent_quest
+        if new_questlen.parent_quest != None:
+            new_questlen = new_questlen.parent_quest
 
         if len(stquests_by_user) == 1:           
             travel_data = {
@@ -534,13 +539,15 @@ def create_travel(entry, quest):
                 prev_new_quest = prev_stquest_by_user.quest.parent_quest
                 
             if prev_stquest_by_user != stquest_by_user:
-                if (stquest_by_user.quest.parent_quest != None):
-                    stquest_by_user.quest.address = stquest_by_user.quest.parent_quest.address
-                    stquest_by_user.quest.duration_in_minute = stquest_by_user.quest.parent_quest.duration_in_minute
+                # if (stquest_by_user.quest.parent_quest != None):
+                    # stquest_by_user.quest.address = stquest_by_user.quest.parent_quest.address
+                    # stquest_by_user.quest.duration_in_minute = stquest_by_user.quest.parent_quest.duration_in_minute
+                    # stquest_by_user.quest = stquest_by_user.quest.parent_quest
 
-                if (prev_stquest_by_user.quest.parent_quest != None):
-                    prev_stquest_by_user.quest.address = prev_stquest_by_user.quest.parent_quest.address
-                    prev_stquest_by_user.quest.duration_in_minute = prev_stquest_by_user.quest.parent_quest.duration_in_minute
+                # if (prev_stquest_by_user.quest.parent_quest != None):
+                    # prev_stquest_by_user.quest.address = prev_stquest_by_user.quest.parent_quest.address
+                    # prev_stquest_by_user.quest.duration_in_minute = prev_stquest_by_user.quest.parent_quest.duration_in_minute
+                    # prev_stquest_by_user.quest = prev_stquest_by_user.quest.parent_quest
 
                 new_prev_entry_time = (
                     datetime.combine(

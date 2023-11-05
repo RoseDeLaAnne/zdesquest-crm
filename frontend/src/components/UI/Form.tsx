@@ -13,6 +13,7 @@ import {
   Checkbox,
   Upload,
   Modal,
+  AutoComplete,
 } from "antd";
 // antd | icons
 import { PlusOutlined } from "@ant-design/icons";
@@ -128,6 +129,11 @@ const FormFC: FC = ({
                     onChange={(selectedValues) =>
                       handleOnChange(selectedValues, innerItem.name)
                     }
+                  />
+                ) : innerItem.element.name === "AutoComplete" ? (
+                  <AutoComplete
+                    options={innerItem.element.options}
+                    style={{ width: "100%" }}
                   />
                 ) : innerItem.element.name === "DatePicker" ? (
                   <DatePicker

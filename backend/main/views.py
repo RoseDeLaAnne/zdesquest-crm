@@ -435,12 +435,16 @@ def QuestsWithSpecailVersions(request):
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def STQuests(request):
     if request.method == "GET":
         start_date_param = request.query_params.get("start_date", None)
         end_date_param = request.query_params.get("end_date", None)
 
         entries = []
+
+        print(request.user)
+
         if request.user.is_superuser == True:
             entries = STQuest.objects.all().order_by("date")
         else:
@@ -3463,7 +3467,7 @@ def VSTExpense(request, id):
         expense.date = formatted_date
         expense.amount = data["amount"]
         expense.name = data["name"]
-        expense.description = data["description"]
+        # expense.description = data["description"]
         expense.sub_category = sub_category
         expense.paid_from = data["paid_from"]
 
@@ -3569,12 +3573,16 @@ def VSTQuest(request, id):
         data = create_non_empty_dict(request.body)
 
         quest = Quest.objects.get(id=data["quest"])
+        new_quest = quest
+
         if (quest.parent_quest != None):
             quest.address = quest.parent_quest.address
             quest.administrator_rate = quest.parent_quest.administrator_rate
             quest.actor_rate = quest.parent_quest.actor_rate
             quest.animator_rate = quest.parent_quest.animator_rate
             quest.duration_in_minute = quest.parent_quest.duration_in_minute
+
+            new_quest = quest.parent_quest
 
         entry_data = {
             "quest_cost": data["quest_cost"],
@@ -3777,6 +3785,7 @@ def VSTQuest(request, id):
                     "name": "Комната",
                     "user": room_employee_name,
                     "stquest": entry,
+                    "quest": new_quest,
                     "sub_category": "actor",
                 }
             ).save()
@@ -3802,22 +3811,10 @@ def VSTQuest(request, id):
                     "name": "Видео отзыв",
                     "user": administrator,
                     "stquest": entry,
+                    "quest": new_quest,
                     "sub_category": "administrator",
                 }
             ).save()
-            # STExpense(
-            #     **{
-            #         "date": formatted_date,
-            #         "amount": 50,
-            #         "name": "Видео отзыв",
-            #         "user": administrator,
-            #         "stquest": entry,
-            #         "quest": quest,
-            #         "sub_category": STExpenseSubCategory.objects.get(
-            #             latin_name="salary"
-            #         ),
-            #     }
-            # ).quests.add(quest).save()
 
         if "video_after" in data:
             QSalary(
@@ -3827,6 +3824,7 @@ def VSTQuest(request, id):
                     "name": "Видео после",
                     "user": administrator,
                     "stquest": entry,
+                    "quest": new_quest,
                     "sub_category": "administrator",
                 }
             ).save()
@@ -3854,6 +3852,7 @@ def VSTQuest(request, id):
                         "name": "Игра",
                         "user": employee,
                         "stquest": entry,
+                        "quest": new_quest,
                         "sub_category": "actor",
                     }
                 ).save()
@@ -3880,6 +3879,7 @@ def VSTQuest(request, id):
                     "name": "Игра",
                     "user": animator_local,
                     "stquest": entry,
+                    "quest": new_quest,
                     "sub_category": "actor",
                 }
             ).save()
@@ -3906,6 +3906,7 @@ def VSTQuest(request, id):
                     "name": "Игра",
                     "user": local_admin,
                     "stquest": entry,
+                    "quest": new_quest,
                     "sub_category": "administrator",
                 }
             ).save()
@@ -3931,6 +3932,7 @@ def VSTQuest(request, id):
                     "name": "Видео",
                     "user": administrator,
                     "stquest": entry,
+                    "quest": new_quest,
                     "sub_category": "administrator",
                 }
             ).save()
@@ -3941,6 +3943,7 @@ def VSTQuest(request, id):
                     "name": "Бонус за пакет",
                     "user": administrator,
                     "stquest": entry,
+                    "quest": new_quest,
                     "sub_category": "administrator",
                 }
             ).save()
@@ -3951,6 +3954,7 @@ def VSTQuest(request, id):
                     "name": "Фотомагнит акц.",
                     "user": administrator,
                     "stquest": entry,
+                    "quest": new_quest,
                     "sub_category": "administrator",
                 }
             ).save()
@@ -3994,6 +3998,19 @@ def VSTQuest(request, id):
             #     }
             # ).quests.add(quest).save()
 
+        if (new_quest.address != 'Афанасьева, 13'):
+            QSalary(
+                **{
+                    "date": formatted_date,
+                    "amount": 30,
+                    "name": "Фотомагнит акц.",
+                    "user": administrator,
+                    "stquest": entry,
+                    "quest": new_quest,
+                    "sub_category": "administrator",
+                }
+            ).save()
+
         if data["night_game"] != 0:
             if "administrator" in data:
                 administrator = User.objects.get(id=data["administrator"])
@@ -4004,6 +4021,7 @@ def VSTQuest(request, id):
                         "name": "Ночная игра",
                         "user": administrator,
                         "stquest": entry,
+                        "quest": new_quest,
                         "sub_category": "administrator",
                     }
                 ).save()
@@ -4029,6 +4047,7 @@ def VSTQuest(request, id):
                         "name": "Ночная игра",
                         "user": animator,
                         "stquest": entry,
+                        "quest": new_quest,
                         "sub_category": "actor",
                     }
                 ).save()
@@ -4058,6 +4077,7 @@ def VSTQuest(request, id):
                             "name": "Ночная игра",
                             "user": actor,
                             "stquest": entry,
+                            "quest": new_quest,
                             "sub_category": "actor",
                         }
                     ).save()
@@ -4082,6 +4102,7 @@ def VSTQuest(request, id):
                             "name": "Простой",
                             "user": actor,
                             "stquest": entry,
+                            "quest": new_quest,
                             "sub_category": "actor",
                         }
                     ).save()
@@ -4105,6 +4126,7 @@ def VSTQuest(request, id):
                         "name": "Игра",
                         "user": actor,
                         "stquest": entry,
+                        "quest": new_quest,
                         "sub_category": "actor",
                     }
                 ).save()
@@ -4395,7 +4417,7 @@ def CreateSTExpense(request):
             "date": formatted_date,
             "amount": data["amount"],
             "name": data["name"],
-            "description": data["description"],
+            # "description": data["description"],
             "sub_category": sub_category,
             "paid_from": data["paid_from"],
             "created_by": request.user,
@@ -4783,7 +4805,7 @@ def CreateSTQuest(request):
                     }
                 ).save()
 
-                if (data['quest']['address'] != 'Афанасьева, 13'):
+                if (new_quest.address != 'Афанасьева, 13'):
                     QSalary(
                         **{
                             "date": formatted_date,

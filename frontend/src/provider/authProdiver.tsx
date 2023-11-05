@@ -19,14 +19,16 @@ const AuthProvider = ({ children }) => {
     setAccess_(newAccess);
   };
 
+  axios.defaults.headers.common["Authorization"] = "Bearer " + access;
+
   useEffect(() => {
     if (access) {
       axios.defaults.headers.common["Authorization"] = "Bearer " + access;
       localStorage.setItem("access", access);
-    } else {
-      delete axios.defaults.headers.common["Authorization"];
-      localStorage.removeItem("access");
-    }
+    }// } else {
+    //   delete axios.defaults.headers.common["Authorization"];
+    //   localStorage.removeItem("access");
+    // }
   }, [access]);
 
   // Memoized value of the authentication context

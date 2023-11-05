@@ -99,17 +99,17 @@ const QVideosFC: FC = () => {
   ];
 
   const initialPackedTableColumns = [
-    {
-      title: "id",
-      dataIndex: "id",
-      key: "id",
-      isSorting: false,
-      searching: {
-        isSearching: true,
-        title: "id",
-      },
-      isCountable: false,
-    },
+    // {
+    //   title: "id",
+    //   dataIndex: "id",
+    //   key: "id",
+    //   isSorting: false,
+    //   searching: {
+    //     isSearching: true,
+    //     title: "id",
+    //   },
+    //   isCountable: false,
+    // },
     {
       title: "имя клиента",
       dataIndex: "client_name",

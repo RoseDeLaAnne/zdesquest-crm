@@ -23,19 +23,15 @@ export const minuteStep = 15;
 
 const optionsNameOfExpense = [
   {
-    label: "такси",
     value: "Такси",
   },
   {
-    label: "ремонтные работы",
     value: "Ремонтные работы",
   },
   {
-    label: "обед",
     value: "Обед",
   },
   {
-    label: "расходники",
     value: "Расходники",
   },
 ];
@@ -992,7 +988,7 @@ export const getSTExpensesFormItems = async () => {
           isRequired: true,
           placeholder: "пожалуйста, выберите наименование расхода",
           element: {
-            name: "Select",
+            name: "AutoComplete",
             options: optionsNameOfExpense,
             multiple: null,
             defaultValue: null,
@@ -1030,26 +1026,26 @@ export const getSTExpensesFormItems = async () => {
         },
       ],
     },
-    {
-      gutter: 16,
-      items: [
-        {
-          spanXS: 24,
-          spanSM: 24,
-          spanMD: 24,
-          name: "description",
-          label: "описание расхода",
-          isRequired: true,
-          placeholder: "пожалуйста, введите описание расхода",
-          element: {
-            name: "Input",
-            options: null,
-            multiple: null,
-            defaultValue: null,
-          },
-        },
-      ],
-    },
+    // {
+    //   gutter: 16,
+    //   items: [
+    //     {
+    //       spanXS: 24,
+    //       spanSM: 24,
+    //       spanMD: 24,
+    //       name: "description",
+    //       label: "описание расхода",
+    //       isRequired: true,
+    //       placeholder: "пожалуйста, введите описание расхода",
+    //       element: {
+    //         name: "Input",
+    //         options: null,
+    //         multiple: null,
+    //         defaultValue: null,
+    //       },
+    //     },
+    //   ],
+    // },
     {
       gutter: 16,
       items: [
