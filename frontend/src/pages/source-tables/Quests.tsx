@@ -334,10 +334,17 @@ const STQuestsFC: FC = () => {
     dayjs().day() === 0 || dayjs().day() === 6
   );
 
+  // const [time, setTime] = useState(dayjs().hour(dayjs().hour()).startOf("hour"))
+  // const [prepayment, setPrepayment] = useState(500)
+
   const [quests, setQuests] = useState([]);
   const [notVisibleFormItems, setNotVisibleFormItems] = useState([]);
   const [titlesFormItems, setTitlesFormItems] = useState({});
   const [defaultValuesFormItems, setDefaultValuesFormItems] = useState({});
+
+  const formHandleOnSelect = (value, name) => {
+    // setPrepayment(1000)
+  }
 
   const formHandleOnChange = (value, name) => {
     if (name === "quest") {
@@ -435,7 +442,6 @@ const STQuestsFC: FC = () => {
   const formInitialValues = {
     date: dayjs(),
     time: dayjs().hour(dayjs().hour()).startOf("hour"),
-    // administrator: userId,
     prepayment: 500,
   };
 
@@ -463,6 +469,7 @@ const STQuestsFC: FC = () => {
       titlesFormItems={titlesFormItems}
       notVisibleFormItems={notVisibleFormItems}
       defaultValuesFormItems={defaultValuesFormItems}
+      formHandleOnSelect={formHandleOnSelect}
       formHandleOnChange={formHandleOnChange}
       formInitialValues={formInitialValues}
       operationIsAdd={true}

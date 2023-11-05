@@ -394,7 +394,10 @@ class QSalary(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
     stquest = models.ForeignKey(
-        STQuest, on_delete=models.CASCADE, blank=True, null=True
+        STQuest, on_delete=models.CASCADE, blank=True, null=True, related_name="qsalary_stquest"
+    )
+    quest = models.ForeignKey(
+        Quest, on_delete=models.CASCADE, blank=True, null=True, related_name="qsalary_quest"
     )
 
     sub_category = models.CharField(max_length=255, default="")

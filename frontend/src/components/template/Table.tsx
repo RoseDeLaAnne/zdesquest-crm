@@ -67,6 +67,7 @@ const TableFC: FC = ({
   notVisibleFormItems,
   defaultValuesFormItems,
   formHandleOnChange,
+  formHandleOnSelect,
   operationIsAdd,
   operationIsEdit,
   operationIsDelete,
@@ -303,33 +304,130 @@ const TableFC: FC = ({
       .filter((column) => column.countable)
       .map((column) => column.dataIndex);
   } else {
-    unpackedTableColumns = tableDataHead.map((column) => {
-      return {
-        title: column.title,
-        dataIndex: column.dataIndex,
-        key: column.key,
-        ...getColumnSearchProps(column.dataIndex, ""),
-        sorter: {
-          compare: (a, b) => a[column.dataIndex] - b[column.dataIndex],
-        },
-        render: (obj) => {
-          if (obj.tooltip !== "") {
-            return (
-              <Tooltip
-                title={
-                  <div dangerouslySetInnerHTML={{ __html: obj.tooltip }} />
-                }
-                placement="bottomLeft"
-              >
-                <div>{obj.value}</div>
-              </Tooltip>
-            );
-          } else {
-            return <div>{obj.value}</div>;
-          }
-        },
-      };
+    unpackedTableColumns = tableDataHead.map((item) => {
+      if (item.children) {
+        return {
+          ...item,
+          children: item.children.map((child) => ({
+            ...child,
+            render: (obj) => {
+              if (obj.tooltip !== "") {
+                return (
+                  <Tooltip
+                    title={
+                      <div dangerouslySetInnerHTML={{ __html: obj.tooltip }} />
+                    }
+                    placement="bottomLeft"
+                  >
+                    <div>{obj.value}</div>
+                  </Tooltip>
+                );
+              } else {
+                return <div>{obj.value}</div>;
+              }
+            },
+          })),
+        };
+      }
+      return { ...item, render: (obj) => {
+        if (obj.tooltip !== "") {
+          return (
+            <Tooltip
+              title={
+                <div dangerouslySetInnerHTML={{ __html: obj.tooltip }} />
+              }
+              placement="bottomLeft"
+            >
+              <div>{obj.value}</div>
+            </Tooltip>
+          );
+        } else {
+          return <div>{obj.value}</div>;
+        }
+      }, };
     });
+
+    // unpackedTableColumns = tableDataHead.map((column) => {
+    //   // console.log(column)
+
+    //   let newColumn = {
+    //     title: column.title,
+    //   };
+
+    //   if (column.hasOwnProperty('children')) {
+    //     console.log('children')
+    //     newColumn.children = newColumn.children.map((newColumnItem) => {
+    //       return {
+    //         dataIndex: newColumnItem.dataIndex,
+    //         key: newColumnItem.key,
+    //         render: (obj) => {
+    //           if (obj.tooltip !== "") {
+    //             return (
+    //               <Tooltip
+    //                 title={
+    //                   <div dangerouslySetInnerHTML={{ __html: obj.tooltip }} />
+    //                 }
+    //                 placement="bottomLeft"
+    //               >
+    //                 <div>{obj.value}</div>
+    //               </Tooltip>
+    //             );
+    //           } else {
+    //             return <div>{obj.value}</div>;
+    //           }
+    //         },
+    //       }
+    //     })
+    //   } else {
+    //     newColumn = {
+    //       dataIndex: column.dataIndex,
+    //       key: column.key,
+    //       render: (obj) => {
+    //         if (obj.tooltip !== "") {
+    //           return (
+    //             <Tooltip
+    //               title={
+    //                 <div dangerouslySetInnerHTML={{ __html: obj.tooltip }} />
+    //               }
+    //               placement="bottomLeft"
+    //             >
+    //               <div>{obj.value}</div>
+    //             </Tooltip>
+    //           );
+    //         } else {
+    //           return <div>{obj.value}</div>;
+    //         }
+    //       },
+    //     }
+    //   }
+
+    //   return newColumn
+    //   // return {
+    //   //   title: column.title,
+    //   //   dataIndex: column.dataIndex,
+    //   //   key: column.key,
+    //   //   ...getColumnSearchProps(column.dataIndex, ""),
+    //   //   sorter: {
+    //   //     compare: (a, b) => a[column.dataIndex] - b[column.dataIndex],
+    //   //   },
+    //   //   render: (obj) => {
+    //   //     if (obj.tooltip !== "") {
+    //   //       return (
+    //   //         <Tooltip
+    //   //           title={
+    //   //             <div dangerouslySetInnerHTML={{ __html: obj.tooltip }} />
+    //   //           }
+    //   //           placement="bottomLeft"
+    //   //         >
+    //   //           <div>{obj.value}</div>
+    //   //         </Tooltip>
+    //   //       );
+    //   //     } else {
+    //   //       return <div>{obj.value}</div>;
+    //   //     }
+    //   //   },
+    //   // };
+    // });
   }
   if (tableDateColumn) {
     tableColumns = [
@@ -745,6 +843,7 @@ const TableFC: FC = ({
           formFileList={fileList}
           formSetFileList={setFileList}
           formInitialValues={formInitialValues}
+          formHandleOnSelect={formHandleOnSelect}
           formHandleOnChange={formHandleOnChange}
           formOnFinish={formOnFinish}
         />

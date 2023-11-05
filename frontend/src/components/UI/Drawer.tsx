@@ -16,6 +16,7 @@ const DrawerFC: FC = ({
   formFileList,
   formSetFileList,
   formOnFinish,
+  formHandleOnSelect,
   formHandleOnChange,
   formInitialValues
 }) => {
@@ -35,7 +36,7 @@ const DrawerFC: FC = ({
         </Space>
       }
     >
-      <CForm form={formForm} items={formItems} fileList={formFileList} setFileList={formSetFileList} onFinish={formOnFinish} handleOnChange={formHandleOnChange} initialValues={formInitialValues} />
+      <CForm form={formForm} items={formItems} fileList={formFileList} setFileList={formSetFileList} onFinish={formOnFinish} handleOnSelect={formHandleOnSelect} handleOnChange={formHandleOnChange} initialValues={formInitialValues} />
     </Drawer>
   );
 };

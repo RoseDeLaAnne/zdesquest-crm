@@ -6,40 +6,8 @@ import { Typography, Table } from "antd";
 const { Text } = Typography;
 
 const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {
-  // const columns2 = [
-  //     {
-  //         "title": "Зарплаты",
-  //         "dataIndex": "salary",
-  //         "key": "salary"
-  //     },
-  //     {
-  //         "title": "Аренда",
-  //         "children": [
-  //             {
-  //                 "title": "Ставка",
-  //                 "dataIndex": "rate",
-  //                 "key": "rate"
-  //             },
-  //             {
-  //                 "title": "Коммунальные услуги",
-  //                 "dataIndex": "public_service",
-  //                 "key": "public_service"
-  //             }
-  //         ]
-  //     },
-  //     {
-  //         "title": "Прочие расходы",
-  //         "children": [
-  //             {
-  //                 "title": "Прочие расходы",
-  //                 "dataIndex": "other_expenses",
-  //                 "key": "other_expenses"
-  //             }
-  //         ]
-  //     }
-  // ]
-
   console.log(columns)
+  console.log(dataSource)
 
   return (
     <Table

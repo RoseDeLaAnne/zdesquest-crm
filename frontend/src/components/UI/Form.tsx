@@ -44,6 +44,7 @@ const FormFC: FC = ({
   setFileList,
   form,
   onFinish,
+  handleOnSelect,
   handleOnChange,
   initialValues,
 }) => {
@@ -74,7 +75,7 @@ const FormFC: FC = ({
 
   const handleBeforeUpload = (file) => {
     // Custom logic to handle the file before uploading
-    console.log('Before upload:', file);
+    console.log("Before upload:", file);
     return false; // Prevent automatic upload
   };
 
@@ -140,7 +141,11 @@ const FormFC: FC = ({
                   />
                 ) : innerItem.element.name === "TimePicker" ? (
                   <TimePicker
-                    defaultValue={innerItem.element.defaultValue}
+                    // onSelect={(selectedValues) => {
+                    //   handleOnSelect(selectedValues, innerItem.name);
+                    // }}
+                    // value={initialValues.time}
+                    // defaultValue={innerItem.element.defaultValue}
                     format={timePickerFormat}
                     minuteStep={minuteStep}
                     style={{ width: "100%" }}
