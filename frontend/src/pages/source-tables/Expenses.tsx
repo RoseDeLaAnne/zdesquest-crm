@@ -29,8 +29,8 @@ import {
 // constants
 import { getSTExpensesFormItems } from "../../constants";
 
-// const backendUrl = 'http://localhost:8000/'
-const backendUrl = 'http://crm.zdesquest.ru/'
+const backendUrl = 'http://localhost:8000/'
+// const backendUrl = 'http://crm.zdesquest.ru/'
 
 const STExpensesFC: FC = () => {
   const initialBreadcrumbItems = [
@@ -160,6 +160,9 @@ const STExpensesFC: FC = () => {
   }, []);
 
   const formHandleOnChange = (value, name) => {
+    console.log('value', value)
+    console.log('name', name)
+    
     if (name === 'name') {
       if (value === 'Такси' || value === 'Обед') {
         setNotVisibleFormItems(prevState => prevState.filter(item => item !== 'employees'));

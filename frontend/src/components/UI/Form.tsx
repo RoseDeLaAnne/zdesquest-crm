@@ -133,6 +133,9 @@ const FormFC: FC = ({
                 ) : innerItem.element.name === "AutoComplete" ? (
                   <AutoComplete
                     options={innerItem.element.options}
+                    onChange={(selectedValues) =>
+                      handleOnChange(selectedValues, innerItem.name)
+                    }
                     style={{ width: "100%" }}
                   />
                 ) : innerItem.element.name === "DatePicker" ? (
