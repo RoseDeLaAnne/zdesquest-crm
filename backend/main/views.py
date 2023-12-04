@@ -3924,7 +3924,7 @@ def VSTQuest(request, id):
             #     }
             # ).quests.add(quest).save()
 
-        if data["is_package"] == True:
+        if data["is_package"] == True and new_quest.address != 'Афанасьева, 13':
             QSalary(
                 **{
                     "date": formatted_date,
@@ -3998,7 +3998,10 @@ def VSTQuest(request, id):
             #     }
             # ).quests.add(quest).save()
 
+        # print(new_quest.address)
+        # if "administrator" in data:
         if (new_quest.address != 'Афанасьева, 13'):
+            print('not afanaseva 13')
             QSalary(
                 **{
                     "date": formatted_date,
@@ -4095,10 +4098,11 @@ def VSTQuest(request, id):
                     #     }
                     # ).quests.add(quest).save()
                 if data["easy_work"] != 0:
+                    print(int((int(data["easy_work"]) - 50) / count_easy_work))
                     QSalary(
                         **{
                             "date": formatted_date,
-                            "amount": int(data["easy_work"]) / count_easy_work,
+                            "amount": int((int(data["easy_work"]) - 50) / count_easy_work),
                             "name": "Простой",
                             "user": actor,
                             "stquest": entry,
@@ -4143,6 +4147,22 @@ def VSTQuest(request, id):
                 #         ),
                 #     }
                 # ).quests.add(quest).save()
+
+        # print(data['employees_first_time'].all())
+
+        if "employees_first_time" in data:
+            employees_first_time = User.objects.filter(id__in=data['employees_first_time'])
+
+            for employee_first_time in employees_first_time:
+                QSalary(**{
+                    "date": formatted_date,
+                    "amount": 250,
+                    "name": "Игра",
+                    "user": employee_first_time,
+                    "stquest": entry,
+                    "quest": new_quest,
+                    "sub_category": "actor",
+                }).save()
 
         return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
 
@@ -4919,7 +4939,7 @@ def CreateSTQuest(request):
                     if data["easy_work"] != 0:
                         easy_work_salary_data = {
                             "date": formatted_date,
-                            "amount": int(data["easy_work"]) / count_easy_work,
+                            "amount": (int(data["easy_work"]) - 50) / count_easy_work,
                             "name": "Простой",
                             "user": actor,
                             "stquest": entry,
@@ -4985,7 +5005,7 @@ def CreateSTQuest(request):
                     if data["easy_work"] != 0:
                         easy_work_salary_data = {
                             "date": formatted_date,
-                            "amount": int(data["easy_work"]) / count_easy_work,
+                            "amount": (int(data["easy_work"]) - 50) / count_easy_work,
                             "name": "Простой",
                             "user": actor,
                             "stquest": entry,

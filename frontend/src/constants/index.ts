@@ -582,7 +582,7 @@ export const getSTQuestFormItems = async () => {
           spanMD: 12,
           name: "administrator",
           label: "администратор",
-          isRequired: true,
+          isRequired: false,
           placeholder: "пожалуйста, выберите администратора",
           element: {
             name: "Select",

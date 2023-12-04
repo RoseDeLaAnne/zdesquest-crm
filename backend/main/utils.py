@@ -100,6 +100,7 @@ def create_qincome(data, entry):
                 + int(data["easy_work"])
                 + int(data["night_game"])
             )
+            
             # if local_data['discount_sum']:
             # local_data['game_tooltip'] =
             # local_data['game'] = {
@@ -531,12 +532,15 @@ def create_travel(entry, quest):
             if index == 0:
                 prev_stquest_by_user = stquest_by_user
                 
-            new_quest = stquest_by_user
+            new_quest = stquest_by_user.quest
             if (stquest_by_user.quest.parent_quest != None):
                 new_quest = stquest_by_user.quest.parent_quest
-            prev_new_quest = prev_stquest_by_user
+            prev_new_quest = prev_stquest_by_user.quest
             if (prev_stquest_by_user.quest.parent_quest != None):
                 prev_new_quest = prev_stquest_by_user.quest.parent_quest
+
+            # print(new_quest)
+            # print(prev_new_quest)
                 
             if prev_stquest_by_user != stquest_by_user:
                 # if (stquest_by_user.quest.parent_quest != None):
