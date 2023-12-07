@@ -435,7 +435,7 @@ def QuestsWithSpecailVersions(request):
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def STQuests(request):
     if request.method == "GET":
         start_date_param = request.query_params.get("start_date", None)
@@ -443,12 +443,12 @@ def STQuests(request):
 
         entries = []
 
-        print(request.user)
+        # if request.user.is_superuser == True:
+        #     entries = STQuest.objects.all().order_by("date")
+        # else:
+        #     entries = STQuest.objects.filter(created_by=request.user).order_by("date")
 
-        if request.user.is_superuser == True:
-            entries = STQuest.objects.all().order_by("date")
-        else:
-            entries = STQuest.objects.filter(created_by=request.user).order_by("date")
+        entries = STQuest.objects.all().order_by("date")        
 
         if start_date_param and end_date_param:
             try:
@@ -539,13 +539,14 @@ def STQuests(request):
 
                 # Append the serialized actor to the list
                 serialized_half_actors.append(serialized_half_actor)
+
             serialized_employees_first_time = []
             for (
                 employee_first_time
             ) in (
                 entry.employees_first_time.all()
             ):  # Assuming actors is a related manager (e.g., a ManyToManyField or ForeignKey)
-                serialized_half_actor = {
+                serialized_employee_first_time = {
                     "id": employee_first_time.id,
                     "last_name": employee_first_time.last_name,
                     "first_name": employee_first_time.first_name,
@@ -553,7 +554,7 @@ def STQuests(request):
                 }
 
                 # Append the serialized actor to the list
-                serialized_employees_first_time.append(serialized_employees_first_time)
+                serialized_employees_first_time.append(serialized_employee_first_time)
 
             entry_dict[date_timestamp]["quest"] = {
                 "id": entry.quest.id,
@@ -2811,30 +2812,30 @@ def Salaries(request):
                 else:
                     child = merged_data[date_str][salary.user.id]
                     child["value"] += salary.amount
-                    if (
-                        item_name == "Проезд" and user_taxi[salary.user.id] == True
-                    ):  # Adjust the counting for 'Проезд'
-                        child["value"] -= 12.5
-                        if (
-                            item_name in child["tooltip"]
-                            and child["tooltip"][item_name]["count"] >= 2
-                        ):
-                            child["tooltip"][item_name]["count"] += 1
-                            child["tooltip"][item_name]["total_amount"] += salary.amount
-                        else:
-                            child["tooltip"][item_name] = {
-                                "count": 1,
-                                "total_amount": salary.amount,
-                            }
+                    # if (
+                    #     item_name == "Проезд" and user_taxi[salary.user.id] == True
+                    # ):  # Adjust the counting for 'Проезд'
+                    #     child["value"] -= 12.5
+                    #     if (
+                    #         item_name in child["tooltip"]
+                    #         and child["tooltip"][item_name]["count"] >= 2
+                    #     ):
+                    #         child["tooltip"][item_name]["count"] += 1
+                    #         child["tooltip"][item_name]["total_amount"] += salary.amount
+                    #     else:
+                    #         child["tooltip"][item_name] = {
+                    #             "count": 1,
+                    #             "total_amount": salary.amount,
+                    #         }
+                    # else:
+                    if item_name in child["tooltip"]:
+                        child["tooltip"][item_name]["count"] += 1
+                        child["tooltip"][item_name]["total_amount"] += salary.amount
                     else:
-                        if item_name in child["tooltip"]:
-                            child["tooltip"][item_name]["count"] += 1
-                            child["tooltip"][item_name]["total_amount"] += salary.amount
-                        else:
-                            child["tooltip"][item_name] = {
-                                "count": 1,
-                                "total_amount": salary.amount,
-                            }
+                        child["tooltip"][item_name] = {
+                            "count": 1,
+                            "total_amount": salary.amount,
+                        }
 
         for bp in bonuses_penalties:
             date_str = bp.date.strftime("%d.%m.%Y")
@@ -2882,7 +2883,7 @@ def Salaries(request):
                         }
 
         body_data = []
-        print(merged_data)
+        # print(merged_data)
         for date_str, date_data in merged_data.items():
             user_data = {
                 "id": date_data["id"],
@@ -2965,7 +2966,7 @@ def SalariesCurrent(request):
         for user in users:
             user_taxi[user.id] = False
 
-        print(user_taxi)
+        # print(user_taxi)
 
         for salary in salaries:
             date_str = salary.date.strftime("%d.%m.%Y")
@@ -2998,30 +2999,30 @@ def SalariesCurrent(request):
                 else:
                     child = merged_data[date_str][salary.user.id]
                     child["value"] += salary.amount
-                    if (
-                        item_name == "Проезд" and user_taxi[salary.user.id] == True
-                    ):  # Adjust the counting for 'Проезд'
-                        child["value"] -= 12.5
-                        if (
-                            item_name in child["tooltip"]
-                            and child["tooltip"][item_name]["count"] >= 2
-                        ):
-                            child["tooltip"][item_name]["count"] += 1
-                            child["tooltip"][item_name]["total_amount"] += salary.amount
-                        else:
-                            child["tooltip"][item_name] = {
-                                "count": 1,
-                                "total_amount": salary.amount,
-                            }
+                    # if (
+                    #     item_name == "Проезд" and user_taxi[salary.user.id] == True
+                    # ):  # Adjust the counting for 'Проезд'
+                    #     child["value"] -= 12.5
+                    #     if (
+                    #         item_name in child["tooltip"]
+                    #         and child["tooltip"][item_name]["count"] >= 2
+                    #     ):
+                    #         child["tooltip"][item_name]["count"] += 1
+                    #         child["tooltip"][item_name]["total_amount"] += salary.amount
+                    #     else:
+                    #         child["tooltip"][item_name] = {
+                    #             "count": 1,
+                    #             "total_amount": salary.amount,
+                    #         }
+                    # else:
+                    if item_name in child["tooltip"]:
+                        child["tooltip"][item_name]["count"] += 1
+                        child["tooltip"][item_name]["total_amount"] += salary.amount
                     else:
-                        if item_name in child["tooltip"]:
-                            child["tooltip"][item_name]["count"] += 1
-                            child["tooltip"][item_name]["total_amount"] += salary.amount
-                        else:
-                            child["tooltip"][item_name] = {
-                                "count": 1,
-                                "total_amount": salary.amount,
-                            }
+                        child["tooltip"][item_name] = {
+                            "count": 1,
+                            "total_amount": salary.amount,
+                        }
 
         for bp in bonuses_penalties:
             date_str = bp.date.strftime("%d.%m.%Y")
@@ -3614,6 +3615,8 @@ def VSTQuest(request, id):
         if "administrator" in data:
             administrator = User.objects.get(id=data["administrator"])
             entry_data.update({"administrator": administrator})
+        # elif "employees_first_time" in data:
+        #     administrator = User.objects.get(id=data['employees_first_time'])
 
         count_easy_work = 1
 
@@ -3816,7 +3819,23 @@ def VSTQuest(request, id):
                 }
             ).save()
 
-        if "video_after" in data:
+        if "video" in data and data["video"] != 0:
+            # print('videoadmin')
+
+            if "administrator" in data:
+                QSalary(
+                    **{
+                        "date": formatted_date,
+                        "amount": 100,
+                        "name": "Сумма видео",
+                        "user": administrator,
+                        "stquest": entry,
+                        "quest": new_quest,
+                        "sub_category": "administrator",
+                    }
+                ).save()
+
+        if "video_after" in data and data["video_after"] != 0:
             QSalary(
                 **{
                     "date": formatted_date,
@@ -3923,8 +3942,21 @@ def VSTQuest(request, id):
             #         ),
             #     }
             # ).quests.add(quest).save()
-
+            
         if data["is_package"] == True and new_quest.address != 'Афанасьева, 13':
+            QSalary(
+                **{
+                    "date": formatted_date,
+                    "amount": 30,
+                    "name": "Фотомагнит акц.",
+                    "user": administrator,
+                    "stquest": entry,
+                    "quest": new_quest,
+                    "sub_category": "administrator",
+                }
+            ).save()
+
+        if data["is_package"] == True:
             QSalary(
                 **{
                     "date": formatted_date,
@@ -3941,17 +3973,6 @@ def VSTQuest(request, id):
                     "date": formatted_date,
                     "amount": 100,
                     "name": "Бонус за пакет",
-                    "user": administrator,
-                    "stquest": entry,
-                    "quest": new_quest,
-                    "sub_category": "administrator",
-                }
-            ).save()
-            QSalary(
-                **{
-                    "date": formatted_date,
-                    "amount": 30,
-                    "name": "Фотомагнит акц.",
                     "user": administrator,
                     "stquest": entry,
                     "quest": new_quest,
@@ -4000,19 +4021,19 @@ def VSTQuest(request, id):
 
         # print(new_quest.address)
         # if "administrator" in data:
-        if (new_quest.address != 'Афанасьева, 13'):
-            print('not afanaseva 13')
-            QSalary(
-                **{
-                    "date": formatted_date,
-                    "amount": 30,
-                    "name": "Фотомагнит акц.",
-                    "user": administrator,
-                    "stquest": entry,
-                    "quest": new_quest,
-                    "sub_category": "administrator",
-                }
-            ).save()
+        # if (new_quest.address != 'Афанасьева, 13') and :
+        #     # print('not afanaseva 13')
+        #     QSalary(
+        #         **{
+        #             "date": formatted_date,
+        #             "amount": 30,
+        #             "name": "Фотомагнит акц.",
+        #             "user": administrator,
+        #             "stquest": entry,
+        #             "quest": new_quest,
+        #             "sub_category": "administrator",
+        #         }
+        #     ).save()
 
         if data["night_game"] != 0:
             if "administrator" in data:
@@ -4098,6 +4119,7 @@ def VSTQuest(request, id):
                     #     }
                     # ).quests.add(quest).save()
                 if data["easy_work"] != 0:
+                    print('prostoi')
                     print(int((int(data["easy_work"]) - 50) / count_easy_work))
                     QSalary(
                         **{
@@ -4150,6 +4172,20 @@ def VSTQuest(request, id):
 
         # print(data['employees_first_time'].all())
 
+        if "administrator" in data:
+            if data["easy_work"] != 0:
+                QSalary(
+                    **{
+                        "date": formatted_date,
+                        "amount": int((int(data["easy_work"]) - 50) / count_easy_work),
+                        "name": "Простой",
+                        "user": administrator,
+                        "stquest": entry,
+                        "quest": new_quest,
+                        "sub_category": "actor",
+                    }
+                ).save()
+
         if "employees_first_time" in data:
             employees_first_time = User.objects.filter(id__in=data['employees_first_time'])
 
@@ -4157,7 +4193,7 @@ def VSTQuest(request, id):
                 QSalary(**{
                     "date": formatted_date,
                     "amount": 250,
-                    "name": "Игра",
+                    "name": "Игра (в первый раз)",
                     "user": employee_first_time,
                     "stquest": entry,
                     "quest": new_quest,
@@ -4674,20 +4710,22 @@ def CreateSTQuest(request):
                     }
                 ).save()
 
-            if "video" in data:
-                QSalary(
-                    **{
-                        "date": formatted_date,
-                        "amount": 100,
-                        "name": "Сумма видео",
-                        "user": administrator,
-                        "stquest": entry,
-                        "quest": new_quest,
-                        "sub_category": "administrator",
-                    }
-                ).save()
+            if "video" in data and data["video"] != 0:
+                # print('videoadmin')
+                if "administrator" in data:
+                    QSalary(
+                        **{
+                            "date": formatted_date,
+                            "amount": 100,
+                            "name": "Сумма видео",
+                            "user": administrator,
+                            "stquest": entry,
+                            "quest": new_quest,
+                            "sub_category": "administrator",
+                        }
+                    ).save()
 
-            if "video_after" in data:
+            if "video_after" in data and data["video_after"] != 0:
                 QSalary(
                     **{
                         "date": formatted_date,
