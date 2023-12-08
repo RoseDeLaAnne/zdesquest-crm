@@ -1238,7 +1238,7 @@ def QuestExpenses(request, id):
         # for body
         quest = Quest.objects.get(id=id)
 
-        dates = []
+        dates = ['08.12.2023', '09.12.2023']
         sub_categories2 = []
 
         salaries_dates = []
@@ -1380,25 +1380,42 @@ def QuestExpenses(request, id):
             salaries_by_date[salary_date][salary.user.id]['salary_data'][salary.name]['value'] += salary.amount
             salaries_by_date[salary_date][salary.user.id]['value'] += salary.amount
 
+        
+
+        # for bonus_penalty in bonuses_penalties:
+        #     bonus_penalty_date = bonus_penalty.date.strftime("%d.%m.%Y")
+        #     # print(bonus)
+
+        #     for item in bonus_penalty_names_by_bonus_penalty_date_user_id[bonus_penalty_date].items():
+        #         item_user_id = item[0]
+        #         item_bonus_penalty_names = item[1]
+
+        #         for item_bonus_penalty_name in item_bonus_penalty_names:
+        #             # print(salaries_by_date[bonus_penalty_date][item_user_id]['salary_data'][item_bonus_penalty_name])
+        #             # if item_user_id in salaries_by_date[bonus_penalty_date]:
+        #             #     salaries_by_date[bonus_penalty_date][item_user_id]['salary_data'].update({item_bonus_penalty_name: {'amount': 0, 'value': 0}})
+
         for bonus_penalty in bonuses_penalties:
             bonus_penalty_date = bonus_penalty.date.strftime("%d.%m.%Y")
+            # print(bonus)
 
             for item in bonus_penalty_names_by_bonus_penalty_date_user_id[bonus_penalty_date].items():
                 item_user_id = item[0]
                 item_bonus_penalty_names = item[1]
 
                 for item_bonus_penalty_name in item_bonus_penalty_names:
-                    if item_user_id in salaries_by_date[salary_date]:
+                    if item_user_id in salaries_by_date[bonus_penalty_date]:
                         salaries_by_date[bonus_penalty_date][item_user_id]['salary_data'].update({item_bonus_penalty_name: {'amount': 0, 'value': 0}})
-        
+
+        # print(salaries_by_date)
         for bonus_penalty in bonuses_penalties:
             bonus_penalty_date = bonus_penalty.date.strftime("%d.%m.%Y")
 
-            # print(bonus_penalty.type)
-            # if (bonus_penalty.type)
+            # print(bonus_penalty_date)
+            # print(salaries_by_date)
 
             if bonus_penalty.name not in salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]['salary_data']:
-                salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]['salary_data'][bonus_penalty.name] = {'amount': 0, 'value': 0,}
+                salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]['salary_data'][bonus_penalty.name] = {'amount': 0, 'value': 0}
             salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]['salary_data'][bonus_penalty.name]['amount'] += 1
 
             if (bonus_penalty.type == 'bonus'):
@@ -2778,6 +2795,8 @@ def Salaries(request):
         merged_data = {}
         user_taxi = {}
 
+        dates = ['03.11.2023', '02.12.2023']
+
         for user in users:
             user_taxi[user.id] = False
 
@@ -2812,6 +2831,17 @@ def Salaries(request):
                 else:
                     child = merged_data[date_str][salary.user.id]
                     child["value"] += salary.amount
+                    # print(child['tooltip'])
+                    # if (item_name == 'Проезд') and user_taxi[salary.user.id] == True:
+                    #     if item_name in child['tooltip']:
+                    #         # print(child['tooltip'][item_name]['count'])
+                    #         child['tooltip'][item_name] = {
+                    #             "count": child['tooltip'][item_name]['count'],
+                    #             "total_amount": child['tooltip'][item_name]['total_amount']
+                    #         }
+                        # child['tooltip'][item_name] = {
+                        #     "count": ch,
+                        # }
                     # if (
                     #     item_name == "Проезд" and user_taxi[salary.user.id] == True
                     # ):  # Adjust the counting for 'Проезд'
@@ -2836,6 +2866,19 @@ def Salaries(request):
                             "count": 1,
                             "total_amount": salary.amount,
                         }
+
+            # if salary.user:
+            #     print(salary.user.id)
+
+        # print(merged_data)
+        # print(user_taxi)
+
+        # for date in dates:
+        #     print(date)
+        #     for user in users:
+        #         # print(merged_data[date][user.id])
+        #         print(merged_data[date][user.id]['tooltip'])
+        #         print(user.id)
 
         for bp in bonuses_penalties:
             date_str = bp.date.strftime("%d.%m.%Y")
@@ -3314,6 +3357,7 @@ def QVideos(request, id):
 
         quest = Quest.objects.get(id=id)
 
+        # print(quest)
         try:
             start_date = (
                 datetime.strptime(start_date_param, "%d-%m-%Y").date()
@@ -3330,13 +3374,20 @@ def QVideos(request, id):
                 {"error": "Invalid date format. Please use DD-MM-YYYY."}, status=400
             )
 
-        entries = QVideo.objects.filter(quest=quest).order_by("date")
+        entries = QVideo.objects.filter(Q(quest__parent_quest=quest) | Q(quest=quest)).order_by("date")
+
+        # print(QVideo.objects.all())
+
+        # for video in QVideo.objects.all():
+            # print(video.quest)
 
         if start_date and end_date:
             entries = entries.filter(date__range=(start_date, end_date))
 
         keys_to_remove = ["id", "quest_id"]
         response_data = convert_with_children(entries, keys_to_remove)
+
+        # print(entries)
 
         return Response(response_data)
 
@@ -3702,6 +3753,8 @@ def VSTQuest(request, id):
             new_data1 = {
                 "animator": animator,
             }
+
+            count_easy_work += 1
         else:
             new_data1 = {
                 "animator": None,
@@ -3767,13 +3820,17 @@ def VSTQuest(request, id):
                 and ("client_name" in data)
                 or (data["is_package"] == True)
             ):
+                type = 'package'
+                if (data['is_video_review'] == True):
+                    type = 'video_review'
                 QVideo(
                     **{
                         "date": formatted_date,
                         "time": formatted_time,
                         "client_name": data["client_name"],
                         "sent": False,
-                        "is_package": data["is_package"],
+                        # "is_package": data["is_package"],
+                        "type": type,
                         "note": "",
                         "quest": quest,
                         "stquest": entry,
@@ -4171,6 +4228,67 @@ def VSTQuest(request, id):
                 # ).quests.add(quest).save()
 
         # print(data['employees_first_time'].all())
+
+        if "photomagnets_quantity" in data and data["photomagnets_quantity"] != 0:
+            photomagnets_promo = data["photomagnets_quantity"] // 2
+            photomagnets_not_promo = data["photomagnets_quantity"] - photomagnets_promo
+
+            for i in range(photomagnets_not_promo):
+                QSalary(
+                    **{
+                        "date": formatted_date,
+                        "amount": 60,
+                        "name": "Фотомагнит (не акц.)",
+                        "user": administrator,
+                        "stquest": entry,
+                        "quest": new_quest,
+                        "sub_category": "administrator",
+                    }
+                ).save()
+
+            for i in range(photomagnets_promo):
+                QSalary(
+                    **{
+                        "date": formatted_date,
+                        "amount": 30,
+                        "name": "Фотомагнит (акц.)",
+                        "user": administrator,
+                        "stquest": entry,
+                        "quest": new_quest,
+                        "sub_category": "administrator",
+                    }
+                ).save()
+
+
+        if "photomagnets_quantity_after" in data and (int(data['photomagnets_quantity_after']) != 0):
+            photomagnets_promo = int(data["photomagnets_quantity_after"]) // 2
+            photomagnets_not_promo = int(data["photomagnets_quantity_after"]) - photomagnets_promo
+
+            for i in range(photomagnets_not_promo):
+                QSalary(
+                    **{
+                        "date": formatted_date,
+                        "amount": 60,
+                        "name": "Фотомагнит (не акц.)",
+                        "user": administrator,
+                        "stquest": entry,
+                        "quest": new_quest,
+                        "sub_category": "administrator",
+                    }
+                ).save()
+
+            for i in range(photomagnets_promo):
+                QSalary(
+                    **{
+                        "date": formatted_date,
+                        "amount": 30,
+                        "name": "Фотомагнит (акц.)",
+                        "user": administrator,
+                        "stquest": entry,
+                        "quest": new_quest,
+                        "sub_category": "administrator",
+                    }
+                ).save()
 
         if "administrator" in data:
             if data["easy_work"] != 0:
@@ -4620,6 +4738,8 @@ def CreateSTQuest(request):
             count_easy_work += 1
             animator = User.objects.get(id=data["animator"])
             entry_data["animator"] = animator
+
+            count_easy_work += 1
         if "room_employee_name" in data:
             room_employee_name = User.objects.get(id=data["room_employee_name"])
             entry_data["room_employee_name"] = room_employee_name
@@ -4780,13 +4900,17 @@ def CreateSTQuest(request):
                 and ("client_name" in data)
                 or (data["is_package"] == True)
             ):
+                type = 'package'
+                if (data['is_video_review'] == True):
+                    type = 'video_review'
                 QVideo(
                     **{
                         "date": formatted_date,
                         "time": formatted_time,
                         "client_name": data["client_name"],
                         "sent": False,
-                        "is_package": data["is_package"],
+                        # "is_package": data["is_package"],
+                        "type": type,
                         "note": "",
                         "quest": quest,
                         "stquest": entry,
@@ -5014,6 +5138,68 @@ def CreateSTQuest(request):
                     #     "quest": quest,
                     #     "sub_category": STExpenseSubCategory.objects.get(latin_name='salary')
                     # }).quests.add(quest).save()
+
+            if "photomagnets_quantity" in data and data["photomagnets_quantity"] != 0:
+                photomagnets_promo = data["photomagnets_quantity"] // 2
+                photomagnets_not_promo = data["photomagnets_quantity"] - photomagnets_promo
+
+                for i in range(photomagnets_not_promo):
+                    QSalary(
+                        **{
+                            "date": formatted_date,
+                            "amount": 60,
+                            "name": "Фотомагнит (не акц.)",
+                            "user": administrator,
+                            "stquest": entry,
+                            "quest": new_quest,
+                            "sub_category": "administrator",
+                        }
+                    ).save()
+
+                for i in range(photomagnets_promo):
+                    QSalary(
+                        **{
+                            "date": formatted_date,
+                            "amount": 30,
+                            "name": "Фотомагнит (акц.)",
+                            "user": administrator,
+                            "stquest": entry,
+                            "quest": new_quest,
+                            "sub_category": "administrator",
+                        }
+                    ).save()
+
+
+            if "photomagnets_quantity_after" in data and (int(data['photomagnets_quantity_after']) != 0):
+                photomagnets_promo = int(data["photomagnets_quantity_after"]) // 2
+                photomagnets_not_promo = int(data["photomagnets_quantity_after"]) - photomagnets_promo
+
+                for i in range(photomagnets_not_promo):
+                    QSalary(
+                        **{
+                            "date": formatted_date,
+                            "amount": 60,
+                            "name": "Фотомагнит (не акц.)",
+                            "user": administrator,
+                            "stquest": entry,
+                            "quest": new_quest,
+                            "sub_category": "administrator",
+                        }
+                    ).save()
+
+                for i in range(photomagnets_promo):
+                    QSalary(
+                        **{
+                            "date": formatted_date,
+                            "amount": 30,
+                            "name": "Фотомагнит (акц.)",
+                            "user": administrator,
+                            "stquest": entry,
+                            "quest": new_quest,
+                            "sub_category": "administrator",
+                        }
+                    ).save()
+
 
             if "actors_half" in data:
                 count_easy_work += actors.count()

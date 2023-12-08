@@ -132,6 +132,85 @@ const QVideosFC: FC = () => {
         </>
       ),
     },
+    
+    // {
+    //   title: "пакет",
+    //   dataIndex: "is_package",
+    //   key: "is_package",
+    //   isSorting: false,
+    //   searching: {
+    //     isSearching: false,
+    //     title: "",
+    //   },
+    //   isCountable: false,
+    //   render: (_, { is_package }) => (
+    //     <>
+    //       {is_package.map((is_package_single: boolean) => {
+    //         let color = ''
+    //         let formatText = ''
+
+    //         if (is_package_single == true) {
+    //           color = "green";
+    //           formatText = 'да'
+    //         } else {
+    //           color = "red";
+    //           formatText = 'нет'
+    //         }
+    //         return (
+    //           <Tag color={color} key={formatText}>
+    //             {formatText}
+    //           </Tag>
+    //         );
+    //       })}
+    //     </>
+    //   ),
+    {
+      title: "тип",
+      dataIndex: "type",
+      key: "type",
+      isSorting: false,
+      searching: {
+        isSearching: false,
+        title: "",
+      },
+      isCountable: false,
+      render: (_, { type }) => (
+        <>
+          {type.map((type_single: string) => {
+            let color = 'black'
+            let formatText = ''
+
+            if (type_single == 'package') {
+              // color = "green";
+              formatText = 'пакет'
+            } else if (type_single == 'video_review') {
+              // color = "red";
+              formatText = 'видео отзыв'
+            }
+            return (
+              <Tag color={color} key={formatText}>
+                {formatText}
+              </Tag>
+            );
+          })}
+        </>
+      ),
+      
+      // render: (is_package) => {
+      //   let color = "red";
+      //   let formattedIsPackage = "";
+
+      //   if (is_package === true) {
+      //     color = "green";
+      //     formattedIsPackage = "да";
+      //   } else if (is_package === false) {
+      //     color = "red";
+      //     formattedIsPackage = "нет";
+      //   }
+
+      //   return <Tag color={color}>{formattedIsPackage}</Tag>;
+      // },
+    },
     {
       title: "отправлено",
       dataIndex: "sent",
@@ -163,31 +242,6 @@ const QVideosFC: FC = () => {
           })}
         </>
       ),
-    },
-    {
-      title: "пакет",
-      dataIndex: "is_package",
-      key: "is_package",
-      isSorting: false,
-      searching: {
-        isSearching: false,
-        title: "",
-      },
-      isCountable: false,
-      render: (is_package) => {
-        let color = "red";
-        let formattedIsPackage = "";
-
-        if (is_package === true) {
-          color = "green";
-          formattedIsPackage = "да";
-        } else if (is_package === false) {
-          color = "red";
-          formattedIsPackage = "нет";
-        }
-
-        return <Tag color={color}>{formattedIsPackage}</Tag>;
-      },
     },
     {
       title: "примечание",

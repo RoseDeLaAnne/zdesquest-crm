@@ -440,8 +440,8 @@ def create_qcash_register_from_stquest(data, entry):
 
     cash_register = QCashRegister(**local_data2)
 
-    if (int(data["cash_payment"]) != 0):
-        cash_register.save()
+    # if (int(data["cash_payment"]) != 0):
+    cash_register.save()
 
 
 def create_qcash_register_from_stexpense(data):
@@ -543,15 +543,15 @@ def create_travel(entry, quest):
             # print(prev_new_quest)
                 
             if prev_stquest_by_user != stquest_by_user:
-                # if (stquest_by_user.quest.parent_quest != None):
-                    # stquest_by_user.quest.address = stquest_by_user.quest.parent_quest.address
-                    # stquest_by_user.quest.duration_in_minute = stquest_by_user.quest.parent_quest.duration_in_minute
-                    # stquest_by_user.quest = stquest_by_user.quest.parent_quest
+                if (stquest_by_user.quest.parent_quest != None):
+                    stquest_by_user.quest.address = stquest_by_user.quest.parent_quest.address
+                    stquest_by_user.quest.duration_in_minute = stquest_by_user.quest.parent_quest.duration_in_minute
+                    stquest_by_user.quest = stquest_by_user.quest.parent_quest
 
-                # if (prev_stquest_by_user.quest.parent_quest != None):
-                    # prev_stquest_by_user.quest.address = prev_stquest_by_user.quest.parent_quest.address
-                    # prev_stquest_by_user.quest.duration_in_minute = prev_stquest_by_user.quest.parent_quest.duration_in_minute
-                    # prev_stquest_by_user.quest = prev_stquest_by_user.quest.parent_quest
+                if (prev_stquest_by_user.quest.parent_quest != None):
+                    prev_stquest_by_user.quest.address = prev_stquest_by_user.quest.parent_quest.address
+                    prev_stquest_by_user.quest.duration_in_minute = prev_stquest_by_user.quest.parent_quest.duration_in_minute
+                    prev_stquest_by_user.quest = prev_stquest_by_user.quest.parent_quest
 
                 new_prev_entry_time = (
                     datetime.combine(

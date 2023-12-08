@@ -481,13 +481,19 @@ class ExpenseFromTheir(models.Model):
 
 
 class QVideo(models.Model):
+    TYPE = [
+        ("package", "пакет"),
+        ("video_review", "видео отзыв"),
+    ]
+
     date = models.DateField(default=timezone.now)
     time = models.TimeField(default=timezone.now)
 
     client_name = models.CharField(max_length=255)
     sent = models.BooleanField()
 
-    is_package = models.BooleanField(default=False)
+    # is_package = models.BooleanField(default=False)
+    type = models.CharField(choices=TYPE, default="package", max_length=255)
 
     note = models.CharField(max_length=255, default="")
 
