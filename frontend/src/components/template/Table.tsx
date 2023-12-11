@@ -583,7 +583,7 @@ const TableFC: FC = ({
         fixed: "right",
       },
     ];
-  } else {
+  } else if (tableIsOperation) {
     tableColumns = [
       ...tableColumns,
       {
