@@ -25,6 +25,8 @@ class UserSerializer(ModelSerializer):
             "id",
             "email",
             "phone_number",
+            "phone_number_for_transfer",
+            "bank",
             "last_name",
             "first_name",
             "middle_name",

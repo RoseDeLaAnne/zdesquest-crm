@@ -854,6 +854,10 @@ def VUser(request, id):
             user.email = data["email"]
         if "phone_number" in data:
             user.phone_number = data["phone_number"]
+        if "phone_number_for_transfer" in data:
+            user.phone_number_for_transfer = data["phone_number_for_transfer"]
+        if "bank" in data:
+            user.bank = data["bank"]
         if "quest" in data:
             quest = Quest.objects.get(id=data["quest"])
             user.quest = quest
@@ -4620,7 +4624,7 @@ def CreateUser(request):
         # try:
         data = create_non_empty_dict(request.body)
 
-        optional_fields = ["phone_number"]
+        optional_fields = ["phone_number", "phone_number_for_transfer", "bank"]
 
         entry_data = {
             "email": data["email"],

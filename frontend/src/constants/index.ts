@@ -21,6 +21,21 @@ export const rangePickerFormat = datePickerFormat;
 export const timePickerFormat = "HH:mm";
 export const minuteStep = 15;
 
+const optionsBanks = [
+  {
+    label: "сбербанк",
+    value: "sberbank",
+  },
+  {
+    label: "тинькофф",
+    value: "tinkoff",
+  },
+  {
+    label: "альфабанк",
+    value: "alfabank",
+  },
+];
+
 const optionsNameOfExpense = [
   {
     value: "Такси",
@@ -381,6 +396,41 @@ export const getUsersFormItems = async () => {
             name: "DatePicker",
             options: [],
             multiple: null,
+            defaultValue: null,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 12,
+          name: "phone_number_for_transfer",
+          label: "номер телефона для перевода",
+          isRequired: false,
+          placeholder: "пожалуйста, введите пароль",
+          element: {
+            name: "Input",
+            options: [],
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 12,
+          name: "bank",
+          label: "банк",
+          isRequired: false,
+          placeholder: "пожалуйста, введите пароль",
+          element: {
+            name: "Select",
+            options: optionsBanks,
+            multiple: false,
             defaultValue: null,
           },
         },

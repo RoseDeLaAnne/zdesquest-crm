@@ -75,6 +75,12 @@ class STExpenseSubCategory(models.Model):
         return self.name
 
 class User(AbstractBaseUser, PermissionsMixin):
+    BANKS = [
+        ("sberbank", "сбербанк"),
+        ("tinkoff", "тинькофф"),
+        ("alfabank", "альфа-банк"),
+    ]
+    
     email = models.EmailField(verbose_name=_("Адрес электронной почты"), unique=True)
     phone_number = models.CharField(
         verbose_name=_("Номер телефона"),
@@ -83,6 +89,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True,
         null=True,
     )
+    
 
     last_name = models.CharField(
         verbose_name=_("Фамилия"), max_length=255
@@ -141,6 +148,17 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True,
         null=True,
         related_name="user_internship_quest",
+    )
+
+    phone_number_for_transfer = models.CharField(
+        verbose_name=_("Номер телефона для перевода"),
+        max_length=18,
+        unique=True,
+        blank=True,
+        null=True,
+    )
+    bank = models.CharField(
+        choices=BANKS, blank=True, null=True, max_length=255
     )
 
     USERNAME_FIELD = "email"
