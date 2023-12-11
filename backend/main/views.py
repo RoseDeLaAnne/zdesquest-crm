@@ -2824,6 +2824,7 @@ def Salaries(request):
                 "date"
             )
             users = User.objects.exclude(email='admin@gmail.com')
+            # users = User.objects.all()
         else:
             salaries = (
                 QSalary.objects.filter(user=request.user)
@@ -2850,13 +2851,14 @@ def Salaries(request):
         merged_data = {}
         user_taxi = {}
 
-        dates = []
+        dates = ['10.12.2023', '11.12.2023']
 
         for date in dates:
             user_taxi[date] = {}
             for user in users:
                 user_taxi[date][user.id] = False
 
+        # print(user_taxi)
         for salary in salaries:
             date_str = salary.date.strftime("%d.%m.%Y")
             item_name = salary.name
@@ -2875,7 +2877,6 @@ def Salaries(request):
             a1 = STExpense.objects.filter(Q(name="Такси") & Q(employees=salary.user) & Q(date=salary.date))
 
             # print(a1)
-            user_taxi[date_str] = {}
             if len(a1) != 0:
                 user_taxi[date_str][salary.user.id] = True
 
@@ -2932,8 +2933,9 @@ def Salaries(request):
             #     print(salary.user.id)
 
         for date in dates:
-            # print(date)
+            # print(dates)
             for user in users:
+                print(user_taxi)
                 if user_taxi[date][user.id] == True:
                     merged_data[date][user.id]['value'] -= 25
                     merged_data[date][user.id]['tooltip']['Проезд']['count'] -= 1
@@ -2975,10 +2977,6 @@ def Salaries(request):
                 # print(sub_item)
 
         # print(merged_data)
-
-        # print(merged_data)
-
-        # print(merged_data['10.12.2023'][12])
 
         # for date in dates:
         #     print(date)
