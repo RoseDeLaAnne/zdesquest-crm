@@ -76,6 +76,7 @@ const EditFC: FC = ({
             ) {
               form.setFieldsValue({ [key]: value !== null ? value.id : value });
             } else if (
+              key === "administrators_half" ||
               key === "actors" ||
               key === "actors_half" ||
               key === "special_versions" ||

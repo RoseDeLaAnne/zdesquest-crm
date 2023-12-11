@@ -197,6 +197,9 @@ class STQuest(models.Model):
         null=True,
         related_name="administrator_stquest",
     )
+    administrators_half = models.ManyToManyField(
+        User, blank=True, related_name="administrators_half_stquest"
+    )
     actors = models.ManyToManyField(User, blank=True, related_name="actors_stquest")
     actors_half = models.ManyToManyField(
         User, blank=True, related_name="actors_half_stquest"

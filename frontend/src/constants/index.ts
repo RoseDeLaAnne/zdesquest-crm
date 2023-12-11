@@ -931,6 +931,26 @@ export const getSTQuestFormItems = async () => {
           spanXS: 24,
           spanSM: 24,
           spanMD: 12,
+          name: "administrators_half",
+          label: "администраторы (50%)",
+          isRequired: false,
+          placeholder: "пожалуйста, выберите администраторов (50%)",
+          element: {
+            name: "Select",
+            options: optionsUsers,
+            multiple: true,
+            defaultValue: null,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 24,
           name: "employees_first_time",
           label: "сотрудники, которые играют в первый раз",
           isRequired: false,
@@ -952,7 +972,8 @@ export const getSTQuestFormItems = async () => {
 // getSTExpensesFormItems
 export const getSTExpensesFormItems = async () => {
   const optionsUsers = await fetchUsers();
-  const optionsQuests = await fetchQuestsWithSpecVersions();
+  // const optionsQuests = await fetchQuestsWithSpecVersions();
+  const optionsQuests = await fetchQuests();
   const optionsSubCategories = await fetchSubCategories();
 
   const formItems = [

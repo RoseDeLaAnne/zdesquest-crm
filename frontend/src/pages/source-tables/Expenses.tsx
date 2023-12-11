@@ -160,8 +160,8 @@ const STExpensesFC: FC = () => {
   }, []);
 
   const formHandleOnChange = (value, name) => {
-    console.log('value', value)
-    console.log('name', name)
+    // console.log('value', value)
+    // console.log('name', name)
     
     if (name === 'name') {
       if (value === 'Такси' || value === 'Обед') {

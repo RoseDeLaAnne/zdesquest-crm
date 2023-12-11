@@ -208,6 +208,7 @@ const STQuestsFC: FC = () => {
         }
       },
     },
+    
     {
       title: "актеры/второй актер/аниматор",
       dataIndex: "actor_or_second_actor_or_animator",
@@ -265,6 +266,21 @@ const STQuestsFC: FC = () => {
             return (
               <Tag color="black" key={actor_half.id}>
                 {actor_half.last_name} {actor_half.first_name}
+              </Tag>
+            );
+          })}
+        </>
+      ),
+    },
+    {
+      title: "администраторы (50%)",
+      dataIndex: "administrators_half",
+      render: (_, { administrators_half }) => (
+        <>
+          {administrators_half.map((administrator_half) => {
+            return (
+              <Tag color="black" key={administrator_half.id}>
+                {administrator_half.last_name} {administrator_half.first_name}
               </Tag>
             );
           })}

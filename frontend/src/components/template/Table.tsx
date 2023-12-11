@@ -503,6 +503,7 @@ const TableFC: FC = ({
         } else if (
           key === "actors" ||
           key === "actors_half" ||
+          key === "administrators_half" ||
           key === "special_versions" ||
           key === "versions" ||
           key === "roles" ||
