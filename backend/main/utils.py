@@ -638,8 +638,6 @@ def create_travel(entry, quest):
                 # print(prev_new_quest)
                     
                 if prev_stquest_by_user != stquest_by_user:
-                    new_prev_entry_time = 0
-                    
                     if (stquest_by_user.quest.parent_quest != None):
                         stquest_by_user.quest.address = stquest_by_user.quest.parent_quest.address
                         stquest_by_user.quest.duration_in_minute = stquest_by_user.quest.parent_quest.duration_in_minute
@@ -650,22 +648,13 @@ def create_travel(entry, quest):
                         prev_stquest_by_user.quest.duration_in_minute = prev_stquest_by_user.quest.parent_quest.duration_in_minute
                         prev_stquest_by_user.quest = prev_stquest_by_user.quest.parent_quest
 
-                        new_prev_entry_time = (
-                            datetime.combine(
-                                prev_stquest_by_user.date, prev_stquest_by_user.time
-                            )
-                            + timedelta(minutes=prev_stquest_by_user.quest.parent_quest.duration_in_minute)
-                            + cleaning_time
+                    new_prev_entry_time = (
+                        datetime.combine(
+                            prev_stquest_by_user.date, prev_stquest_by_user.time
                         )
-                    else:
-                        new_prev_entry_time = (
-                            datetime.combine(
-                                prev_stquest_by_user.date, prev_stquest_by_user.time
-                            )
-                            + timedelta(minutes=prev_stquest_by_user.quest.duration_in_minute)
-                            + cleaning_time
-                        )
-
+                        + timedelta(minutes=prev_stquest_by_user.quest.duration_in_minute)
+                        + cleaning_time
+                    )
                     new_now_entry_time = (
                         datetime.combine(stquest_by_user.date, stquest_by_user.time)
                         - prep_time
