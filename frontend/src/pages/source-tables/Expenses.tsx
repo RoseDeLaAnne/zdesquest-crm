@@ -29,8 +29,8 @@ import {
 // constants
 import { getSTExpensesFormItems } from "../../constants";
 
-const backendUrl = 'http://localhost:8000/'
-// const backendUrl = 'http://crm.zdesquest.ru/'
+// const backendUrl = 'http://localhost:8000/'
+const backendUrl = 'http://crm.zdesquest.ru/'
 
 const STExpensesFC: FC = () => {
   const initialBreadcrumbItems = [

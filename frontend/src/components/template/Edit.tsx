@@ -93,7 +93,8 @@ const EditFC: FC = ({
                   uid: "-1",
                   name: "attachment.jpg",
                   status: "done",
-                  url: `http://localhost:8000${value}`,
+                  // url: `http://localhost:8000${value}`,
+                  url: `http://crm.zdesquest.ru${value}`,
                 },
               ]);
             } else {
