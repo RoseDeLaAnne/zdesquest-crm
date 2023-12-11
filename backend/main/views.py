@@ -435,7 +435,7 @@ def QuestsWithSpecailVersions(request):
 
 
 @api_view(["GET"])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def STQuests(request):
     if request.method == "GET":
         start_date_param = request.query_params.get("start_date", None)
@@ -443,12 +443,12 @@ def STQuests(request):
 
         entries = []
 
-        # if request.user.is_superuser == True:
-        #     entries = STQuest.objects.all().order_by("date")
-        # else:
-        #     entries = STQuest.objects.filter(created_by=request.user).order_by("date")
+        if request.user.is_superuser == True:
+            entries = STQuest.objects.all().order_by("date")
+        else:
+            entries = STQuest.objects.filter(created_by=request.user).order_by("date")
 
-        entries = STQuest.objects.all().order_by("date")        
+        # entries = STQuest.objects.all().order_by("date")        
 
         if start_date_param and end_date_param:
             try:
@@ -2763,7 +2763,6 @@ def VQCashRegisterTaken(request, id):
 
         return Response(serializer.data)
 
-
 @api_view(["GET"])
 def ToggleQCashRegister(request, id):
     if request.method == "GET":
@@ -2773,6 +2772,20 @@ def ToggleQCashRegister(request, id):
             entry.status = "reset"
         else:
             entry.status = "not_reset"
+
+        entry.save()
+
+        return Response(status=200)
+
+@api_view(["GET"])
+def ToggleQVideo(request, id):
+    if request.method == "GET":
+        entry = QVideo.objects.get(id=id)
+
+        if entry.sent == True:
+            entry.sent = False
+        else:
+            entry.sent = True
 
         entry.save()
 
@@ -2837,7 +2850,7 @@ def Salaries(request):
         merged_data = {}
         user_taxi = {}
 
-        dates = ['10.12.2023']
+        dates = []
 
         for date in dates:
             user_taxi[date] = {}
@@ -2862,7 +2875,7 @@ def Salaries(request):
             a1 = STExpense.objects.filter(Q(name="Такси") & Q(employees=salary.user) & Q(date=salary.date))
 
             # print(a1)
-
+            user_taxi[date_str] = {}
             if len(a1) != 0:
                 user_taxi[date_str][salary.user.id] = True
 

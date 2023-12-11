@@ -328,6 +328,16 @@ export const toggleQuestCashRegister = async (id: number) => {
   }
 };
 
+export const toggleQuestVideo = async (id: number) => {
+  try {
+    const url = `${url3}/api/toggle/video/${id}/`;
+    const res = await axios.get(url);
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getWorkCardExpenses = async (
   startDate: string,
   endDate: string,

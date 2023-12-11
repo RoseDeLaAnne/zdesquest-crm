@@ -24,6 +24,7 @@ import useWindowWidthAndCollapsed from "../../useWindowWidthAndCollapsed";
 // constants
 import { layoutMarginLeft, rangePickerFormat } from "../../constants";
 import dayjs from "dayjs";
+import { useParams } from "react-router-dom";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -35,6 +36,7 @@ const MainFC: FC = ({
   defaultSelectedKeys,
   breadcrumbItems,
   title,
+  isUseParams,
   isRangePicker,
   rangePickerHandleChange,
   isAddEntry,
@@ -55,9 +57,11 @@ const MainFC: FC = ({
 
   // const [messageApi, contextHolder] = message.useMessage();
 
+  const { id } = isUseParams ? useParams() : { id: "" };
+
   useEffect(() => {
     document.title = title;
-  }, []);
+  }, [id]);
 
   return (
     <Layout hasSider>

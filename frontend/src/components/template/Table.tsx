@@ -40,7 +40,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 import { datePickerFormat, timePickerFormat } from "../../constants";
-import { getSTQuest } from "../../api/APIUtils";
+import { getSTQuest, toggleQuestVideo } from "../../api/APIUtils";
 
 const TableFC: FC = ({
   defaultOpenKeys,
@@ -183,13 +183,16 @@ const TableFC: FC = ({
         breadcrumbItems[breadcrumbItemsLength - 1].title
       } | редактирование`;
     } else {
-      title = `${breadcrumbItems[breadcrumbItemsLength - 2].title} | ${
-        breadcrumbItems[breadcrumbItemsLength - 1].title
+      title = `${breadcrumbItems[breadcrumbItemsLength - 1].title
       }`;
+      // title = `${breadcrumbItems[breadcrumbItemsLength - 2].title} | ${
+      //   breadcrumbItems[breadcrumbItemsLength - 1].title
+      // }`;
     }
   } else if (breadcrumbItemsLength === 1) {
     title = breadcrumbItems[0].title;
   }
+  
 
   const drawerOnClose = () => {
     setDrawerIsOpen(false);
@@ -204,6 +207,23 @@ const TableFC: FC = ({
     localStorage.setItem("drawerIsOpen", "true");
   };
   const cancelHandleClick = () => {};
+
+  const handleToggle = async (key: number) => {
+    const res = await toggleQuestVideo(key)
+    if (res.status === 200) {
+      const newData = tableDataSource.filter((item) => item.key !== key);
+      setTableDataSource(newData);
+
+      if (dates.length !== 0) {
+        getEntries(
+          dates[0].format("DD-MM-YYYY"),
+          dates[1].format("DD-MM-YYYY")
+        );
+      } else {
+        getEntries(null, null);
+      }
+    }
+  };
 
   const handleDelete = async (key: number) => {
     const res = await deleteFunction(key);
@@ -541,26 +561,32 @@ const TableFC: FC = ({
     setDrawer2IsOpen(true);
     localStorage.setItem("drawer2IsOpen", "true");
   };
-  if (tableIsOperation) {
+  if (tableIsOperation == 'toggle') {
     tableColumns = [
       ...tableColumns,
       {
-        // title: "операция",
-        // dataIndex: "operation",
-        // key: "operation",
-        // render: (_, record: { key: React.Key }) =>
-        //   tableDataSource.length >= 1 ? (
-        //     <Space>
-        //       <Popconfirm
-        //         title="toggle"
-        //         onConfirm={() => handleToggle(record.key)}
-        //       >
-        //         <a>toggle</a>
-        //       </Popconfirm>
-        //     </Space>
-        //   ) : null,
-        // width: 192,
-        // fixed: "right",
+        title: "операция",
+        dataIndex: "operation",
+        key: "operation",
+        render: (_, record: { key: React.Key }) =>
+          tableDataSource.length >= 1 ? (
+            <Space>
+              <Popconfirm
+                title="вы уверены, что хотите отправить?"
+                onConfirm={() => handleToggle(record.key)}
+              >
+                <a>отправить</a>
+              </Popconfirm>
+            </Space>
+          ) : null,
+        width: 192,
+        fixed: "right",
+      },
+    ];
+  } else {
+    tableColumns = [
+      ...tableColumns,
+      {
         title: "операция",
         dataIndex: "operation",
         key: "operation",
@@ -815,6 +841,21 @@ const TableFC: FC = ({
     } else {
       getEntries(null, null);
     }
+
+    const breadcrumbItemsLength = breadcrumbItems.length;
+    if (breadcrumbItemsLength !== 1) {
+      if (isCancel && isCreate) {
+        title = `${
+          breadcrumbItems[breadcrumbItemsLength - 1].title
+        } | редактирование`;
+      } else {
+        title = `${breadcrumbItems[breadcrumbItemsLength - 2].title} | ${
+          breadcrumbItems[breadcrumbItemsLength - 1].title
+        }`;
+      }
+    } else if (breadcrumbItemsLength === 1) {
+      title = breadcrumbItems[0].title;
+    }
   }, [id]);
 
   return (
@@ -823,6 +864,7 @@ const TableFC: FC = ({
       defaultSelectedKeys={defaultSelectedKeys}
       breadcrumbItems={breadcrumbItems}
       title={title}
+      isUseParams={isUseParams}
       isRangePicker={isRangePicker}
       rangePickerHandleChange={rangePickerHandleChange}
       isAddEntry={isAddEntry}

@@ -303,7 +303,7 @@ const App: FC = ({
   };
 
   useEffect(() => {
-    document.title = title;
+    // document.title = title;
 
     fetchData(null, null);
   }, []);

@@ -42,6 +42,17 @@ class UserSerializer(ModelSerializer):
 
         depth = 1
 
+    # def __init__(self, instance=None, data=serializers.empty, **kwargs):
+    #     # Call the parent __init__ method
+    #     super().__init__(instance, data, **kwargs)
+
+    #     # Check if the user has the role "Актер"
+    #     if instance and any(role['name'] == 'Видео' for role in instance.roles.values()):
+    #         # Add the 'is_video' field to the fields list
+    #         self.fields['is_video'] = True
+    #     else:
+    #         self.fields['is_video'] = False
+
     # def to_representation(self, instance):
     #     if not isinstance(instance, AnonymousUser):
     #         return super().to_representation(instance)

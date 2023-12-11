@@ -53,6 +53,15 @@ const optionsNameOfExpense = [
   {
     value: "Расходники",
   },
+  {
+    value: "Уборка помещений",
+  },
+  {
+    value: "Обработка помещений от насекомых",
+  },
+  {
+    value: "Мобильная связь",
+  },
 ];
 
 const optionsOperation = [

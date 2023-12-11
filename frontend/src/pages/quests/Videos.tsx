@@ -132,7 +132,7 @@ const QVideosFC: FC = () => {
         </>
       ),
     },
-    
+
     // {
     //   title: "пакет",
     //   dataIndex: "is_package",
@@ -177,15 +177,15 @@ const QVideosFC: FC = () => {
       render: (_, { type }) => (
         <>
           {type.map((type_single: string) => {
-            let color = 'black'
-            let formatText = ''
+            let color = "black";
+            let formatText = "";
 
-            if (type_single == 'package') {
+            if (type_single == "package") {
               // color = "green";
-              formatText = 'пакет'
-            } else if (type_single == 'video_review') {
+              formatText = "пакет";
+            } else if (type_single == "video_review") {
               // color = "red";
-              formatText = 'видео отзыв'
+              formatText = "видео отзыв";
             }
             return (
               <Tag color={color} key={formatText}>
@@ -195,7 +195,7 @@ const QVideosFC: FC = () => {
           })}
         </>
       ),
-      
+
       // render: (is_package) => {
       //   let color = "red";
       //   let formattedIsPackage = "";
@@ -224,15 +224,15 @@ const QVideosFC: FC = () => {
       render: (_, { sent }) => (
         <>
           {sent.map((entry: string) => {
-            let color = ''
-            let formatText = ''
+            let color = "";
+            let formatText = "";
 
             if (entry) {
               color = "green";
-              formatText = 'отправлено'
+              formatText = "отправлено";
             } else {
               color = "red";
-              formatText = 'не отправлено'
+              formatText = "не отправлено";
             }
             return (
               <Tag color={color} key={entry}>
@@ -266,7 +266,7 @@ const QVideosFC: FC = () => {
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, [id]);
 
   return (
     <TemplateTable
@@ -274,10 +274,11 @@ const QVideosFC: FC = () => {
       defaultSelectedKeys={[`quests${id}Videos`]}
       breadcrumbItems={initialBreadcrumbItems}
       isRangePicker={true}
+      tableIsOperation={"toggle"}
       tableDateColumn={"date_time"}
       initialPackedTableColumns={initialPackedTableColumns}
       getFunction={getQVideos}
-      isUseParams={user.is_superuser ? true : false}
+      isUseParams={true}
     />
   );
 };

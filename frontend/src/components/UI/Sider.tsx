@@ -37,6 +37,7 @@ const App: FC = ({
   defaultOpenKeys,
   defaultSelectedKeys,
 }) => {
+  const [isVideo, setIsVideo] = useState(false)
   const [user, setUser] = useState([]);
   const [questsData, setQuestsData] = useState([]);
   const fetchUser = async () => {
@@ -101,6 +102,23 @@ const App: FC = ({
           `/quests/${quest.id}/expenses-from-own`,
           <FallOutlined />
         ),
+        getItem(
+          "видео",
+          `quests${quest.id}Videos`,
+          `/quests/${quest.id}/videos`,
+          <VideoCameraOutlined />
+        ),
+      ]
+    );
+  }
+
+  function convertQuestToMenuItem2(quest) {
+    return getItem(
+      quest.name,
+      `quests${quest.id}`,
+      null,
+      <QuestionOutlined />,
+      [
         getItem(
           "видео",
           `quests${quest.id}Videos`,
@@ -192,6 +210,10 @@ const App: FC = ({
 
   let menuItems = [];
 
+  // console.log(user.roles.some(role => role.name === "Видео"))
+
+  // console.log(user.roles)
+
   if (user.is_superuser) {
     menuItems = [
       getItem("сотрудники", "users", "/users", <UserOutlined />),
@@ -255,6 +277,27 @@ const App: FC = ({
       ),
       getItem("квесты", "quests", null, <QuestionOutlined />, [
         ...questsData.map(convertQuestToMenuItem),
+      ]),
+      getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
+    ];
+  } else if (user.roles && user.roles.some(role => role.name == 'Видео')) {
+    menuItems = [
+      getItem("исходные таблицы", "sourceTables", null, <TableOutlined />, [
+        getItem(
+          "квесты",
+          "sourceTablesQuests",
+          "/source-tables/quests",
+          <QuestionOutlined />
+        ),
+        getItem(
+          "расходы",
+          "sourceTablesExpenses",
+          "/source-tables/expenses",
+          <QuestionOutlined />
+        ),
+      ]),
+      getItem("квесты", "quests", null, <QuestionOutlined />, [
+        ...questsData.map(convertQuestToMenuItem2),
       ]),
       getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
     ];

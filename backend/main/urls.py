@@ -44,6 +44,7 @@ urlpatterns = [
     path("quest/<int:id>/videos/", views.QVideos),
     path("toggle/expenses-from-own/<int:id>/", views.ToggleQExpensesFromOwn),
     path("toggle/cash-register/<int:id>/", views.ToggleQCashRegister),
+    path("toggle/video/<int:id>/", views.ToggleQVideo),
     path("salaries/", views.Salaries),
     path("salaries/current/", views.SalariesCurrent),
     path("quest-profit/<int:id>/", views.QuestProfitById),

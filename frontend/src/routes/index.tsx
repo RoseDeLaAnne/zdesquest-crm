@@ -86,14 +86,14 @@ const Routes = () => {
           path: "/login",
           element: <Navigate to="/salaries" />,
         },
-        {
-          path: "/test",
-          element: <Test />,
-        },
-        {
-          path: "/inputc",
-          element: <InputC />,
-        },
+        // {
+        //   path: "/test",
+        //   element: <Test />,
+        // },
+        // {
+        //   path: "/inputc",
+        //   element: <InputC />,
+        // },
         // {
         //   path: "/test3",
         //   element: <Test3 />,

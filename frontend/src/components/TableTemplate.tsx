@@ -474,7 +474,7 @@ const App: FC = ({
   };
 
   useEffect(() => {
-    document.title = title;
+    // document.title = title;
 
     // const currentDate = new Date();
     // const currentDay = currentDate.getDate();
