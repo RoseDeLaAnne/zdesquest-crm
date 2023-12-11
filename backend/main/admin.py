@@ -77,6 +77,12 @@ class UserAdmin(UserAdmin):
         (
             None,
             {
+                "fields": ("phone_number_for_transfer", "bank"),
+            },
+        ),
+        (
+            None,
+            {
                 "fields": ("quest",),
             },
         ),
@@ -128,6 +134,12 @@ class UserAdmin(UserAdmin):
                     "date_joined",
                     "date_of_birth",
                 ),
+            },
+        ),
+        (
+            None,
+            {
+                "fields": ("phone_number_for_transfer", "bank"),
             },
         ),
         (
