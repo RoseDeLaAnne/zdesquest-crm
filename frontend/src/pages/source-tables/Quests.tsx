@@ -74,6 +74,18 @@ const STQuestsFC: FC = () => {
           return null;
         }
       },
+      // filters: [
+      //   { text: 'детский сад радуга', value: 'детский сад радуга' },
+      //   { text: 'тьма', value: 'тьма' },
+      // ],
+      // onFilter: (value, record) => {
+      //   // record.children.map
+      //   {record.children.map.map((children2) => {
+      //     console.log(children2)
+      //     return children2
+      //   })}
+      //   // return value
+      // },
       minWidth: 256,
     },
     {

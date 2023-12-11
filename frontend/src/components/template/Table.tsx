@@ -291,6 +291,14 @@ const TableFC: FC = ({
         newColumn.render = column.render;
       }
 
+      if (column.filters) {
+        newColumn.filters = column.filters;
+      }
+
+      if (column.onFilter) {
+        newColumn.onFilter = column.onFilter;
+      }
+
       // if (column.isFiltering) {
       //   newColumn.filters = [
       //     { text: 'квартира 404', value: 'Квартира 404' },

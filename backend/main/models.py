@@ -483,6 +483,12 @@ class ExpenseFromTheir(models.Model):
         ("not_paid", "не выплачено"),
     ]
 
+    BANKS = [
+        ("sberbank", "сбербанк"),
+        ("tinkoff", "тинькофф"),
+        ("alfabank", "альфа-банк"),
+    ]
+
     date = models.DateField()
 
     amount = models.IntegerField()
@@ -495,6 +501,17 @@ class ExpenseFromTheir(models.Model):
     quest = models.ForeignKey(Quest, on_delete=models.CASCADE, blank=True, null=True)
     stexpense = models.ForeignKey(
         STExpense, on_delete=models.CASCADE, blank=True, null=True
+    )
+
+    phone_number_for_transfer = models.CharField(
+        verbose_name=_("Номер телефона для перевода"),
+        max_length=18,
+        unique=True,
+        blank=True,
+        null=True,
+    )
+    bank = models.CharField(
+        choices=BANKS, blank=True, null=True, max_length=255
     )
 
     def __str__(self):

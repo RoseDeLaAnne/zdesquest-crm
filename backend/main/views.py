@@ -3687,10 +3687,14 @@ def VSTExpense(request, id):
                         "amount": int(data["amount"]),
                         "description": data["name"],
                         "who_paid": who_paid,
+                        "phone_number_for_transfer": who_paid.phone_number_for_transfer,
+                        "bank": who_paid.bank,
                         "quest": quest,
                         "stexpense": expense,
                     }
 
+                    print(local_data)
+                    print('changed')
                     cash_register = ExpenseFromTheir(**local_data)
                     cash_register.save()
 
@@ -4839,10 +4843,13 @@ def CreateSTExpense(request):
                         "amount": int(data["amount"]),
                         "description": data["name"],
                         "who_paid": who_paid,
+                        "phone_number_for_transfer": who_paid.phone_number_for_transfer,
+                        "bank": who_paid.bank,
                         "quest": quest,
                         "stexpense": expense,
                     }
 
+                    print('created')
                     cash_register = ExpenseFromTheir(**local_data)
                     cash_register.save()
 
