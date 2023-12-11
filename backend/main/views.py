@@ -3397,6 +3397,8 @@ def QExpensesFromOwn(request, id):
                     "amount": 0,
                     "description": "",
                     "who_paid": "",
+                    "phone_number_for_transfer": 0,
+                    "bank": "",
                     "status": "",
                     "quest": "",
                     "children": [],
@@ -3429,6 +3431,8 @@ def QExpensesFromOwn(request, id):
                         "last_name": entry.who_paid.last_name,
                         "first_name": entry.who_paid.first_name,
                     },
+                    "phone_number_for_transfer": entry.phone_number_for_transfer,
+                    "bank": entry.bank,
                     "status": entry.status,
                     "quest": {
                         "id": entry.quest.id,

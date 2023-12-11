@@ -146,6 +146,41 @@ const QExpensesFromOwnFC: FC = () => {
       },
     },
     {
+      title: "номер телефона для перевода",
+      dataIndex: "phone_number_for_transfer",
+      sorting: true,
+      searching: "номеру телефона для перевода",
+      width: 280,
+    },
+    {
+      title: "банк",
+      dataIndex: "bank",
+      sorting: true,
+      searching: "банку",
+      width: 120,
+      render: (bank) => {
+        if (bank !== null) {
+          let color = "black";
+          let formattedText = ''
+
+          if (bank === 'sberbank') {
+            color = "green";
+            formattedText = 'сбербанк'
+          } else if (bank === 'tinkoff') {
+            color = "yellow";
+            formattedText = 'тинькофф'
+          } else if (bank === 'alfabank') {
+            color = 'red'
+            formattedText = 'альфа-банк'
+          }
+
+          return <Tag color={color}>{formattedText}</Tag>;
+        } else {
+          return null;
+        }        
+      },
+    },
+    {
       title: "статус",
       dataIndex: "status",
       key: "статус",
