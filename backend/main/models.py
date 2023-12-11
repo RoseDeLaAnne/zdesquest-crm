@@ -487,6 +487,7 @@ class ExpenseFromTheir(models.Model):
         ("sberbank", "сбербанк"),
         ("tinkoff", "тинькофф"),
         ("alfabank", "альфа-банк"),
+        ("vtb", "втб"),
     ]
 
     date = models.DateField()

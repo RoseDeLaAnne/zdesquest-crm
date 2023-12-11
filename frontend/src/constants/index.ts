@@ -34,6 +34,10 @@ const optionsBanks = [
     label: "альфабанк",
     value: "alfabank",
   },
+  {
+    label: "втб",
+    value: "vtb",
+  },
 ];
 
 const optionsNameOfExpense = [

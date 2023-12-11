@@ -172,8 +172,10 @@ const QExpensesFromOwnFC: FC = () => {
           } else if (bank === 'alfabank') {
             color = 'red'
             formattedText = 'альфа-банк'
+          } else if (bank === 'vtb') {
+            color = 'blue'
+            formattedText = 'втб'
           }
-
           return <Tag color={color}>{formattedText}</Tag>;
         } else {
           return null;
