@@ -740,3 +740,48 @@ def convert_with_children(entries, keys_to_remove):
     response_data = list(entry_dict.values())
 
     return response_data
+
+
+def convert_with_children2(entries, keys_to_remove):
+    keys = set()
+    keys_to_remove_local = ["_state", "date", "time"] + keys_to_remove
+    for entry in entries:
+        keys.update(entry.__dict__.keys())
+    keys = [x for x in keys if x not in keys_to_remove_local]
+    keys = list(keys)
+
+    entry_dict = {}
+
+    for entry in entries:
+        date_timestamp = date_to_timestamp(entry.date)
+        date_str = entry.date.strftime("%d.%m.%Y")
+
+        if date_timestamp not in entry_dict:
+            entry_dict[date_timestamp] = {}
+            for key in keys:
+                entry_dict[date_timestamp][key] = entry.__dict__[key]
+            entry_dict[date_timestamp]["id"] = str(entry.id).zfill(2)
+            entry_dict[date_timestamp]["key"] = str(date_timestamp)
+            entry_dict[date_timestamp]["date_time"] = date_str
+            entry_dict[date_timestamp]["children"] = []
+
+        for key in keys:
+            entry_dict[date_timestamp][key] = []
+            # if isinstance(entry.__dict__[key], str):
+            # entry_dict[date_timestamp][key] += " " + entry.__dict__[key]
+            # entry_dict[date_timestamp][key].append(entry.__dict__[key])
+
+        entry_time = entry.time.strftime("%H:%M")
+        entry_data = {"id": entry.id, "key": str(entry.id), "date_time": entry_time}
+        for key in keys:
+            value = getattr(entry, key, None)
+            entry_data[key] = []
+            entry_data[key].append(value)
+        entry_dict[date_timestamp]["children"].append(entry_data)
+
+    for date_data in entry_dict.values():
+        date_data["children"].sort(key=lambda x: x["date_time"])
+
+    response_data = list(entry_dict.values())
+
+    return response_data

@@ -28,6 +28,7 @@ from .utils import (
     create_qcash_register_from_stquest,
     create_qcash_register_from_stexpense,
     convert_with_children,
+    convert_with_children2,
 )
 
 from django.db.models import Count
@@ -3510,7 +3511,7 @@ def QVideos(request, id):
             entries = entries.filter(date__range=(start_date, end_date))
 
         keys_to_remove = ["id", "quest_id"]
-        response_data = convert_with_children(entries, keys_to_remove)
+        response_data = convert_with_children2(entries, keys_to_remove)
 
         # print(entries)
 
@@ -3962,9 +3963,13 @@ def VSTQuest(request, id):
                 and ("client_name" in data)
                 or (data["is_package"] == True)
             ):
-                type = 'package'
+                type = ''
                 if (data['is_video_review'] == True):
                     type = 'video_review'
+                elif (data["is_package"] == True):
+                    type = 'package'
+                else:
+                    type = 'video'
                 QVideo(
                     **{
                         "date": formatted_date,
@@ -4009,7 +4014,7 @@ def VSTQuest(request, id):
             QSalary(
                 **{
                     "date": formatted_date,
-                    "amount": 50,
+                    "amount": 75,
                     "name": "Видео отзыв",
                     "user": administrator,
                     "stquest": entry,
@@ -4025,7 +4030,7 @@ def VSTQuest(request, id):
                 QSalary(
                     **{
                         "date": formatted_date,
-                        "amount": 100,
+                        "amount": 125,
                         "name": "Сумма видео",
                         "user": administrator,
                         "stquest": entry,
@@ -4188,7 +4193,7 @@ def VSTQuest(request, id):
             QSalary(
                 **{
                     "date": formatted_date,
-                    "amount": 100,
+                    "amount": 125,
                     "name": "Видео",
                     "user": administrator,
                     "stquest": entry,
@@ -5028,7 +5033,7 @@ def CreateSTQuest(request):
                 QSalary(
                     **{
                         "date": formatted_date,
-                        "amount": 50,
+                        "amount": 75,
                         "name": "Видео отзыв",
                         "user": administrator,
                         "stquest": entry,
@@ -5065,7 +5070,7 @@ def CreateSTQuest(request):
                     QSalary(
                         **{
                             "date": formatted_date,
-                            "amount": 100,
+                            "amount": 125,
                             "name": "Сумма видео",
                             "user": administrator,
                             "stquest": entry,
@@ -5129,9 +5134,13 @@ def CreateSTQuest(request):
                 and ("client_name" in data)
                 or (data["is_package"] == True)
             ):
-                type = 'package'
+                type = ''
                 if (data['is_video_review'] == True):
                     type = 'video_review'
+                elif (data["is_package"] == True):
+                    type = 'package'
+                else:
+                    type = 'video'
                 QVideo(
                     **{
                         "date": formatted_date,
@@ -5196,7 +5205,7 @@ def CreateSTQuest(request):
                 QSalary(
                     **{
                         "date": formatted_date,
-                        "amount": 100,
+                        "amount": 125,
                         "name": "Видео",
                         "user": administrator,
                         "stquest": entry,
