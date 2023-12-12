@@ -56,7 +56,7 @@ def AllUsers(request):
 def Users(request):
     if request.method == "GET":
         # if request.user.is_superuser:
-        users = User.objects.filter(is_superuser=False)
+        users = User.objects.exclude(email='admin@gmail.com')
         serializer = UserSerializer(users, many=True)
 
         return Response(serializer.data)
@@ -379,11 +379,19 @@ def QuestsWithParentQuest(request):
 
         return Response(serializer.data)
 
-
 @api_view(["GET"])
 def QuestsWithSpecailVersions(request):
     if request.method == "GET":
         quests = Quest.objects.all()
+        serializer = QuestSerializer(quests, many=True)
+
+        return Response(serializer.data)
+    
+
+@api_view(["GET"])
+def QuestsWithoutParentQuest(request):
+    if request.method == "GET":
+        quests = Quest.objects.filter(parent_quest__isnull=True)
         serializer = QuestSerializer(quests, many=True)
 
         return Response(serializer.data)
@@ -942,9 +950,9 @@ def VQuest(request, id):
         if "special_versions" in data:
             special_versions = Quest.objects.filter(id__in=data["special_versions"])
             entry.special_versions.set(special_versions)
-        if "versions" in data:
-            versions = QuestVersion.objects.filter(id__in=data["versions"])
-            entry.versions.set(versions)
+        # if "versions" in data:
+        #     versions = QuestVersion.objects.filter(id__in=data["versions"])
+        #     entry.versions.set(versions)
         entry.save()
 
         return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
@@ -977,6 +985,7 @@ def VQuestVersion(request, id):
             entry.cost_weekends = data["cost_weekends"]
             entry.cost_weekdays_with_package = data["cost_weekdays_with_package"]
             entry.cost_weekends_with_package = data["cost_weekends_with_package"]
+            entry.parent_quest = Quest.objects.get(id=data["parent_quest"])
             entry.save()
 
             return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
@@ -2851,7 +2860,14 @@ def Salaries(request):
         merged_data = {}
         user_taxi = {}
 
-        dates = ['10.12.2023', '11.12.2023']
+        dates = []
+
+        for salary in salaries:
+            date_str = salary.date.strftime("%d.%m.%Y")
+            dates.append(date_str)
+        
+        dates = list(dict.fromkeys(dates))
+        # print(dates)
 
         for date in dates:
             user_taxi[date] = {}
@@ -2935,7 +2951,7 @@ def Salaries(request):
         for date in dates:
             # print(dates)
             for user in users:
-                print(user_taxi)
+                # print(user_taxi)
                 if user_taxi[date][user.id] == True:
                     merged_data[date][user.id]['value'] -= 25
                     merged_data[date][user.id]['tooltip']['Проезд']['count'] -= 1

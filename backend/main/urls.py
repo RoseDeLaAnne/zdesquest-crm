@@ -26,6 +26,7 @@ urlpatterns = [
     path("roles/", views.Roles),
     path("quests/", views.Quests),
     path("quests-with-parent-quest/", views.QuestsWithParentQuest),
+    path("quests-without-parent-quest/", views.QuestsWithoutParentQuest),
     path("quests-with-special-versions/", views.QuestsWithSpecailVersions),
     # path("quests-with-spec-versions-and-versions/", views.QuestsWithSpecailVersionsAndVersions    ),
     # path("quest-versions/", views.QuestVersions),

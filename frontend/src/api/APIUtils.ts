@@ -115,6 +115,26 @@ export const getQuestsWithSpecVersions = async () => {
   }
 };
 
+export const getQuestsWithParentQuest = async () => {
+  try {
+    const url = `${url3}/api/quests-with-parent-quest/`;
+    const res = await axios.get(url);
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getQuestsWithoutParentQuest = async () => {
+  try {
+    const url = `${url3}/api/quests-without-parent-quest/`;
+    const res = await axios.get(url);
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getQuestVersions = async () => {
   try {
     const url = `${url3}/api/quest-versions/`;

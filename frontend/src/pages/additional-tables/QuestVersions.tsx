@@ -11,7 +11,7 @@ import {
 } from "@ant-design/icons";
 
 // api
-import { getQuests, postQuest, deleteQuest, getQuestVersions, deleteQuestVersion, postQuestVersion } from "../../api/APIUtils";
+import { getQuests, postQuest, deleteQuest, getQuestVersions, deleteQuestVersion, postQuestVersion, getQuestsWithParentQuest } from "../../api/APIUtils";
 
 // components
 import TemplateTable from "../../components/template/Table";
@@ -60,6 +60,20 @@ const ATQuestVersions: FC = () => {
       sorting: true,
       searching: "",
     },
+    {
+      title: "родительский квест",
+      dataIndex: "parent_quest",
+      sorting: false,
+      searching: "",
+      render: (parent_quest) => {
+        if (parent_quest !== null) {
+          return <Tag color="black">{parent_quest.name}</Tag>;
+        } else {
+          return null;
+        }
+      },
+      width: 164,
+    },
   ];
 
   const [formItems, setFormItems] = useState([])
@@ -86,7 +100,7 @@ const ATQuestVersions: FC = () => {
       tableIsOperation={true}
       operationIsDelete={true}
       operationIsEdit={true}
-      getFunction={getQuestVersions}
+      getFunction={getQuestsWithParentQuest}
       deleteFunction={deleteQuestVersion}
       postFunction={postQuestVersion}
       isUseParams={false}

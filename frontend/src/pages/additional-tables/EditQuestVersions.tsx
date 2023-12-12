@@ -10,12 +10,12 @@ import { TableOutlined } from "@ant-design/icons";
 import TemplateEdit from "../../components/template/Edit.tsx";
 
 // api
-import { getQuestVersion, putQuestVersion } from "../../api/APIUtils.ts";
+import { getQuest, getQuestVersion, putQuest, putQuestVersion } from "../../api/APIUtils.ts";
 
 // constants
-import { getQuestVersionsFormItems } from "../../constants/index.ts";
+import { getQuestVersionsFormItems, getQuestsFormItems } from "../../constants/index.ts";
 
-const EditUsersFC: FC = () => {
+const EditQuestVersionsFC: FC = () => {
   const initialBreadcrumbItems = [
     {
       icon: TableOutlined,
@@ -42,17 +42,20 @@ const EditUsersFC: FC = () => {
     getFormItems();
   }, []);
 
+  const formHandleOnChange = () => {};
+
   return (
     <TemplateEdit
       defaultOpenKeys={["additionalTables"]}
       defaultSelectedKeys={["additionalTablesQuestVersions"]}
       breadcrumbItems={initialBreadcrumbItems}
-      getFunction={getQuestVersion}
+      getFunction={getQuest}
       putFunction={putQuestVersion}
       isUseParams={true}
+      formHandleOnChange={formHandleOnChange}
       formItems={formItems}
     />
   );
 };
 
-export default EditUsersFC;
+export default EditQuestVersionsFC;

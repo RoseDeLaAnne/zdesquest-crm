@@ -1529,26 +1529,6 @@ export const getQuestsFormItems = async () => {
           spanXS: 24,
           spanSM: 24,
           spanMD: 12,
-          name: "versions",
-          label: "версии",
-          isRequired: false,
-          placeholder: "пожалуйста, введите пароль",
-          element: {
-            name: "Select",
-            options: optionsQuestVersions,
-            multiple: true,
-            defaultValue: null,
-          },
-        },
-      ],
-    },
-    {
-      gutter: 16,
-      items: [
-        {
-          spanXS: 24,
-          spanSM: 24,
-          spanMD: 24,
           name: "duration_in_minute",
           label: "продолжительность квеста в минутах",
           isRequired: true,
@@ -1569,6 +1549,8 @@ export const getQuestsFormItems = async () => {
 
 // getQuestVersionsFormItems
 export const getQuestVersionsFormItems = async () => {
+  const optionsQuests = await fetchQuests();
+
   const formItems = [
     {
       gutter: 16,
@@ -1580,7 +1562,7 @@ export const getQuestVersionsFormItems = async () => {
           name: "name",
           label: "название",
           isRequired: true,
-          placeholder: "пожалуйста, введите логин",
+          placeholder: "пожалуйста, введите название",
           element: {
             name: "Input",
             options: [],
@@ -1600,7 +1582,7 @@ export const getQuestVersionsFormItems = async () => {
           name: "cost_weekdays",
           label: "стоимость квеста в будние дни",
           isRequired: true,
-          placeholder: "пожалуйста, введите логин",
+          placeholder: "пожалуйста, введите стоимость квеста в будние дни",
           element: {
             name: "Input",
             options: [],
@@ -1615,7 +1597,7 @@ export const getQuestVersionsFormItems = async () => {
           name: "cost_weekends",
           label: "стоимость квеста в выходные дни",
           isRequired: true,
-          placeholder: "пожалуйста, введите пароль",
+          placeholder: "пожалуйста, введите стоимость квеста в выходные дни",
           element: {
             name: "Input",
             options: [],
@@ -1635,7 +1617,7 @@ export const getQuestVersionsFormItems = async () => {
           name: "cost_weekdays_with_package",
           label: "стоимость квеста в будние дни (пакет)",
           isRequired: true,
-          placeholder: "пожалуйста, введите логин",
+          placeholder: "пожалуйста, введите стоимость квеста в будние дни (пакет)",
           element: {
             name: "Input",
             options: [],
@@ -1650,11 +1632,31 @@ export const getQuestVersionsFormItems = async () => {
           name: "cost_weekends_with_package",
           label: "стоимость квеста в выходные дни (пакет)",
           isRequired: true,
-          placeholder: "пожалуйста, введите пароль",
+          placeholder: "пожалуйста, введите стоимость квеста в выходные дни (пакет)",
           element: {
             name: "Input",
             options: [],
             multiple: null,
+            defaultValue: null,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 24,
+          name: "parent_quest",
+          label: "родительский квест",
+          isRequired: true,
+          placeholder: "пожалуйста, выберите родительский квест",
+          element: {
+            name: "Select",
+            options: optionsQuests,
+            multiple: false,
             defaultValue: null,
           },
         },

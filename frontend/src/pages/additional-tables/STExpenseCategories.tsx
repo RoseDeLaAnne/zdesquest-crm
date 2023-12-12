@@ -72,6 +72,8 @@ const STExpenseCategoriesFC: FC = () => {
       postFunction={postSTExpenseCategory}
       formItems={formItems}
       tableIsOperation={true}
+      operationIsEdit={true}
+      operationIsDelete={true}
       formHandleOnChange={formHandleOnChange}
     />
   );

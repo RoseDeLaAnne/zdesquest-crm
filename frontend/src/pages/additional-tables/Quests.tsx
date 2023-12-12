@@ -16,6 +16,8 @@ import {
   postQuest,
   deleteQuest,
   getQuestsWithSpecVersions,
+  getQuestsWithParentQuest,
+  getQuestsWithoutParentQuest,
 } from "../../api/APIUtils";
 
 // components
@@ -108,22 +110,6 @@ const ATQuests: FC = () => {
       ),
     },
     {
-      title: "версии",
-      dataIndex: "versions",
-
-      render: (_, { versions }) => (
-        <>
-          {versions.map((version) => {
-            return (
-              <Tag color="red" key={version.id}>
-                {version.name}
-              </Tag>
-            );
-          })}
-        </>
-      ),
-    },
-    {
       title: "продолжительность квеста в минутах",
       dataIndex: "duration_in_minute",
       sorting: true,
@@ -155,7 +141,7 @@ const ATQuests: FC = () => {
       tableIsOperation={true}
       operationIsEdit={true}
       operationIsDelete={true}
-      getFunction={getQuestsWithSpecVersions}
+      getFunction={getQuestsWithoutParentQuest}
       deleteFunction={deleteQuest}
       postFunction={postQuest}
       isUseParams={false}

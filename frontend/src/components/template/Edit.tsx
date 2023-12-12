@@ -72,6 +72,7 @@ const EditFC: FC = ({
               key === "user" ||
               key === "who_paid" ||
               key === "sub_category" ||
+              key === "parent_quest" ||
               key === "category"
             ) {
               form.setFieldsValue({ [key]: value !== null ? value.id : value });
@@ -93,8 +94,8 @@ const EditFC: FC = ({
                   uid: "-1",
                   name: "attachment.jpg",
                   status: "done",
-                  // url: `http://localhost:8000${value}`,
-                  url: `http://crm.zdesquest.ru${value}`,
+                  url: `http://localhost:8000${value}`,
+                  // url: `http://crm.zdesquest.ru${value}`,
                 },
               ]);
             } else {
