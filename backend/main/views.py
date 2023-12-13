@@ -2854,7 +2854,7 @@ def Salaries(request):
         user_data_map = {user.id: UserSerializer(user).data for user in users}
 
         head_data = [
-            {"title": user.first_name, "dataIndex": str(user.id), "key": str(user.id)}
+            {"title": user.first_name, "dataIndex": str(user.id), "key": str(user.id),}
             for user in users
         ]
 
@@ -3053,7 +3053,7 @@ def Salaries(request):
             user_data = {
                 "id": date_data["id"],
                 "key": str(date_data["id"]),
-                "date": date_data["date"],
+                "date": date_data["date"]
             }
 
             for id, data in date_data.items():
@@ -3970,6 +3970,12 @@ def VSTQuest(request, id):
                     type = 'package'
                 else:
                     type = 'video'
+
+                local_quest = quest
+                if len(quest.special_versions.all()) != 0:
+                    local_quest = quest.special_versions.all()[0]
+
+                # print(local_quest)
                 QVideo(
                     **{
                         "date": formatted_date,
@@ -3979,7 +3985,7 @@ def VSTQuest(request, id):
                         # "is_package": data["is_package"],
                         "type": type,
                         "note": "",
-                        "quest": quest,
+                        "quest": local_quest,
                         "stquest": entry,
                     }
                 ).save()
@@ -5141,6 +5147,12 @@ def CreateSTQuest(request):
                     type = 'package'
                 else:
                     type = 'video'
+
+                local_quest = quest
+                if (len(quest.special_versions.all()) != 0):
+                    local_quest = quest.special_versions.all()[0]
+
+                print(local_quest)
                 QVideo(
                     **{
                         "date": formatted_date,
@@ -5150,7 +5162,7 @@ def CreateSTQuest(request):
                         # "is_package": data["is_package"],
                         "type": type,
                         "note": "",
-                        "quest": quest,
+                        "quest": local_quest,
                         "stquest": entry,
                     }
                 ).save()

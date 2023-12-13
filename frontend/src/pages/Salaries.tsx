@@ -24,7 +24,7 @@ const SalariesFC: FC = () => {
     if (response.status === 200) {
       setUser(response.data);
 
-      console.log(response.data.is_superuser)
+      // console.log(response.data.is_superuser)
     }
   };
   useEffect(() => {
@@ -41,6 +41,7 @@ const SalariesFC: FC = () => {
       // getFunction={user.is_superuser ? getSalaries : getCurrentSalaries}
       getFunction={getSalaries}
       tableScroll={{ x: 1000 }}
+      tableIsObj={true}
     />
   );
 };

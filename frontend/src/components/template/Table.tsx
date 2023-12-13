@@ -23,10 +23,10 @@ import type { ColumnType, ColumnsType } from "antd/es/table";
 import type {
   FilterConfirmProps,
   FilterValue,
-  SorterResult,
+  SorterResult
 } from "antd/es/table/interface";
 // antd | icons
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, LogoutOutlined } from "@ant-design/icons";
 
 // components
 import CMain from "./Main";
@@ -71,6 +71,7 @@ const TableFC: FC = ({
   operationIsAdd,
   operationIsEdit,
   operationIsDelete,
+  tableIsObj,
 }) => {
   const { id } = isUseParams ? useParams() : { id: "" };
 
@@ -375,6 +376,8 @@ const TableFC: FC = ({
       }, };
     });
 
+    tableCountingFields = tableDataHead.map((column) => column.dataIndex);
+
     // unpackedTableColumns = tableDataHead.map((column) => {
     //   // console.log(column)
 
@@ -627,6 +630,8 @@ const TableFC: FC = ({
       if (res.status === 200) {
         if (!initialPackedTableColumns) {
           const { head, body } = res.data;
+
+          console.log(head)
           setTableDataHead(head);
           setTableDataSource(body);
         } else {
@@ -648,7 +653,7 @@ const TableFC: FC = ({
     getEntries(startDateStr, endDateStr);
   };
 
-  const tableIsObj = false;
+  // const tableIsObj = false;
 
   const [messageApi, contextHolder] = message.useMessage();
   const form2OnFinish = async (value) => {
@@ -876,7 +881,7 @@ const TableFC: FC = ({
       form={form}
     >
       {contextHolder}
-      <FloatButton onClick={() => logout()} />
+      <FloatButton icon={<LogoutOutlined />} onClick={() => logout()} />
       <CTable
         scroll={tableScroll}
         columns={tableColumns}

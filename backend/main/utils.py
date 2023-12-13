@@ -490,211 +490,218 @@ def create_travel(entry, quest):
         new_quest0 = stquests_by_user[0].quest
         new_questlen = stquests_by_user[len(stquests_by_user) - 1].quest
 
+        # print(new_quest0)
+        # print(new_questlen)
+
         if len(new_quest0.special_versions.all()) != 0:
-            for special_version in new_quest0.special_versions.all():
-                if len(stquests_by_user) == 1:           
-                    travel_data = {
-                        "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
-                        "amount": 25,
-                        "name": "Проезд",
-                        "user": user,
-                        "stquest": stquests_by_user[0],
-                        "quest": special_version,
-                        "sub_category": "actor",
-                    }
-                    QSalary(**travel_data).save()
-                    # QSalary(**travel_data).save()
-                elif len(stquests_by_user) >= 2:
+            new_quest0 = new_quest0.special_versions.all()[0]
+        if len(new_questlen.special_versions.all()) != 0:
+            new_questlen = new_questlen.special_versions.all()[0]
+            # print(new_quest0.special_versions.all()[0])
+        #     for special_version in new_quest0.special_versions.all():
+        #         if len(stquests_by_user) == 1:           
+        #             travel_data = {
+        #                 "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
+        #                 "amount": 25 / 2,
+        #                 "name": "Проезд",
+        #                 "user": user,
+        #                 "stquest": stquests_by_user[0],
+        #                 "quest": special_version,
+        #                 "sub_category": "actor",
+        #             }
+        #             QSalary(**travel_data).save()
+        #             QSalary(**travel_data).save()
+        #         elif len(stquests_by_user) >= 2:
+        #             travel_data_now = {
+        #                 "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
+        #                 "amount": 25 / 2,
+        #                 "name": "Проезд",
+        #                 "user": user,
+        #                 "stquest": stquests_by_user[0],
+        #                 "quest": special_version,
+        #                 "sub_category": "actor",
+        #             }
+        #             travel_data_prev = {
+        #                 "date": stquests_by_user[len(stquests_by_user) - 1].date.strftime(
+        #                     "%Y-%m-%d"
+        #                 ),
+        #                 "amount": 25 / 2,
+        #                 "name": "Проезд",
+        #                 "user": user,
+        #                 "stquest": stquests_by_user[len(stquests_by_user) - 1],
+        #                 "quest": special_version,
+        #                 "sub_category": "actor",
+        #             }
+        #             QSalary(**travel_data_now).save()
+        #             QSalary(**travel_data_prev).save()
+
+        #         prev_stquest_by_user = None
+        #         for index, stquest_by_user in enumerate(stquests_by_user):
+        #             if index == 0:
+        #                 prev_stquest_by_user = stquest_by_user                        
+        #             if prev_stquest_by_user != stquest_by_user:
+        #                 new_prev_entry_time = (
+        #                     datetime.combine(
+        #                         prev_stquest_by_user.date, prev_stquest_by_user.time
+        #                     )
+        #                     + timedelta(minutes=special_version.duration_in_minute)
+        #                     + cleaning_time
+        #                 )
+        #                 new_now_entry_time = (
+        #                     datetime.combine(stquest_by_user.date, stquest_by_user.time)
+        #                     - prep_time
+        #                 )
+        #                 # if new_now_entry_time - new_prev_entry_time >= timedelta(hours=2):
+        #                 travel_data_now = {
+        #                     "date": stquest_by_user.date.strftime("%Y-%m-%d"),
+        #                     "amount": 25 / 2,
+        #                     "name": "Проезд",
+        #                     "user": user,
+        #                     "stquest": stquest_by_user,
+        #                     "quest": special_version,
+        #                     "sub_category": "actor",
+        #                 }
+        #                 travel_data_prev = {
+        #                     "date": prev_stquest_by_user.date.strftime("%Y-%m-%d"),
+        #                     "amount": 25 / 2,
+        #                     "name": "Проезд",
+        #                     "user": user,
+        #                     "stquest": prev_stquest_by_user,
+        #                     "quest": special_version,
+        #                     "sub_category": "actor",
+        #                 }
+        #                 QSalary(**travel_data_now).save()
+        #                 QSalary(**travel_data_prev).save()
+        #                 # elif (
+        #                 #     stquest_by_user.quest.address != prev_stquest_by_user.quest.address
+        #                 # ):
+        #                 #     travel_data_prev = {
+        #                 #         "date": prev_stquest_by_user.date.strftime("%Y-%m-%d"),
+        #                 #         "amount": 25,
+        #                 #         "name": "Проезд",
+        #                 #         "user": user,
+        #                 #         "stquest": prev_stquest_by_user,
+        #                 #         "quest": prev_new_quest,
+        #                 #         "sub_category": "actor",
+        #                 #     }
+        #                 #     QSalary(**travel_data_prev).save()
+
+        #             prev_stquest_by_user = stquest_by_user
+        # # else:
+        if new_quest0.parent_quest != None:
+            new_quest0 = new_quest0.parent_quest
+        if new_questlen.parent_quest != None:
+            new_questlen = new_questlen.parent_quest
+
+        if len(stquests_by_user) == 1:           
+            travel_data = {
+                "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
+                "amount": 25,
+                "name": "Проезд",
+                "user": user,
+                "stquest": stquests_by_user[0],
+                "quest": new_quest0,
+                "sub_category": "actor",
+            }
+            QSalary(**travel_data).save()
+            QSalary(**travel_data).save()
+        elif len(stquests_by_user) >= 2:
+            travel_data_now = {
+                "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
+                "amount": 25,
+                "name": "Проезд",
+                "user": user,
+                "stquest": stquests_by_user[0],
+                "quest": new_quest0,
+                "sub_category": "actor",
+            }
+            travel_data_prev = {
+                "date": stquests_by_user[len(stquests_by_user) - 1].date.strftime(
+                    "%Y-%m-%d"
+                ),
+                "amount": 25,
+                "name": "Проезд",
+                "user": user,
+                "stquest": stquests_by_user[len(stquests_by_user) - 1],
+                "quest": new_questlen,
+                "sub_category": "actor",
+            }
+            QSalary(**travel_data_now).save()
+            QSalary(**travel_data_prev).save()
+
+        prev_stquest_by_user = None
+        for index, stquest_by_user in enumerate(stquests_by_user):
+            if index == 0:
+                prev_stquest_by_user = stquest_by_user
+                
+            new_quest = stquest_by_user.quest
+            if (stquest_by_user.quest.parent_quest != None):
+                new_quest = stquest_by_user.quest.parent_quest
+            prev_new_quest = prev_stquest_by_user.quest
+            if (prev_stquest_by_user.quest.parent_quest != None):
+                prev_new_quest = prev_stquest_by_user.quest.parent_quest
+
+            # print(new_quest)
+            # print(prev_new_quest)
+                
+            if prev_stquest_by_user != stquest_by_user:
+                if (stquest_by_user.quest.parent_quest != None):
+                    stquest_by_user.quest.address = stquest_by_user.quest.parent_quest.address
+                    stquest_by_user.quest.duration_in_minute = stquest_by_user.quest.parent_quest.duration_in_minute
+                    stquest_by_user.quest = stquest_by_user.quest.parent_quest
+
+                if (prev_stquest_by_user.quest.parent_quest != None):
+                    prev_stquest_by_user.quest.address = prev_stquest_by_user.quest.parent_quest.address
+                    prev_stquest_by_user.quest.duration_in_minute = prev_stquest_by_user.quest.parent_quest.duration_in_minute
+                    prev_stquest_by_user.quest = prev_stquest_by_user.quest.parent_quest
+
+                new_prev_entry_time = (
+                    datetime.combine(
+                        prev_stquest_by_user.date, prev_stquest_by_user.time
+                    )
+                    + timedelta(minutes=prev_stquest_by_user.quest.duration_in_minute)
+                    + cleaning_time
+                )
+                new_now_entry_time = (
+                    datetime.combine(stquest_by_user.date, stquest_by_user.time)
+                    - prep_time
+                )
+                if new_now_entry_time - new_prev_entry_time >= timedelta(hours=2):
                     travel_data_now = {
-                        "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
+                        "date": stquest_by_user.date.strftime("%Y-%m-%d"),
                         "amount": 25,
                         "name": "Проезд",
                         "user": user,
-                        "stquest": stquests_by_user[0],
-                        "quest": special_version,
+                        "stquest": stquest_by_user,
+                        "quest": new_quest,
                         "sub_category": "actor",
                     }
                     travel_data_prev = {
-                        "date": stquests_by_user[len(stquests_by_user) - 1].date.strftime(
-                            "%Y-%m-%d"
-                        ),
+                        "date": prev_stquest_by_user.date.strftime("%Y-%m-%d"),
                         "amount": 25,
                         "name": "Проезд",
                         "user": user,
-                        "stquest": stquests_by_user[len(stquests_by_user) - 1],
-                        "quest": special_version,
+                        "stquest": prev_stquest_by_user,
+                        "quest": prev_new_quest,
                         "sub_category": "actor",
                     }
                     QSalary(**travel_data_now).save()
-                    # QSalary(**travel_data_prev).save()
+                    QSalary(**travel_data_prev).save()
+                elif (
+                    stquest_by_user.quest.address != prev_stquest_by_user.quest.address
+                ):
+                    travel_data_prev = {
+                        "date": prev_stquest_by_user.date.strftime("%Y-%m-%d"),
+                        "amount": 25,
+                        "name": "Проезд",
+                        "user": user,
+                        "stquest": prev_stquest_by_user,
+                        "quest": prev_new_quest,
+                        "sub_category": "actor",
+                    }
+                    QSalary(**travel_data_prev).save()
 
-                prev_stquest_by_user = None
-                for index, stquest_by_user in enumerate(stquests_by_user):
-                    if index == 0:
-                        prev_stquest_by_user = stquest_by_user                        
-                    if prev_stquest_by_user != stquest_by_user:
-                        new_prev_entry_time = (
-                            datetime.combine(
-                                prev_stquest_by_user.date, prev_stquest_by_user.time
-                            )
-                            + timedelta(minutes=special_version.duration_in_minute)
-                            + cleaning_time
-                        )
-                        new_now_entry_time = (
-                            datetime.combine(stquest_by_user.date, stquest_by_user.time)
-                            - prep_time
-                        )
-                        # if new_now_entry_time - new_prev_entry_time >= timedelta(hours=2):
-                        travel_data_now = {
-                            "date": stquest_by_user.date.strftime("%Y-%m-%d"),
-                            "amount": 25,
-                            "name": "Проезд",
-                            "user": user,
-                            "stquest": stquest_by_user,
-                            "quest": special_version,
-                            "sub_category": "actor",
-                        }
-                        travel_data_prev = {
-                            "date": prev_stquest_by_user.date.strftime("%Y-%m-%d"),
-                            "amount": 25,
-                            "name": "Проезд",
-                            "user": user,
-                            "stquest": prev_stquest_by_user,
-                            "quest": special_version,
-                            "sub_category": "actor",
-                        }
-                        QSalary(**travel_data_now).save()
-                        QSalary(**travel_data_prev).save()
-                        # elif (
-                        #     stquest_by_user.quest.address != prev_stquest_by_user.quest.address
-                        # ):
-                        #     travel_data_prev = {
-                        #         "date": prev_stquest_by_user.date.strftime("%Y-%m-%d"),
-                        #         "amount": 25,
-                        #         "name": "Проезд",
-                        #         "user": user,
-                        #         "stquest": prev_stquest_by_user,
-                        #         "quest": prev_new_quest,
-                        #         "sub_category": "actor",
-                        #     }
-                        #     QSalary(**travel_data_prev).save()
-
-                    prev_stquest_by_user = stquest_by_user
-        else:
-            if new_quest0.parent_quest != None:
-                new_quest0 = new_quest0.parent_quest
-            if new_questlen.parent_quest != None:
-                new_questlen = new_questlen.parent_quest
-
-            if len(stquests_by_user) == 1:           
-                travel_data = {
-                    "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
-                    "amount": 25,
-                    "name": "Проезд",
-                    "user": user,
-                    "stquest": stquests_by_user[0],
-                    "quest": new_quest0,
-                    "sub_category": "actor",
-                }
-                QSalary(**travel_data).save()
-                QSalary(**travel_data).save()
-            elif len(stquests_by_user) >= 2:
-                travel_data_now = {
-                    "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
-                    "amount": 25,
-                    "name": "Проезд",
-                    "user": user,
-                    "stquest": stquests_by_user[0],
-                    "quest": new_quest0,
-                    "sub_category": "actor",
-                }
-                travel_data_prev = {
-                    "date": stquests_by_user[len(stquests_by_user) - 1].date.strftime(
-                        "%Y-%m-%d"
-                    ),
-                    "amount": 25,
-                    "name": "Проезд",
-                    "user": user,
-                    "stquest": stquests_by_user[len(stquests_by_user) - 1],
-                    "quest": new_questlen,
-                    "sub_category": "actor",
-                }
-                QSalary(**travel_data_now).save()
-                QSalary(**travel_data_prev).save()
-
-            prev_stquest_by_user = None
-            for index, stquest_by_user in enumerate(stquests_by_user):
-                if index == 0:
-                    prev_stquest_by_user = stquest_by_user
-                    
-                new_quest = stquest_by_user.quest
-                if (stquest_by_user.quest.parent_quest != None):
-                    new_quest = stquest_by_user.quest.parent_quest
-                prev_new_quest = prev_stquest_by_user.quest
-                if (prev_stquest_by_user.quest.parent_quest != None):
-                    prev_new_quest = prev_stquest_by_user.quest.parent_quest
-
-                # print(new_quest)
-                # print(prev_new_quest)
-                    
-                if prev_stquest_by_user != stquest_by_user:
-                    if (stquest_by_user.quest.parent_quest != None):
-                        stquest_by_user.quest.address = stquest_by_user.quest.parent_quest.address
-                        stquest_by_user.quest.duration_in_minute = stquest_by_user.quest.parent_quest.duration_in_minute
-                        stquest_by_user.quest = stquest_by_user.quest.parent_quest
-
-                    if (prev_stquest_by_user.quest.parent_quest != None):
-                        prev_stquest_by_user.quest.address = prev_stquest_by_user.quest.parent_quest.address
-                        prev_stquest_by_user.quest.duration_in_minute = prev_stquest_by_user.quest.parent_quest.duration_in_minute
-                        prev_stquest_by_user.quest = prev_stquest_by_user.quest.parent_quest
-
-                    new_prev_entry_time = (
-                        datetime.combine(
-                            prev_stquest_by_user.date, prev_stquest_by_user.time
-                        )
-                        + timedelta(minutes=prev_stquest_by_user.quest.duration_in_minute)
-                        + cleaning_time
-                    )
-                    new_now_entry_time = (
-                        datetime.combine(stquest_by_user.date, stquest_by_user.time)
-                        - prep_time
-                    )
-                    if new_now_entry_time - new_prev_entry_time >= timedelta(hours=2):
-                        travel_data_now = {
-                            "date": stquest_by_user.date.strftime("%Y-%m-%d"),
-                            "amount": 25,
-                            "name": "Проезд",
-                            "user": user,
-                            "stquest": stquest_by_user,
-                            "quest": new_quest,
-                            "sub_category": "actor",
-                        }
-                        travel_data_prev = {
-                            "date": prev_stquest_by_user.date.strftime("%Y-%m-%d"),
-                            "amount": 25,
-                            "name": "Проезд",
-                            "user": user,
-                            "stquest": prev_stquest_by_user,
-                            "quest": prev_new_quest,
-                            "sub_category": "actor",
-                        }
-                        QSalary(**travel_data_now).save()
-                        QSalary(**travel_data_prev).save()
-                    elif (
-                        stquest_by_user.quest.address != prev_stquest_by_user.quest.address
-                    ):
-                        travel_data_prev = {
-                            "date": prev_stquest_by_user.date.strftime("%Y-%m-%d"),
-                            "amount": 25,
-                            "name": "Проезд",
-                            "user": user,
-                            "stquest": prev_stquest_by_user,
-                            "quest": prev_new_quest,
-                            "sub_category": "actor",
-                        }
-                        QSalary(**travel_data_prev).save()
-
-                prev_stquest_by_user = stquest_by_user
+            prev_stquest_by_user = stquest_by_user
 
 
 def convert_with_children(entries, keys_to_remove):
