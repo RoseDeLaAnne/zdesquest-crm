@@ -3952,7 +3952,7 @@ def VSTQuest(request, id):
 
         create_travel(entry, quest)
         create_qincome(data, entry)
-
+        
         if len(QVideo.objects.filter(stquest=entry)) == 0:
             if (
                 (
@@ -3963,6 +3963,8 @@ def VSTQuest(request, id):
                 and ("client_name" in data)
                 or (data["is_package"] == True)
             ):
+                
+                # print(QVideo.objects.filter(stquest=entry))
                 type = ''
                 if (data['is_video_review'] == True):
                     type = 'video_review'

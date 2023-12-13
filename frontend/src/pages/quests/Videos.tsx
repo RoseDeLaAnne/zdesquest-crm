@@ -281,6 +281,7 @@ const QVideosFC: FC = () => {
       initialPackedTableColumns={initialPackedTableColumns}
       getFunction={getQVideos}
       isUseParams={true}
+      tableScroll={{ x: 1000 }}
     />
   );
 };
