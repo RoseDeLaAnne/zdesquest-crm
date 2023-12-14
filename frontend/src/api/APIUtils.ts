@@ -415,9 +415,9 @@ export const getQVideos = async (
   }
 };
 
-export const toggleExpensesFromTheir = async (id: number) => {
+export const toggleExpensesFromOwn = async (id: number) => {
   try {
-    const url = `${url3}/api/toggle/expenses-from-their/${id}/`;
+    const url = `${url3}/api/toggle/expenses-from-own/${id}/`;
     const response = await axios.get(url);
     return response;
   } catch (error) {

@@ -71,18 +71,33 @@ const STExpensesFC: FC = () => {
       sorting: true,
       searching: "наименованию расхода",
     },
-    {
-      title: "описание расхода",
-      dataIndex: "description",
-      sorting: true,
-      searching: "описанию расхода",
-    },
+    // {
+    //   title: "описание расхода",
+    //   dataIndex: "description",
+    //   sorting: true,
+    //   searching: "описанию расхода",
+    // },
     {
       title: "сумма расхода",
       dataIndex: "amount",
       sorting: true,
       searching: "наименованию расхода",
       countable: true,
+    },
+    {
+      title: "категория",
+      dataIndex: "sub_category",
+      render: (sub_category) => {
+        if (sub_category !== null) {
+          return (
+            <Tag color="black">
+              {sub_category.name}
+            </Tag>
+          );
+        } else {
+          return null;
+        }
+      },
     },
     {
       title: "квесты",
@@ -143,6 +158,21 @@ const STExpensesFC: FC = () => {
             })}
         </>
       ),
+    },
+    {
+      title: "кто создал",
+      dataIndex: "created_by",
+      render: (created_by) => {
+        if (created_by !== null) {
+          return (
+            <Tag color="black">
+              {created_by.first_name} {created_by.last_name}
+            </Tag>
+          );
+        } else {
+          return null;
+        }
+      },
     },
   ];
 

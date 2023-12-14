@@ -136,6 +136,10 @@ def create_qincome(data, entry):
                 new_data = {"video": int(data["video"])}
                 local_data.update(new_data)
 
+            if "video_after" in data:
+                new_data = {"video_after": int(data["video_after"])}
+                local_data.update(new_data)
+
             if "photomagnets_quantity" in data:
                 new_data = {"photomagnets": int(photomagnets_sum)}
                 local_data.update(new_data)
@@ -279,7 +283,11 @@ def create_qincome(data, entry):
                     local_data.update(new_data)
 
                 if "video" in data:
-                    new_data = {"video": int(data["video"])}
+                    new_data = {"video": int(data["video"]) / len(quest.special_versions.all())}
+                    local_data.update(new_data)
+
+                if "video_after" in data:
+                    new_data = {"video_after": int(data["video_after"]) / len(quest.special_versions.all())}
                     local_data.update(new_data)
 
                 if "photomagnets_quantity" in data:
@@ -391,6 +399,10 @@ def create_qincome(data, entry):
 
             if "video" in data:
                 new_data = {"video": int(data["video"])}
+                local_data.update(new_data)
+
+            if "video_after" in data:
+                new_data = {"video_after": int(data["video_after"])}
                 local_data.update(new_data)
 
             if "photomagnets_quantity" in data:

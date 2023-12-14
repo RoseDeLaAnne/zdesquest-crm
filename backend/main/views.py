@@ -1033,8 +1033,14 @@ def QuestIncomes(request, id):
 
         income_dict = {}  # To track incomes by date
 
+        value = 0
+        tooltip = ""
+        total = 0
+
         for income in incomes:
-            tooltip = ""
+            # value = income.game
+            # tooltip = ""
+            
             date_timestamp = date_to_timestamp(
                 income.date
             )  # Convert date to Unix timestamp
@@ -1052,6 +1058,7 @@ def QuestIncomes(request, id):
                     },
                     "room": 0,
                     "video": 0,
+                    "video_after": 0,
                     "photomagnets": 0,
                     "actor": 0,
                     "total": 0,
@@ -1063,41 +1070,50 @@ def QuestIncomes(request, id):
             child_id = str(income.id)  # Use income.id as the child's key
             income_time = income.time.strftime("%H:%M")  # Format time as HH:MM
 
-            income_game = {"value": income.game, "tooltip": ""}
+            income_game = {"value": value, "tooltip": tooltip}
 
-            # income_dict[date_timestamp]["game"] += income.game  # Update sums
-            income_dict[date_timestamp]["game"]["value"] += income.game  # Update sums
+            value += income.game 
+            total += income.game           
+
+            if len(income.stquest.quest.special_versions.all()) != 0:
+                tooltip = f"{income.stquest.quest} ({income.stquest.quest_cost})<br>"
             if income.is_package == True:
-                # income_dict[date_timestamp]["game"]['tooltip'] = "Пакет"
-
-                income_game = {"value": income.game, "tooltip": tooltip + "Пакет"}
+                tooltip += "Пакет<br>"
             if income.discount_sum > 0:
-                # income_dict[date_timestamp]["game"]['tooltip'] = "Пакет"
-
-                income_game = {
-                    "value": income.game,
-                    "tooltip": tooltip
-                    + f"Скидка - {income.discount_sum} ({income.discount_desc})",
-                }
+                value -= income.discount_sum
+                total -= income.discount_sum
+                tooltip += f"Скидка - {income.discount_sum} ({income.discount_desc})<br>"
 
             if income.easy_work > 0:
                 income_game = {
                     "value": income.game,
                     "tooltip": tooltip + f"Простой - {income.easy_work}",
                 }
+
+            income_game = {
+                "value": value,
+                "tooltip": tooltip,
+            }
+
+            income_dict[date_timestamp]["game"]["value"] = value  # Update sums
+
             income_dict[date_timestamp]["room"] += income.room
+            income_dict[date_timestamp]["video_after"] += income.video_after
             income_dict[date_timestamp]["video"] += income.video
             income_dict[date_timestamp]["photomagnets"] += income.photomagnets
             income_dict[date_timestamp]["actor"] += income.actor
             income_dict[date_timestamp]["total"] += (
-                income.game
+                value # income.game
                 + income.room
+                + income.video_after
                 + income.video
                 + income.photomagnets
                 + income.actor
             )
             income_dict[date_timestamp]["paid_cash"] += income.paid_cash
             income_dict[date_timestamp]["paid_non_cash"] += income.paid_non_cash
+
+            total = value + income.room + income.video_after + income.video + income.photomagnets + income.actor
 
             income_dict[date_timestamp]["children"].append(
                 {
@@ -1108,14 +1124,18 @@ def QuestIncomes(request, id):
                     "game": income_game,
                     "room": income.room,
                     "video": income.video,
+                    "video_after": income.video_after,
                     "photomagnets": income.photomagnets,
                     "actor": income.actor,
-                    "total": income.total,
+                    # "total": income.total,
+                    "total": total,
                     "quest": income.quest.id,
                     "paid_cash": income.paid_cash,
                     "paid_non_cash": income.paid_non_cash,
                 }
             )
+
+            # print(income_dict)
 
         # Sort children by "date_time" within each parent object
         for date_data in income_dict.values():
@@ -1448,7 +1468,7 @@ def QuestExpenses(request, id):
         for bonus_penalty in bonuses_penalties:
             bonus_penalty_date = bonus_penalty.date.strftime("%d.%m.%Y")
 
-            print(bonus_penalty_date)
+            # print(bonus_penalty_date)
             # print(salaries_by_date)
 
             if bonus_penalty.user.id not in salaries_by_date[bonus_penalty_date]:
@@ -1462,7 +1482,7 @@ def QuestExpenses(request, id):
             if 'last_name' not in salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]:
                 salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]['last_name'] = bonus_penalty.user.last_name
 
-            print(bonus_penalty.user.first_name)
+            # print(bonus_penalty.user.first_name)
 
             if bonus_penalty.name not in salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]['salary_data']:
                 salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]['salary_data'][bonus_penalty.name] = {'amount': 0, 'value': 0}
@@ -1528,6 +1548,9 @@ def QuestExpenses(request, id):
             expense_total_amount = expense.amount
             sub_category_latin_name = expense.sub_category.latin_name
 
+            # print(expense_amount)
+            # print(expense_total_amount)
+
             sum_tooltip = ''
             if (expense_amount == expense_total_amount):
                 sum_tooltip += f"{expense_total_amount}р."
@@ -1542,7 +1565,8 @@ def QuestExpenses(request, id):
                 expenses_by_date[expense_date][sub_category_latin_name]['tooltip'] += f"{sum_tooltip} - {expense.name} для {employees_tooltip}<br />"
             else:
                 expenses_by_date[expense_date][sub_category_latin_name]['tooltip'] += f"{sum_tooltip} - {expense.name}<br />"
-            expenses_by_date[expense_date][sub_category_latin_name]['value'] += expense_total_amount
+            # expenses_by_date[expense_date][sub_category_latin_name]['value'] += expense_total_amount
+            expenses_by_date[expense_date][sub_category_latin_name]['value'] += expense_amount
 
             # print(expenses_by_date)
 
@@ -2858,6 +2882,8 @@ def Salaries(request):
             for user in users
         ]
 
+        head_data = sorted(head_data, key=lambda x: x["title"])
+
         merged_data = {}
         user_taxi = {}
 
@@ -3423,12 +3449,12 @@ def QExpensesFromOwn(request, id):
                     "key": str(date_timestamp),  # Use Unix timestamp as the key
                     "date": date_str,
                     "amount": 0,
-                    "description": "",
-                    "who_paid": "",
-                    "phone_number_for_transfer": 0,
-                    "bank": "",
-                    "status": "",
-                    "quest": "",
+                    "description": None,
+                    "who_paid": None,
+                    "phone_number_for_transfer": None,
+                    "bank": None,
+                    "status": None,
+                    "quest": None,
                     "children": [],
                 }
 

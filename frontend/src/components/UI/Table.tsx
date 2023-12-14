@@ -8,6 +8,7 @@ const { Text } = Typography;
 const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {
   console.log(columns)
   console.log(dataSource)
+  console.log('isObj', isObj)
 
   return (
     <Table
@@ -34,12 +35,14 @@ const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {
             dataSourceColumns.status !== "paid"
           ) {
             total.forEach((totalEach) => {
-              if (totalEach.total !== null && isObj) {
+              if (totalEach.total !== null && isObj && dataSourceColumns[totalEach.key]) {
                 totalEach.total += dataSourceColumns[totalEach.key].value;
+                // console.log('dataSourceColumns[totalEach.key]1', dataSourceColumns[totalEach.key])
               } else if (totalEach["key"] === "game") {
                 totalEach.total += dataSourceColumns[totalEach.key].value;
               } else if (totalEach.total !== null && !isObj) {
                 totalEach.total += dataSourceColumns[totalEach.key];
+                // console.log('dataSourceColumns[totalEach.key]2', dataSourceColumns[totalEach.key])
               }
             });
           }

@@ -23,6 +23,7 @@ import {
   getQuestCashRegister,
   getQuests,
   getWorkCardExpenses,
+  toggleExpensesFromOwn,
   toggleExpensesFromTheir,
 } from "../../api/APIUtils";
 
@@ -138,11 +139,15 @@ const QExpensesFromOwnFC: FC = () => {
       },
       countable: false,
       render: (user) => {
+        if (user !== null) {
         return (
           <Tag color="black">
             {user.first_name} {user.last_name}
           </Tag>
-        );
+        ) }
+        else {
+          return null
+        }
       },
     },
     {
@@ -193,6 +198,7 @@ const QExpensesFromOwnFC: FC = () => {
       },
       countable: false,
       render: (status) => {
+        if (status !== null) {
         let color = "red";
         let formattedStatus = status;
 
@@ -205,6 +211,9 @@ const QExpensesFromOwnFC: FC = () => {
         }
 
         return <Tag color={color}>{formattedStatus}</Tag>;
+      } else {
+        return null
+      }
       },
     },
   ];
@@ -218,7 +227,9 @@ const QExpensesFromOwnFC: FC = () => {
       tableDateColumn={"date"}
       initialPackedTableColumns={initialPackedTableColumns}
       getFunction={getExpensesFromOwn}
+      toggleFunction={toggleExpensesFromOwn}
       isUseParams={true}
+      tableIsOperation={"toggle"}
     />
   );
 };

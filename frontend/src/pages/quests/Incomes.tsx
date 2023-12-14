@@ -138,6 +138,11 @@ const QIncomesFC: FC = () => {
       countable: true,
     },
     {
+      title: "видео после",
+      dataIndex: "video_after",
+      countable: true,
+    },
+    {
       title: "фотомагниты",
       dataIndex: "photomagnets",
       countable: true,

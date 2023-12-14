@@ -47,6 +47,7 @@ const FormFC: FC = ({
   onFinish,
   handleOnSelect,
   handleOnChange,
+  handleOnSearch,
   initialValues,
 }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -79,6 +80,26 @@ const FormFC: FC = ({
     console.log("Before upload:", file);
     return false; // Prevent automatic upload
   };
+
+  // const localOptions = [
+  //   {
+  //     "label": "анна артемьева",
+  //     "value": 1
+  //   },
+  //   {
+  //     "label": "светлана яковлева",
+  //     "value": 2
+  //   },
+  //   {
+  //     "label": "мария шматина",
+  //     "value": 3
+  //   },
+  // ]
+
+  // const handleOnSearch = (value: string) => {
+  //   // console.log(value)
+  //   console.log(localOptions.filter(option => option.label.includes(value)))
+  // }
 
   return (
     <Form
@@ -128,6 +149,9 @@ const FormFC: FC = ({
                     options={innerItem.element.options}
                     onChange={(selectedValues) =>
                       handleOnChange(selectedValues, innerItem.name)
+                    }
+                    onSearch={(selectedValues) =>
+                      handleOnSearch(selectedValues, innerItem.name)
                     }
                   />
                 ) : innerItem.element.name === "AutoComplete" ? (

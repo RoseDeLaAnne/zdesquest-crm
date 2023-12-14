@@ -58,6 +58,7 @@ const TableFC: FC = ({
   deleteFunction,
   postFunction,
   putFunction,
+  toggleFunction,
   isUseParams,
   isAddEntry,
   drawerTitle,
@@ -68,6 +69,7 @@ const TableFC: FC = ({
   defaultValuesFormItems,
   formHandleOnChange,
   formHandleOnSelect,
+  formHandleOnSearch,
   operationIsAdd,
   operationIsEdit,
   operationIsDelete,
@@ -210,7 +212,8 @@ const TableFC: FC = ({
   const cancelHandleClick = () => {};
 
   const handleToggle = async (key: number) => {
-    const res = await toggleQuestVideo(key)
+    // const res = await toggleQuestVideo(key)
+    const res = await toggleFunction(key)
     if (res.status === 200) {
       const newData = tableDataSource.filter((item) => item.key !== key);
       setTableDataSource(newData);
@@ -901,6 +904,7 @@ const TableFC: FC = ({
           formInitialValues={formInitialValues}
           formHandleOnSelect={formHandleOnSelect}
           formHandleOnChange={formHandleOnChange}
+          formHandleOnSearch={formHandleOnSearch}
           formOnFinish={formOnFinish}
         />
       )}

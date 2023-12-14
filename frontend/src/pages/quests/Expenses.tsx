@@ -131,6 +131,7 @@ const QExpensesFC: FC = () => {
       // initialPackedTableColumns={initialPackedTableColumns}
       getFunction={getQuestExpenses}
       isUseParams={true}
+      tableIsObj={true}
     />
   );
 };

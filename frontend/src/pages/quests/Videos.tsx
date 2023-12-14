@@ -18,7 +18,7 @@ import {
 import TemplateTable from "../../components/template/Table";
 
 // api
-import { getCurrentUser, getQVideos, getQuests } from "../../api/APIUtils";
+import { getCurrentUser, getQVideos, getQuests, toggleQuestVideo } from "../../api/APIUtils";
 
 const QVideosFC: FC = () => {
   const { id } = useParams();
@@ -280,6 +280,7 @@ const QVideosFC: FC = () => {
       tableDateColumn={"date_time"}
       initialPackedTableColumns={initialPackedTableColumns}
       getFunction={getQVideos}
+      toggleFunction={toggleQuestVideo}
       isUseParams={true}
       tableScroll={{ x: 1000 }}
     />

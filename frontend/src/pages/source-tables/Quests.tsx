@@ -467,6 +467,8 @@ const STQuestsFC: FC = () => {
     }
   };
 
+  const formHandleOnSearch = (value: string, name: string) => {}
+
   const formInitialValues = {
     date: dayjs(),
     time: dayjs().hour(dayjs().hour()).startOf("hour"),
@@ -499,6 +501,7 @@ const STQuestsFC: FC = () => {
       defaultValuesFormItems={defaultValuesFormItems}
       formHandleOnSelect={formHandleOnSelect}
       formHandleOnChange={formHandleOnChange}
+      formHandleOnSearch={formHandleOnSearch}
       formInitialValues={formInitialValues}
       operationIsAdd={true}
       operationIsEdit={user.is_superuser ? true : false}
