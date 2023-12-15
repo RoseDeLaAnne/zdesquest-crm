@@ -2691,7 +2691,7 @@ def Salaries(request):
                 .order_by("date")
             )
             bonuses_penalties = (
-                STBonusPenalty.objects.filter(user=request.user)
+                STBonusPenalty.objects.filter(users=request.user)
                 .prefetch_related("users")
                 .order_by("date")
             )
@@ -2761,33 +2761,6 @@ def Salaries(request):
                 else:
                     child = merged_data[date_str][salary.user.id]
                     child["value"] += salary.amount
-                    # print(child['tooltip'])
-                    # if (item_name == 'Проезд') and user_taxi[salary.user.id] == True:
-                    #     if item_name in child['tooltip']:
-                    #         # print(child['tooltip'][item_name]['count'])
-                    #         child['tooltip'][item_name] = {
-                    #             "count": child['tooltip'][item_name]['count'],
-                    #             "total_amount": child['tooltip'][item_name]['total_amount']
-                    #         }
-                        # child['tooltip'][item_name] = {
-                        #     "count": ch,
-                        # }
-                    # if (
-                    #     item_name == "Проезд" and user_taxi[salary.user.id] == True
-                    # ):  # Adjust the counting for 'Проезд'
-                    #     child["value"] -= 12.5
-                    #     if (
-                    #         item_name in child["tooltip"]
-                    #         and child["tooltip"][item_name]["count"] >= 2
-                    #     ):
-                    #         child["tooltip"][item_name]["count"] += 1
-                    #         child["tooltip"][item_name]["total_amount"] += salary.amount
-                    #     else:
-                    #         child["tooltip"][item_name] = {
-                    #             "count": 1,
-                    #             "total_amount": salary.amount,
-                    #         }
-                    # else:
                     if item_name in child["tooltip"]:
                         child["tooltip"][item_name]["count"] += 1
                         child["tooltip"][item_name]["total_amount"] += salary.amount
@@ -2808,50 +2781,6 @@ def Salaries(request):
                     merged_data[date][user.id]['value'] -= 25
                     merged_data[date][user.id]['tooltip']['Проезд']['count'] -= 1
                     merged_data[date][user.id]['tooltip']['Проезд']['total_amount'] -= 25
-
-        # for item in merged_data.items():
-        #     for sub_item in item[1].items():
-                # print('hello')
-                # merged_data[item[0]][sub_item[0]] = {
-                #     "value": 0,
-                #     "tooltip": {
-                #         "Проезд": {
-                #             "count": 3,
-                #             "total_amount": 100,
-                #         }
-                #     }
-                # }
-                # print(sub_item[17])
-
-                # user_id = sub_item[0]
-
-                # if user_taxi[2] == True:
-                #     merged_data['10.12.2023'][2]['value'] -= 25
-                #     merged_data['10.12.2023'][2]['tooltip']['Проезд']['count'] -= 1
-                #     merged_data['10.12.2023'][2]['tooltip']['Проезд']['total_amount'] -= 25
-                
-                # print(user_taxi[2])
-                # merged_data[item[0]][sub_item[0]].update()
-                # print(type(sub_item[0]))
-
-                # merged_data[date_str][salary.user.id] = {
-                #     "value": salary.amount,
-                #     "tooltip": {
-                #         item_name: {"count": 1, "total_amount": salary.amount}
-                #     },
-                # }
-                # print(item[0])
-                # print(sub_item[0])
-                # print(sub_item)
-
-        # print(merged_data)
-
-        # for date in dates:
-        #     print(date)
-        #     for user in users:
-        #         # print(merged_data[date][user.id])
-        #         print(merged_data[date][user.id]['tooltip'])
-        #         print(user.id)
 
         for bp in bonuses_penalties:
             date_str = bp.date.strftime("%d.%m.%Y")
