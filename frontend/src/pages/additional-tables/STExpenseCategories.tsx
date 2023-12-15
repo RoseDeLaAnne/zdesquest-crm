@@ -43,6 +43,10 @@ const STExpenseCategoriesFC: FC = () => {
       title: "название категории",
       dataIndex: "name",
     },
+    {
+      title: "название категории (латинское)",
+      dataIndex: "latin_name",
+    },
   ];
 
   const [formItems, setFormItems] = useState([]);

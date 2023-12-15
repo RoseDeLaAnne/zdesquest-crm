@@ -68,12 +68,27 @@ const STQuestsFC: FC = () => {
       title: "квест",
       dataIndex: "quest",
       render: (quest) => {
-        if (quest !== null) {
-          return <Tag color="black">{quest.name}</Tag>;
+        if (quest == 'Итого за день') {
+        return (
+          <Tag bordered={false} color="orange">
+            {quest}
+          </Tag>
+        );
         } else {
-          return null;
+          if (quest !== null) {
+            return <Tag color="black">{quest.name}</Tag>;
+          } else {
+            return null;
+          }
         }
       },
+      // render: (quest) => {
+      //   if (quest !== null) {
+      //     return <Tag color="black">{quest.name}</Tag>;
+      //   } else {
+      //     return null;
+      //   }
+      // },
       // filters: [
       //   { text: 'детский сад радуга', value: 'детский сад радуга' },
       //   { text: 'тьма', value: 'тьма' },

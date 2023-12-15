@@ -6,9 +6,7 @@ import { Typography, Table } from "antd";
 const { Text } = Typography;
 
 const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {
-  console.log(columns)
-  console.log(dataSource)
-  console.log('isObj', isObj)
+  // console.log('columns', columns)
 
   return (
     <Table
@@ -21,12 +19,27 @@ const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {
           return null;
         }
 
+        // console.log('countingFields uitable', countingFields)
+
+        // console.log('columns', columns)
+
         let total = [];
         for (const column of columns) {
-          total.push({
-            key: column.key,
-            total: countingFields.includes(column.key) ? 0 : null,
-          });
+          if (column.children) {
+            for (const nestedColumn of column.children) {
+              console.log(nestedColumn.key)
+              total.push({
+                key: nestedColumn.key,
+                total: countingFields.includes(nestedColumn.key) ? 0 : null,
+              });
+            }
+          }
+          else {
+            total.push({
+              key: column.key,
+              total: countingFields.includes(column.key) ? 0 : null,
+            });
+          }
         }
 
         dataSource.forEach((dataSourceColumns) => {
@@ -37,12 +50,10 @@ const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {
             total.forEach((totalEach) => {
               if (totalEach.total !== null && isObj && dataSourceColumns[totalEach.key]) {
                 totalEach.total += dataSourceColumns[totalEach.key].value;
-                // console.log('dataSourceColumns[totalEach.key]1', dataSourceColumns[totalEach.key])
               } else if (totalEach["key"] === "game") {
                 totalEach.total += dataSourceColumns[totalEach.key].value;
               } else if (totalEach.total !== null && !isObj) {
                 totalEach.total += dataSourceColumns[totalEach.key];
-                // console.log('dataSourceColumns[totalEach.key]2', dataSourceColumns[totalEach.key])
               }
             });
           }
@@ -51,9 +62,9 @@ const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {
         return (
           <>
             <Table.Summary.Row>
-              {columns.map((item, index) => (
+              {total.map((item, index) => (
                 <Table.Summary.Cell index={index} key={index}>
-                  {index === 0 ? "итого" : <Text>{total[index].total}</Text>}
+                  {index === 0 ? "итого" : <Text>{total[index].total !== null ? total[index].total.toFixed(2) : null}</Text>}
                 </Table.Summary.Cell>
               ))}
             </Table.Summary.Row>

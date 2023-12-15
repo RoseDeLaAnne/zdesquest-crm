@@ -83,7 +83,7 @@ class UserAdmin(UserAdmin):
         (
             None,
             {
-                "fields": ("quest",),
+                "fields": ("quest", "quests_for_videos"),
             },
         ),
         (
@@ -145,7 +145,7 @@ class UserAdmin(UserAdmin):
         (
             None,
             {
-                "fields": ("quest",),
+                "fields": ("quest", "quests_for_videos"),
             },
         ),
         (

@@ -379,7 +379,21 @@ const TableFC: FC = ({
       }, };
     });
 
-    tableCountingFields = tableDataHead.map((column) => column.dataIndex);
+    // tableCountingFields = tableDataHead.map((column) => column.dataIndex);
+
+    tableCountingFields = tableDataHead.flatMap(item => {
+      if (item.dataIndex) {
+        return item.dataIndex;
+      }
+  
+      if (item.children) {
+        return item.children.map(child => child.dataIndex);
+      }
+  
+      return [];
+    });
+
+    console.log('tableCountingFields', tableCountingFields)
 
     // unpackedTableColumns = tableDataHead.map((column) => {
     //   // console.log(column)

@@ -196,9 +196,12 @@ def UserSTQuests(request):
                 # Append the serialized actor to the list
                 serialized_employees_first_time.append(serialized_employees_first_time)
 
+            # entry_dict[date_timestamp]["quest"] = {
+            #     "id": entry.quest.id,
+            #     "name": entry.quest.name,
+            # }
             entry_dict[date_timestamp]["quest"] = {
-                "id": entry.quest.id,
-                "name": entry.quest.name,
+                "Итоги за день"
             }
             entry_dict[date_timestamp]["quest_cost"] += entry.quest_cost
             entry_dict[date_timestamp]["add_players"] += entry.add_players
@@ -580,10 +583,11 @@ def STQuests(request):
                 # Append the serialized actor to the list
                 serialized_employees_first_time.append(serialized_employee_first_time)
 
-            entry_dict[date_timestamp]["quest"] = {
-                "id": entry.quest.id,
-                "name": entry.quest.name,
-            }
+            # entry_dict[date_timestamp]["quest"] = {
+            #     "id": entry.quest.id,
+            #     "name": entry.quest.name,
+            # }
+            entry_dict[date_timestamp]["quest"] = "Итого за день"
             entry_dict[date_timestamp]["quest_cost"] += entry.quest_cost
             entry_dict[date_timestamp]["add_players"] += entry.add_players
             entry_dict[date_timestamp][
@@ -1033,13 +1037,16 @@ def QuestIncomes(request, id):
 
         income_dict = {}  # To track incomes by date
 
-        value = 0
-        tooltip = ""
-        total = 0
+        # value = 0
+        # tooltip = ""
+        # total = 0
 
         for income in incomes:
             # value = income.game
             # tooltip = ""
+            value = 0
+            tooltip = ""
+            total = 0
             
             date_timestamp = date_to_timestamp(
                 income.date
@@ -1083,12 +1090,13 @@ def QuestIncomes(request, id):
                 value -= income.discount_sum
                 total -= income.discount_sum
                 tooltip += f"Скидка - {income.discount_sum} ({income.discount_desc})<br>"
-
             if income.easy_work > 0:
-                income_game = {
-                    "value": income.game,
-                    "tooltip": tooltip + f"Простой - {income.easy_work}",
-                }
+                tooltip += f"Простой - {income.easy_work}<br>"
+            # if income.easy_work > 0:
+            #     income_game = {
+            #         "value": income.game,
+            #         "tooltip": tooltip + f"Простой - {income.easy_work}",
+            #     }
 
             income_game = {
                 "value": value,
@@ -1180,38 +1188,6 @@ def QuestExpenses(request, id):
 
         expenses_by_latin_name = {}
 
-        # for head
-        # categories = STExpenseCategory.objects.all()
-
-        # for category in categories:
-        #     if (len(category.sub_categories.all()) != 0):
-        #         children = []
-
-        #         sub_categories = category.sub_categories
-        #         for sub_category in sub_categories.all():
-        #             children.append({
-        #                 "title": sub_category.name,
-        #                 "dataIndex": sub_category.latin_name,
-        #                 "key": sub_category.latin_name,
-        #             })
-
-        #             expenses_by_latin_name[sub_category.latin_name] = {"tooltip": ''}
-        #             expenses_by_latin_name[sub_category.latin_name].update({"value": 0})
-
-        #         head.append({
-        #             "title": category.name,
-        #             "children": children
-        #         })
-        #     else:
-        #         head.append({
-        #             "title": category.name,
-        #             "dataIndex": category.latin_name,
-        #             "key": category.latin_name,
-        #         })
-
-        #         expenses_by_latin_name[category.latin_name] = {"tooltip": ''}
-        #         expenses_by_latin_name[category.latin_name].update({"value": 0})
-
         sub_categories = STExpenseSubCategory.objects.all()
 
         for sub_category in sub_categories:
@@ -1226,52 +1202,45 @@ def QuestExpenses(request, id):
             categories = STExpenseCategory.objects.filter(id=sub_category_category_id)
 
             for category in categories:
-                # print('category', category)
-                # print('sub_category', sub_category)
-
-                if category.latin_name == sub_category.latin_name:
-                    variable[category.name].append(
-                        {
-                            "title": category.name,
-                            "dataIndex": category.latin_name,
-                            "key": category.latin_name,
-                        }
-                    )
-                else:
-                    variable[category.name].append(
-                        {
-                            "title": sub_category.name,
-                            "dataIndex": sub_category.latin_name,
-                            "key": sub_category.latin_name,
-                        }
-                    )
-
-            # head.append(
-            #     {
-            #         "title": sub_category.name,
-            #         "dataIndex": sub_category.latin_name,
-            #         "key": sub_category.latin_name,
-            #     }
-            # )
+                # if category.latin_name != sub_category.latin_name:
+                # print(variable[category.name])
+                variable[category.name].append(
+                    {
+                        "title": sub_category.name,
+                        "dataIndex": sub_category.latin_name,
+                        "key": sub_category.latin_name,
+                    }
+                )
+                # else:
+                #     variable[category.name].append(
+                #         {
+                #             "title": sub_category.name,
+                #             "dataIndex": sub_category.latin_name,
+                #             "key": sub_category.latin_name,
+                #         }
+                #     )
 
             expenses_by_latin_name[sub_category.latin_name] = {"tooltip": ""}
             expenses_by_latin_name[sub_category.latin_name].update({"value": 0})
+
+        # print(variable)
 
         for item in variable.items():
             item_key = item[0]
             item_value = item[1]
 
-            # print(item_key)
-            # print(item_value)
+            # print(item)
 
-            if len(item_value) > 0:
+            # print(len(item_value))
+
+            if len(item_value) > 0 and len(item_value) != 1:
                 head.append({"title": item_key, "children": item_value})
-            else:
+            elif len(item_value) == 1:
                 head.append(
                     {
-                        "title": item_key,
-                        "dataIndex": item_key,
-                        "key": item_key,
+                        "title": item_value[0]['title'],
+                        "dataIndex": item_value[0]['dataIndex'],
+                        "key": item_value[0]['key'],
                     }
                 )
 
@@ -1335,6 +1304,8 @@ def QuestExpenses(request, id):
             if bonus_penalty_date not in bonus_penalty_names_by_bonus_penalty_date_user_id:
                 bonus_penalty_names_by_bonus_penalty_date_user_id[bonus_penalty_date] = {}
             bonus_penalty_names_by_bonus_penalty_date_user_id[bonus_penalty_date].update({bonus_penalty.name: {'tooltip': '', 'value': 0}})
+
+            dates.append(bonus_penalty_date)
 
         for expense in expenses:
             expense_date = expense.date.strftime("%d.%m.%Y")
@@ -1467,33 +1438,31 @@ def QuestExpenses(request, id):
         # print(salaries_by_date)
         for bonus_penalty in bonuses_penalties:
             bonus_penalty_date = bonus_penalty.date.strftime("%d.%m.%Y")
+            bonus_penalty_users = bonus_penalty.users
 
-            # print(bonus_penalty_date)
-            # print(salaries_by_date)
+            for bonus_penalty_user in bonus_penalty_users.all():               
+                if bonus_penalty_user.id not in salaries_by_date[bonus_penalty_date]:
+                    salaries_by_date[bonus_penalty_date][bonus_penalty_user.id] = {}
+                if 'salary_data' not in salaries_by_date[bonus_penalty_date][bonus_penalty_user.id]:
+                    salaries_by_date[bonus_penalty_date][bonus_penalty_user.id]['salary_data'] = {}
+                if 'value' not in salaries_by_date[bonus_penalty_date][bonus_penalty_user.id]:
+                    salaries_by_date[bonus_penalty_date][bonus_penalty_user.id]['value'] = 0
+                if 'first_name' not in salaries_by_date[bonus_penalty_date][bonus_penalty_user.id]:
+                    salaries_by_date[bonus_penalty_date][bonus_penalty_user.id]['first_name'] = bonus_penalty_user.first_name
+                if 'last_name' not in salaries_by_date[bonus_penalty_date][bonus_penalty_user.id]:
+                    salaries_by_date[bonus_penalty_date][bonus_penalty_user.id]['last_name'] = bonus_penalty_user.last_name
 
-            if bonus_penalty.user.id not in salaries_by_date[bonus_penalty_date]:
-                salaries_by_date[bonus_penalty_date][bonus_penalty.user.id] = {}
-            if 'salary_data' not in salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]:
-                salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]['salary_data'] = {}
-            if 'value' not in salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]:
-                salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]['value'] = 0
-            if 'first_name' not in salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]:
-                salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]['first_name'] = bonus_penalty.user.first_name
-            if 'last_name' not in salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]:
-                salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]['last_name'] = bonus_penalty.user.last_name
 
-            # print(bonus_penalty.user.first_name)
+                if bonus_penalty.name not in salaries_by_date[bonus_penalty_date][bonus_penalty_user.id]['salary_data']:
+                    salaries_by_date[bonus_penalty_date][bonus_penalty_user.id]['salary_data'][bonus_penalty.name] = {'amount': 0, 'value': 0}
+                salaries_by_date[bonus_penalty_date][bonus_penalty_user.id]['salary_data'][bonus_penalty.name]['amount'] += 1
 
-            if bonus_penalty.name not in salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]['salary_data']:
-                salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]['salary_data'][bonus_penalty.name] = {'amount': 0, 'value': 0}
-            salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]['salary_data'][bonus_penalty.name]['amount'] += 1
-
-            if (bonus_penalty.type == 'bonus'):
-                salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]['salary_data'][bonus_penalty.name]['value'] -= bonus_penalty.amount
-                salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]['value'] -= bonus_penalty.amount
-            else:
-                salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]['salary_data'][bonus_penalty.name]['value'] += bonus_penalty.amount
-                salaries_by_date[bonus_penalty_date][bonus_penalty.user.id]['value'] += bonus_penalty.amount
+                if (bonus_penalty.type == 'bonus'):
+                    salaries_by_date[bonus_penalty_date][bonus_penalty_user.id]['salary_data'][bonus_penalty.name]['value'] -= bonus_penalty.amount
+                    salaries_by_date[bonus_penalty_date][bonus_penalty_user.id]['value'] -= bonus_penalty.amount
+                else:
+                    salaries_by_date[bonus_penalty_date][bonus_penalty_user.id]['salary_data'][bonus_penalty.name]['value'] += bonus_penalty.amount
+                    salaries_by_date[bonus_penalty_date][bonus_penalty_user.id]['value'] += bonus_penalty.amount
 
         # print(salaries_by_date)
 
@@ -1519,7 +1488,7 @@ def QuestExpenses(request, id):
                 item_value_item_user_id = item_value_item[0]
                 item_value_item_value = item_value_item[1]
 
-                print(item_value_item_value)
+                # print(item_value_item_value)
 
                 info = ''
                 for item_value_item_value_salary_data_item in item_value_item_value['salary_data'].items():
@@ -1540,11 +1509,13 @@ def QuestExpenses(request, id):
                     }
                 }
             )
+
+        # print('salaries_data', salaries_data)
         
         expense_for = ['Такси', 'Обед']
         for expense in expenses:
             expense_date = expense.date.strftime("%d.%m.%Y")
-            expense_amount = expense.amount / len(expense.quests.all())
+            expense_amount = round(expense.amount / len(expense.quests.all()), 2)
             expense_total_amount = expense.amount
             sub_category_latin_name = expense.sub_category.latin_name
 
@@ -1559,7 +1530,7 @@ def QuestExpenses(request, id):
 
             employees_tooltip = ''
             for employee in expense.employees.all():
-                employees_tooltip += f"{employee.first_name} {employee.last_name}"
+                employees_tooltip += f"{employee.first_name} {employee.last_name} "
 
             if (expense.name in expense_for):
                 expenses_by_date[expense_date][sub_category_latin_name]['tooltip'] += f"{sum_tooltip} - {expense.name} для {employees_tooltip}<br />"
@@ -1581,18 +1552,10 @@ def QuestExpenses(request, id):
                 }
             )
 
-        # print('salaries_by_date', salaries_by_date)
-        # print(expenses_by_date)
-
-        # body_data2 = {}
 
         new_obj = {}
 
-        # print('body_data_salary_tooltip', body_data_salary_tooltip)
-        # print('body_data_salary_value', body_data_salary_value)
-
-        # print('expenses_by_date', expenses_by_date)
-
+        # print(arr_dates)
         
         for date in arr_dates:
             if date not in new_obj:
@@ -1619,6 +1582,8 @@ def QuestExpenses(request, id):
                 new_obj[date].update({sub_category2: {"tooltip": expenses_by_date[date][sub_category2]['tooltip'], "value": expenses_by_date[date][sub_category2]['value']}})
 
         # print('new_obj', new_obj)
+                
+        # print(new_obj)
 
         new_obj = dict(sorted(new_obj.items()))
 
@@ -1634,146 +1599,6 @@ def QuestExpenses(request, id):
                     item[sub_category] = {"tooltip": "", "value": 0}
             body_data.append(item)
 
-        # body_data2 = {arr_date: {sub_category2: {} for sub_category2 in sub_categories2} for arr_date in arr_dates}
-
-        # print(body_data2)
-
-        # for item in body_data2.items():
-        #     body_data.append(
-        #         {
-        #             "date": item[0]
-        #         }
-        #     )
-
-        # for entry_date in entry_dates:
-        #     body.append(
-        #         {
-        #             "date": entry_date,
-        #             "salary": {}
-        #         }
-        #     )
-
-        # for item1 in salaries_data:
-        #     for item2 in expenses_data:
-        #         if item1['date'] == item2['date']:
-        #             merged_dict = {**item1, **item2}
-        #             body_data.append(merged_dict)
-
-        # print(merged_arr)
-
-        # print(expenses_by_latin_name)
-
-            # body_data[expense.sub_category.id]['tooltip'] = ''
-
-
-
-            # for salary_data_item in value['salary_data'].items():
-            #     salary_data_item_key = salary_data_item[0]
-            #     salary_data_item_value = salary_data_item[1]
-
-            #     if (salary_data_item_value['amount'] != 0):
-            #         info += f"{salary_data_item_value['value']}р. - {salary_data_item_value['amount']} {salary_data_item_key}<br />"
-
-            # body_data['salary']['tooltip'] += f"{value['first_name']} {value['last_name']} - {value['value']}р.<br />{info}<br />"
-
-        # for user in users:
-        #     user_id = user["id"]
-        #     first_name = user["first_name"]
-        #     last_name = user["last_name"]
-
-            # salary_by_date[user_id] = {"first_name": first_name}
-            # salary_by_date[user_id].update({"last_name": last_name})
-            # salary_by_date[user_id].update({"value": 0})
-            # salary_by_date[user_id].update({"salary_data": {}})
-
-            # for salary_name in salary_names:
-            #     salary_by_date[user_id]["salary_data"].update({salary_name: {'amount': 0, 'value': 0}})
-
-        # print("salary_by_user_id", salary_by_user_id)
-
-        # for salary_date in salaries_dates:
-        #     for user in users:
-        #         salary_by_date[salary_date] = []
-
-        # for salary_date in salaries_dates:
-        #     for user in users:
-        #         salary_by_date[salary_date].append(
-        #             {
-        #                 user["id"]: {
-        #                     "first_name": user["first_name"],
-        #                     "last_name": user["last_name"],
-        #                     "value": 0,
-        #                     "salary_data": {},
-        #                 }
-        #             }
-        #         )
-
-        # print('salary_by_date', salary_by_date)
-
-        # body_data = []
-        # for salary_date in salaries_dates:
-        #     body_data = [{
-        #         "date": salary_date
-        #     }]
-        #     body_data[salary_date]
-        # body_data["salary"] = {"tooltip": ""}
-        # body_data["salary"].update({"value": 0})
-        # for salary in salaries:
-        #     user_id = salary.user.id
-        #     name = salary.name
-        #     amount = salary.amount
-        #     body_data["salary"]["value"] += amount
-
-        #     salary_by_user_id[user_id]["salary_data"][name]['amount'] += 1
-        #     salary_by_user_id[user_id]["salary_data"][name]['value'] += amount
-        #     salary_by_user_id[user_id]["value"] += amount
-
-        # print("salary_by_user_id", salary_by_user_id)
-
-        # for item in salary_by_user_id.items():
-        #     user_id = item[0]
-        #     value = item[1]
-
-        #     info = ''
-        #     for salary_data_item in value['salary_data'].items():
-        #         salary_data_item_key = salary_data_item[0]
-        #         salary_data_item_value = salary_data_item[1]
-
-        #         if (salary_data_item_value['amount'] != 0):
-        #             info += f"{salary_data_item_value['value']}р. - {salary_data_item_value['amount']} {salary_data_item_key}<br />"
-
-        #     body_data['salary']['tooltip'] += f"{value['first_name']} {value['last_name']} - {value['value']}р.<br />{info}<br />"
-
-        # expense_for = ['Такси', 'Обед']
-        # for expense in expenses:
-        #     name = expense.name
-        #     quests = expense.quests
-        #     amount = expense.amount / len(quests.all())
-        #     total_amount = expense.amount
-        #     sub_category_latin_name = expense.sub_category.latin_name
-        #     employees = expense.employees
-
-        #     sum_tooltip = ''
-        #     if (amount == total_amount):
-        #         sum_tooltip += f"{total_amount}р."
-        #     else:
-        #         sum_tooltip += f"{amount}р. ({total_amount}р.)"
-
-        #     employees_tooltip = ''
-        #     for employee in employees.all():
-        #         employees_tooltip += f"{employee.first_name} {employee.last_name}"
-
-        #     if (name in expense_for):
-        #         expenses_by_latin_name[sub_category_latin_name]['tooltip'] += f"{sum_tooltip} - {name} для {employees_tooltip}<br />"
-        #     else:
-        #         expenses_by_latin_name[sub_category_latin_name]['tooltip'] += f"{sum_tooltip} - {name}<br />"
-        #     expenses_by_latin_name[sub_category_latin_name]['value'] += total_amount
-
-        #     print(expense.sub_category.id)
-        #     body_data[expense.sub_category.id]['tooltip'] = ''
-
-        # print("body_data", body_data)
-        # print(expenses_by_latin_name)
         transformed_data = {
             "head": head,
             "body": body_data,
@@ -2854,7 +2679,7 @@ def Salaries(request):
 
         if request.user.is_superuser == True:
             salaries = QSalary.objects.select_related("user").order_by("date")
-            bonuses_penalties = STBonusPenalty.objects.select_related("user").order_by(
+            bonuses_penalties = STBonusPenalty.objects.prefetch_related("users").order_by(
                 "date"
             )
             users = User.objects.exclude(email='admin@gmail.com')
@@ -2867,7 +2692,7 @@ def Salaries(request):
             )
             bonuses_penalties = (
                 STBonusPenalty.objects.filter(user=request.user)
-                .select_related("user")
+                .prefetch_related("users")
                 .order_by("date")
             )
             users = [request.user]
@@ -3043,35 +2868,36 @@ def Salaries(request):
                         "tooltip": {},
                     }
 
-            if bp.user:
-                if bp.type == "bonus":
-                    merged_data[date_str][bp.user.id]["value"] += bp.amount
-                    if item_name in merged_data[date_str][bp.user.id]["tooltip"]:
-                        merged_data[date_str][bp.user.id]["tooltip"][item_name][
-                            "count"
-                        ] += 1
-                        merged_data[date_str][bp.user.id]["tooltip"][item_name][
-                            "total_amount"
-                        ] += bp.amount
-                    else:
-                        merged_data[date_str][bp.user.id]["tooltip"][item_name] = {
-                            "count": 1,
-                            "total_amount": bp.amount,
-                        }
-                elif bp.type == "penalty":
-                    merged_data[date_str][bp.user.id]["value"] -= bp.amount
-                    if item_name in merged_data[date_str][bp.user.id]["tooltip"]:
-                        merged_data[date_str][bp.user.id]["tooltip"][item_name][
-                            "count"
-                        ] += 1
-                        merged_data[date_str][bp.user.id]["tooltip"][item_name][
-                            "total_amount"
-                        ] -= bp.amount
-                    else:
-                        merged_data[date_str][bp.user.id]["tooltip"][item_name] = {
-                            "count": 1,
-                            "total_amount": -bp.amount,
-                        }
+            if len(bp.users.all()) != 0:
+                for bp_user in bp.users.all():
+                    if bp.type == "bonus":
+                        merged_data[date_str][bp_user.id]["value"] += bp.amount
+                        if item_name in merged_data[date_str][bp_user.id]["tooltip"]:
+                            merged_data[date_str][bp_user.id]["tooltip"][item_name][
+                                "count"
+                            ] += 1
+                            merged_data[date_str][bp_user.id]["tooltip"][item_name][
+                                "total_amount"
+                            ] += bp.amount
+                        else:
+                            merged_data[date_str][bp_user.id]["tooltip"][item_name] = {
+                                "count": 1,
+                                "total_amount": bp.amount,
+                            }
+                    elif bp.type == "penalty":
+                        merged_data[date_str][bp_user.id]["value"] -= bp.amount
+                        if item_name in merged_data[date_str][bp_user.id]["tooltip"]:
+                            merged_data[date_str][bp_user.id]["tooltip"][item_name][
+                                "count"
+                            ] += 1
+                            merged_data[date_str][bp_user.id]["tooltip"][item_name][
+                                "total_amount"
+                            ] -= bp.amount
+                        else:
+                            merged_data[date_str][bp_user.id]["tooltip"][item_name] = {
+                                "count": 1,
+                                "total_amount": -bp.amount,
+                            }
 
         body_data = []
         # print(merged_data)
@@ -4610,16 +4436,18 @@ def VSTBonusPenalty(request, id):
             formatted_date = datetime.strptime(
                 data["date"], "%Y-%m-%dT%H:%M:%S.%fZ"
             ).date()
-            user = User.objects.get(id=data["user"])
+            # user = User.objects.get(id=data["user"])
+            users = User.objects.filter(id__in=data["users"])
             quests = Quest.objects.filter(id__in=data["quests"])
 
             entry = STBonusPenalty.objects.get(id=id)
             entry.date = formatted_date
-            entry.user = user
+            # entry.user = user
             entry.amount = data["amount"]
             entry.name = data["name"]
             entry.type = data["type"]
             entry.save()
+            entry.users.set(users)
             entry.quests.set(quests)
 
             return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
@@ -4648,6 +4476,7 @@ def VSTExpenseCategory(request, id):
 
             entry = STExpenseCategory.objects.get(id=id)
             entry.name = data["name"]
+            entry.latin_name = data["latin_name"]
             entry.save()
 
             return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
@@ -4676,6 +4505,7 @@ def VSTExpenseSubCategory(request, id):
 
             entry = STExpenseSubCategory.objects.get(id=id)
             entry.name = data["name"]
+            entry.latin_name = data["latin_name"]
             entry.category = STExpenseCategory.objects.get(id=data["category"])
             entry.save()
 
@@ -5563,7 +5393,7 @@ def CreateSTBonusPenalty(request):
         data = {key: value for key, value in data1.items() if value not in ("", None)}
 
         formatted_date = datetime.strptime(data["date"], "%Y-%m-%dT%H:%M:%S.%fZ").date()
-        user = User.objects.get(id=data["user"])
+        # user = User.objects.get(id=data["user"])
 
         optional_fields = ["name"]
 
@@ -5571,7 +5401,7 @@ def CreateSTBonusPenalty(request):
             "date": formatted_date,
             "amount": data["amount"],
             "type": data["type"],
-            "user": user,
+            # "user": user,
         }
 
         for field in optional_fields:
@@ -5581,6 +5411,9 @@ def CreateSTBonusPenalty(request):
         entry = STBonusPenalty(**entry_data)
         entry.save()
 
+        if "users" in data:
+            users = User.objects.filter(id__in=data["users"])
+            entry.users.set(users)
         if "quests" in data:
             quests = Quest.objects.filter(id__in=data["quests"])
             entry.quests.set(quests)
@@ -5599,10 +5432,11 @@ def CreateSTExpenseCategory(request):
     if request.method == "POST":
         # try:
         data = json.loads(request.body)
-        print(data)
+        # print(data)
 
         entry_data = {
             "name": data["name"],
+            "latin_name": data["latin_name"],
         }
 
         entry = STExpenseCategory(**entry_data)
@@ -5625,6 +5459,7 @@ def CreateSTExpenseSubCategory(request):
 
         entry_data = {
             "name": data["name"],
+            "latin_name": data["latin_name"],
             "category": STExpenseCategory.objects.get(id=data["category"]),
         }
 

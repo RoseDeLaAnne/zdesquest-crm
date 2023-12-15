@@ -161,6 +161,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         choices=BANKS, blank=True, null=True, max_length=255
     )
 
+    quests_for_videos = models.ManyToManyField(Quest, verbose_name=_("Квесты"))
+
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
@@ -359,7 +361,8 @@ class STBonusPenalty(models.Model):
     amount = models.IntegerField(default=0)
     name = models.CharField(max_length=255, default="")
 
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+    # users = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+    users = models.ManyToManyField(User, blank=True)
 
     quests = models.ManyToManyField(Quest, blank=True)
 

@@ -1328,14 +1328,14 @@ export const getSTBonusesPenaltiesFormItems = async () => {
           spanXS: 24,
           spanSM: 24,
           spanMD: 12,
-          name: "user",
-          label: "сотрудник",
+          name: "users",
+          label: "сотрудники",
           isRequired: true,
           placeholder: "пожалуйста, введите стоимость квеста",
           element: {
             name: "Select",
             options: optionsUsers,
-            multiple: false,
+            multiple: true,
             defaultValue: null,
           },
         },
@@ -1692,26 +1692,26 @@ export const getSTExpenseSubCategoriesFormItems = async () => {
         },
       ],
     },
-    // {
-    //   gutter: 16,
-    //   items: [
-    //     {
-    //       spanXS: 24,
-    //       spanSM: 24,
-    //       spanMD: 24,
-    //       name: "latin_name",
-    //       label: "название подкатегории (en)",
-    //       isRequired: true,
-    //       placeholder: "пожалуйста, введите логин",
-    //       element: {
-    //         name: "Input",
-    //         options: [],
-    //         multiple: null,
-    //         defaultValue: null,
-    //       },
-    //     },
-    //   ],
-    // },
+    {
+      gutter: 16,
+      items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 24,
+          name: "latin_name",
+          label: "название подкатегории (латинское)",
+          isRequired: true,
+          placeholder: "пожалуйста, введите логин",
+          element: {
+            name: "Input",
+            options: [],
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+      ],
+    },
     {
       gutter: 16,
       items: [
@@ -1760,26 +1760,26 @@ export const getSTExpenseCategoriesFormItems = async () => {
         },
       ],
     },
-    // {
-    //   gutter: 16,
-    //   items: [
-    //     {
-    //       spanXS: 24,
-    //       spanSM: 24,
-    //       spanMD: 24,
-    //       name: "latin_name",
-    //       label: "название категории (en)",
-    //       isRequired: true,
-    //       placeholder: "пожалуйста, введите логин",
-    //       element: {
-    //         name: "Input",
-    //         options: [],
-    //         multiple: null,
-    //         defaultValue: null,
-    //       },
-    //     },
-    //   ],
-    // }
+    {
+      gutter: 16,
+      items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 24,
+          name: "latin_name",
+          label: "название категории (латинское)",
+          isRequired: true,
+          placeholder: "пожалуйста, введите логин",
+          element: {
+            name: "Input",
+            options: [],
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+      ],
+    }
   ];
 
   return formItems;

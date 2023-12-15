@@ -41,10 +41,10 @@ const STExpenseSubCategories: FC = () => {
       title: "название подкатегории",
       dataIndex: "name",
     },
-    // {
-    //   title: "название подкатегории (en)",
-    //   dataIndex: "latin_name",
-    // },
+    {
+      title: "название подкатегории (латинское)",
+      dataIndex: "latin_name",
+    },
     {
       title: "категория",
       dataIndex: "category",

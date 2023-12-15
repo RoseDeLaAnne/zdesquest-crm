@@ -99,27 +99,26 @@ const STQuests: FC = () => {
       isCountable: true,
     },
     {
-      title: "сотрудник",
-      dataIndex: "user",
-      key: "user",
+      title: "сотрудники",
+      dataIndex: "users",
+      key: "users",
       isSorting: false,
       searching: {
         isSearching: false,
         title: "",
       },
       isCountable: false,
-      render: (user) => {
-        if (user !== null) {
-          return (
-            <Tag color="black">
-              {user.last_name} {user.first_name}{" "}
-              {user.middle_name ? user.middle_name : ""}
-            </Tag>
-          );
-        } else {
-          return null;
-        }
-      },
+      render: (_, { users }) => (
+        <>
+          {users.map((user) => {
+            return (
+              <Tag color="orange" key={user.id}>
+                {user.first_name} {user.last_name}
+              </Tag>
+            );
+          })}
+        </>
+      ),      
     },
     {
       title: "квесты",

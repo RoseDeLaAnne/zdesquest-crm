@@ -34,6 +34,7 @@ class UserSerializer(ModelSerializer):
             "internship_period_start",
             "internship_period_end",
             "quest",
+            "quests_for_videos",
             "roles",
             "internship_quest",
             "is_active",
