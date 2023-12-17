@@ -251,6 +251,25 @@ export const getQuestExpenses = async (
   }
 };
 
+export const getQuestSalaries = async (
+  startDate: string,
+  endDate: string,
+  id: number
+) => {
+  try {
+    let url;
+    if (startDate !== null && endDate !== null) {
+      url = `${url3}/api/quest/${id}/salaries/?start_date=${startDate}&end_date=${endDate}`;
+    } else {
+      url = `${url3}/api/quest/${id}/salaries/`;
+    }
+    const res = await axios.get(url);
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getSalaries = async (startDate: string, endDate: string) => {
   try {
     let url;

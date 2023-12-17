@@ -73,6 +73,12 @@ const App: FC = ({
           <FallOutlined />
         ),
         getItem(
+          "зарплаты",
+          `quests${quest.id}Salaries`,
+          `/quests/${quest.id}/salaries`,
+          <FallOutlined />
+        ),
+        getItem(
           "касса",
           `quests${quest.id}CashRegister`,
           `/quests/${quest.id}/cash-register`,

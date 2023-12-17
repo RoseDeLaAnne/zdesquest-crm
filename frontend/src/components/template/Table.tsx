@@ -393,7 +393,7 @@ const TableFC: FC = ({
       return [];
     });
 
-    console.log('tableCountingFields', tableCountingFields)
+    // console.log('tableCountingFields', tableCountingFields)
 
     // unpackedTableColumns = tableDataHead.map((column) => {
     //   // console.log(column)

@@ -106,13 +106,9 @@ const fetchAllUsers = async () => {
     const res = await getAllUsers();
     if (res.status === 200) {
       const formattedOptions = res.data.map((el) => ({
-        label:
-          (el.last_name ? el.last_name.toLowerCase() : "") +
-          " " +
-          el.first_name.toLowerCase() +
-          " " +
-          (el.middle_name ? el.middle_name.toLowerCase() : ""),
+        label: el.first_name.toLowerCase() + " " + el.last_name.toLowerCase(),
         value: el.id,
+        // value: el.first_name.toLowerCase() + " " + el.last_name.toLowerCase(),
       }));
       return formattedOptions;
     }
@@ -127,8 +123,7 @@ const fetchUsers = async () => {
       const formattedOptions = res.data.map((el) => ({
         label:
           el.first_name.toLowerCase() + " " + el.last_name.toLowerCase(),
-          // " " +
-          // (el.middle_name ? el.middle_name.toLowerCase() : ""),
+        // value: el.first_name.toLowerCase() + " " + el.last_name.toLowerCase(),
         value: el.id,
       }));
       return formattedOptions;

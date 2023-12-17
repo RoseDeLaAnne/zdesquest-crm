@@ -37,6 +37,7 @@ urlpatterns = [
     path("stexpense-sub-categories/", views.STExpenseSubCategories),
     path("quest/<int:id>/incomes/", views.QuestIncomes),
     path("quest/<int:id>/expenses/", views.QuestExpenses),
+    path("quest/<int:id>/salaries/", views.QuestSalaries),
     path("quest/<int:id>/cash-register/", views.VQCashRegister),
     path("quest/<int:id>/cash-register-deposited/", views.VQCashRegisterDeposited),
     path("quest/<int:id>/cash-register-taken/", views.VQCashRegisterTaken),
@@ -47,7 +48,6 @@ urlpatterns = [
     path("toggle/cash-register/<int:id>/", views.ToggleQCashRegister),
     path("toggle/video/<int:id>/", views.ToggleQVideo),
     path("salaries/", views.Salaries),
-    path("salaries/current/", views.SalariesCurrent),
     path("quest-profit/<int:id>/", views.QuestProfitById),
     # GET, PUT, DELETE
     path("user/<int:id>/", views.VUser),

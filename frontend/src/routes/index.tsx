@@ -42,6 +42,7 @@ import FExpenses from "../pages/forms/Expenses";
 // quests
 import QIncomes from "../pages/quests/Incomes";
 import QExpenses from "../pages/quests/Expenses";
+import QSalaries from "../pages/quests/Salaries";
 import QCashRegister from "../pages/quests/CashRegister";
 import QCashRegisterDeposited from "../pages/quests/CashRegisterDeposited";
 import QCashRegisterTaken from "../pages/quests/CashRegisterTaken";
@@ -86,18 +87,6 @@ const Routes = () => {
           path: "/login",
           element: <Navigate to="/salaries" />,
         },
-        // {
-        //   path: "/test",
-        //   element: <Test />,
-        // },
-        // {
-        //   path: "/inputc",
-        //   element: <InputC />,
-        // },
-        // {
-        //   path: "/test3",
-        //   element: <Test3 />,
-        // },
         {
           path: "/test4",
           element: <Test4 />,
@@ -189,6 +178,10 @@ const Routes = () => {
         {
           path: "/quests/:id/expenses",
           element: <QExpenses />,
+        },
+        {
+          path: "/quests/:id/salaries",
+          element: <QSalaries />,
         },
         {
           path: "/quests/:id/cash-register",
