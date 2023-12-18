@@ -252,6 +252,7 @@ const fetchQuestVersions = async () => {
 export const getUsersFormItems = async () => {
   const optionsRoles = await fetchRoles();
   const optionsQuests = await fetchQuests();
+  const optionsQuestsWithSpecVersions = await fetchQuestsWithSpecVersions();
 
   const formItems = [
     {
@@ -512,7 +513,7 @@ export const getUsersFormItems = async () => {
           placeholder: "пожалуйста, выберите квесты",
           element: {
             name: "Select",
-            options: optionsQuests,
+            options: optionsQuestsWithSpecVersions,
             multiple: true,
             defaultValue: null,
           },
