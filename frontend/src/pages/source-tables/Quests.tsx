@@ -425,7 +425,8 @@ const STQuestsFC: FC = () => {
       setIsPackage(value.target.checked);
 
       if (value.target.checked) {
-        setNotVisibleFormItems(["birthday_congr", "video"]);
+        // setNotVisibleFormItems(["birthday_congr", "video"]);
+        setNotVisibleFormItems(["video"]);
       } else {
         setNotVisibleFormItems([]);
       }
