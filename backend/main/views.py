@@ -3237,7 +3237,7 @@ def VSTQuest(request, id):
                         QSalary(
                             **{
                                 "date": formatted_date,
-                                "amount": int((int(data["easy_work"]) - 50) / count_easy_work),
+                                "amount": int(data["easy_work"]) / count_easy_work,
                                 "name": "Простой",
                                 "user": actor,
                                 "stquest": entry,
@@ -3302,7 +3302,7 @@ def VSTQuest(request, id):
                     QSalary(
                         **{
                             "date": formatted_date,
-                            "amount": int((int(data["easy_work"]) - 50) / count_easy_work),
+                            "amount": int(data["easy_work"]) / count_easy_work,
                             "name": "Простой",
                             "user": actor_half,
                             "stquest": entry,
@@ -3390,7 +3390,7 @@ def VSTQuest(request, id):
                 QSalary(
                     **{
                         "date": formatted_date,
-                        "amount": int((int(data["easy_work"]) - 50) / count_easy_work),
+                        "amount": int(data["easy_work"]) / count_easy_work,
                         "name": "Простой",
                         "user": administrator,
                         "stquest": entry,
@@ -4232,7 +4232,8 @@ def CreateSTQuest(request):
                     if data["easy_work"] != 0:
                         easy_work_salary_data = {
                             "date": formatted_date,
-                            "amount": (int(data["easy_work"]) - 50) / count_easy_work,
+                            # "amount": (int(data["easy_work"]) - 50) / count_easy_work,
+                            "amount": int(data["easy_work"]) / count_easy_work,
                             "name": "Простой",
                             "user": actor,
                             "stquest": entry,
@@ -4360,7 +4361,7 @@ def CreateSTQuest(request):
                     if data["easy_work"] != 0:
                         easy_work_salary_data = {
                             "date": formatted_date,
-                            "amount": (int(data["easy_work"]) - 50) / count_easy_work,
+                            "amount": int(data["easy_work"]) / count_easy_work,
                             "name": "Простой",
                             "user": actor,
                             "stquest": entry,
