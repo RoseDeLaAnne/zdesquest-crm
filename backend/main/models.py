@@ -160,7 +160,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         choices=BANKS, blank=True, null=True, max_length=255
     )
 
-    quests_for_videos = models.ManyToManyField(Quest, verbose_name=_("Квесты"))
+    quests_for_videos = models.ManyToManyField(Quest, blank=True, verbose_name=_("Квесты"))
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
