@@ -3683,12 +3683,12 @@ def CreateSTExpense(request):
         formatted_date = convert_to_date(data["date"])
         sub_category = STExpenseSubCategory.objects.get(id=data["sub_category"])
 
-        stexpenses = STExpense.objects.filter(
-            Q(date=formatted_date) & Q(quests=Quest.objects.filter(id__in=data["quests"])) & Q(employees=User.objects.filter(id__in=data["employees"])) & Q(name=data["name"]) & Q(amount=data["amount"])
-        )
+        # stexpenses = STExpense.objects.filter(
+        #     Q(date=formatted_date) & Q(quests=Quest.objects.filter(id__in=data["quests"])) & Q(employees=User.objects.filter(id__in=data["employees"])) & Q(name=data["name"]) & Q(amount=data["amount"])
+        # )
 
-        if len(stexpenses) != 0:
-            return JsonResponse({"message": "Запись уже создана"}, status=400)
+        # if len(stexpenses) != 0:
+        #     return JsonResponse({"message": "Запись уже создана"}, status=400)
 
         expense_data = {
             "date": formatted_date,
