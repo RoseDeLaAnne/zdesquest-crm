@@ -521,6 +521,8 @@ const TableFC: FC = ({
     const res = await getSTQuest(key);
     // const data = res.data
 
+    // console.log('hello2')
+
     const cleanedData = Object.fromEntries(
       Object.entries(res.data).filter(
         ([key, val]) => val !== "" && val !== null
@@ -686,6 +688,7 @@ const TableFC: FC = ({
 
     // console.log(mergeObj.quest)
     mergeObj.quest = mergeObj.quest.id;
+    mergeObj.room_employee_name = mergeObj.room_employee_name.id;
     mergeObj.administrator = mergeObj.administrator.id;
     mergeObj.created_by = mergeObj.created_by.id;
     mergeObj.date = dayjs(mergeObj.date, "DD-MM-YYYY").format(
@@ -734,6 +737,8 @@ const TableFC: FC = ({
       }
     }
     setUndefinedOrNullToZero(cleanedData);
+
+    // console.log('mergeObj', mergeObj)
 
     const res2 = await putFunction(stQuestKey, mergeObj);
     if (res2.status === 200) {
