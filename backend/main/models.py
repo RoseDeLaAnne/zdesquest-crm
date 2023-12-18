@@ -90,7 +90,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         null=True,
     )
     
-
     last_name = models.CharField(
         verbose_name=_("Фамилия"), max_length=255
     )
@@ -512,7 +511,6 @@ class ExpenseFromTheir(models.Model):
     phone_number_for_transfer = models.CharField(
         verbose_name=_("Номер телефона для перевода"),
         max_length=18,
-        unique=True,
         blank=True,
         null=True,
     )

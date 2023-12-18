@@ -256,6 +256,11 @@ const STQuestsFC: FC = () => {
       countable: true,
     },
     {
+      title: "видео после",
+      dataIndex: "video_after",
+      countable: true,
+    },
+    {
       title: "ночная игра",
       dataIndex: "night_game",
       countable: true,

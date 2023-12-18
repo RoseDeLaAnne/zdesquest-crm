@@ -499,6 +499,7 @@ def STQuests(request):
                     "room_quantity": 0,
                     "room_employee_name": "",
                     "video": 0,
+                    "video_after": 0,
                     "photomagnets_quantity": 0,
                     "photomagnets_sum": 0,
                     "birthday_congr": 0,
@@ -611,6 +612,7 @@ def STQuests(request):
             }
 
             entry_dict[date_timestamp]["video"] += entry.video
+            entry_dict[date_timestamp]["video_after"] += entry.video_after
             entry_dict[date_timestamp][
                 "photomagnets_quantity"
             ] += entry.photomagnets_quantity
@@ -681,6 +683,7 @@ def STQuests(request):
                         else None,
                     },
                     "video": entry.video,
+                    "video_after": entry.video_after,
                     "photomagnets_quantity": entry.photomagnets_quantity,
                     "photomagnets_sum": entry.photomagnets_sum,
                     "birthday_congr": entry.birthday_congr,
@@ -2574,8 +2577,8 @@ def VSTExpense(request, id):
                         "stexpense": expense,
                     }
 
-                    print(local_data)
-                    print('changed')
+                    # print(local_data)
+                    # print('changed')
                     cash_register = ExpenseFromTheir(**local_data)
                     cash_register.save()
 
@@ -2875,7 +2878,7 @@ def VSTQuest(request, id):
             QSalary(
                 **{
                     "date": formatted_date,
-                    "amount": 75,
+                    "amount": 50,
                     "name": "Видео отзыв",
                     "user": administrator,
                     "stquest": entry,
@@ -2891,7 +2894,7 @@ def VSTQuest(request, id):
                 QSalary(
                     **{
                         "date": formatted_date,
-                        "amount": 125,
+                        "amount": 100,
                         "name": "Сумма видео",
                         "user": administrator,
                         "stquest": entry,
@@ -3753,7 +3756,7 @@ def CreateSTExpense(request):
                         "stexpense": expense,
                     }
 
-                    print('created')
+                    # print('created')
                     cash_register = ExpenseFromTheir(**local_data)
                     cash_register.save()
 
@@ -3917,7 +3920,7 @@ def CreateSTQuest(request):
                 QSalary(
                     **{
                         "date": formatted_date,
-                        "amount": 75,
+                        "amount": 50,
                         "name": "Видео отзыв",
                         "user": administrator,
                         "stquest": entry,
@@ -3954,7 +3957,7 @@ def CreateSTQuest(request):
                     QSalary(
                         **{
                             "date": formatted_date,
-                            "amount": 125,
+                            "amount": 100,
                             "name": "Сумма видео",
                             "user": administrator,
                             "stquest": entry,
