@@ -2655,7 +2655,7 @@ def VSTQuest(request, id):
         # elif "employees_first_time" in data:
         #     administrator = User.objects.get(id=data['employees_first_time'])
 
-        count_easy_work = 1
+        count_easy_work = 2
 
         stquest = STQuest.objects.get(id=id)
         entry = STQuest.objects.get(id=id)
@@ -3815,7 +3815,7 @@ def CreateSTQuest(request):
             Q(date=formatted_date) & Q(time=formatted_time) & Q(quest=quest)
         )
 
-        count_easy_work = 1
+        count_easy_work = 2
 
         optional_fields = [
             "add_players",
