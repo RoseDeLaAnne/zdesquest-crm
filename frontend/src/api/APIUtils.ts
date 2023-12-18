@@ -285,6 +285,21 @@ export const getSalaries = async (startDate: string, endDate: string) => {
   }
 };
 
+export const getVideos = async (startDate: string, endDate: string) => {
+  try {
+    let url;
+    if (startDate !== null && endDate !== null) {
+      url = `${url3}/api/videos/?start_date=${startDate}&end_date=${endDate}`;
+    } else {
+      url = `${url3}/api/videos/`;
+    }
+    const res = await axios.get(url);
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getCurrentSalaries = async (startDate: string, endDate: string) => {
   try {
     let url;

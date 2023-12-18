@@ -48,6 +48,7 @@ urlpatterns = [
     path("toggle/cash-register/<int:id>/", views.ToggleQCashRegister),
     path("toggle/video/<int:id>/", views.ToggleQVideo),
     path("salaries/", views.Salaries),
+    path("videos/", views.Videos),
     path("quest-profit/<int:id>/", views.QuestProfitById),
     # GET, PUT, DELETE
     path("user/<int:id>/", views.VUser),

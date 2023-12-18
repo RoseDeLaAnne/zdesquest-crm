@@ -86,6 +86,7 @@ const EditFC: FC = ({
               key === "roles" ||
               key === "quests" ||
               key === "employees_first_time" ||
+              key === "quests_for_videos" ||
               key === "employees"
             ) {
               form.setFieldsValue({ [key]: value.map((el) => el.id) });

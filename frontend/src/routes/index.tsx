@@ -10,6 +10,8 @@ import Home from "../pages/Home";
 
 import Login from "../pages/authentication/Login";
 
+import Videos from "../pages/Videos";
+
 import Users from "../pages/Users";
 import EditUsers from "../pages/EditUsers";
 
@@ -88,12 +90,12 @@ const Routes = () => {
           element: <Navigate to="/salaries" />,
         },
         {
-          path: "/test4",
-          element: <Test4 />,
-        },
-        {
           path: "/users",
           element: <Users />,
+        },
+        {
+          path: "/videos",
+          element: <Videos />,
         },
         {
           path: "/users/edit/:id",

@@ -232,6 +232,7 @@ class STQuest(models.Model):
     )
     is_package = models.BooleanField(default=False)
     is_video_review = models.BooleanField(default=False)
+    video_as_a_gift = models.BooleanField(default=False)
 
     cash_payment = models.IntegerField(default=0)
     cashless_payment = models.IntegerField(default=0)

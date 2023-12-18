@@ -302,9 +302,10 @@ const App: FC = ({
           <QuestionOutlined />
         ),
       ]),
-      getItem("квесты", "quests", null, <QuestionOutlined />, [
-        ...questsData.map(convertQuestToMenuItem2),
-      ]),
+      // getItem("квесты", "quests", null, <QuestionOutlined />, [
+      //   ...questsData.map(convertQuestToMenuItem2),
+      // ]),
+      getItem("видео", "videos", "/videos", <DollarOutlined />),
       getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
     ];
   } else {

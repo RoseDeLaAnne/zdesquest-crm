@@ -499,6 +499,26 @@ export const getUsersFormItems = async () => {
         },
       ],
     },
+    {
+      gutter: 16,
+      items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 24,
+          name: "quests_for_videos",
+          label: "квесты (для видео)",
+          isRequired: false,
+          placeholder: "пожалуйста, выберите квесты",
+          element: {
+            name: "Select",
+            options: optionsQuests,
+            multiple: true,
+            defaultValue: null,
+          },
+        },
+      ],
+    },
   ];
 
   return formItems;
@@ -517,7 +537,7 @@ export const getSTQuestFormItems = async () => {
         {
           spanXS: 24,
           spanSM: 24,
-          spanMD: 12,
+          spanMD: 24,
           name: "quest",
           label: "квест",
           isRequired: true,
@@ -529,10 +549,15 @@ export const getSTQuestFormItems = async () => {
             defaultValue: null,
           },
         },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
         {
-          spanXS: 12,
-          spanSM: 12,
-          spanMD: 6,
+          spanXS: 8,
+          spanSM: 8,
+          spanMD: 8,
           name: "is_package",
           label: "пакет",
           isRequired: true,
@@ -545,11 +570,26 @@ export const getSTQuestFormItems = async () => {
           },
         },
         {
-          spanXS: 12,
-          spanSM: 12,
-          spanMD: 6,
+          spanXS: 8,
+          spanSM: 8,
+          spanMD: 8,
           name: "is_video_review",
           label: "видео отзыв",
+          isRequired: true,
+          placeholder: "да/нет",
+          element: {
+            name: "Checkbox",
+            options: null,
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+        {
+          spanXS: 8,
+          spanSM: 8,
+          spanMD: 8,
+          name: "video_as_a_gift",
+          label: "видео в подарок",
           isRequired: true,
           placeholder: "да/нет",
           element: {

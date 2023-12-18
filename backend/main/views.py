@@ -20,6 +20,8 @@ from collections import defaultdict
 
 from django.db.models import Sum
 
+import time
+
 from .utils import (
     create_non_empty_dict,
     convert_to_date,
@@ -140,6 +142,7 @@ def UserSTQuests(request):
                     "animator": "",
                     "is_package": False,
                     "is_video_review": False,
+                    "video_as_a_gift": False,
                     "cash_payment": 0,
                     "cashless_payment": 0,
                     "cash_delivery": 0,
@@ -252,6 +255,7 @@ def UserSTQuests(request):
             }
             entry_dict[date_timestamp]["is_package"] = entry.is_package
             entry_dict[date_timestamp]["is_video_review"] = entry.is_video_review
+            entry_dict[date_timestamp]["video_as_a_gift"] = entry.video_as_a_gift
             entry_dict[date_timestamp]["cash_payment"] += entry.cash_payment
             entry_dict[date_timestamp]["cashless_payment"] += entry.cashless_payment
             entry_dict[date_timestamp]["cash_delivery"] += entry.cash_delivery
@@ -323,6 +327,7 @@ def UserSTQuests(request):
                     },
                     "is_package": entry.is_package,
                     "is_video_review": entry.is_video_review,
+                    "video_as_a_gift": entry.video_as_a_gift,
                     "cash_payment": entry.cash_payment,
                     "cashless_payment": entry.cashless_payment,
                     "cash_delivery": entry.cash_delivery,
@@ -513,6 +518,7 @@ def STQuests(request):
                     "animator": "",
                     "is_package": False,
                     "is_video_review": False,
+                    "video_as_a_gift": False,
                     "cash_payment": 0,
                     "cashless_payment": 0,
                     "cash_delivery": 0,
@@ -640,6 +646,7 @@ def STQuests(request):
             }
             entry_dict[date_timestamp]["is_package"] = entry.is_package
             entry_dict[date_timestamp]["is_video_review"] = entry.is_video_review
+            entry_dict[date_timestamp]["video_as_a_gift"] = entry.video_as_a_gift
             entry_dict[date_timestamp]["cash_payment"] += entry.cash_payment
             entry_dict[date_timestamp]["cashless_payment"] += entry.cashless_payment
             entry_dict[date_timestamp]["cash_delivery"] += entry.cash_delivery
@@ -713,6 +720,7 @@ def STQuests(request):
                     },
                     "is_package": entry.is_package,
                     "is_video_review": entry.is_video_review,
+                    "video_as_a_gift": entry.video_as_a_gift,
                     "cash_payment": entry.cash_payment,
                     "cashless_payment": entry.cashless_payment,
                     "cash_delivery": entry.cash_delivery,
@@ -883,6 +891,8 @@ def VUser(request, id):
         user.save()
         if "roles" in data:
             user.roles.set(Role.objects.filter(id__in=data["roles"]))
+        if "quests_for_videos" in data:
+            user.quests_for_videos.set(Quest.objects.filter(id__in=data["quests_for_videos"]))
 
         return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
 
@@ -2117,6 +2127,59 @@ def Salaries(request):
 
 
 @api_view(["GET"])
+def Videos(request):
+    quests_for_videos = []
+    for quest_for_videos in request.user.quests_for_videos.all():
+        quests_for_videos.append(quest_for_videos.id)
+
+    qvideos_by_quest_id = QVideo.objects.filter(quest__id__in=quests_for_videos)
+
+    body = {}
+
+    for entry in qvideos_by_quest_id:
+        date_timestamp = date_to_timestamp(entry.date)
+        entry_date = entry.date.strftime("%d.%m.%Y")
+
+        if date_timestamp not in body:
+            body[date_timestamp] = {
+                "id": 0,
+                "key": str(date_timestamp),
+                "date_time": entry_date,
+                "client_name": "",
+                "sent": None,
+                "type": "",
+                "note": "",
+                "quest": {},
+                "stquest": {},
+                "children": [],
+            }
+
+        body[date_timestamp]["children"].append({
+            "id": entry.id,
+            "key": str(entry.id),
+            "date_time": entry.time.strftime("%H:%M"),
+            "client_name": entry.client_name,
+            "sent": entry.sent,
+            "type": entry.type,
+            "note": entry.note,
+            "quest": {
+                "id": entry.quest.id,
+                "name": entry.quest.name,
+            },
+            "stquest": {
+                "id": entry.stquest.id,
+                "name": entry.stquest.quest.name,
+            },
+        })
+
+    for body_data in body.values():
+        body_data["children"].sort(key=lambda x: x["date_time"])
+
+    response_data = list(body.values())
+
+    return Response(response_data)
+
+@api_view(["GET"])
 def QuestProfitById(request, id):
     if request.method == "GET":
         qincomes = QIncome.objects.filter(quest__id=id)
@@ -2128,7 +2191,7 @@ def QuestProfitById(request, id):
             or 0
         )
 
-        print(total)
+        # print(total)
         response_data = {"total": total}
 
         return Response(response_data)
@@ -2662,7 +2725,7 @@ def VSTQuest(request, id):
         salaries_by_stquest = QSalary.objects.filter(stquest=stquest)
         incomes_by_stquest = QIncome.objects.filter(stquest=stquest)
         cash_register_by_stquest = QCashRegister.objects.filter(stquest=stquest)
-        videos_by_stquest = QVideo.objects.filter(stquest=stquest)
+        # videos_by_stquest = QVideo.objects.filter(stquest=stquest)
 
         for salary_by_stquest in salaries_by_stquest:
             salary_by_stquest.delete()
@@ -2673,8 +2736,8 @@ def VSTQuest(request, id):
         for cash_register_by_stquest_one in cash_register_by_stquest:
             cash_register_by_stquest_one.delete()
 
-        for video_by_stquest in videos_by_stquest:
-            video_by_stquest.delete()
+        # for video_by_stquest in videos_by_stquest:
+        #     video_by_stquest.delete()
 
         optional_fields = [
             "add_players",
@@ -2688,6 +2751,7 @@ def VSTQuest(request, id):
             "night_game",
             "is_package",
             "is_video_review",
+            "video_as_a_gift",
             "cash_payment",
             "cashless_payment",
             "cash_delivery",
@@ -2808,32 +2872,39 @@ def VSTQuest(request, id):
 
         create_travel(entry, quest)
         create_qincome(data, entry)
+
+        # print(stquest.id)
+        # print('QVideo.objects.filter(stquest=entry)', QVideo.objects.all())
+
+        # print(QVideo.objects.filter(stquest=entry))
         
-        if len(QVideo.objects.filter(stquest=entry)) == 0:
-            if (
-                (
-                    ("video" in data and data["video"] != 0)
-                    or (data["is_video_review"] == True)
-                    or ("video_after" in data)
-                )
-                and ("client_name" in data)
-                or (data["is_package"] == True)
-            ):
-                
-                # print(QVideo.objects.filter(stquest=entry))
-                type = ''
-                if (data['is_video_review'] == True):
-                    type = 'video_review'
-                elif (data["is_package"] == True):
-                    type = 'package'
-                else:
-                    type = 'video'
+        # if len(QVideo.objects.filter(stquest=entry)) == 0:
+        if (
+            (
+                ("video" in data and data["video"] != 0)
+                or (data["is_video_review"] == True)
+                or (data["video_as_a_gift"] == True)
+                or ("video_after" in data)
+            )
+            and ("client_name" in data)
+            or (data["is_package"] == True)
+        ):
+            
+            type = ''
+            if (data['is_video_review'] == True):
+                type = 'video_review'
+            elif (data["is_package"] == True):
+                type = 'package'
+            elif (data["video_as_a_gift"] == True):
+                type = 'video_as_a_gift'
+            else:
+                type = 'video'
 
-                local_quest = quest
-                if len(quest.special_versions.all()) != 0:
-                    local_quest = quest.special_versions.all()[0]
+            local_quest = quest
+            if len(quest.special_versions.all()) != 0:
+                local_quest = quest.special_versions.all()[0]
 
-                # print(local_quest)
+            if len(QVideo.objects.filter(stquest=entry)) == 0:
                 QVideo(
                     **{
                         "date": formatted_date,
@@ -2847,6 +2918,16 @@ def VSTQuest(request, id):
                         "stquest": entry,
                     }
                 ).save()
+            else:
+                for qvideo in QVideo.objects.filter(stquest=entry):
+                    qvideo.date = formatted_date
+                    qvideo.time = formatted_time
+                    qvideo.client_name = data["client_name"]
+                    qvideo.type = type
+                    qvideo.note = ""
+                    qvideo.quest = local_quest
+                    qvideo.stquest = entry
+                    qvideo.save()
 
         if "room_employee_name" in data:
             QSalary(
@@ -2880,6 +2961,19 @@ def VSTQuest(request, id):
                     "date": formatted_date,
                     "amount": 50,
                     "name": "Видео отзыв",
+                    "user": administrator,
+                    "stquest": entry,
+                    "quest": new_quest,
+                    "sub_category": "administrator",
+                }
+            ).save()
+
+        if data["video_as_a_gift"] == True:
+            QSalary(
+                **{
+                    "date": formatted_date,
+                    "amount": 100,
+                    "name": "Видео в подарок",
                     "user": administrator,
                     "stquest": entry,
                     "quest": new_quest,
@@ -3571,6 +3665,9 @@ def CreateUser(request):
         if "roles" in data:
             entry.roles.set(Role.objects.filter(id__in=data["roles"]))
 
+        if "quests_for_videos" in data:
+            entry.quests_for_videos.set(Quest.objects.filter(id__in=data["quests_for_videos"]))
+
         return JsonResponse({"message": "Пользователь успешно создан"}, status=201)
 
         # except Exception as e:
@@ -3830,6 +3927,7 @@ def CreateSTQuest(request):
             "night_game",
             "is_package",
             "is_video_review",
+            "video_as_a_gift",
             "cash_payment",
             "cashless_payment",
             "cash_delivery",
@@ -3928,22 +4026,13 @@ def CreateSTQuest(request):
                         "sub_category": "administrator",
                     }
                 ).save()
-                # STExpense(**{
-                #     "date": formatted_date,
-                #     "amount": 50,
-                #     "name": "Видео отзыв",
-                #     "user": administrator,
-                #     "stquest": entry,
-                #     "quest": quest,
-                #     "sub_category": STExpenseSubCategory.objects.get(latin_name='salary')
-                # }).quests.add(quest).save()
 
-            if data['is_video_review'] == True:
+            if data["video_as_a_gift"] == True:
                 QSalary(
                     **{
                         "date": formatted_date,
-                        "amount": 50,
-                        "name": "Видео отзыв",
+                        "amount": 100,
+                        "name": "Видео в подарок",
                         "user": administrator,
                         "stquest": entry,
                         "quest": new_quest,
@@ -4016,6 +4105,7 @@ def CreateSTQuest(request):
                 (
                     ("video" in data and data["video"] != 0)
                     or (data["is_video_review"] == True)
+                    or (data["video_as_a_gift"] == True)
                     or ("video_after" in data)
                 )
                 and ("client_name" in data)
@@ -4026,6 +4116,8 @@ def CreateSTQuest(request):
                     type = 'video_review'
                 elif (data["is_package"] == True):
                     type = 'package'
+                elif (data["video_as_a_gift"] == True):
+                    type = 'video_as_a_gift'
                 else:
                     type = 'video'
 
@@ -4033,7 +4125,7 @@ def CreateSTQuest(request):
                 if (len(quest.special_versions.all()) != 0):
                     local_quest = quest.special_versions.all()[0]
 
-                print(local_quest)
+                # print(local_quest)
                 QVideo(
                     **{
                         "date": formatted_date,

@@ -140,6 +140,24 @@ const STQuestsFC: FC = () => {
       },
     },
     {
+      title: "видео в подарок",
+      dataIndex: "video_as_a_gift",
+      render: (video_as_a_gift) => {
+        let color = "red";
+        let formattedIsTravel = "";
+
+        if (video_as_a_gift === true) {
+          color = "green";
+          formattedIsTravel = "да";
+        } else if (video_as_a_gift === false) {
+          color = "red";
+          formattedIsTravel = "нет";
+        }
+
+        return <Tag color={color}>{formattedIsTravel}</Tag>;
+      },
+    },
+    {
       title: "стоимость квеста",
       dataIndex: "quest_cost",
       sorting: true,
@@ -421,6 +439,15 @@ const STQuestsFC: FC = () => {
         }
       }
     }
+    
+    if (name === "is_video_review" || name === 'video_as_a_gift') {
+      if (value.target.checked) {
+        setNotVisibleFormItems(["video"]);
+      } else {
+        setNotVisibleFormItems([]);
+      }
+    }
+
     if (name === "is_package") {
       setIsPackage(value.target.checked);
 

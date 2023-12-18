@@ -188,6 +188,8 @@ const QVideosFC: FC = () => {
               formatText = "видео отзыв";
             } else if (type_single == 'video') {
               formatText = "видео"
+            } else if (type_single == 'video_as_a_gift') {
+              formatText = "видео в подарок"
             }
             return (
               <Tag color={color} key={formatText}>
