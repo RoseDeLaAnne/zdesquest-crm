@@ -3151,7 +3151,7 @@ def VSTQuest(request, id):
             QSalary(
                 **{
                     "date": formatted_date,
-                    "amount": 125,
+                    "amount": 100,
                     "name": "Видео",
                     "user": administrator,
                     "stquest": entry,
@@ -4190,7 +4190,7 @@ def CreateSTQuest(request):
                 QSalary(
                     **{
                         "date": formatted_date,
-                        "amount": 125,
+                        "amount": 100,
                         "name": "Видео",
                         "user": administrator,
                         "stquest": entry,
