@@ -3986,16 +3986,16 @@ def CreateSTQuest(request):
 
         entry = STQuest(**entry_data)
 
-        internship_period_start_administrator = administrator.internship_period_start
-        internship_period_end_administrator = administrator.internship_period_end
+        # internship_period_start_administrator = administrator.internship_period_start
+        # internship_period_end_administrator = administrator.internship_period_end
 
-        date_today = date.today()
+        # date_today = date.today()
 
         administrator_rate = quest.administrator_rate
 
         if len(stquests) == 0:
-            if (internship_period_start_administrator <= date_today <= internship_period_end_administrator) and (administrator.internship_quest == quest):
-                administrator_rate = 250
+            # if (internship_period_start_administrator <= date_today <= internship_period_end_administrator) and (administrator.internship_quest == quest):
+            #     administrator_rate = 250
 
             entry.save()
                 
