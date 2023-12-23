@@ -378,7 +378,7 @@ const App: FC = ({
           style={{
             position: "fixed",
             top: 0,
-            zIndex: 1,
+            zIndex: 100,
             width: "100%",
             display: "flex",
             alignItems: "center",

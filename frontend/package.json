@@ -18,7 +18,8 @@
     "react-highlight-words": "^0.20.0",
     "react-input-mask": "^2.0.4",
     "react-router-dom": "^6.14.2",
-    "sass": "^1.64.2"
+    "sass": "^1.64.2",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/node": "^20.8.2",

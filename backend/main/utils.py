@@ -437,8 +437,8 @@ def create_qcash_register_from_stquest(data, entry):
     quest = Quest.objects.get(id=data["quest"])
     new_quest = quest
 
-    print(data["cash_payment"])
-    print(data["cash_delivery"])
+    # print(data["cash_payment"])
+    # print(data["cash_delivery"])
 
     if (quest.parent_quest != None):
         new_quest = Quest.objects.get(id=quest.parent_quest.id)

@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.db.models import Q
 from django.db.models import Count
 
-from datetime import datetime
+from datetime import datetime, date
 from django.utils.timezone import make_aware
 from datetime import timedelta
 
@@ -874,6 +874,15 @@ def VUser(request, id):
                 data["date_of_birth"], "%Y-%m-%dT%H:%M:%S.%fZ"
             ).date()
             user.date_of_birth = formatted_date
+        if "internship_period" in data:
+            internship_period_start = datetime.strptime(
+                data["internship_period"][0], "%Y-%m-%dT%H:%M:%S.%fZ"
+            ).date()
+            internship_period_end = datetime.strptime(
+                data["internship_period"][1], "%Y-%m-%dT%H:%M:%S.%fZ"
+            ).date()
+            user.internship_period_start = internship_period_start
+            user.internship_period_end = internship_period_end
         if "email" in data:
             user.email = data["email"]
         if "phone_number" in data:
@@ -2660,7 +2669,6 @@ def VSTExpense(request, id):
 
         return Response(status=200)
 
-
 @api_view(["GET", "PUT", "DELETE"])
 def VSTQuest(request, id):
     if request.method == "GET":
@@ -3519,7 +3527,16 @@ def VSTQuest(request, id):
         return Response(status=200)
 
 
-@api_view(["GET", "PUT", "DELETE"])
+@api_view(["GET"])
+def VSTQuestSaveAll(request):
+    if request.method == "GET":
+        # stquests = STQuest.objects.all()
+        # for stquest in stquests:
+        #     print(stquest)
+
+        return Response(status=200)
+
+@api_view(["GET", "PUT", "DELETE" ])
 def VSTBonusPenalty(request, id):
     if request.method == "GET":
         entry = STBonusPenalty.objects.get(id=id)
@@ -3952,8 +3969,9 @@ def CreateSTQuest(request):
 
         if "animator" in data:
             count_easy_work += 1
-            animator = User.objects.get(Q(first_name=data['animator'].split()[0].capitalize()) & Q(last_name=data['animator'].split()[1].capitalize()))
-            entry_data["animator"] = animator
+            # animator = User.objects.get(Q(first_name=data['animator'].split()[0].capitalize()) & Q(last_name=data['animator'].split()[1].capitalize()))
+            # entry_data["animator"] = animator
+            entry_data["animator"] = data['animator']
 
             count_easy_work += 1
         if "room_employee_name" in data:
@@ -3968,12 +3986,20 @@ def CreateSTQuest(request):
 
         entry = STQuest(**entry_data)
 
-        if len(stquests) == 0:
-            entry.save()
-            if "actors" in data:
-                # for actor in data["actors"]:
-                    # print(actor)
+        internship_period_start_administrator = administrator.internship_period_start
+        internship_period_end_administrator = administrator.internship_period_end
 
+        date_today = date.today()
+
+        administrator_rate = quest.administrator_rate
+
+        if len(stquests) == 0:
+            if (internship_period_start_administrator <= date_today <= internship_period_end_administrator) and (administrator.internship_quest == quest):
+                administrator_rate = 250
+
+            entry.save()
+                
+            if "actors" in data:
                 actors = User.objects.filter(id__in=data["actors"])
                 entry.actors.set(actors)
             if "actors_half" in data:
@@ -4168,7 +4194,8 @@ def CreateSTQuest(request):
                 QSalary(
                     **{
                         "date": formatted_date,
-                        "amount": quest.administrator_rate,
+                        # "amount": quest.administrator_rate,
+                        "amount": administrator_rate,
                         "name": "Игра",
                         "user": administrator,
                         "stquest": entry,

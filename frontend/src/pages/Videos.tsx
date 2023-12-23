@@ -36,7 +36,7 @@ const VideosFC: FC = () => {
       title: "квест",
       dataIndex: "quest",
       render: (quest) => {
-        if (quest !== {}) {
+        if (quest !== null) {
           return <Tag color="orange">{quest.name}</Tag>;
         } else {
           return null;

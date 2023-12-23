@@ -31,6 +31,7 @@ urlpatterns = [
     # path("quests-with-spec-versions-and-versions/", views.QuestsWithSpecailVersionsAndVersions    ),
     # path("quest-versions/", views.QuestVersions),
     path("stquests/", views.STQuests),
+    path("stquests/save-all/", views.VSTQuestSaveAll),
     path("stexpenses/", views.STExpenses),
     path("stbonuses-penalties/", views.STBonusesPenalties),
     path("stexpense-categories/", views.STExpenseCategories),

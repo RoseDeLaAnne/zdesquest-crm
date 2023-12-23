@@ -3,6 +3,8 @@ import Highlighter from "react-highlight-words";
 
 import { FC, useRef, useState, useEffect } from "react";
 
+import * as XLSX from "xlsx"
+
 // react-router-dom
 import { Link, useParams } from "react-router-dom";
 
@@ -74,6 +76,7 @@ const TableFC: FC = ({
   operationIsEdit,
   operationIsDelete,
   tableIsObj,
+  isExport
 }) => {
   const { id } = isUseParams ? useParams() : { id: "" };
 
@@ -857,6 +860,26 @@ const TableFC: FC = ({
 
   // console.log(tableColumns)
 
+  const exportHandleOnClick = () => {
+    const fileName = 'ExcelFile1'
+
+    const data = [
+      {
+        "date": '01.01.2000',
+        "value": 341
+      },
+      {
+        "date": '02.01.2000',
+        "value": 531
+      },
+    ]
+      
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    XLSX.writeFile(wb, `${fileName}.xlsx`);
+  }
+
   useEffect(() => {
     form.setFieldsValue(defaultValuesFormItems);
   }, [defaultValuesFormItems, form]);
@@ -895,10 +918,12 @@ const TableFC: FC = ({
       isRangePicker={isRangePicker}
       rangePickerHandleChange={rangePickerHandleChange}
       isAddEntry={isAddEntry}
+      isExport={isExport}
       addEntryHandleClick={addEntryHandleClick}
       addEntryTitle={addEntryTitle}
       isCancel={isCancel}
       cancelHandleClick={cancelHandleClick}
+      exportHandleOnClick={exportHandleOnClick}
       isCreate={isCreate}
       form={form}
     >

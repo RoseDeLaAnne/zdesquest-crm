@@ -115,6 +115,7 @@ const SalariesFC: FC = () => {
       isUseParams={true}
       tableScroll={{ x: 1000 }}
       tableIsObj={true}
+      isExport={true}
     />
   );
 };

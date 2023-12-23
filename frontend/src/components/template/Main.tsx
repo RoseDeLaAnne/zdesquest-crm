@@ -40,10 +40,12 @@ const MainFC: FC = ({
   isRangePicker,
   rangePickerHandleChange,
   isAddEntry,
+  isExport,
   addEntryHandleClick,
   addEntryTitle,
   isCancel,
   cancelHandleClick,
+  exportHandleOnClick,
   isCreate,
   form,
   children,
@@ -113,6 +115,24 @@ const MainFC: FC = ({
                 )}
               </div>
             )}
+            {/* {isExport === true && (
+              <Button
+                type="primary"
+                onClick={addEntryHandleClick}
+                icon={<PlusOutlined />}
+                className="m-w100"
+              >
+                Excel
+              </Button>
+            )} */}
+            {/* <Button
+              type="primary"
+              onClick={exportHandleOnClick}
+              icon={<PlusOutlined />}
+              className="m-w100"
+            >
+              Excel
+            </Button> */}
             {(isCancel === true || isCreate === true) && (
               <Space>
                 {isCancel === true && (
