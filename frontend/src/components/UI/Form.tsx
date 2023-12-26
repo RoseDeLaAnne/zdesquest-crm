@@ -46,7 +46,6 @@ const FormFC: FC = ({
   form,
   onFinish,
   handleOnSelect,
-  handleOnChange,
   handleOnSearch,
   initialValues,
 }) => {
@@ -71,6 +70,11 @@ const FormFC: FC = ({
     setPreviewTitle(
       file.name || file.url!.substring(file.url!.lastIndexOf("/") + 1)
     );
+  };
+
+  const handleOnChange = (value: string, name: string) => {
+    console.log(value)
+    console.log(name)
   };
 
   const handleCancel = () => setPreviewOpen(false);
