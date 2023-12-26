@@ -3015,34 +3015,6 @@ def VSTQuest(request, id):
                     "sub_category": "administrator",
                 }
             ).save()
-            # STExpense(
-            #     **{
-            #         "date": formatted_date,
-            #         "amount": 200,
-            #         "name": "Видео после",
-            #         "user": administrator,
-            #         "stquest": entry,
-            #         "quest": quest,
-            #         "sub_category": STExpenseSubCategory.objects.get(
-            #             latin_name="salary"
-            #         ),
-            #     }
-            # ).quests.add(quest).save()
-
-        # if "internship_quest" in data:
-        #     employees = User.objects.filter(id__in=data["internship_quest"])
-        #     for employee in employees:
-        #         QSalary(
-        #             **{
-        #                 "date": formatted_date,
-        #                 "amount": 250,
-        #                 "name": "Игра",
-        #                 "user": employee,
-        #                 "stquest": entry,
-        #                 "quest": new_quest,
-        #                 "sub_category": "actor",
-        #             }
-        #         ).save()
 
         if "animator" in data:
             animator_local = User.objects.get(id=data["animator"])
@@ -3837,17 +3809,13 @@ def CreateSTQuest(request):
 
         date_today = date.today()
 
-        # internship_period_start_administrator = administrator.internship_period_start
-        # internship_period_end_administrator = administrator.internship_period_end
-
-
         administrator_rate = quest.administrator_rate
 
         if len(stquests) == 0:
             if administrator.internship_period_start:
                 print('period')
-            # if (internship_period_start_administrator <= date_today <= internship_period_end_administrator) and (administrator.internship_quest == quest):
-            #     administrator_rate = 250
+                if (administrator.internship_period_start <= date_today <= administrator.internship_period_end) and (administrator.internship_quest == quest):
+                    administrator_rate = 250
 
             entry.save()
                 
