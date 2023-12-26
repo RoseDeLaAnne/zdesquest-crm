@@ -1106,7 +1106,7 @@ def QuestIncomes(request, id):
 
             if len(income.stquest.quest.special_versions.all()) != 0:
                 # tooltip = f"{income.stquest.quest} ({income.stquest.quest_cost})<br>"
-                tooltip = f"{income.stquest.quest} ({value})<br>"
+                tooltip = f"{income.stquest.quest} ({value*2})<br>"
             if income.is_package == True:
                 tooltip += "Пакет<br>"
             if income.discount_sum > 0:
