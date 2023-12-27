@@ -10,6 +10,7 @@ const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {
 
   return (
     <Table
+      pagination={{ pageSize: 100 }}
       scroll={scroll}
       columns={columns}
       dataSource={dataSource}
