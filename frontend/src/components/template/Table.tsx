@@ -679,6 +679,8 @@ const TableFC: FC = ({
 
   const [messageApi, contextHolder] = message.useMessage();
   const form2OnFinish = async (value) => {
+    console.log('trigerred')
+    
     const cleanedData = Object.fromEntries(
       Object.entries(value).filter(([key, val]) => val !== "" && val !== null)
     );
@@ -689,10 +691,26 @@ const TableFC: FC = ({
 
     let mergeObj = Object.assign({}, res.data, value);
 
-    // console.log(mergeObj.quest)
+    if (mergeObj.room_employee_name) {
+      mergeObj.room_employee_name = mergeObj.room_employee_name.id;
+    }
+    if (mergeObj.administrator) {
+      mergeObj.administrator = mergeObj.administrator.id;
+    }
+    if (mergeObj.actors) {
+      mergeObj.actors = mergeObj.actors.map((actor) => {
+        return actor.id;
+      });
+    }
+    if (mergeObj.administrators_half) {
+      mergeObj.administrators_half = mergeObj.administrators_half.map((administrator_half) => {
+        return administrator_half.id;
+      });
+    }
+
     mergeObj.quest = mergeObj.quest.id;
-    mergeObj.room_employee_name = mergeObj.room_employee_name.id;
-    mergeObj.administrator = mergeObj.administrator.id;
+    // mergeObj.room_employee_name = mergeObj.room_employee_name.id;
+    // mergeObj.administrator = mergeObj.administrator.id;
     mergeObj.created_by = mergeObj.created_by.id;
     mergeObj.date = dayjs(mergeObj.date, "DD-MM-YYYY").format(
       "YYYY-MM-DD[T]00:00:00.000[Z]"
@@ -700,13 +718,15 @@ const TableFC: FC = ({
     mergeObj.time = dayjs(mergeObj.time, "HH:mm:ss")
       .utc()
       .format("YYYY-01-01THH:mm:ss.000[Z]");
-    mergeObj.actors = mergeObj.actors.map((actor) => {
-      return actor.id;
-    });
-
+    
     cleanedData.quest = res.data.quest.id;
     cleanedData.quest_cost = res.data.quest_cost;
-    cleanedData.administrator = res.data.administrator.id;
+
+    if (res.data.administrator) {
+      cleanedData.administrator = res.data.administrator.id;
+    }
+
+    // cleanedData.administrator = res.data.administrator.id;
     cleanedData.video_after =
       (cleanedData.video ? parseInt(cleanedData.video) : 0) +
       parseInt(res.data.video);
@@ -744,6 +764,7 @@ const TableFC: FC = ({
     // console.log('mergeObj', mergeObj)
 
     const res2 = await putFunction(stQuestKey, mergeObj);
+    // console.log(res2)
     if (res2.status === 200) {
       messageApi.open({
         type: "success",
