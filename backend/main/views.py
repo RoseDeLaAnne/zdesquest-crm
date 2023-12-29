@@ -1985,14 +1985,14 @@ def Salaries(request):
 
         user_data_map = {user.id: UserSerializer(user).data for user in users}
 
-        # head_data = [
-        #     {"title": user.first_name, "dataIndex": str(user.id), "key": str(user.id),}
-        #     for user in users
-        # ]
+        head_data = [
+            {"title": user.first_name, "dataIndex": str(user.id), "key": str(user.id),}
+            for user in users
+        ]
 
-        # head_data = sorted(head_data, key=lambda x: x["title"])
+        head_data = sorted(head_data, key=lambda x: x["title"])
 
-        head_data = []
+        # head_data = []
 
         
 
