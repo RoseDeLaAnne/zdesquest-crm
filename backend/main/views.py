@@ -1985,12 +1985,18 @@ def Salaries(request):
 
         user_data_map = {user.id: UserSerializer(user).data for user in users}
 
-        head_data = [
-            {"title": user.first_name, "dataIndex": str(user.id), "key": str(user.id),}
-            for user in users
-        ]
+        # head_data = [
+        #     {"title": user.first_name, "dataIndex": str(user.id), "key": str(user.id),}
+        #     for user in users
+        # ]
 
-        head_data = sorted(head_data, key=lambda x: x["title"])
+        # head_data = sorted(head_data, key=lambda x: x["title"])
+
+        head_data = []
+
+        
+
+        # print(head_data)
 
         merged_data = {}
         user_taxi = {}
@@ -3169,6 +3175,32 @@ def VSTQuest(request, id):
                                 "sub_category": "actor",
                             }
                         ).save()
+
+                        if data["night_game"] != 0:
+                            QSalary(
+                                **{
+                                    "date": formatted_date,
+                                    "amount": 50,
+                                    "name": f"Ночная игра ({quest.name})",
+                                    "user": actor,
+                                    "stquest": entry,
+                                    "quest": special_version,
+                                    "sub_category": "actor",
+                                }
+                            ).save()
+
+                        if data["easy_work"] != 0:
+                            QSalary(
+                                **{
+                                    "date": formatted_date,
+                                    "amount": int(data["easy_work"]) / 2 / count_easy_work,
+                                    "name": f"Простой ({quest.name})",
+                                    "user": actor,
+                                    "stquest": entry,
+                                    "quest": special_version,
+                                    "sub_category": "actor",
+                                }
+                            ).save()
             else:
                 for actor in actors:
                     if data["night_game"] != 0:
