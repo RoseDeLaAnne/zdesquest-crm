@@ -1960,13 +1960,45 @@ def Salaries(request):
         bonuses_penalties = []
         users = []
 
+        head_data = []
+
         if request.user.is_superuser == True:
             salaries = QSalary.objects.select_related("user").order_by("date")
             bonuses_penalties = STBonusPenalty.objects.prefetch_related("users").order_by(
                 "date"
             )
             users = User.objects.exclude(email='admin@gmail.com')
-            # users = User.objects.all()
+            
+            objj = {}
+            objj['Без квеста'] = {}
+            objj['Без квеста']['children'] = []
+
+            for user in users:
+                if user.quest != None:
+                    if user.quest.name not in objj:
+                        objj[user.quest.name] = {}
+                        objj[user.quest.name]['children'] = []
+
+                    objj[user.quest.name]['children'].append({
+                        "title": f"{user.first_name} {user.last_name}",
+                        "dataIndex": str(user.id),
+                        "key": str(user.id),
+                    })
+                elif user.quest == None:
+                    objj['Без квеста']['children'].append({
+                        "title": f"{user.first_name} {user.last_name}",
+                        "dataIndex": str(user.id),
+                        "key": str(user.id),
+                    })
+
+            for item in objj.items():
+                item_quest = item[0]
+                item_children = item[1]['children']
+
+                head_data.append({
+                    'title': item_quest,
+                    "children": item_children
+                })
         else:
             salaries = (
                 QSalary.objects.filter(user=request.user)
@@ -1980,52 +2012,19 @@ def Salaries(request):
             )
             users = [request.user]
 
+            head_data = [
+                {"title": user.first_name, "dataIndex": str(user.id), "key": str(user.id),}
+                for user in users
+            ]
+
+            head_data = sorted(head_data, key=lambda x: x["title"])
+
         if start_date and end_date:
             salaries = salaries.filter(date__range=(start_date, end_date))
 
         user_data_map = {user.id: UserSerializer(user).data for user in users}
 
-        head_data = []
-
-        # head_data = [
-        #     {"title": user.first_name, "dataIndex": str(user.id), "key": str(user.id),}
-        #     for user in users
-        # ]
-
-        # head_data = sorted(head_data, key=lambda x: x["title"])
-
         # quests_data = []
-
-        objj = {}
-        objj['Без квеста'] = {}
-        objj['Без квеста']['children'] = []
-
-        for user in users:
-            if user.quest != None:
-                if user.quest.name not in objj:
-                    objj[user.quest.name] = {}
-                    objj[user.quest.name]['children'] = []
-
-                objj[user.quest.name]['children'].append({
-                    "title": f"{user.first_name} {user.last_name}",
-                    "dataIndex": str(user.id),
-                    "key": str(user.id),
-                })
-            elif user.quest == None:
-                objj['Без квеста']['children'].append({
-                    "title": f"{user.first_name} {user.last_name}",
-                    "dataIndex": str(user.id),
-                    "key": str(user.id),
-                })
-
-        for item in objj.items():
-            item_quest = item[0]
-            item_children = item[1]['children']
-
-            head_data.append({
-                'title': item_quest,
-                "children": item_children
-            })
 
         index_to_move = next((index for index, d in enumerate(head_data) if d["title"] == "Без квеста"), None)
 
