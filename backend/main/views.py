@@ -2027,6 +2027,13 @@ def Salaries(request):
                 "children": item_children
             })
 
+        index_to_move = next((index for index, d in enumerate(head_data) if d["title"] == "Без квеста"), None)
+
+        if index_to_move is not None:
+            # Pop the object and then append it to the end
+            element_to_move = head_data.pop(index_to_move)
+            head_data.append(element_to_move)
+
         merged_data = {}
         user_taxi = {}
 
