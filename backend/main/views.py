@@ -1985,18 +1985,47 @@ def Salaries(request):
 
         user_data_map = {user.id: UserSerializer(user).data for user in users}
 
-        head_data = [
-            {"title": user.first_name, "dataIndex": str(user.id), "key": str(user.id),}
-            for user in users
-        ]
+        head_data = []
 
-        head_data = sorted(head_data, key=lambda x: x["title"])
+        # head_data = [
+        #     {"title": user.first_name, "dataIndex": str(user.id), "key": str(user.id),}
+        #     for user in users
+        # ]
 
-        # head_data = []
+        # head_data = sorted(head_data, key=lambda x: x["title"])
 
-        
+        # quests_data = []
 
-        # print(head_data)
+        objj = {}
+        objj['Без квеста'] = {}
+        objj['Без квеста']['children'] = []
+
+        for user in users:
+            if user.quest != None:
+                if user.quest.name not in objj:
+                    objj[user.quest.name] = {}
+                    objj[user.quest.name]['children'] = []
+
+                objj[user.quest.name]['children'].append({
+                    "title": f"{user.first_name} {user.last_name}",
+                    "dataIndex": str(user.id),
+                    "key": str(user.id),
+                })
+            elif user.quest == None:
+                objj['Без квеста']['children'].append({
+                    "title": f"{user.first_name} {user.last_name}",
+                    "dataIndex": str(user.id),
+                    "key": str(user.id),
+                })
+
+        for item in objj.items():
+            item_quest = item[0]
+            item_children = item[1]['children']
+
+            head_data.append({
+                'title': item_quest,
+                "children": item_children
+            })
 
         merged_data = {}
         user_taxi = {}
