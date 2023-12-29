@@ -190,14 +190,14 @@ const STExpensesFC: FC = () => {
   }, []);
 
   const formHandleOnChange = (value, name) => {
-    // console.log('value', value)
-    // console.log('name', name)
+    console.log('value', value)
+    console.log('name', name)
     
     if (name === 'name') {
       if (value === 'Такси' || value === 'Обед') {
         setNotVisibleFormItems(prevState => prevState.filter(item => item !== 'employees'));
       } else {
-        // setNotVisibleFormItems(prevState => prevState.filter(item => item !== 'who_paid'));
+        setNotVisibleFormItems(prevState => prevState.filter(item => item !== 'who_paid'));
       }
     }
     if (name === 'paid_from') {

@@ -71,7 +71,7 @@ const TableFC: FC = ({
   defaultValuesFormItems,
   formHandleOnChange,
   formHandleOnSelect,
-  formHandleOnSearch,
+  // formHandleOnSearch,
   operationIsAdd,
   operationIsEdit,
   operationIsDelete,
@@ -969,7 +969,7 @@ const TableFC: FC = ({
           formInitialValues={formInitialValues}
           formHandleOnSelect={formHandleOnSelect}
           formHandleOnChange={formHandleOnChange}
-          formHandleOnSearch={formHandleOnSearch}
+          // formHandleOnSearch={formHandleOnSearch}
           formOnFinish={formOnFinish}
         />
       )}

@@ -46,7 +46,7 @@ const FormFC: FC = ({
   form,
   onFinish,
   handleOnSelect,
-  handleOnSearch,
+  handleOnChange,
   initialValues,
 }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -72,10 +72,10 @@ const FormFC: FC = ({
     );
   };
 
-  const handleOnChange = (value: string, name: string) => {
-    console.log(value)
-    console.log(name)
-  };
+  // const handleOnChange = (value: string, name: string) => {
+  //   console.log(value)
+  //   console.log(name)
+  // };
 
   const handleCancel = () => setPreviewOpen(false);
 
@@ -154,9 +154,9 @@ const FormFC: FC = ({
                     onChange={(selectedValues) =>
                       handleOnChange(selectedValues, innerItem.name)
                     }
-                    onSearch={(selectedValues) =>
-                      handleOnSearch(selectedValues, innerItem.name)
-                    }
+                    // onSearch={(selectedValues) =>
+                    //   handleOnSearch(selectedValues, innerItem.name)
+                    // }
                   />
                 ) : innerItem.element.name === "AutoComplete" ? (
                   <AutoComplete
