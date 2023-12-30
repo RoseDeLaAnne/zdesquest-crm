@@ -3072,7 +3072,7 @@ def VSTQuest(request, id):
 
         if len(quest.special_versions.all()) != 0:
             for special_version in quest.special_versions.all():
-                if len(data['administrators_half']) != 0:
+                if "administrators_half" in data and len(data['administrators_half']) != 0:
                     for administrator_half in administrators_half:
                         QSalary(
                             **{
@@ -3098,7 +3098,7 @@ def VSTQuest(request, id):
                         }
                     ).save()
         else:
-            if len(data['administrators_half']) != 0:
+            if "administrators_half" in data and len(data['administrators_half']) != 0:
                 for administrator_half in administrators_half:
                     QSalary(
                         **{
@@ -4045,7 +4045,7 @@ def CreateSTQuest(request):
 
             if len(quest.special_versions.all()) != 0:
                 for special_version in quest.special_versions.all():
-                    if len(data['administrators_half']) != 0:
+                    if "administrators_half" in data and len(data['administrators_half']) != 0:
                         for administrator_half in administrators_half:
                             QSalary(
                                 **{
@@ -4071,7 +4071,7 @@ def CreateSTQuest(request):
                             }
                         ).save()
             else:
-                if len(data['administrators_half']) != 0:
+                if "administrators_half" in data and len(data['administrators_half']) != 0:
                     for administrator_half in administrators_half:
                         QSalary(
                             **{
