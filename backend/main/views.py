@@ -2938,8 +2938,6 @@ def VSTQuest(request, id):
             if (administrator.internship_period_start <= date_today <= administrator.internship_period_end) and (administrator.internship_quest == quest):
                 administrator_rate = 250
 
-                print(administrator_rate)
-
         if (
             (
                 ("video" in data and data["video"] != 0)
@@ -3114,7 +3112,7 @@ def VSTQuest(request, id):
                         }
                     ).save()
             if "administrator" in data:
-                print(administrator_rate)
+                # print(administrator_rate)
                 QSalary(
                     **{
                         "date": formatted_date,
@@ -3881,7 +3879,7 @@ def CreateSTQuest(request):
 
         if len(stquests) == 0:
             if administrator.internship_period_start:
-                print('period')
+                # print('period')
                 if (administrator.internship_period_start <= date_today <= administrator.internship_period_end) and (administrator.internship_quest == quest):
                     administrator_rate = 250
 
@@ -4047,7 +4045,7 @@ def CreateSTQuest(request):
 
             if len(quest.special_versions.all()) != 0:
                 for special_version in quest.special_versions.all():
-                    if "administrators_half" in data:
+                    if len(data['administrators_half']) != 0:
                         for administrator_half in administrators_half:
                             QSalary(
                                 **{
@@ -4073,7 +4071,7 @@ def CreateSTQuest(request):
                             }
                         ).save()
             else:
-                if "administrators_half" in data:
+                if len(data['administrators_half']) != 0:
                     for administrator_half in administrators_half:
                         QSalary(
                             **{
