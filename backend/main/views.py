@@ -2183,7 +2183,7 @@ def Videos(request):
     for quest_for_videos in request.user.quests_for_videos.all():
         quests_for_videos.append(quest_for_videos.id)
 
-    qvideos_by_quest_id = QVideo.objects.filter(quest__id__in=quests_for_videos)
+    qvideos_by_quest_id = QVideo.objects.filter(quest__id__in=quests_for_videos).order_by("date")
 
     body = {}
 
@@ -2199,7 +2199,7 @@ def Videos(request):
                 "client_name": "",
                 "sent": None,
                 "type": "",
-                "note": "",
+                "note": "", 
                 "quest": {},
                 "stquest": {},
                 "children": [],
