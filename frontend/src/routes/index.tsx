@@ -221,10 +221,10 @@ const Routes = () => {
   const routesForNotAuthenticatedOnly = [
     {
       path: "/",
-      element: <>
-      <Link to={'/login'}>to Login</Link>
-      <Link to={'/users'}>to Users</Link></>,
-      // element: <Navigate to="/login" />,
+      // element: <>
+      // <Link to={'/login'}>to Login</Link>
+      // <Link to={'/users'}>to Users</Link></>,
+      element: <Navigate to="/login" />,
     },
     // {
     //   path: "/users",
