@@ -2,10 +2,6 @@ import { Link, Navigate, RouterProvider, createBrowserRouter } from "react-route
 import { useAuth } from "../provider/authProdiver";
 import { ProtectedRoute } from "./ProtectedRoute";
 
-import Test from "../pages/Test";
-import InputC from "../pages/InputC";
-import Test4 from "../pages/Test4";
-
 import Home from "../pages/Home";
 
 import Login from "../pages/authentication/Login";

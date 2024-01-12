@@ -6,7 +6,7 @@ import { FC, useRef, useState, useEffect } from "react";
 import * as XLSX from "xlsx"
 
 // react-router-dom
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
 // antd
 import {
@@ -79,6 +79,8 @@ const TableFC: FC = ({
   isExport
 }) => {
   const { id } = isUseParams ? useParams() : { id: "" };
+
+  const navigate = useNavigate();
 
   const [fileList, setFileList] = useState([]);
 
@@ -653,13 +655,18 @@ const TableFC: FC = ({
         if (!initialPackedTableColumns) {
           const { head, body } = res.data;
 
-          console.log(head)
           setTableDataHead(head);
           setTableDataSource(body);
         } else {
           setTableDataSource(res.data);
           // console.log('a')
         }
+      }
+
+      if (res === 401) {
+        setAccess();
+        localStorageRemoveItem(['refresh', 'access'])
+        navigate("/", { replace: true });
       }
     } catch (error) {
       throw error;
@@ -791,18 +798,6 @@ const TableFC: FC = ({
       if (breadcrumbItems[breadcrumbItems.length - 1].title == "касса") {
         value["quest"] = parseInt(id);
       }
-      // let response;
-      // if (value.attachment) {
-      //   if (value.attachment.length > 0) {
-      //     response = await postFunction(value, value.attachment[0].originFileObj)
-      //   } else {
-      //     response = await postFunction(value);
-      //   }
-      // } else {
-      //   response = await postFunction(value);
-      // }
-
-      // console.log(fileList[0].originFileObj)
 
       let response;
       if (fileList.length > 0) {
