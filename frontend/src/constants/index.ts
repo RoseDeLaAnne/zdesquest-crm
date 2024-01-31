@@ -1910,6 +1910,26 @@ export const getSTQuestsFormItems2 = async () => {
       gutter: 16,
       items: [
         {
+          spanXS: 8,
+          spanSM: 8,
+          spanMD: 4,
+          name: "is_video_review",
+          label: "видео отзыв",
+          isRequired: false,
+          placeholder: "да/нет",
+          element: {
+            name: "Checkbox",
+            options: [],
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
           spanXS: 24,
           spanSM: 24,
           spanMD: 12,

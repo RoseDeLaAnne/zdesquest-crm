@@ -473,6 +473,8 @@ const TableFC: FC = ({
     cleanedData.quest = res.data.quest.id;
     cleanedData.quest_cost = res.data.quest_cost;
     cleanedData.administrator = res.data.administrator.id;
+    cleanedData.is_video_review =
+      cleanedData.is_video_review ? cleanedData.is_video_review : false;
     cleanedData.video_after =
       (cleanedData.video ? parseInt(cleanedData.video) : 0) +
       parseInt(res.data.video);
