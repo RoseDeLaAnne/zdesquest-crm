@@ -3353,7 +3353,7 @@ def VSTQuest(request, id):
                     }
                 ).save()
 
-        if data["is_package"] == True and (new_quest.address != "Афанасьева, 13" or new_quest.address != 'Проспект Ленина, 59'):
+        if data["is_package"] == True and new_quest.address != "Афанасьева, 13" and new_quest.address != "Проспект Ленина, 59":
             QSalary(
                 **{
                     "date": formatted_date,
@@ -4377,7 +4377,7 @@ def CreateSTQuest(request):
                     }
                 ).save()
 
-                if (new_quest.address != "Афанасьева, 13" or new_quest.address != 'Проспект Ленина, 59'):
+                if new_quest.address != "Афанасьева, 13" and new_quest.address != 'Проспект Ленина, 59':
                     QSalary(
                         **{
                             "date": formatted_date,
