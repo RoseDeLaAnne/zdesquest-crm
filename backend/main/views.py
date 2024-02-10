@@ -2070,6 +2070,9 @@ def Salaries(request):
 
             # print(a1)
             if len(a1) != 0:
+                if salary.user.id not in user_taxi[date_str]:
+                    user_taxi[date_str][salary.user.id] = False
+
                 user_taxi[date_str][salary.user.id] = True
 
             # print(user_taxi)
