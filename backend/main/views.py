@@ -2304,6 +2304,13 @@ def Salaries(request):
                     merged_data[date][user.id]["value"] -= 25 * int(
                         user_taxi[date][user.id]
                     )
+
+                    if "Проезд" not in merged_data[date][user.id]["tooltip"]:
+                        merged_data[date][user.id]["tooltip"]["Проезд"] = {
+                            "count": 0,
+                            "total_amount": 0
+                        }
+
                     merged_data[date][user.id]["tooltip"]["Проезд"]["count"] -= int(
                         user_taxi[date][user.id]
                     )
