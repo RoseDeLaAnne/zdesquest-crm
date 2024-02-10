@@ -121,8 +121,7 @@ const fetchUsers = async () => {
     const res = await getUsers();
     if (res.status === 200) {
       const formattedOptions = res.data.map((el) => ({
-        label:
-          el.first_name.toLowerCase() + " " + el.last_name.toLowerCase(),
+        label: el.first_name.toLowerCase() + " " + el.last_name.toLowerCase(),
         // value: el.first_name.toLowerCase() + " " + el.last_name.toLowerCase(),
         value: el.id,
       }));
@@ -643,22 +642,7 @@ export const getSTQuestFormItems = async () => {
         {
           spanXS: 24,
           spanSM: 24,
-          spanMD: 12,
-          name: "quest_cost",
-          label: "стоимость квеста",
-          isRequired: true,
-          placeholder: "пожалуйста, введите стоимость квеста",
-          element: {
-            name: "InputNumber",
-            options: null,
-            multiple: null,
-            defaultValue: null,
-          },
-        },
-        {
-          spanXS: 24,
-          spanSM: 24,
-          spanMD: 12,
+          spanMD: 24,
           name: "client_name",
           label: "имя клиента",
           isRequired: true,
@@ -667,41 +651,6 @@ export const getSTQuestFormItems = async () => {
             name: "Input",
             options: null,
             multiple: null,
-            defaultValue: null,
-          },
-        },
-      ],
-    },
-    {
-      gutter: 16,
-      items: [
-        {
-          spanXS: 24,
-          spanSM: 24,
-          spanMD: 12,
-          name: "administrator",
-          label: "администратор",
-          isRequired: false,
-          placeholder: "пожалуйста, выберите администратора",
-          element: {
-            name: "Select",
-            options: optionsUsers,
-            multiple: false,
-            defaultValue: null,
-          },
-        },
-        {
-          spanXS: 24,
-          spanSM: 24,
-          spanMD: 12,
-          name: "actors",
-          label: "актеры",
-          isRequired: false,
-          placeholder: "пожалуйста, выберите актеров",
-          element: {
-            name: "Select",
-            options: optionsUsers,
-            multiple: true,
             defaultValue: null,
           },
         },
@@ -783,66 +732,11 @@ export const getSTQuestFormItems = async () => {
         {
           spanXS: 24,
           spanSM: 24,
-          spanMD: 24,
-          name: "prepayment",
-          label: "предоплата",
-          isRequired: false,
-          placeholder: "пожалуйста, введите предоплату",
-          element: {
-            name: "InputNumber",
-            options: null,
-            multiple: null,
-            defaultValue: 500,
-          },
-        },
-      ],
-    },
-    {
-      gutter: 16,
-      items: [
-        {
-          spanXS: 24,
-          spanSM: 24,
           spanMD: 12,
-          name: "room_employee_name",
-          label: "сотрудник комнаты",
-          isRequired: false,
-          placeholder: "пожалуйста, выберите сотрудника комнаты",
-          element: {
-            name: "Select",
-            options: optionsUsers,
-            multiple: null,
-            defaultValue: null,
-          },
-        },
-        {
-          spanXS: 24,
-          spanSM: 24,
-          spanMD: 12,
-          name: "animator",
-          label: "аниматор",
-          isRequired: false,
-          placeholder: "пожалуйста, выберите аниматора",
-          element: {
-            name: "Select",
-            options: optionsUsers,
-            multiple: false,
-            defaultValue: null,
-          },
-        },
-      ],
-    },
-    {
-      gutter: 16,
-      items: [
-        {
-          spanXS: 24,
-          spanSM: 24,
-          spanMD: 12,
-          name: "actor_or_second_actor_or_animator",
-          label: "актеры/второй актер/аниматор",
-          isRequired: false,
-          placeholder: "пожалуйста, введите актера/второго актера/аниматора",
+          name: "quest_cost",
+          label: "стоимость квеста",
+          isRequired: true,
+          placeholder: "пожалуйста, введите стоимость квеста",
           element: {
             name: "InputNumber",
             options: null,
@@ -874,10 +768,10 @@ export const getSTQuestFormItems = async () => {
           spanXS: 24,
           spanSM: 24,
           spanMD: 12,
-          name: "room_sum",
-          label: "сумма комнат",
+          name: "discount_sum",
+          label: "сумма скидки",
           isRequired: false,
-          placeholder: "пожалуйста, введите сумму комнат",
+          placeholder: "пожалуйста, введите сумму скидки",
           element: {
             name: "InputNumber",
             options: null,
@@ -889,10 +783,65 @@ export const getSTQuestFormItems = async () => {
           spanXS: 24,
           spanSM: 24,
           spanMD: 12,
+          name: "discount_desc",
+          label: "описание скидки",
+          isRequired: false,
+          placeholder: "пожалуйста, введите описание скидки",
+          element: {
+            name: "Input",
+            options: null,
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 24,
+          name: "actor_or_second_actor_or_animator",
+          label: "актеры/второй актер/аниматор",
+          isRequired: false,
+          placeholder: "пожалуйста, введите актера/второго актера/аниматора",
+          element: {
+            name: "InputNumber",
+            options: null,
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 12,
           name: "video",
           label: "сумма видео",
           isRequired: false,
           placeholder: "пожалуйста, введите сумму видео",
+          element: {
+            name: "InputNumber",
+            options: null,
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 12,
+          name: "room_sum",
+          label: "сумма комнат",
+          isRequired: false,
+          placeholder: "пожалуйста, введите сумму комнат",
           element: {
             name: "InputNumber",
             options: null,
@@ -978,36 +927,20 @@ export const getSTQuestFormItems = async () => {
         {
           spanXS: 24,
           spanSM: 24,
-          spanMD: 12,
-          name: "discount_sum",
-          label: "сумма скидки",
+          spanMD: 24,
+          name: "prepayment",
+          label: "предоплата",
           isRequired: false,
-          placeholder: "пожалуйста, введите сумму скидки",
+          placeholder: "пожалуйста, введите предоплату",
           element: {
             name: "InputNumber",
             options: null,
             multiple: null,
-            defaultValue: null,
-          },
-        },
-        {
-          spanXS: 24,
-          spanSM: 24,
-          spanMD: 12,
-          name: "discount_desc",
-          label: "описание скидки",
-          isRequired: false,
-          placeholder: "пожалуйста, введите описание скидки",
-          element: {
-            name: "Input",
-            options: null,
-            multiple: null,
-            defaultValue: null,
+            defaultValue: 500,
           },
         },
       ],
     },
-
     {
       gutter: 16,
       items: [
@@ -1015,10 +948,80 @@ export const getSTQuestFormItems = async () => {
           spanXS: 24,
           spanSM: 24,
           spanMD: 12,
-          name: "actors_half",
-          label: "актеры (50%)",
+          name: "administrator",
+          label: "администратор",
           isRequired: false,
-          placeholder: "пожалуйста, выберите актеров (50%)",
+          placeholder: "пожалуйста, выберите администратора",
+          element: {
+            name: "Select",
+            options: optionsUsers,
+            multiple: false,
+            defaultValue: null,
+          },
+        },
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 12,
+          name: "actors",
+          label: "актеры",
+          isRequired: false,
+          placeholder: "пожалуйста, выберите актеров",
+          element: {
+            name: "Select",
+            options: optionsUsers,
+            multiple: true,
+            defaultValue: null,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 12,
+          name: "animator",
+          label: "аниматор",
+          isRequired: false,
+          placeholder: "пожалуйста, выберите аниматора",
+          element: {
+            name: "Select",
+            options: optionsUsers,
+            multiple: false,
+            defaultValue: null,
+          },
+        },
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 12,
+          name: "room_employee_name",
+          label: "сотрудник комнаты",
+          isRequired: false,
+          placeholder: "пожалуйста, выберите сотрудника комнаты",
+          element: {
+            name: "Select",
+            options: optionsUsers,
+            multiple: null,
+            defaultValue: null,
+          },
+        },
+      ],
+    },
+    {
+      gutter: 16,
+      items: [
+        {
+          spanXS: 24,
+          spanSM: 24,
+          spanMD: 12,
+          name: "administrators_half",
+          label: "администраторы (50%)",
+          isRequired: false,
+          placeholder: "пожалуйста, выберите администраторов (50%)",
           element: {
             name: "Select",
             options: optionsUsers,
@@ -1030,10 +1033,10 @@ export const getSTQuestFormItems = async () => {
           spanXS: 24,
           spanSM: 24,
           spanMD: 12,
-          name: "administrators_half",
-          label: "администраторы (50%)",
+          name: "actors_half",
+          label: "актеры (50%)",
           isRequired: false,
-          placeholder: "пожалуйста, выберите администраторов (50%)",
+          placeholder: "пожалуйста, выберите актеров (50%)",
           element: {
             name: "Select",
             options: optionsUsers,
@@ -1053,7 +1056,8 @@ export const getSTQuestFormItems = async () => {
           name: "employees_first_time",
           label: "сотрудники, которые играют в первый раз",
           isRequired: false,
-          placeholder: "пожалуйста, выбертие сотрудников, которые играют в первый раз",
+          placeholder:
+            "пожалуйста, выбертие сотрудников, которые играют в первый раз",
           element: {
             name: "Select",
             options: optionsUsers,
@@ -1653,7 +1657,8 @@ export const getQuestVersionsFormItems = async () => {
           name: "cost_weekdays_with_package",
           label: "стоимость квеста в будние дни (пакет)",
           isRequired: true,
-          placeholder: "пожалуйста, введите стоимость квеста в будние дни (пакет)",
+          placeholder:
+            "пожалуйста, введите стоимость квеста в будние дни (пакет)",
           element: {
             name: "Input",
             options: [],
@@ -1668,7 +1673,8 @@ export const getQuestVersionsFormItems = async () => {
           name: "cost_weekends_with_package",
           label: "стоимость квеста в выходные дни (пакет)",
           isRequired: true,
-          placeholder: "пожалуйста, введите стоимость квеста в выходные дни (пакет)",
+          placeholder:
+            "пожалуйста, введите стоимость квеста в выходные дни (пакет)",
           element: {
             name: "Input",
             options: [],
@@ -1815,7 +1821,7 @@ export const getSTExpenseCategoriesFormItems = async () => {
           },
         },
       ],
-    }
+    },
   ];
 
   return formItems;
