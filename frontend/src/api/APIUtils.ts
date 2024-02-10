@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const url2 = "https://crm.zdesquest.ru";
-const url3 = url2
+const url3 = url2;
 // const url3 = "http://127.0.0.1:8000";
 
 // GET
@@ -11,7 +11,7 @@ export const getQuestProfit = async (id: number) => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -21,7 +21,7 @@ export const getAllUsers = async () => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -31,7 +31,7 @@ export const getUsers = async () => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -41,7 +41,7 @@ export const getCurrentUser = async () => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -56,7 +56,7 @@ export const getUserSTQuests = async (startDate: string, endDate: string) => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -71,7 +71,7 @@ export const getUserSTExpenses = async (startDate: string, endDate: string) => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -81,7 +81,7 @@ export const getUsersByRole = async (roleName: string) => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -91,7 +91,7 @@ export const getRoles = async () => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -101,7 +101,7 @@ export const getQuests = async () => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -111,7 +111,7 @@ export const getQuestsWithSpecVersions = async () => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -121,7 +121,7 @@ export const getQuestsWithParentQuest = async () => {
     const res = await axios.get(url);
     return res;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -131,7 +131,7 @@ export const getQuestsWithoutParentQuest = async () => {
     const res = await axios.get(url);
     return res;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -141,7 +141,7 @@ export const getQuestVersions = async () => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -156,7 +156,7 @@ export const getSTQuests = async (startDate: string, endDate: string) => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -171,7 +171,7 @@ export const getSTExpenses = async (startDate: string, endDate: string) => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -189,7 +189,7 @@ export const getSTBonusesPenalties = async (
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -199,7 +199,7 @@ export const getSTExpenseCategories = async () => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -209,7 +209,7 @@ export const getSTExpenseSubCategories = async () => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -228,7 +228,7 @@ export const getQuestIncomes = async (
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -247,7 +247,7 @@ export const getQuestExpenses = async (
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -266,7 +266,7 @@ export const getQuestSalaries = async (
     const res = await axios.get(url);
     return res;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -281,7 +281,7 @@ export const getSalaries = async (startDate: string, endDate: string) => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -296,7 +296,7 @@ export const getVideos = async (startDate: string, endDate: string) => {
     const res = await axios.get(url);
     return res;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -314,7 +314,7 @@ export const getCurrentSalaries = async (
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -333,7 +333,7 @@ export const getQuestCashRegister = async (
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -352,7 +352,7 @@ export const getQuestCashRegisterDeposited = async (
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -371,7 +371,7 @@ export const getQuestCashRegisterTaken = async (
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -381,7 +381,7 @@ export const toggleQuestCashRegister = async (id: number) => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -391,7 +391,7 @@ export const toggleQuestVideo = async (id: number) => {
     const res = await axios.get(url);
     return res;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -410,7 +410,7 @@ export const getWorkCardExpenses = async (
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -429,7 +429,7 @@ export const getExpensesFromOwn = async (
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -448,7 +448,7 @@ export const getQVideos = async (
     const res = await axios.get(url);
     return res;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -458,7 +458,7 @@ export const toggleExpensesFromOwn = async (id: number) => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -469,7 +469,7 @@ export const getUser = async (id: number) => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -479,7 +479,7 @@ export const putUser = async (id: number, value: object) => {
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -489,7 +489,7 @@ export const deleteUser = async (id: number) => {
     const response = await axios.delete(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -499,7 +499,7 @@ export const getQuest = async (id: number) => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -509,7 +509,7 @@ export const putQuest = async (id: number, value: object) => {
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -519,7 +519,7 @@ export const deleteQuest = async (id: number) => {
     const response = await axios.delete(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -529,7 +529,7 @@ export const getQuestVersion = async (id: number) => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -539,7 +539,7 @@ export const putQuestVersion = async (id: number, value: object) => {
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -549,7 +549,7 @@ export const deleteQuestVersion = async (id: number) => {
     const response = await axios.delete(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -559,7 +559,7 @@ export const getSTQuest = async (stqid: number) => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -569,7 +569,7 @@ export const putSTQuest = async (id: number, value: object) => {
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -579,7 +579,7 @@ export const deleteSTQuest = async (id: number) => {
     const response = await axios.delete(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -589,7 +589,7 @@ export const getSTExpense = async (id: number) => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -606,7 +606,7 @@ export const putSTExpense = async (id: number, value: object, files: any) => {
     res = await axios.put(url, formData);
     return res;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -616,7 +616,7 @@ export const deleteSTExpense = async (id: number) => {
     const response = await axios.delete(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -626,7 +626,7 @@ export const getSTBonusPenalty = async (id: number) => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -636,7 +636,7 @@ export const putSTBonusPenalty = async (id: number, value: object) => {
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -646,7 +646,7 @@ export const deleteSTBonusPenalty = async (id: number) => {
     const response = await axios.delete(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -656,7 +656,7 @@ export const getSTExpenseCategory = async (id: number) => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -666,7 +666,7 @@ export const putSTExpenseCategory = async (id: number, value: object) => {
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -676,7 +676,7 @@ export const deleteSTExpenseCategory = async (id: number) => {
     const response = await axios.delete(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -686,7 +686,7 @@ export const getSTExpenseSubCategory = async (id: number) => {
     const response = await axios.get(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -696,7 +696,7 @@ export const putSTExpenseSubCategory = async (id: number, value: object) => {
     const response = await axios.put(url, value);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -706,7 +706,7 @@ export const deleteSTExpenseSubCategory = async (id: number) => {
     const response = await axios.delete(url);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -717,7 +717,7 @@ export const token = async (value: object) => {
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -727,7 +727,7 @@ export const tokenRefresh = async (value: object) => {
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -737,7 +737,7 @@ export const postUser = async (value: object) => {
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -747,7 +747,7 @@ export const postQuest = async (value: object) => {
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -757,7 +757,7 @@ export const postQuestVersion = async (value: object) => {
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -767,7 +767,7 @@ export const postSTQuest = async (value: object) => {
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -784,7 +784,7 @@ export const postSTExpense = async (value: object, files: any) => {
     res = await axios.post(url, formData);
     return res;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -794,7 +794,7 @@ export const postSTBonusPenalty = async (value: object) => {
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -804,7 +804,7 @@ export const postSTExpenseCategory = async (value: object) => {
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -814,7 +814,7 @@ export const postSTExpenseSubCategory = async (value: object) => {
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };
 
@@ -824,6 +824,6 @@ export const postQCashRegister = async (value: object) => {
     const response = await axios.post(url, value);
     return response;
   } catch (error) {
-    return error.response.status
+    return error.response.status;
   }
 };

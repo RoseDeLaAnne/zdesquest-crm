@@ -2137,7 +2137,21 @@ def Salaries(request):
 
         head_data = []
 
+        dates = []
+        dates_not_formatted = []
+
+        for salary in salaries:
+            date_str = salary.date.strftime("%d.%m.%Y")
+            dates.append(date_str)
+            dates_not_formatted.append(salary.date)
+
+        taxi_expenses = []
+
         if request.user.is_superuser == True:
+            taxi_expenses = STExpense.objects.filter(
+                Q(name="Такси") & Q(date__in=dates_not_formatted)
+            )
+
             salaries = QSalary.objects.select_related("user").order_by("date")
             bonuses_penalties = STBonusPenalty.objects.prefetch_related(
                 "users"
@@ -2176,6 +2190,10 @@ def Salaries(request):
 
                 head_data.append({"title": item_quest, "children": item_children})
         else:
+            taxi_expenses = STExpense.objects.filter(
+                Q(name="Такси") & Q(date__in=dates_not_formatted) & Q(employees=request.user)
+            )
+
             salaries = (
                 QSalary.objects.filter(user=request.user)
                 .select_related("user")
@@ -2219,14 +2237,6 @@ def Salaries(request):
         merged_data = {}
         user_taxi = {}
 
-        dates = []
-        dates_not_formatted = []
-
-        for salary in salaries:
-            date_str = salary.date.strftime("%d.%m.%Y")
-            dates.append(date_str)
-            dates_not_formatted.append(salary.date)
-
         dates = list(dict.fromkeys(dates))
         # print(dates)
 
@@ -2236,9 +2246,9 @@ def Salaries(request):
                 # user_taxi[date][user.id] = False
                 user_taxi[date][user.id] = 0
 
-        taxi_expenses = STExpense.objects.filter(
-            Q(name="Такси") & Q(date__in=dates_not_formatted)
-        )
+        # taxi_expenses = STExpense.objects.filter(
+        #     Q(name="Такси") & Q(date__in=dates_not_formatted)
+        # )
 
         for t_e in taxi_expenses:
             for employee in t_e.employees.all():
@@ -2258,21 +2268,6 @@ def Salaries(request):
                         "value": 0,
                         "tooltip": {},
                     }
-
-            # a1 = STExpense.objects.filter(
-            #     Q(name="Такси") & Q(employees=salary.user) & Q(date=salary.date)
-            # )
-
-            # print(a1)
-
-            # print(a1)
-            # if len(a1) != 0:
-            # if salary.user.id not in user_taxi[date_str]:
-            #     user_taxi[date_str][salary.user.id] = False
-
-            # user_taxi[date_str][salary.user.id] = True
-
-            # print(user_taxi)
 
             if salary.user:
                 if salary.user.id not in merged_data[date_str]:
@@ -2294,8 +2289,7 @@ def Salaries(request):
                             "total_amount": salary.amount,
                         }
 
-            # if salary.user:
-            #     print(salary.user.id)
+        # print(user_taxi)
 
         for date in dates:
             for user in users:
@@ -2308,7 +2302,7 @@ def Salaries(request):
                     if "Проезд" not in merged_data[date][user.id]["tooltip"]:
                         merged_data[date][user.id]["tooltip"]["Проезд"] = {
                             "count": 0,
-                            "total_amount": 0
+                            "total_amount": 0,
                         }
 
                     merged_data[date][user.id]["tooltip"]["Проезд"]["count"] -= int(
