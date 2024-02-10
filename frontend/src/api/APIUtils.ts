@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const url2 = "https://crm.zdesquest.ru";
-// const url3 = url2
-const url3 = "http://127.0.0.1:8000";
+const url3 = url2
+// const url3 = "http://127.0.0.1:8000";
 
 // GET
 export const getQuestProfit = async (id: number) => {
