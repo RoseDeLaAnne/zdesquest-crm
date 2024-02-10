@@ -48,7 +48,7 @@ class Quest(models.Model):
 
     def save(self, *args, **kwargs):
         if self.actor_rate is not None:
-            self.animator_rate = self.actor_rate + 50
+            self.animator_rate = int(self.actor_rate) + 50
         super().save(*args, **kwargs)
 
     def __str__(self):
