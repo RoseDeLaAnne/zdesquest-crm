@@ -941,7 +941,7 @@ def VUser(request, id):
         if "bank" in data:
             user.bank = data["bank"]
         if "quest" in data:
-            quest = Quest.objects.get(id=data["quest"])
+            quest = Quest.objects.get(name=data["quest"])
             user.quest = quest
         if "password" in data:
             user.set_password(data["password"])
@@ -2328,10 +2328,13 @@ def Salaries(request):
 
             if len(bp.users.all()) != 0:
                 for bp_user in bp.users.all():
-                    if (bp_user == request.user):
+                    if bp_user == request.user:
                         if bp.type == "bonus":
                             merged_data[date_str][bp_user.id]["value"] += bp.amount
-                            if item_name in merged_data[date_str][bp_user.id]["tooltip"]:
+                            if (
+                                item_name
+                                in merged_data[date_str][bp_user.id]["tooltip"]
+                            ):
                                 merged_data[date_str][bp_user.id]["tooltip"][item_name][
                                     "count"
                                 ] += 1
@@ -2339,13 +2342,18 @@ def Salaries(request):
                                     "total_amount"
                                 ] += bp.amount
                             else:
-                                merged_data[date_str][bp_user.id]["tooltip"][item_name] = {
+                                merged_data[date_str][bp_user.id]["tooltip"][
+                                    item_name
+                                ] = {
                                     "count": 1,
                                     "total_amount": bp.amount,
                                 }
                         elif bp.type == "penalty":
                             merged_data[date_str][bp_user.id]["value"] -= bp.amount
-                            if item_name in merged_data[date_str][bp_user.id]["tooltip"]:
+                            if (
+                                item_name
+                                in merged_data[date_str][bp_user.id]["tooltip"]
+                            ):
                                 merged_data[date_str][bp_user.id]["tooltip"][item_name][
                                     "count"
                                 ] += 1
@@ -2353,7 +2361,9 @@ def Salaries(request):
                                     "total_amount"
                                 ] -= bp.amount
                             else:
-                                merged_data[date_str][bp_user.id]["tooltip"][item_name] = {
+                                merged_data[date_str][bp_user.id]["tooltip"][
+                                    item_name
+                                ] = {
                                     "count": 1,
                                     "total_amount": -bp.amount,
                                 }
@@ -2939,7 +2949,7 @@ def VSTQuest(request, id):
         # try:
         data = create_non_empty_dict(request.body)
 
-        quest = Quest.objects.get(id=data["quest"])
+        quest = Quest.objects.get(name=data["quest"])
         new_quest = quest
 
         if quest.parent_quest != None:
@@ -2970,7 +2980,7 @@ def VSTQuest(request, id):
             ).time()
             entry_data.update({"time": formatted_time})
         if "quest" in data:
-            quest = Quest.objects.get(id=data["quest"])
+            quest = Quest.objects.get(name=data["quest"])
             if quest.parent_quest != None:
                 quest.address = quest.parent_quest.address
                 quest.administrator_rate = quest.parent_quest.administrator_rate
@@ -2984,7 +2994,11 @@ def VSTQuest(request, id):
         count_easy_work = 1
 
         if "administrator" in data:
-            administrator = User.objects.get(id=data["administrator"])
+            administrator = User.objects.get(
+                Q(first_name=data["administrator"].split()[0].capitalize())
+                & Q(last_name=data["administrator"].split()[1].capitalize())
+            )
+            # administrator = User.objects.get(id=data["administrator"])
             administrator_for_entry = administrator
             entry_data.update({"administrator": administrator})
             count_easy_work += 1
@@ -3070,7 +3084,11 @@ def VSTQuest(request, id):
         # }
 
         if "animator" in data:
-            animator = User.objects.get(id=data["animator"])
+            animator = User.objects.get(
+                Q(first_name=data["animator"].split()[0].capitalize())
+                & Q(last_name=data["animator"].split()[1].capitalize())
+            )
+            # animator = User.objects.get(id=data["animator"])
             new_data1 = {
                 "animator": animator,
             }
@@ -3081,7 +3099,11 @@ def VSTQuest(request, id):
                 "animator": None,
             }
         if "room_employee_name" in data:
-            room_employee_name = User.objects.get(id=data["room_employee_name"])
+            room_employee_name = User.objects.get(
+                Q(first_name=data["room_employee_name"].split()[0].capitalize())
+                & Q(last_name=data["room_employee_name"].split()[1].capitalize())
+            )
+            # room_employee_name = User.objects.get(id=data["room_employee_name"])
             new_data2 = {
                 "room_employee_name": room_employee_name,
             }
@@ -3118,27 +3140,75 @@ def VSTQuest(request, id):
             create_qcash_register_from_stquest(data, entry)
 
         if "actors_half" in data:
-            actors_half = User.objects.filter(id__in=data["actors_half"])
+            # actors_half = User.objects.filter(id__in=data["actors_half"])
+            actor_half_names = data["actors_half"]
+            formatted_actor_half_names = [
+                " ".join(word.capitalize() for word in name.split())
+                for name in actor_half_names
+            ]
+            first_names = [name.split()[0] for name in formatted_actor_half_names]
+            last_names = [name.split()[1] for name in formatted_actor_half_names]
+            actors_half = User.objects.filter(
+                first_name__in=first_names, last_name__in=last_names
+            )
             entry.actors_half.set(actors_half)
         else:
             entry.actors_half.set([])
 
         if len(data["administrators_half"]) != 0:
+            administrator_half_names = data["administrators_half"]
+            formatted_administrator_half_names = [
+                " ".join(word.capitalize() for word in name.split())
+                for name in administrator_half_names
+            ]
+            first_names = [
+                name.split()[0] for name in formatted_administrator_half_names
+            ]
+            last_names = [
+                name.split()[1] for name in formatted_administrator_half_names
+            ]
             administrators_half = User.objects.filter(
-                id__in=data["administrators_half"]
+                first_name__in=first_names, last_name__in=last_names
             )
+            # administrators_half = User.objects.filter(
+            #     id__in=data["administrators_half"]
+            # )
             administrator_for_entry = administrators_half[0]
             entry.administrators_half.set(administrators_half)
 
         if "actors" in data:
-            actors = User.objects.filter(id__in=data["actors"])
+            # actors = User.objects.filter(id__in=data["actors"])
+            actor_names = data["actors"]
+            formatted_actor_names = [
+                " ".join(word.capitalize() for word in name.split())
+                for name in actor_names
+            ]
+            first_names = [name.split()[0] for name in formatted_actor_names]
+            last_names = [name.split()[1] for name in formatted_actor_names]
+            actors = User.objects.filter(
+                first_name__in=first_names, last_name__in=last_names
+            )
             entry.actors.set(actors)
         else:
             entry.actors.set([])
 
         if "employees_first_time" in data:
+            # employees_first_time = User.objects.filter(
+            #     id__in=data["employees_first_time"]
+            # )
+            employee_first_time_names = data["employees_first_time"]
+            formatted_employee_first_time_names = [
+                " ".join(word.capitalize() for word in name.split())
+                for name in employee_first_time_names
+            ]
+            first_names = [
+                name.split()[0] for name in formatted_employee_first_time_names
+            ]
+            last_names = [
+                name.split()[1] for name in formatted_employee_first_time_names
+            ]
             employees_first_time = User.objects.filter(
-                id__in=data["employees_first_time"]
+                first_name__in=first_names, last_name__in=last_names
             )
             entry.employees_first_time.set(employees_first_time)
 
@@ -3420,7 +3490,7 @@ def VSTQuest(request, id):
                 ).save()
 
         if "actors" in data:
-            actors = User.objects.filter(id__in=data["actors"])
+            # actors = User.objects.filter(id__in=data["actors"])
             count_easy_work += actors.count()
 
             if len(quest.special_versions.all()) != 0:
@@ -3783,7 +3853,7 @@ def CreateUser(request):
             entry_data["date_of_birth"] = convert_to_date(data["date_of_birth"])
 
         if "quest" in data:
-            entry_data["quest"] = Quest.objects.get(id=data["quest"])
+            entry_data["quest"] = Quest.objects.get(name=data["quest"])
 
         if "internship_period" in data:
             entry_data["internship_period_start"] = convert_to_date(
@@ -4029,7 +4099,8 @@ def CreateSTQuest(request):
             datetime.combine(datetime.min, formatted_time_without_3_hours)
             + timedelta(hours=3)
         ).time()
-        quest = Quest.objects.get(id=data["quest"])
+        # quest = Quest.objects.get(name=data["quest"])
+        quest = Quest.objects.get(name=data["quest"])
         new_quest = quest
 
         if quest.parent_quest != None:
@@ -4085,9 +4156,12 @@ def CreateSTQuest(request):
 
         if "animator" in data:
             count_easy_work += 1
-            # animator = User.objects.get(Q(first_name=data['animator'].split()[0].capitalize()) & Q(last_name=data['animator'].split()[1].capitalize()))
+            animator = User.objects.get(
+                Q(first_name=data["animator"].split()[0].capitalize())
+                & Q(last_name=data["animator"].split()[1].capitalize())
+            )
 
-            animator = User.objects.get(id=data["animator"])
+            # animator = User.objects.get(id=data["animator"])
             entry_data["animator"] = animator
 
             # entry_data["animator"] = data['animator']
@@ -4097,14 +4171,22 @@ def CreateSTQuest(request):
         administrator_for_entry = None
 
         if "administrator" in data:
-            administrator = User.objects.get(id=data["administrator"])
+            administrator = User.objects.get(
+                Q(first_name=data["administrator"].split()[0].capitalize())
+                & Q(last_name=data["administrator"].split()[1].capitalize())
+            )
+            # administrator = User.objects.get(id=data["administrator"])
             administrator_for_entry = administrator
             entry_data["administrator"] = administrator
 
             count_easy_work += 1
 
         if "room_employee_name" in data:
-            room_employee_name = User.objects.get(id=data["room_employee_name"])
+            room_employee_name = User.objects.get(
+                Q(first_name=data["room_employee_name"].split()[0].capitalize())
+                & Q(last_name=data["room_employee_name"].split()[1].capitalize())
+            )
+            # room_employee_name = User.objects.get(id=data["room_employee_name"])
             entry_data["room_employee_name"] = room_employee_name
         if ("photomagnets_quantity" in data) and (quest.address != "Афанасьева, 13"):
             entry_data["photomagnets_quantity"] = int(data["photomagnets_quantity"])
@@ -4132,23 +4214,71 @@ def CreateSTQuest(request):
             entry.save()
 
             if "actors" in data:
-                actors = User.objects.filter(id__in=data["actors"])
+                actor_names = data["actors"]
+                formatted_actor_names = [
+                    " ".join(word.capitalize() for word in name.split())
+                    for name in actor_names
+                ]
+                first_names = [name.split()[0] for name in formatted_actor_names]
+                last_names = [name.split()[1] for name in formatted_actor_names]
+                actors = User.objects.filter(
+                    first_name__in=first_names, last_name__in=last_names
+                )
+                # actors = User.objects.filter(id__in=data["actors"])
                 entry.actors.set(actors)
             if "actors_half" in data:
-                actors_half = User.objects.filter(id__in=data["actors_half"])
+                actor_half_names = data["actors_half"]
+                formatted_actor_half_names = [
+                    " ".join(word.capitalize() for word in name.split())
+                    for name in actor_half_names
+                ]
+                first_names = [name.split()[0] for name in formatted_actor_half_names]
+                last_names = [name.split()[1] for name in formatted_actor_half_names]
+                actors_half = User.objects.filter(
+                    first_name__in=first_names, last_name__in=last_names
+                )
+                # actors_half = User.objects.filter(id__in=data["actors_half"])
                 entry.actors_half.set(actors_half)
 
             if "administrators_half" in data:
+                administrator_half_names = data["administrators_half"]
+                formatted_administrator_half_names = [
+                    " ".join(word.capitalize() for word in name.split())
+                    for name in administrator_half_names
+                ]
+                first_names = [
+                    name.split()[0] for name in formatted_administrator_half_names
+                ]
+                last_names = [
+                    name.split()[1] for name in formatted_administrator_half_names
+                ]
                 administrators_half = User.objects.filter(
-                    id__in=data["administrators_half"]
+                    first_name__in=first_names, last_name__in=last_names
                 )
+                # administrators_half = User.objects.filter(
+                #     id__in=data["administrators_half"]
+                # )
                 administrator_for_entry = administrators_half[0]
                 entry.administrators_half.set(administrators_half)
 
             if "employees_first_time" in data:
+                employee_first_time_names = data["employees_first_time"]
+                formatted_employee_first_time_names = [
+                    " ".join(word.capitalize() for word in name.split())
+                    for name in employee_first_time_names
+                ]
+                first_names = [
+                    name.split()[0] for name in formatted_employee_first_time_names
+                ]
+                last_names = [
+                    name.split()[1] for name in formatted_employee_first_time_names
+                ]
                 employees_first_time = User.objects.filter(
-                    id__in=data["employees_first_time"]
+                    first_name__in=first_names, last_name__in=last_names
                 )
+                # employees_first_time = User.objects.filter(
+                #     id__in=data["employees_first_time"]
+                # )
                 entry.employees_first_time.set(employees_first_time)
 
             create_travel(entry, quest)
@@ -4724,7 +4854,7 @@ def CreateQCashRegister(request):
             "amount": data["amount"],
             "description": data["description"],
             "operation": data["operation"],
-            "quest": Quest.objects.get(id=data["quest"]),
+            "quest": Quest.objects.get(name=data["quest"]),
         }
 
         entry = QCashRegister(**entry_data)

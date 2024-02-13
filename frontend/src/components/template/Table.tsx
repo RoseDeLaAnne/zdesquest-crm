@@ -3,7 +3,7 @@ import Highlighter from "react-highlight-words";
 
 import { FC, useRef, useState, useEffect } from "react";
 
-import * as XLSX from "xlsx"
+import * as XLSX from "xlsx";
 
 // react-router-dom
 import { Link, useParams, useNavigate } from "react-router-dom";
@@ -25,7 +25,7 @@ import type { ColumnType, ColumnsType } from "antd/es/table";
 import type {
   FilterConfirmProps,
   FilterValue,
-  SorterResult
+  SorterResult,
 } from "antd/es/table/interface";
 // antd | icons
 import { SearchOutlined, LogoutOutlined } from "@ant-design/icons";
@@ -76,7 +76,7 @@ const TableFC: FC = ({
   operationIsEdit,
   operationIsDelete,
   tableIsObj,
-  isExport
+  isExport,
 }) => {
   const { id } = isUseParams ? useParams() : { id: "" };
 
@@ -191,8 +191,7 @@ const TableFC: FC = ({
         breadcrumbItems[breadcrumbItemsLength - 1].title
       } | редактирование`;
     } else {
-      title = `${breadcrumbItems[breadcrumbItemsLength - 1].title
-      }`;
+      title = `${breadcrumbItems[breadcrumbItemsLength - 1].title}`;
       // title = `${breadcrumbItems[breadcrumbItemsLength - 2].title} | ${
       //   breadcrumbItems[breadcrumbItemsLength - 1].title
       // }`;
@@ -200,7 +199,6 @@ const TableFC: FC = ({
   } else if (breadcrumbItemsLength === 1) {
     title = breadcrumbItems[0].title;
   }
-  
 
   const drawerOnClose = () => {
     setDrawerIsOpen(false);
@@ -218,7 +216,7 @@ const TableFC: FC = ({
 
   const handleToggle = async (key: number) => {
     // const res = await toggleQuestVideo(key)
-    const res = await toggleFunction(key)
+    const res = await toggleFunction(key);
     if (res.status === 200) {
       const newData = tableDataSource.filter((item) => item.key !== key);
       setTableDataSource(newData);
@@ -366,35 +364,38 @@ const TableFC: FC = ({
           })),
         };
       }
-      return { ...item, render: (obj) => {
-        if (obj.tooltip !== "") {
-          return (
-            <Tooltip
-              title={
-                <div dangerouslySetInnerHTML={{ __html: obj.tooltip }} />
-              }
-              placement="bottomLeft"
-            >
-              <div>{obj.value}</div>
-            </Tooltip>
-          );
-        } else {
-          return <div>{obj.value}</div>;
-        }
-      }, };
+      return {
+        ...item,
+        render: (obj) => {
+          if (obj.tooltip !== "") {
+            return (
+              <Tooltip
+                title={
+                  <div dangerouslySetInnerHTML={{ __html: obj.tooltip }} />
+                }
+                placement="bottomLeft"
+              >
+                <div>{obj.value}</div>
+              </Tooltip>
+            );
+          } else {
+            return <div>{obj.value}</div>;
+          }
+        },
+      };
     });
 
     // tableCountingFields = tableDataHead.map((column) => column.dataIndex);
 
-    tableCountingFields = tableDataHead.flatMap(item => {
+    tableCountingFields = tableDataHead.flatMap((item) => {
       if (item.dataIndex) {
         return item.dataIndex;
       }
-  
+
       if (item.children) {
-        return item.children.map(child => child.dataIndex);
+        return item.children.map((child) => child.dataIndex);
       }
-  
+
       return [];
     });
 
@@ -588,7 +589,7 @@ const TableFC: FC = ({
     setDrawer2IsOpen(true);
     localStorage.setItem("drawer2IsOpen", "true");
   };
-  if (tableIsOperation == 'toggle') {
+  if (tableIsOperation == "toggle") {
     tableColumns = [
       ...tableColumns,
       {
@@ -628,16 +629,21 @@ const TableFC: FC = ({
               ) : null}
               {operationIsDelete ? (
                 <Popconfirm
-                title="уверены, что хотите удалить?"
-                onConfirm={() => handleDelete(record.key)}
-              >
-                <a>удалить</a>
-              </Popconfirm>
+                  title="уверены, что хотите удалить?"
+                  onConfirm={() => handleDelete(record.key)}
+                >
+                  <a>удалить</a>
+                </Popconfirm>
               ) : null}
             </Space>
           ) : null,
         // width: operationIsAdd && operationIsEdit ? 256 : 192,
-        width: operationIsAdd && !operationIsEdit ? 104 : operationIsEdit && operationIsAdd ? 256 : 192,
+        width:
+          operationIsAdd && !operationIsEdit
+            ? 104
+            : operationIsEdit && operationIsAdd
+            ? 256
+            : 192,
         fixed: "right",
       },
     ];
@@ -665,7 +671,7 @@ const TableFC: FC = ({
 
       if (res === 401) {
         setAccess();
-        localStorageRemoveItem(['refresh', 'access'])
+        localStorageRemoveItem(["refresh", "access"]);
         navigate("/", { replace: true });
       }
     } catch (error) {
@@ -686,8 +692,8 @@ const TableFC: FC = ({
 
   const [messageApi, contextHolder] = message.useMessage();
   const form2OnFinish = async (value) => {
-    console.log('trigerred')
-    
+    console.log("trigerred");
+
     const cleanedData = Object.fromEntries(
       Object.entries(value).filter(([key, val]) => val !== "" && val !== null)
     );
@@ -710,9 +716,11 @@ const TableFC: FC = ({
       });
     }
     if (mergeObj.administrators_half) {
-      mergeObj.administrators_half = mergeObj.administrators_half.map((administrator_half) => {
-        return administrator_half.id;
-      });
+      mergeObj.administrators_half = mergeObj.administrators_half.map(
+        (administrator_half) => {
+          return administrator_half.id;
+        }
+      );
     }
 
     mergeObj.quest = mergeObj.quest.id;
@@ -725,7 +733,7 @@ const TableFC: FC = ({
     mergeObj.time = dayjs(mergeObj.time, "HH:mm:ss")
       .utc()
       .format("YYYY-01-01THH:mm:ss.000[Z]");
-    
+
     cleanedData.quest = res.data.quest.id;
     cleanedData.quest_cost = res.data.quest_cost;
 
@@ -734,8 +742,9 @@ const TableFC: FC = ({
     }
 
     // cleanedData.administrator = res.data.administrator.id;
-    cleanedData.is_video_review =
-      cleanedData.is_video_review ? cleanedData.is_video_review : false;
+    cleanedData.is_video_review = cleanedData.is_video_review
+      ? cleanedData.is_video_review
+      : false;
     cleanedData.video_after =
       (cleanedData.video ? parseInt(cleanedData.video) : 0) +
       parseInt(res.data.video);
@@ -828,11 +837,11 @@ const TableFC: FC = ({
         } else {
           getEntries(null, null);
         }
-        form.resetFields()
+        form.resetFields();
       } else {
         messageApi.open({
           type: "error",
-          content: "запись не создана",
+          content: "запись не создана, т.к. уже существуют в базе данных",
         });
       }
     } catch (error) {
@@ -847,7 +856,7 @@ const TableFC: FC = ({
   const logout = async () => {
     setAccess();
     localStorageRemoveItem(["refresh", "access"]);
-    window.location.href = '/login';
+    window.location.href = "/login";
     // navigate("/", { replace: true });
   };
 
@@ -882,24 +891,24 @@ const TableFC: FC = ({
   // console.log(tableColumns)
 
   const exportHandleOnClick = () => {
-    const fileName = 'ExcelFile1'
+    const fileName = "ExcelFile1";
 
     const data = [
       {
-        "date": '01.01.2000',
-        "value": 341
+        date: "01.01.2000",
+        value: 341,
       },
       {
-        "date": '02.01.2000',
-        "value": 531
+        date: "02.01.2000",
+        value: 531,
       },
-    ]
-      
+    ];
+
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, `${fileName}.xlsx`);
-  }
+  };
 
   useEffect(() => {
     form.setFieldsValue(defaultValuesFormItems);

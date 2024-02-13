@@ -62,13 +62,34 @@ const EditFC: FC = ({
             } else if (key === "time") {
               const time = dayjs(value, timePickerFormat);
               form.setFieldsValue({ [key]: time });
+            } else if (key === "quest") {
+              form.setFieldsValue({
+                [key]:
+                  value !== null
+                    ? value.name.toLowerCase()
+                    : value,
+              });
+            } else if (key === "administrator") {
+              form.setFieldsValue({
+                [key]:
+                  value !== null
+                    ? `${value.first_name.toLowerCase()} ${value.last_name.toLowerCase()}`
+                    : value,
+              });
+            } else if (key === "actors") {
+              form.setFieldsValue({
+                [key]: value.map(
+                  (el) =>
+                    `${el.first_name.toLowerCase()} ${el.last_name.toLowerCase()}`
+                ),
+              });
             } else if (
               key === "user" ||
-              key === "administrator" ||
+              // key === "administrator" ||
               key === "animator" ||
               key === "created_by" ||
               key === "room_employee_name" ||
-              key === "quest" ||
+              // key === "quest" ||
               key === "user" ||
               key === "who_paid" ||
               key === "sub_category" ||
@@ -79,7 +100,7 @@ const EditFC: FC = ({
             } else if (
               key === "administrators_half" ||
               key === "users" ||
-              key === "actors" ||
+              // key === "actors" ||
               key === "actors_half" ||
               key === "special_versions" ||
               key === "versions" ||

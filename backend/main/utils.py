@@ -52,7 +52,8 @@ def create_qincome(data, entry):
         formatted_time = entry.time
 
     if "quest" in data:
-        quest = Quest.objects.get(id=data["quest"])
+        # quest = Quest.objects.get(id=data["quest"])
+        quest = Quest.objects.get(name=data["quest"])
 
         if quest.parent_quest != None:
             if ("photomagnets_quantity") in data:
@@ -488,7 +489,8 @@ def create_qincome(data, entry):
 def create_qcash_register_from_stquest(data, entry):
     formatted_date = convert_to_date(data["date"])
 
-    quest = Quest.objects.get(id=data["quest"])
+    # quest = Quest.objects.get(id=data["quest"])
+    quest = Quest.objects.get(name=data["quest"])
     new_quest = quest
 
     # print(data["cash_payment"])

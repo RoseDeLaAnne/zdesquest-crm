@@ -101,7 +101,7 @@ const App: FC = ({
   drawerTitle,
   formItems,
   handleChange,
-  checkboxOnChange
+  checkboxOnChange,
 }) => {
   const {
     token: { colorBgContainer },
@@ -351,7 +351,9 @@ const App: FC = ({
             key: child.dataIndex,
             render: (text) => (
               <Tooltip
-                title={<div dangerouslySetInnerHTML={{ __html: text.tooltip }} />}
+                title={
+                  <div dangerouslySetInnerHTML={{ __html: text.tooltip }} />
+                }
                 placement="topLeft"
               >
                 <div>{text.value}</div>
@@ -398,7 +400,7 @@ const App: FC = ({
       },
     ];
   }
-  console.log(tableColumns)
+  console.log(tableColumns);
   const handleDelete = async (key: React.Key) => {
     const response = await deleteFunction(key);
     if (response.status === 200) {
@@ -462,7 +464,7 @@ const App: FC = ({
 
   const logout = async () => {
     setAccess();
-    localStorageRemoveItem(['refresh', 'access'])
+    localStorageRemoveItem(["refresh", "access"]);
     navigate("/", { replace: true });
   };
 

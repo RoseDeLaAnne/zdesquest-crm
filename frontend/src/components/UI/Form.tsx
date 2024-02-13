@@ -18,6 +18,8 @@ import {
 // antd | icons
 import { PlusOutlined } from "@ant-design/icons";
 
+import moment from 'moment-timezone';
+
 // constants
 import {
   datePickerFormat,
@@ -28,6 +30,8 @@ import {
 import locale from "antd/es/date-picker/locale/ru_RU";
 
 import "dayjs/locale/ru";
+
+moment.tz.setDefault("Europe/Moscow");
 
 const { RangePicker } = DatePicker;
 
@@ -175,6 +179,7 @@ const FormFC: FC = ({
                       handleOnChange(selectedValues, innerItem.name)
                     }
                     style={{ width: "100%" }}
+                    needConfirm={false}
                   />
                 ) : innerItem.element.name === "TimePicker" ? (
                   <TimePicker
@@ -183,6 +188,7 @@ const FormFC: FC = ({
                     // }}
                     // value={initialValues.time}
                     // defaultValue={innerItem.element.defaultValue}
+                    needConfirm={false}
                     format={timePickerFormat}
                     minuteStep={minuteStep}
                     style={{ width: "100%" }}

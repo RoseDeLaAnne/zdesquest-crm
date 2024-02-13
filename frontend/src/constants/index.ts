@@ -107,8 +107,8 @@ const fetchAllUsers = async () => {
     if (res.status === 200) {
       const formattedOptions = res.data.map((el) => ({
         label: el.first_name.toLowerCase() + " " + el.last_name.toLowerCase(),
-        value: el.id,
-        // value: el.first_name.toLowerCase() + " " + el.last_name.toLowerCase(),
+        // value: el.id,
+        value: el.first_name.toLowerCase() + " " + el.last_name.toLowerCase(),
       }));
       return formattedOptions;
     }
@@ -122,8 +122,8 @@ const fetchUsers = async () => {
     if (res.status === 200) {
       const formattedOptions = res.data.map((el) => ({
         label: el.first_name.toLowerCase() + " " + el.last_name.toLowerCase(),
-        // value: el.first_name.toLowerCase() + " " + el.last_name.toLowerCase(),
-        value: el.id,
+        value: el.first_name.toLowerCase() + " " + el.last_name.toLowerCase(),
+        // value: el.id,
       }));
       return formattedOptions;
     }
@@ -182,7 +182,8 @@ const fetchQuests = async () => {
     if (res.status === 200) {
       const formattedOptions = res.data.map((el) => ({
         label: el.name.toLowerCase(),
-        value: el.id,
+        value: el.name,
+        // value: el.id,
       }));
 
       return formattedOptions;
@@ -197,7 +198,8 @@ const fetchQuestsWithSpecVersions = async () => {
     if (res.status === 200) {
       const formattedOptions = res.data.map((el) => ({
         label: el.name.toLowerCase(),
-        value: el.id,
+        value: el.name,
+        // value: el.id,
       }));
 
       // const newArr = res.data.map((el) => {
@@ -237,7 +239,8 @@ const fetchQuestVersions = async () => {
     if (res.status === 200) {
       const formattedOptions = res.data.map((el) => ({
         label: el.name.toLowerCase(),
-        value: el.id,
+        value: el.name,
+        // value: el.id,
       }));
 
       return formattedOptions;
