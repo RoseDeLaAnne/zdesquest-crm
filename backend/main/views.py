@@ -2215,16 +2215,29 @@ def Salaries(request):
         dates = list(dict.fromkeys(dates))
         dates_not_formatted = list(dict.fromkeys(dates_not_formatted))
 
+        user_taxi = {}
+
+        for date in dates:
+            user_taxi[date] = {}
+            for user in users:
+                user_taxi[date][user.id] = 0
+
         if request.user.is_superuser == True:
             taxi_expenses = STExpense.objects.filter(
                 Q(name="Такси") & Q(date__in=dates_not_formatted)
             )
+            for t_e in taxi_expenses:
+                for employee in t_e.employees.all():
+                    user_taxi[t_e.date.strftime("%d.%m.%Y")][employee.id] += 1
         else:
             taxi_expenses = STExpense.objects.filter(
                 Q(name="Такси")
                 & Q(date__in=dates_not_formatted)
                 & Q(employees=request.user)
             )
+
+            for t_e in taxi_expenses:
+                user_taxi[t_e.date.strftime("%d.%m.%Y")][request.user.id] += 1
 
         index_to_move = next(
             (index for index, d in enumerate(head_data) if d["title"] == "Без квеста"),
@@ -2236,16 +2249,6 @@ def Salaries(request):
             head_data.append(element_to_move)
 
         merged_data = {}
-        user_taxi = {}
-
-        for date in dates:
-            user_taxi[date] = {}
-            for user in users:
-                user_taxi[date][user.id] = 0
-
-        for t_e in taxi_expenses:
-            for employee in t_e.employees.all():
-                user_taxi[t_e.date.strftime("%d.%m.%Y")][employee.id] += 1
 
         for salary in salaries:
             date_str = salary.date.strftime("%d.%m.%Y")
@@ -2325,37 +2328,38 @@ def Salaries(request):
 
             if len(bp.users.all()) != 0:
                 for bp_user in bp.users.all():
-                    if bp.type == "bonus":
-                        merged_data[date_str][bp_user.id]["value"] += bp.amount
-                        if item_name in merged_data[date_str][bp_user.id]["tooltip"]:
-                            merged_data[date_str][bp_user.id]["tooltip"][item_name][
-                                "count"
-                            ] += 1
-                            merged_data[date_str][bp_user.id]["tooltip"][item_name][
-                                "total_amount"
-                            ] += bp.amount
-                        else:
-                            merged_data[date_str][bp_user.id]["tooltip"][item_name] = {
-                                "count": 1,
-                                "total_amount": bp.amount,
-                            }
-                    elif bp.type == "penalty":
-                        merged_data[date_str][bp_user.id]["value"] -= bp.amount
-                        if item_name in merged_data[date_str][bp_user.id]["tooltip"]:
-                            merged_data[date_str][bp_user.id]["tooltip"][item_name][
-                                "count"
-                            ] += 1
-                            merged_data[date_str][bp_user.id]["tooltip"][item_name][
-                                "total_amount"
-                            ] -= bp.amount
-                        else:
-                            merged_data[date_str][bp_user.id]["tooltip"][item_name] = {
-                                "count": 1,
-                                "total_amount": -bp.amount,
-                            }
+                    if (bp_user == request.user):
+                        if bp.type == "bonus":
+                            merged_data[date_str][bp_user.id]["value"] += bp.amount
+                            if item_name in merged_data[date_str][bp_user.id]["tooltip"]:
+                                merged_data[date_str][bp_user.id]["tooltip"][item_name][
+                                    "count"
+                                ] += 1
+                                merged_data[date_str][bp_user.id]["tooltip"][item_name][
+                                    "total_amount"
+                                ] += bp.amount
+                            else:
+                                merged_data[date_str][bp_user.id]["tooltip"][item_name] = {
+                                    "count": 1,
+                                    "total_amount": bp.amount,
+                                }
+                        elif bp.type == "penalty":
+                            merged_data[date_str][bp_user.id]["value"] -= bp.amount
+                            if item_name in merged_data[date_str][bp_user.id]["tooltip"]:
+                                merged_data[date_str][bp_user.id]["tooltip"][item_name][
+                                    "count"
+                                ] += 1
+                                merged_data[date_str][bp_user.id]["tooltip"][item_name][
+                                    "total_amount"
+                                ] -= bp.amount
+                            else:
+                                merged_data[date_str][bp_user.id]["tooltip"][item_name] = {
+                                    "count": 1,
+                                    "total_amount": -bp.amount,
+                                }
 
         body_data = []
-        # print(merged_data)
+
         for date_str, date_data in merged_data.items():
             user_data = {
                 "id": date_data["id"],
