@@ -57,7 +57,9 @@ const EditFC: FC = ({
             const value = cleanedData[key];
 
             if (key === "date" || key === "date_of_birth") {
-              const date = dayjs(value, datePickerFormat);
+              // const date = dayjs(value, datePickerFormat);
+              // form.setFieldsValue({ [key]: date });
+              const date = dayjs(value, datePickerFormat).utcOffset(3 * 60);
               form.setFieldsValue({ [key]: date });
             } else if (key === "time") {
               const time = dayjs(value, timePickerFormat);
@@ -69,14 +71,14 @@ const EditFC: FC = ({
                     ? value.name.toLowerCase()
                     : value,
               });
-            } else if (key === "administrator") {
+            } else if (key === "administrator" || key === "animator" || key === "room_employee_name") {
               form.setFieldsValue({
                 [key]:
                   value !== null
                     ? `${value.first_name.toLowerCase()} ${value.last_name.toLowerCase()}`
                     : value,
               });
-            } else if (key === "actors") {
+            } else if (key === "actors" || key === "actors_half" || key === "employees_first_time" || key === "employees") {
               form.setFieldsValue({
                 [key]: value.map(
                   (el) =>
@@ -86,9 +88,9 @@ const EditFC: FC = ({
             } else if (
               key === "user" ||
               // key === "administrator" ||
-              key === "animator" ||
+              // key === "animator" ||
               key === "created_by" ||
-              key === "room_employee_name" ||
+              // key === "room_employee_name" ||
               // key === "quest" ||
               key === "user" ||
               key === "who_paid" ||
@@ -101,14 +103,14 @@ const EditFC: FC = ({
               key === "administrators_half" ||
               key === "users" ||
               // key === "actors" ||
-              key === "actors_half" ||
+              // key === "actors_half" ||
               key === "special_versions" ||
               key === "versions" ||
               key === "roles" ||
               key === "quests" ||
-              key === "employees_first_time" ||
-              key === "quests_for_videos" ||
-              key === "employees"
+              // key === "employees_first_time" ||
+              key === "quests_for_videos"
+              // key === "employees"
             ) {
               form.setFieldsValue({ [key]: value.map((el) => el.id) });
             } else if (key === "attachment") {
