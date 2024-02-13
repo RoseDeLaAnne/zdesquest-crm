@@ -2131,32 +2131,23 @@ def Salaries(request):
                 {"error": "Invalid date format. Please use DD-MM-YYYY."}, status=400
             )
 
+        users = []
         salaries = []
         bonuses_penalties = []
-        users = []
 
         head_data = []
 
         dates = []
         dates_not_formatted = []
 
-        for salary in salaries:
-            date_str = salary.date.strftime("%d.%m.%Y")
-            dates.append(date_str)
-            dates_not_formatted.append(salary.date)
-
         taxi_expenses = []
 
         if request.user.is_superuser == True:
-            taxi_expenses = STExpense.objects.filter(
-                Q(name="Такси") & Q(date__in=dates_not_formatted)
-            )
-
+            users = User.objects.exclude(email="admin@gmail.com")
             salaries = QSalary.objects.select_related("user").order_by("date")
             bonuses_penalties = STBonusPenalty.objects.prefetch_related(
                 "users"
             ).order_by("date")
-            users = User.objects.exclude(email="admin@gmail.com")
 
             objj = {}
             objj["Без квеста"] = {}
@@ -2190,10 +2181,7 @@ def Salaries(request):
 
                 head_data.append({"title": item_quest, "children": item_children})
         else:
-            taxi_expenses = STExpense.objects.filter(
-                Q(name="Такси") & Q(date__in=dates_not_formatted) & Q(employees=request.user)
-            )
-
+            users = [request.user]
             salaries = (
                 QSalary.objects.filter(user=request.user)
                 .select_related("user")
@@ -2204,7 +2192,6 @@ def Salaries(request):
                 .prefetch_related("users")
                 .order_by("date")
             )
-            users = [request.user]
 
             head_data = [
                 {
@@ -2220,9 +2207,24 @@ def Salaries(request):
         if start_date and end_date:
             salaries = salaries.filter(date__range=(start_date, end_date))
 
-        user_data_map = {user.id: UserSerializer(user).data for user in users}
+        for salary in salaries:
+            date_str = salary.date.strftime("%d.%m.%Y")
+            dates.append(date_str)
+            dates_not_formatted.append(salary.date)
 
-        # quests_data = []
+        dates = list(dict.fromkeys(dates))
+        dates_not_formatted = list(dict.fromkeys(dates_not_formatted))
+
+        if request.user.is_superuser == True:
+            taxi_expenses = STExpense.objects.filter(
+                Q(name="Такси") & Q(date__in=dates_not_formatted)
+            )
+        else:
+            taxi_expenses = STExpense.objects.filter(
+                Q(name="Такси")
+                & Q(date__in=dates_not_formatted)
+                & Q(employees=request.user)
+            )
 
         index_to_move = next(
             (index for index, d in enumerate(head_data) if d["title"] == "Без квеста"),
@@ -2230,25 +2232,16 @@ def Salaries(request):
         )
 
         if index_to_move is not None:
-            # Pop the object and then append it to the end
             element_to_move = head_data.pop(index_to_move)
             head_data.append(element_to_move)
 
         merged_data = {}
         user_taxi = {}
 
-        dates = list(dict.fromkeys(dates))
-        # print(dates)
-
         for date in dates:
             user_taxi[date] = {}
             for user in users:
-                # user_taxi[date][user.id] = False
                 user_taxi[date][user.id] = 0
-
-        # taxi_expenses = STExpense.objects.filter(
-        #     Q(name="Такси") & Q(date__in=dates_not_formatted)
-        # )
 
         for t_e in taxi_expenses:
             for employee in t_e.employees.all():
@@ -3353,7 +3346,11 @@ def VSTQuest(request, id):
                     }
                 ).save()
 
-        if data["is_package"] == True and new_quest.address != "Афанасьева, 13" and new_quest.address != "Проспект Ленина, 59":
+        if (
+            data["is_package"] == True
+            and new_quest.address != "Афанасьева, 13"
+            and new_quest.address != "Проспект Ленина, 59"
+        ):
             QSalary(
                 **{
                     "date": formatted_date,
@@ -4377,7 +4374,10 @@ def CreateSTQuest(request):
                     }
                 ).save()
 
-                if new_quest.address != "Афанасьева, 13" and new_quest.address != 'Проспект Ленина, 59':
+                if (
+                    new_quest.address != "Афанасьева, 13"
+                    and new_quest.address != "Проспект Ленина, 59"
+                ):
                     QSalary(
                         **{
                             "date": formatted_date,
