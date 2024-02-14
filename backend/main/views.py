@@ -980,7 +980,7 @@ def VRole(request, id):
 
     #         formatted_date = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
     #         sub_category = ExpenseSubCategory.objects.get(id=data["subCategory"])
-    #         quests = Quest.objects.filter(id__in=data["quests"])
+    #         quests = Quest.objects.filter(name__in=data["quests"])
 
     #         expense = Expense.objects.get(id=id)
     #         expense.date = formatted_date
@@ -2834,7 +2834,7 @@ def VSTExpense(request, id):
 
         formatted_date = convert_to_date(data["date"])
         sub_category = STExpenseSubCategory.objects.get(id=data["sub_category"])
-        quests = Quest.objects.filter(id__in=data["quests"])
+        quests = Quest.objects.filter(name__in=data["quests"])
 
         expense = STExpense.objects.get(id=id)
         expense.date = formatted_date
@@ -2857,7 +2857,7 @@ def VSTExpense(request, id):
         expense.save()
 
         if "quests" in data:
-            quests = Quest.objects.filter(id__in=data["quests"])
+            quests = Quest.objects.filter(name__in=data["quests"])
             expense.quests.set(quests)
 
             cash_register = QCashRegister.objects.filter(stexpense=expense)
@@ -3748,7 +3748,7 @@ def VSTBonusPenalty(request, id):
             ).date()
             # user = User.objects.get(id=data["user"])
             users = User.objects.filter(id__in=data["users"])
-            quests = Quest.objects.filter(id__in=data["quests"])
+            quests = Quest.objects.filter(name__in=data["quests"])
 
             entry = STBonusPenalty.objects.get(id=id)
             entry.date = formatted_date
@@ -3899,7 +3899,7 @@ def CreateUser(request):
 
 #             # formatted_date = datetime.strptime(data['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
 #             # sub_category = ExpenseSubCategory.objects.get(id=data["subCategory"])
-#             # quests = Quest.objects.filter(id__in=data["quests"])
+#             # quests = Quest.objects.filter(name__in=data["quests"])
 
 #             # expense_data = {
 #             #     "date": formatted_date,
@@ -3998,7 +3998,7 @@ def CreateSTExpense(request):
         sub_category = STExpenseSubCategory.objects.get(id=data["sub_category"])
 
         # stexpenses = STExpense.objects.filter(
-        #     Q(date=formatted_date) & Q(quests=Quest.objects.filter(id__in=data["quests"])) & Q(employees=User.objects.filter(id__in=data["employees"])) & Q(name=data["name"]) & Q(amount=data["amount"])
+        #     Q(date=formatted_date) & Q(quests=Quest.objects.filter(name__in=data["quests"])) & Q(employees=User.objects.filter(id__in=data["employees"])) & Q(name=data["name"]) & Q(amount=data["amount"])
         # )
 
         # if len(stexpenses) != 0:
@@ -4025,7 +4025,7 @@ def CreateSTExpense(request):
         expense.save()
 
         if "quests" in data:
-            quests = Quest.objects.filter(id__in=data["quests"])
+            quests = Quest.objects.filter(name__in=data["quests"])
             expense.quests.set(quests)
 
             for quest in quests:
@@ -4780,7 +4780,7 @@ def CreateSTBonusPenalty(request):
             users = User.objects.filter(id__in=data["users"])
             entry.users.set(users)
         if "quests" in data:
-            quests = Quest.objects.filter(id__in=data["quests"])
+            quests = Quest.objects.filter(name__in=data["quests"])
             entry.quests.set(quests)
 
         return JsonResponse({"message": "Запись успешно создана"}, status=201)
