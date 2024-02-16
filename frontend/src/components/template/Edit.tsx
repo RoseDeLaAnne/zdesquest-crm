@@ -71,7 +71,7 @@ const EditFC: FC = ({
                     ? value.name.toLowerCase()
                     : value,
               });
-            } else if (key === "administrator" || key === "animator" || key === "room_employee_name") {
+            } else if (key === "administrator" || key === "animator" || key === "room_employee_name" || key === "who_paid") {
               form.setFieldsValue({
                 [key]:
                   value !== null
@@ -100,7 +100,7 @@ const EditFC: FC = ({
               // key === "room_employee_name" ||
               // key === "quest" ||
               key === "user" ||
-              key === "who_paid" ||
+              // key === "who_paid" ||
               key === "sub_category" ||
               key === "parent_quest" ||
               key === "category"
