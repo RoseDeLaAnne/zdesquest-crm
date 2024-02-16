@@ -4882,7 +4882,7 @@ def CreateQCashRegister(request):
             "amount": data["amount"],
             "description": data["description"],
             "operation": data["operation"],
-            "quest": Quest.objects.get(name=data["quest"]),
+            "quest": Quest.objects.get(id=data["quest"]),
         }
 
         entry = QCashRegister(**entry_data)
