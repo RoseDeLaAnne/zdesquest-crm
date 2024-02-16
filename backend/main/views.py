@@ -2845,7 +2845,11 @@ def VSTExpense(request, id):
         expense.paid_from = data["paid_from"]
 
         if "who_paid" in data:
-            who_paid = User.objects.get(id=data["who_paid"])
+            # who_paid = User.objects.get(id=data["who_paid"])
+            who_paid = User.objects.get(
+                Q(first_name=data["who_paid"].split()[0].capitalize())
+                & Q(last_name=data["who_paid"].split()[1].capitalize())
+            )
             expense.who_paid = who_paid
 
         if request.FILES:
@@ -2904,7 +2908,7 @@ def VSTExpense(request, id):
                     cash_register = WorkCardExpense(**local_data)
                     cash_register.save()
                 elif data["paid_from"] == "own":
-                    who_paid = User.objects.get(id=data["who_paid"])
+                    # who_paid = User.objects.get(id=data["who_paid"])
                     local_data = {
                         "date": formatted_date,
                         "amount": int(data["amount"]),
@@ -2922,7 +2926,17 @@ def VSTExpense(request, id):
                     cash_register.save()
 
         if "employees" in data:
-            employees = User.objects.filter(id__in=data["employees"])
+            employees_names = data["employees"]
+            formatted_employees_names = [
+                " ".join(word.capitalize() for word in name.split())
+                for name in employees_names
+            ]
+            first_names = [name.split()[0] for name in formatted_employees_names]
+            last_names = [name.split()[1] for name in formatted_employees_names]
+            employees = User.objects.filter(
+                first_name__in=first_names, last_name__in=last_names
+            )
+            # employees = User.objects.filter(id__in=data["employees"])
             expense.employees.set(employees)
 
         return JsonResponse({"message": "Запись успешно обновлена"}, status=200)
@@ -4015,7 +4029,11 @@ def CreateSTExpense(request):
         }
 
         if "who_paid" in data:
-            expense_data.update({"who_paid": User.objects.get(id=data["who_paid"])})
+            who_paid = User.objects.get(
+                Q(first_name=data["who_paid"].split()[0].capitalize())
+                & Q(last_name=data["who_paid"].split()[1].capitalize())
+            )
+            expense_data.update({"who_paid": who_paid})
 
         expense = STExpense(**expense_data)
 
@@ -4055,7 +4073,7 @@ def CreateSTExpense(request):
                     cash_register = WorkCardExpense(**local_data)
                     cash_register.save()
                 elif data["paid_from"] == "own":
-                    who_paid = User.objects.get(id=data["who_paid"])
+                    # who_paid = User.objects.get(id=data["who_paid"])
                     local_data = {
                         "date": formatted_date,
                         "amount": int(data["amount"]),
@@ -4072,7 +4090,17 @@ def CreateSTExpense(request):
                     cash_register.save()
 
         if "employees" in data:
-            employees = User.objects.filter(id__in=data["employees"])
+            # employees = User.objects.filter(id__in=data["employees"])
+            employees_names = data["employees"]
+            formatted_employees_names = [
+                " ".join(word.capitalize() for word in name.split())
+                for name in employees_names
+            ]
+            first_names = [name.split()[0] for name in formatted_employees_names]
+            last_names = [name.split()[1] for name in formatted_employees_names]
+            employees = User.objects.filter(
+                first_name__in=first_names, last_name__in=last_names
+            )
             expense.employees.set(employees)
 
         return JsonResponse({"message": "Запись успешно создана"}, status=201)
