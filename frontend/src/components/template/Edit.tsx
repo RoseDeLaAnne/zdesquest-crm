@@ -85,6 +85,13 @@ const EditFC: FC = ({
                     `${el.first_name.toLowerCase()} ${el.last_name.toLowerCase()}`
                 ),
               });
+            } else if (key === "quests") {
+              form.setFieldsValue({
+                [key]: value.map(
+                  (el) =>
+                    el.name.toLowerCase()
+                ),
+              });
             } else if (
               key === "user" ||
               // key === "administrator" ||
@@ -107,7 +114,7 @@ const EditFC: FC = ({
               key === "special_versions" ||
               key === "versions" ||
               key === "roles" ||
-              key === "quests" ||
+              // key === "quests" ||
               // key === "employees_first_time" ||
               key === "quests_for_videos"
               // key === "employees"
