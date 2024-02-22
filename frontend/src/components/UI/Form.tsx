@@ -18,7 +18,7 @@ import {
 // antd | icons
 import { PlusOutlined } from "@ant-design/icons";
 
-import moment from 'moment-timezone';
+import moment from "moment-timezone";
 
 // constants
 import {

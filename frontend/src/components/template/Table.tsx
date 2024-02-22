@@ -44,6 +44,8 @@ dayjs.extend(utc);
 import { datePickerFormat, timePickerFormat } from "../../constants";
 import { getSTQuest, toggleQuestVideo } from "../../api/APIUtils";
 
+import moment from "moment-timezone";
+
 const TableFC: FC = ({
   defaultOpenKeys,
   defaultSelectedKeys,
@@ -810,10 +812,19 @@ const TableFC: FC = ({
   };
 
   const formOnFinish = async (value) => {
+    // console.log(value.date);
+    // const gmt3Timestamp = moment(value.date)
+    //   .tz("Europe/Moscow")
+    //   .format("YYYY-MM-DD");
+    // console.log(gmt3Timestamp);
     try {
       if (breadcrumbItems[breadcrumbItems.length - 1].title == "касса") {
         value["quest"] = parseInt(id);
       }
+
+      // value["date"] = moment(value.date)
+      // .tz("Europe/Moscow")
+      // .format("YYYY-MM-DD");
 
       let response;
       if (fileList.length > 0) {

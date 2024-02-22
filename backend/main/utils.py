@@ -6,6 +6,8 @@ from django.db.models import Q
 
 from .models import *
 
+import pytz
+
 
 def create_non_empty_dict(request_body):
     try:
@@ -22,10 +24,25 @@ def create_non_empty_dict(request_body):
 
 def convert_to_date(date_string, format="%Y-%m-%dT%H:%M:%S.%fZ"):
     try:
-        dt = datetime.strptime(date_string, format)  # parse the string
+        # dt = datetime.strptime(date_string, format)  # parse the string
         # dt += timedelta(hours=3)  # add 3 hours to the datetime
-        formatted_date = dt.date()  # extract the date
-        return formatted_date
+        # formatted_date = dt.date()  # extract the date
+        datetime_obj = datetime.fromisoformat(date_string[:-1])  # remove 'Z' at the end
+
+        # Convert to UTC timezone
+        utc_tz = pytz.timezone('UTC')
+        datetime_utc = utc_tz.localize(datetime_obj)
+
+        # Convert to 'Europe/Moscow' timezone
+        moscow_tz = pytz.timezone('Europe/Moscow')
+        datetime_moscow = datetime_utc.astimezone(moscow_tz)
+
+        # Format the date suitable for Django
+        date_for_django = datetime_moscow.strftime('%Y-%m-%d')  # Format: YYYY-MM-DD
+
+        print(date_for_django)
+        # return formatted_date
+        return date_for_django
     except ValueError as e:
         print(f"Error: {e}")
         return None
@@ -38,6 +55,7 @@ def date_to_timestamp(date):
 def create_qincome(data, entry):
     if "date" in data:
         formatted_date = convert_to_date(data["date"])
+        # formatted_date = datetime.strptime(data["date"], '%Y-%m-%d').date()
     else:
         formatted_date = entry.date
     if "time" in data:
@@ -101,7 +119,7 @@ def create_qincome(data, entry):
                 + int(data["easy_work"])
                 + int(data["night_game"])
             )
-            
+
             # if local_data['discount_sum']:
             # local_data['game_tooltip'] =
             # local_data['game'] = {
@@ -263,7 +281,7 @@ def create_qincome(data, entry):
                                 "time": formatted_time,
                                 "stquest": entry,
                                 "quest": quest_room404,
-                                "game": new_game_sum
+                                "game": new_game_sum,
                                 # "game": {
                                 # "tooltip": "Пакет",
                                 # "value": new_game_sum,
@@ -287,11 +305,16 @@ def create_qincome(data, entry):
                     local_data.update(new_data)
 
                 if "video" in data:
-                    new_data = {"video": int(data["video"]) / len(quest.special_versions.all())}
+                    new_data = {
+                        "video": int(data["video"]) / len(quest.special_versions.all())
+                    }
                     local_data.update(new_data)
 
                 if "video_after" in data:
-                    new_data = {"video_after": int(data["video_after"]) / len(quest.special_versions.all())}
+                    new_data = {
+                        "video_after": int(data["video_after"])
+                        / len(quest.special_versions.all())
+                    }
                     local_data.update(new_data)
 
                 if "photomagnets_quantity" in data:
@@ -400,8 +423,8 @@ def create_qincome(data, entry):
             #     new_data = {"room": int(data["room_sum"])}
 
             #     local_data.update(new_data)
-                
-            if "room_sum" in data and (data['room_sum'] != 0):
+
+            if "room_sum" in data and (data["room_sum"] != 0):
                 new_room_sum = 0
 
                 if quest.name == "Проклятые" or quest.name == "Логово Ведьмы":
@@ -420,7 +443,7 @@ def create_qincome(data, entry):
                     qincome2 = QIncome(**local_data_for404)
                     qincome2.save()
 
-                    if data['is_package'] == True:
+                    if data["is_package"] == True:
                         new_game_sum = data["quest_cost"] - 250
                         new_sum_for_room404 = 250
                         local_data_for_package = {
@@ -428,7 +451,7 @@ def create_qincome(data, entry):
                             "time": formatted_time,
                             "stquest": entry,
                             "quest": quest_room404,
-                            "game": new_game_sum
+                            "game": new_game_sum,
                             # "game": {
                             # "tooltip": "Пакет",
                             # "value": new_game_sum,
@@ -450,7 +473,6 @@ def create_qincome(data, entry):
                     new_data = {"room": int(data["room_sum"])}
 
                 local_data.update(new_data)
-
 
             if "video" in data:
                 new_data = {"video": int(data["video"])}
@@ -488,6 +510,7 @@ def create_qincome(data, entry):
 
 def create_qcash_register_from_stquest(data, entry):
     formatted_date = convert_to_date(data["date"])
+    # formatted_date = datetime.strptime(data["date"], '%Y-%m-%d').date()
 
     # quest = Quest.objects.get(id=data["quest"])
     quest = Quest.objects.get(name=data["quest"])
@@ -496,7 +519,7 @@ def create_qcash_register_from_stquest(data, entry):
     # print(data["cash_payment"])
     # print(data["cash_delivery"])
 
-    if (quest.parent_quest != None):
+    if quest.parent_quest != None:
         new_quest = Quest.objects.get(id=quest.parent_quest.id)
 
     local_data2 = {
@@ -508,7 +531,7 @@ def create_qcash_register_from_stquest(data, entry):
 
     cash_register = QCashRegister(**local_data2)
 
-    if (int(local_data2["amount"]) != 0):
+    if int(local_data2["amount"]) != 0:
         cash_register.save()
 
 
@@ -552,7 +575,14 @@ def create_travel(entry, quest):
         stquests_by_user = (
             STQuest.objects.filter(date=stquest_date)
             .order_by("date", "time")
-            .filter(Q(administrator=user) | Q(animator=user) | Q(actors__in=[user]) | Q(actors_half__in=[user]) | Q(administrators_half__in=[user]) | Q(employees_first_time__in=[user]))
+            .filter(
+                Q(administrator=user)
+                | Q(animator=user)
+                | Q(actors__in=[user])
+                | Q(actors_half__in=[user])
+                | Q(administrators_half__in=[user])
+                | Q(employees_first_time__in=[user])
+            )
             # .filter(Q(administrator=user) | Q(animator=user) | Q(actors__in=[user]) | Q(employees_first_time__in=[user]))
         )
 
@@ -568,7 +598,7 @@ def create_travel(entry, quest):
             new_questlen = new_questlen.special_versions.all()[0]
             # print(new_quest0.special_versions.all()[0])
         #     for special_version in new_quest0.special_versions.all():
-        #         if len(stquests_by_user) == 1:           
+        #         if len(stquests_by_user) == 1:
         #             travel_data = {
         #                 "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
         #                 "amount": 25 / 2,
@@ -607,7 +637,7 @@ def create_travel(entry, quest):
         #         prev_stquest_by_user = None
         #         for index, stquest_by_user in enumerate(stquests_by_user):
         #             if index == 0:
-        #                 prev_stquest_by_user = stquest_by_user                        
+        #                 prev_stquest_by_user = stquest_by_user
         #             if prev_stquest_by_user != stquest_by_user:
         #                 new_prev_entry_time = (
         #                     datetime.combine(
@@ -662,7 +692,7 @@ def create_travel(entry, quest):
         if new_questlen.parent_quest != None:
             new_questlen = new_questlen.parent_quest
 
-        if len(stquests_by_user) == 1:           
+        if len(stquests_by_user) == 1:
             travel_data = {
                 "date": stquests_by_user[0].date.strftime("%Y-%m-%d"),
                 "amount": 25,
@@ -702,26 +732,34 @@ def create_travel(entry, quest):
         for index, stquest_by_user in enumerate(stquests_by_user):
             if index == 0:
                 prev_stquest_by_user = stquest_by_user
-                
+
             new_quest = stquest_by_user.quest
-            if (stquest_by_user.quest.parent_quest != None):
+            if stquest_by_user.quest.parent_quest != None:
                 new_quest = stquest_by_user.quest.parent_quest
             prev_new_quest = prev_stquest_by_user.quest
-            if (prev_stquest_by_user.quest.parent_quest != None):
+            if prev_stquest_by_user.quest.parent_quest != None:
                 prev_new_quest = prev_stquest_by_user.quest.parent_quest
 
             # print(new_quest)
             # print(prev_new_quest)
-                
+
             if prev_stquest_by_user != stquest_by_user:
-                if (stquest_by_user.quest.parent_quest != None):
-                    stquest_by_user.quest.address = stquest_by_user.quest.parent_quest.address
-                    stquest_by_user.quest.duration_in_minute = stquest_by_user.quest.parent_quest.duration_in_minute
+                if stquest_by_user.quest.parent_quest != None:
+                    stquest_by_user.quest.address = (
+                        stquest_by_user.quest.parent_quest.address
+                    )
+                    stquest_by_user.quest.duration_in_minute = (
+                        stquest_by_user.quest.parent_quest.duration_in_minute
+                    )
                     stquest_by_user.quest = stquest_by_user.quest.parent_quest
 
-                if (prev_stquest_by_user.quest.parent_quest != None):
-                    prev_stquest_by_user.quest.address = prev_stquest_by_user.quest.parent_quest.address
-                    prev_stquest_by_user.quest.duration_in_minute = prev_stquest_by_user.quest.parent_quest.duration_in_minute
+                if prev_stquest_by_user.quest.parent_quest != None:
+                    prev_stquest_by_user.quest.address = (
+                        prev_stquest_by_user.quest.parent_quest.address
+                    )
+                    prev_stquest_by_user.quest.duration_in_minute = (
+                        prev_stquest_by_user.quest.parent_quest.duration_in_minute
+                    )
                     prev_stquest_by_user.quest = prev_stquest_by_user.quest.parent_quest
 
                 new_prev_entry_time = (

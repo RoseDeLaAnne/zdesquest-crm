@@ -4008,6 +4008,7 @@ def CreateSTExpense(request):
         data = json.loads(request.data["json"])
 
         formatted_date = convert_to_date(data["date"])
+        # formatted_date = datetime.strptime(data["date"], '%Y-%m-%d').date()
         sub_category = STExpenseSubCategory.objects.get(id=data["sub_category"])
 
         # stexpenses = STExpense.objects.filter(
@@ -4118,7 +4119,12 @@ def CreateSTQuest(request):
         # try:
         data = create_non_empty_dict(request.body)
 
+        print(data)
+
         formatted_date = convert_to_date(data["date"])
+
+        print(formatted_date)
+        # formatted_date = datetime.strptime(data["date"], '%Y-%m-%d').date()
         formatted_time_without_3_hours = datetime.fromisoformat(
             data["time"].replace("Z", "")
         ).time()
