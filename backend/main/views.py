@@ -3691,7 +3691,6 @@ def VSTQuest(request, id):
                     }
                 ).save()
 
-        # if "administrator" in data:
         if data["easy_work"] != 0:
             QSalary(
                 **{
@@ -4606,15 +4605,6 @@ def CreateSTQuest(request):
                             "sub_category": "actor",
                         }
                         QSalary(**easy_work_salary_data).save()
-                        # STExpense(**{
-                        #     "date": formatted_date,
-                        #     "amount": int(data["easy_work"]) / count_easy_work,
-                        #     "name": "Простой",
-                        #     "user": actor,
-                        #     "stquest": entry,
-                        #     "quest": quest,
-                        #     "sub_category": STExpenseSubCategory.objects.get(latin_name='salary')
-                        # }).quests.add(quest).save()
 
                     game_salary_data = {
                         "date": formatted_date,
@@ -4705,68 +4695,54 @@ def CreateSTQuest(request):
             if "actors_half" in data:
                 count_easy_work += actors.count()
 
-                for actor in actors_half:
+                for actor_half in actors_half:
                     if data["night_game"] != 0:
                         night_game_salary_data = {
                             "date": formatted_date,
                             "amount": 100,
                             "name": "Ночная игра",
-                            "user": actor,
+                            "user": actor_half,
                             "stquest": entry,
                             "quest": new_quest,
                             "sub_category": "actor",
                         }
                         QSalary(**night_game_salary_data).save()
-                        # STExpense(**{
-                        #     "date": formatted_date,
-                        #     "amount": 100,
-                        #     "name": "Ночная игра",
-                        #     "user": actor,
-                        #     "stquest": entry,
-                        #     "quest": quest,
-                        #     "sub_category": STExpenseSubCategory.objects.get(latin_name='salary')
-                        # }).quests.add(quest).save()
 
                     if data["easy_work"] != 0:
                         easy_work_salary_data = {
                             "date": formatted_date,
                             "amount": int(data["easy_work"]) / count_easy_work,
                             "name": "Простой",
-                            "user": actor,
+                            "user": actor_half,
                             "stquest": entry,
                             "quest": new_quest,
                             "sub_category": "actor",
                         }
                         QSalary(**easy_work_salary_data).save()
-                        # STExpense(**{
-                        #     "date": formatted_date,
-                        #     "amount": int(data["easy_work"]) / count_easy_work,
-                        #     "name": "Простой",
-                        #     "user": actor,
-                        #     "stquest": entry,
-                        #     "quest": quest,
-                        #     "sub_category": STExpenseSubCategory.objects.get(latin_name='salary')
-                        # }).quests.add(quest).save()
 
                     game_salary_data = {
                         "date": formatted_date,
                         "amount": quest.actor_rate / 2,
                         "name": "Игра",
-                        "user": actor,
+                        "user": actor_half,
                         "stquest": entry,
                         "quest": new_quest,
                         "sub_category": "actor",
                     }
                     QSalary(**game_salary_data).save()
-                    # STExpense(**{
-                    #     "date": formatted_date,
-                    #     "amount": quest.actor_rate / 2,
-                    #     "name": "Игра",
-                    #     "user": actor,
-                    #     "stquest": entry,
-                    #     "quest": quest,
-                    #     "sub_category": STExpenseSubCategory.objects.get(latin_name='salary')
-                    # }).quests.add(quest).save()
+
+            if data["easy_work"] != 0:
+                QSalary(
+                    **{
+                        "date": formatted_date,
+                        "amount": int(data["easy_work"]) / count_easy_work,
+                        "name": "Простой",
+                        "user": administrator_for_entry,
+                        "stquest": entry,
+                        "quest": new_quest,
+                        "sub_category": "actor",
+                    }
+                ).save()
 
             return JsonResponse({"message": "Запись успешно создана"}, status=201)
         else:
