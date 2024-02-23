@@ -3477,7 +3477,7 @@ def VSTQuest(request, id):
 
         if data["night_game"] != 0:
             if "administrator" in data:
-                administrator = User.objects.get(id=data["administrator"])
+                # administrator = User.objects.get(id=data["administrator"])
                 QSalary(
                     **{
                         "date": formatted_date,
