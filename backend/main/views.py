@@ -3360,13 +3360,13 @@ def VSTQuest(request, id):
             ).save()
 
         if "animator" in data:
-            animator_local = User.objects.get(id=data["animator"])
+            # animator_local = User.objects.get(id=data["animator"])
             QSalary(
                 **{
                     "date": formatted_date,
                     "amount": quest.animator_rate,
                     "name": "Игра",
-                    "user": animator_local,
+                    "user": animator,
                     "stquest": entry,
                     "quest": new_quest,
                     "sub_category": "actor",
@@ -3490,7 +3490,7 @@ def VSTQuest(request, id):
                     }
                 ).save()
             if "animator" in data:
-                animator = User.objects.get(id=data["animator"])
+                # animator = User.objects.get(id=data["animator"])
                 QSalary(
                     **{
                         "date": formatted_date,
@@ -4119,11 +4119,11 @@ def CreateSTQuest(request):
         # try:
         data = create_non_empty_dict(request.body)
 
-        print(data)
+        # print(data)
 
         formatted_date = convert_to_date(data["date"])
 
-        print(formatted_date)
+        # print(formatted_date)
         # formatted_date = datetime.strptime(data["date"], '%Y-%m-%d').date()
         formatted_time_without_3_hours = datetime.fromisoformat(
             data["time"].replace("Z", "")
@@ -4441,13 +4441,13 @@ def CreateSTQuest(request):
                 ).save()
 
             if "animator" in data:
-                animator_local = User.objects.get(id=data["animator"])
+                # animator_local = User.objects.get(id=data["animator"])
                 QSalary(
                     **{
                         "date": formatted_date,
                         "amount": quest.animator_rate,
                         "name": "Игра",
-                        "user": animator_local,
+                        "user": animator,
                         "stquest": entry,
                         "quest": new_quest,
                         "sub_category": "actor",
@@ -4468,7 +4468,7 @@ def CreateSTQuest(request):
                                     / len(quest.special_versions.all())
                                     / 2,
                                     "name": f"Игра ({quest.name})",
-                                    "user": administrators_half,
+                                    "user": administrator_half,
                                     "stquest": entry,
                                     "quest": special_version,
                                     "sub_category": "administrator",
@@ -4570,7 +4570,7 @@ def CreateSTQuest(request):
                     }
                 ).save()
                 if "animator" in data:
-                    animator = User.objects.get(id=data["animator"])
+                    # animator = User.objects.get(id=data["animator"])
                     QSalary(
                         **{
                             "date": formatted_date,

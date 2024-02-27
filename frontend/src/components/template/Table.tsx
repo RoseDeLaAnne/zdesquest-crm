@@ -709,25 +709,47 @@ const TableFC: FC = ({
     let mergeObj = Object.assign({}, res.data, value);
 
     if (mergeObj.room_employee_name) {
-      mergeObj.room_employee_name = mergeObj.room_employee_name.id;
+      // mergeObj.room_employee_name = mergeObj.room_employee_name.id;
+      mergeObj.room_employee_name =
+        mergeObj.room_employee_name.first_name.toLowerCase() +
+        " " +
+        mergeObj.room_employee_name.last_name.toLowerCase();
     }
     if (mergeObj.administrator) {
-      mergeObj.administrator = mergeObj.administrator.id;
+      // mergeObj.administrator = mergeObj.administrator.id;
+      mergeObj.administrator =
+        mergeObj.administrator.first_name.toLowerCase() +
+        " " +
+        mergeObj.administrator.last_name.toLowerCase();
+    }
+    if (mergeObj.animator) {
+      mergeObj.animator =
+        mergeObj.animator.first_name.toLowerCase() +
+        " " +
+        mergeObj.animator.last_name.toLowerCase();
     }
     if (mergeObj.actors) {
       mergeObj.actors = mergeObj.actors.map((actor) => {
-        return actor.id;
+        // return actor.id;
+        return (
+          actor.first_name.toLowerCase() + " " + actor.last_name.toLowerCase()
+        );
       });
     }
     if (mergeObj.administrators_half) {
       mergeObj.administrators_half = mergeObj.administrators_half.map(
         (administrator_half) => {
-          return administrator_half.id;
+          // return administrator_half.id;
+          return (
+            administrator_half.first_name.toLowerCase() +
+            " " +
+            administrator_half.last_name.toLowerCase()
+          );
         }
       );
     }
 
-    mergeObj.quest = mergeObj.quest.id;
+    mergeObj.quest = mergeObj.quest.name;
     // mergeObj.room_employee_name = mergeObj.room_employee_name.id;
     // mergeObj.administrator = mergeObj.administrator.id;
     mergeObj.created_by = mergeObj.created_by.id;
@@ -738,7 +760,7 @@ const TableFC: FC = ({
       .utc()
       .format("YYYY-01-01THH:mm:ss.000[Z]");
 
-    cleanedData.quest = res.data.quest.id;
+    cleanedData.quest = res.data.quest.name;
     cleanedData.quest_cost = res.data.quest_cost;
 
     if (res.data.administrator) {

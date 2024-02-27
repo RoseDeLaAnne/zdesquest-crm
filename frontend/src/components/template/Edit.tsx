@@ -78,7 +78,7 @@ const EditFC: FC = ({
                     ? `${value.first_name.toLowerCase()} ${value.last_name.toLowerCase()}`
                     : value,
               });
-            } else if (key === "actors" || key === "actors_half" || key === "employees_first_time" || key === "employees") {
+            } else if (key === "actors" || key === "actors_half" || key === "employees_first_time" || key === "employees" || key === "administrators_half") {
               form.setFieldsValue({
                 [key]: value.map(
                   (el) =>
@@ -107,7 +107,7 @@ const EditFC: FC = ({
             ) {
               form.setFieldsValue({ [key]: value !== null ? value.id : value });
             } else if (
-              key === "administrators_half" ||
+              // key === "administrators_half" ||
               key === "users" ||
               // key === "actors" ||
               // key === "actors_half" ||
