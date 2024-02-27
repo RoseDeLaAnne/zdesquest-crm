@@ -3393,7 +3393,7 @@ def VSTQuest(request, id):
                                 "sub_category": "administrator",
                             }
                         ).save()
-                if "administrators" in data:
+                if "administrator" in data:
                     QSalary(
                         **{
                             "date": formatted_date,
@@ -3408,6 +3408,7 @@ def VSTQuest(request, id):
                     ).save()
         else:
             if "administrators_half" in data and len(data["administrators_half"]) != 0:
+                # print('asdmi213234')
                 for administrator_half in administrators_half:
                     QSalary(
                         **{
@@ -3421,7 +3422,6 @@ def VSTQuest(request, id):
                         }
                     ).save()
             if "administrator" in data:
-                # print(administrator_rate)
                 QSalary(
                     **{
                         "date": formatted_date,
@@ -4474,7 +4474,7 @@ def CreateSTQuest(request):
                                     "sub_category": "administrator",
                                 }
                             ).save()
-                    if "administrators" in data:
+                    if "administrator" in data:
                         QSalary(
                             **{
                                 "date": formatted_date,
@@ -4505,6 +4505,7 @@ def CreateSTQuest(request):
                             }
                         ).save()
                 if "administrator" in data:
+                    print("adminsda232")
                     QSalary(
                         **{
                             "date": formatted_date,
