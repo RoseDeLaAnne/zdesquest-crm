@@ -3760,7 +3760,16 @@ def VSTBonusPenalty(request, id):
                 data["date"], "%Y-%m-%dT%H:%M:%S.%fZ"
             ).date()
             # user = User.objects.get(id=data["user"])
-            users = User.objects.filter(id__in=data["users"])
+            users_names = data["users"]
+            formatted_users_names = [
+                " ".join(word.capitalize() for word in name.split())
+                for name in users_names
+            ]
+            first_names = [name.split()[0] for name in formatted_users_names]
+            last_names = [name.split()[1] for name in formatted_users_names]
+            users = User.objects.filter(
+                first_name__in=first_names, last_name__in=last_names
+            )
             quests = Quest.objects.filter(name__in=data["quests"])
 
             entry = STBonusPenalty.objects.get(id=id)
@@ -4788,7 +4797,16 @@ def CreateSTBonusPenalty(request):
         entry.save()
 
         if "users" in data:
-            users = User.objects.filter(id__in=data["users"])
+            users_names = data["users"]
+            formatted_users_names = [
+                " ".join(word.capitalize() for word in name.split())
+                for name in users_names
+            ]
+            first_names = [name.split()[0] for name in formatted_users_names]
+            last_names = [name.split()[1] for name in formatted_users_names]
+            users = User.objects.filter(
+                first_name__in=first_names, last_name__in=last_names
+            )
             entry.users.set(users)
         if "quests" in data:
             quests = Quest.objects.filter(name__in=data["quests"])
