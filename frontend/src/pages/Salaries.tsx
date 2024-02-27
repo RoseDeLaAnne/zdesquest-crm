@@ -7,7 +7,11 @@ import { DollarOutlined } from "@ant-design/icons";
 import TemplateTable from "../components/template/Table";
 
 // api
-import { getCurrentSalaries, getCurrentUser, getSalaries } from "../api/APIUtils";
+import {
+  getCurrentSalaries,
+  getCurrentUser,
+  getSalaries,
+} from "../api/APIUtils";
 
 const SalariesFC: FC = () => {
   const initialBreadcrumbItems = [
@@ -16,7 +20,7 @@ const SalariesFC: FC = () => {
       title: "зарплаты",
       to: "/salaries",
     },
-  ];  
+  ];
 
   const [user, setUser] = useState([]);
   const fetchUser = async () => {
@@ -40,7 +44,7 @@ const SalariesFC: FC = () => {
       tableDateColumn={"date"}
       // getFunction={user.is_superuser ? getSalaries : getCurrentSalaries}
       getFunction={getSalaries}
-      tableScroll={{ x: 1000 }}
+      tableScroll={{ x: 2000, y: 600 }}
       tableIsObj={true}
     />
   );
