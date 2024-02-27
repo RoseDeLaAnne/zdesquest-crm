@@ -44,7 +44,7 @@ const SalariesFC: FC = () => {
       tableDateColumn={"date"}
       // getFunction={user.is_superuser ? getSalaries : getCurrentSalaries}
       getFunction={getSalaries}
-      tableScroll={{ x: 2000, y: 600 }}
+      tableScroll={{ x: 2500, y: 600 }}
       tableIsObj={true}
     />
   );
