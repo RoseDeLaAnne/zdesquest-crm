@@ -543,7 +543,8 @@ const TableFC: FC = ({
         if (key === "date" || key === "date_of_birth") {
           // const date = dayjs(value, datePickerFormat);
           // form2.setFieldsValue({ [key]: date });
-          const date = dayjs(value, datePickerFormat).utcOffset(3 * 60); // Add 3 hours for GMT+3
+          // const date = dayjs(value, datePickerFormat).utcOffset(3 * 60); // Add 3 hours for GMT+3
+          const date = dayjs(value, datePickerFormat) // Add 3 hours for GMT+3
           form2.setFieldsValue({ [key]: date });
         } else if (key === "time") {
           const time = dayjs(value, timePickerFormat);

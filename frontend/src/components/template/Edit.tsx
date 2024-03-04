@@ -59,26 +59,35 @@ const EditFC: FC = ({
             if (key === "date" || key === "date_of_birth") {
               // const date = dayjs(value, datePickerFormat);
               // form.setFieldsValue({ [key]: date });
-              const date = dayjs(value, datePickerFormat).utcOffset(3 * 60);
+              // const date = dayjs(value, datePickerFormat).utcOffset(3 * 60);
+              const date = dayjs(value, datePickerFormat);
               form.setFieldsValue({ [key]: date });
             } else if (key === "time") {
               const time = dayjs(value, timePickerFormat);
               form.setFieldsValue({ [key]: time });
             } else if (key === "quest") {
               form.setFieldsValue({
-                [key]:
-                  value !== null
-                    ? value.name.toLowerCase()
-                    : value,
+                [key]: value !== null ? value.name : value,
               });
-            } else if (key === "administrator" || key === "animator" || key === "room_employee_name" || key === "who_paid") {
+            } else if (
+              key === "administrator" ||
+              key === "animator" ||
+              key === "room_employee_name" ||
+              key === "who_paid"
+            ) {
               form.setFieldsValue({
                 [key]:
                   value !== null
                     ? `${value.first_name.toLowerCase()} ${value.last_name.toLowerCase()}`
                     : value,
               });
-            } else if (key === "actors" || key === "actors_half" || key === "employees_first_time" || key === "employees" || key === "administrators_half") {
+            } else if (
+              key === "actors" ||
+              key === "actors_half" ||
+              key === "employees_first_time" ||
+              key === "employees" ||
+              key === "administrators_half"
+            ) {
               form.setFieldsValue({
                 [key]: value.map(
                   (el) =>
@@ -87,10 +96,7 @@ const EditFC: FC = ({
               });
             } else if (key === "quests") {
               form.setFieldsValue({
-                [key]: value.map(
-                  (el) =>
-                    el.name.toLowerCase()
-                ),
+                [key]: value.map((el) => el.name),
               });
             } else if (
               key === "user" ||

@@ -181,7 +181,7 @@ const fetchQuests = async () => {
     const res = await getQuests();
     if (res.status === 200) {
       const formattedOptions = res.data.map((el) => ({
-        label: el.name.toLowerCase(),
+        label: el.name,
         value: el.name,
         // value: el.id,
       }));
@@ -197,7 +197,7 @@ const fetchQuestsWithSpecVersions = async () => {
     const res = await getQuestsWithSpecVersions();
     if (res.status === 200) {
       const formattedOptions = res.data.map((el) => ({
-        label: el.name.toLowerCase(),
+        label: el.name,
         value: el.name,
         // value: el.id,
       }));
@@ -238,7 +238,7 @@ const fetchQuestVersions = async () => {
     const res = await getQuestVersions();
     if (res.status === 200) {
       const formattedOptions = res.data.map((el) => ({
-        label: el.name.toLowerCase(),
+        label: el.name,
         value: el.name,
         // value: el.id,
       }));

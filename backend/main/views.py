@@ -2832,7 +2832,10 @@ def VSTExpense(request, id):
 
         data = json.loads(request.data["json"])
 
-        formatted_date = convert_to_date(data["date"])
+        # formatted_date = convert_to_date(data["date"])
+        formatted_date = datetime.strptime(
+                data["date"], "%Y-%m-%dT%H:%M:%S.%fZ"
+            ).date()
         sub_category = STExpenseSubCategory.objects.get(id=data["sub_category"])
         quests = Quest.objects.filter(name__in=data["quests"])
 
@@ -3154,6 +3157,7 @@ def VSTQuest(request, id):
             create_qcash_register_from_stquest(data, entry)
 
         if "actors_half" in data:
+            # print("hello")
             # actors_half = User.objects.filter(id__in=data["actors_half"])
             actor_half_names = data["actors_half"]
             formatted_actor_half_names = [
@@ -3589,7 +3593,7 @@ def VSTQuest(request, id):
                     ).save()
 
         if "actors_half" in data:
-            actors_half = User.objects.filter(id__in=data["actors_half"])
+            # actors_half = User.objects.filter(id__in=data["actors_half"])
             for actor_half in actors_half:
                 if data["night_game"] != 0:
                     QSalary(
