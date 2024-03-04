@@ -532,7 +532,7 @@ const STQuestsFC: FC = () => {
       addEntryTitle={"новая запись"}
       isCancel={false}
       isCreate={false}
-      tableScroll={{ x: 6000 }}
+      tableScroll={{ x: 6000, y: 600 }}
       tableDateColumn={"date_time"}
       initialPackedTableColumns={initialPackedTableColumns}
       tableIsOperation={true}
