@@ -82,7 +82,7 @@ const TableFC: FC = ({
   isPullOfDates,
   pullOfDatesDefaultValue,
   pullOfDatesOptions,
-  pullOfDatesWhenLoading
+  pullOfDatesWhenLoading,
 }) => {
   const { id } = isUseParams ? useParams() : { id: "" };
 
@@ -233,7 +233,7 @@ const TableFC: FC = ({
           dates[1].format("DD-MM-YYYY")
         );
       } else {
-        getEntries(pullOfDatesWhenLoading[0], pullOfDatesWhenLoading[1]);
+        getEntries(pullOfDatesWhenLoading && pullOfDatesWhenLoading[0], pullOfDatesWhenLoading && pullOfDatesWhenLoading[1]);
       }
     }
   };
@@ -250,7 +250,7 @@ const TableFC: FC = ({
           dates[1].format("DD-MM-YYYY")
         );
       } else {
-        getEntries(pullOfDatesWhenLoading[0], pullOfDatesWhenLoading[1]);
+        getEntries(pullOfDatesWhenLoading && pullOfDatesWhenLoading[0], pullOfDatesWhenLoading && pullOfDatesWhenLoading[1]);
       }
     }
   };
@@ -703,9 +703,9 @@ const TableFC: FC = ({
     const [day_1, month_1, year_1] = local_dates[0].split(".").map(Number);
     const [day_2, month_2, year_2] = local_dates[1].split(".").map(Number);
 
-    const str_dates = local_dates.map(date => date.replace(/\./g, '-'));
+    const str_dates = local_dates.map((date) => date.replace(/\./g, "-"));
 
-    getEntries(str_dates[0], str_dates[1])
+    getEntries(str_dates[0], str_dates[1]);
   };
 
   // const tableIsObj = false;
@@ -839,7 +839,10 @@ const TableFC: FC = ({
           dates[1].format("DD-MM-YYYY")
         );
       } else {
-        getEntries(pullOfDatesWhenLoading[0], pullOfDatesWhenLoading[1]);
+        getEntries(
+          pullOfDatesWhenLoading && pullOfDatesWhenLoading[0],
+          pullOfDatesWhenLoading && pullOfDatesWhenLoading[1]
+        );
       }
     } else {
       messageApi.open({
@@ -886,7 +889,10 @@ const TableFC: FC = ({
             dates[1].format("DD-MM-YYYY")
           );
         } else {
-          getEntries(pullOfDatesWhenLoading[0], pullOfDatesWhenLoading[1]);
+          getEntries(
+            pullOfDatesWhenLoading && pullOfDatesWhenLoading[0],
+            pullOfDatesWhenLoading && pullOfDatesWhenLoading[1]
+          );
         }
         form.resetFields();
       } else {
@@ -968,9 +974,15 @@ const TableFC: FC = ({
   useEffect(() => {
     if (breadcrumbItems[breadcrumbItems.length - 1].title === "касса") {
       // getEntries(dayjs().format("DD-MM-YYYY"), dayjs().format("DD-MM-YYYY"));
-      getEntries(pullOfDatesWhenLoading[0], pullOfDatesWhenLoading[1]);
+      getEntries(
+        pullOfDatesWhenLoading && pullOfDatesWhenLoading[0],
+        pullOfDatesWhenLoading && pullOfDatesWhenLoading[1]
+      );
     } else {
-      getEntries(pullOfDatesWhenLoading[0], pullOfDatesWhenLoading[1]);
+      getEntries(
+        pullOfDatesWhenLoading && pullOfDatesWhenLoading[0],
+        pullOfDatesWhenLoading && pullOfDatesWhenLoading[1]
+      );
     }
 
     const breadcrumbItemsLength = breadcrumbItems.length;
