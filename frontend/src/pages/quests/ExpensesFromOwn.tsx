@@ -26,7 +26,7 @@ import {
   toggleExpensesFromOwn,
   toggleExpensesFromTheir,
 } from "../../api/APIUtils";
-import { pullOfDatesDefaultValue, pullOfDatesOptions } from "../../constants";
+import { pullOfDatesDefaultGeneral, pullOfDatesDefaultValue, pullOfDatesOptions, pullOfDatesOptionsGeneral } from "../../constants";
 
 const QExpensesFromOwnFC: FC = () => {
   const { id } = useParams();
@@ -232,8 +232,8 @@ const QExpensesFromOwnFC: FC = () => {
       isUseParams={true}
       tableIsOperation={"toggle"}
       isPullOfDates={true}
-      pullOfDatesDefaultValue={pullOfDatesDefaultValue}
-      pullOfDatesOptions={pullOfDatesOptions}
+      pullOfDatesDefaultValue={pullOfDatesDefaultGeneral}
+      pullOfDatesOptions={pullOfDatesOptionsGeneral}
     />
   );
 };

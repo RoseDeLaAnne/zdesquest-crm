@@ -27,7 +27,7 @@ import {
 } from "../../api/APIUtils";
 
 // constants
-import { getSTExpensesFormItems, pullOfDatesDefaultValue, pullOfDatesOptions } from "../../constants";
+import { getSTExpensesFormItems, pullOfDatesDefaultGeneral, pullOfDatesDefaultValue, pullOfDatesOptions, pullOfDatesOptionsGeneral } from "../../constants";
 
 // const backendUrl = 'http://localhost:8000/'
 const backendUrl = 'http://crm.zdesquest.ru/'
@@ -249,8 +249,8 @@ const STExpensesFC: FC = () => {
       formHandleOnChange={formHandleOnChange}
       tableScroll={{ x: 1500 }}
       isPullOfDates={true}
-      pullOfDatesDefaultValue={pullOfDatesDefaultValue}
-      pullOfDatesOptions={pullOfDatesOptions}
+      pullOfDatesDefaultValue={pullOfDatesDefaultGeneral}
+      pullOfDatesOptions={pullOfDatesOptionsGeneral}
     />
   );
 };

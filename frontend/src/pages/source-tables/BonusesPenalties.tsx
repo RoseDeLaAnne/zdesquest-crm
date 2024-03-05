@@ -22,8 +22,10 @@ import {
 
 import {
   getSTBonusesPenaltiesFormItems,
+  pullOfDatesDefaultGeneral,
   pullOfDatesDefaultValue,
   pullOfDatesOptions,
+  pullOfDatesOptionsGeneral,
 } from "../../constants";
 
 const STQuests: FC = () => {
@@ -188,8 +190,8 @@ const STQuests: FC = () => {
       formItems={formItems}
       formHandleOnChange={formHandleOnChange}
       isPullOfDates={true}
-      pullOfDatesDefaultValue={pullOfDatesDefaultValue}
-      pullOfDatesOptions={pullOfDatesOptions}
+      pullOfDatesDefaultValue={pullOfDatesDefaultGeneral}
+      pullOfDatesOptions={pullOfDatesOptionsGeneral}
     />
   );
 };

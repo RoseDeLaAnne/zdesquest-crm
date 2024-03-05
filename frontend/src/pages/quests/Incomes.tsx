@@ -28,7 +28,7 @@ import {
   deleteSTBonus,
   getQuestIncomes,
 } from "../../api/APIUtils";
-import { pullOfDatesDefaultValue, pullOfDatesOptions } from "../../constants";
+import { pullOfDatesDefaultGeneral, pullOfDatesDefaultValue, pullOfDatesOptions, pullOfDatesOptionsGeneral } from "../../constants";
 
 const QIncomesFC: FC = () => {
   const { id } = useParams();
@@ -180,8 +180,8 @@ const QIncomesFC: FC = () => {
       getFunction={getQuestIncomes}
       isUseParams={true}
       isPullOfDates={true}
-      pullOfDatesDefaultValue={pullOfDatesDefaultValue}
-      pullOfDatesOptions={pullOfDatesOptions}
+      pullOfDatesDefaultValue={pullOfDatesDefaultGeneral}
+      pullOfDatesOptions={pullOfDatesOptionsGeneral}
     />
   );
 };

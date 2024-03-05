@@ -29,7 +29,7 @@ import {
 } from "../../api/APIUtils";
 
 // constants
-import { getSTQuestFormItems, getSTQuestsFormItems2, pullOfDatesDefaultValue, pullOfDatesOptions } from "../../constants";
+import { getSTQuestFormItems, getSTQuestsFormItems2, pullOfDatesDefaultGeneral, pullOfDatesDefaultValue, pullOfDatesOptions, pullOfDatesOptionsGeneral } from "../../constants";
 
 const STQuestsFC: FC = () => {
   const initialBreadcrumbItems = [
@@ -556,8 +556,8 @@ const STQuestsFC: FC = () => {
       operationIsEdit={user.is_superuser ? true : false}
       operationIsDelete={user.is_superuser ? true : false}
       isPullOfDates={true}
-      pullOfDatesDefaultValue={pullOfDatesDefaultValue}
-      pullOfDatesOptions={pullOfDatesOptions}
+      pullOfDatesDefaultValue={pullOfDatesDefaultGeneral}
+      pullOfDatesOptions={pullOfDatesOptionsGeneral}
     />
   );
 };

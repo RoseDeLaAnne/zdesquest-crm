@@ -23,7 +23,7 @@ import {
   getQuests,
   getWorkCardExpenses,
 } from "../../api/APIUtils";
-import { pullOfDatesDefaultValue, pullOfDatesOptions } from "../../constants";
+import { pullOfDatesDefaultGeneral, pullOfDatesDefaultValue, pullOfDatesOptions } from "../../constants";
 
 const QWorkCardExpensesFC: FC = () => {
   const { id } = useParams();
@@ -139,8 +139,8 @@ const QWorkCardExpensesFC: FC = () => {
       getFunction={getWorkCardExpenses}
       isUseParams={true}
       isPullOfDates={true}
-      pullOfDatesDefaultValue={pullOfDatesDefaultValue}
-      pullOfDatesOptions={pullOfDatesOptions}
+      pullOfDatesDefaultValue={pullOfDatesDefaultGeneral}
+      pullOfDatesOptions={pullOfDatesDefaultGeneral}
     />
   );
 };
