@@ -10,7 +10,7 @@ import TemplateTable from "../components/template/Table";
 
 // api
 import { getSalaries, getVideos, toggleQuestVideo } from "../api/APIUtils";
-import { pullOfDatesDefaultValue, pullOfDatesOptions } from "../constants";
+import { pullOfDatesDefaultValue, pullOfDatesDefaultValueForVideo, pullOfDatesOptions, pullOfDatesOptionsForVideo } from "../constants";
 
 const VideosFC: FC = () => {
   const initialBreadcrumbItems = [
@@ -133,8 +133,8 @@ const VideosFC: FC = () => {
       tableIsObj={true}
       tableIsOperation={"toggle"}
       isPullOfDates={true}
-      pullOfDatesDefaultValue={pullOfDatesDefaultValue}
-      pullOfDatesOptions={pullOfDatesOptions}
+      pullOfDatesDefaultValue={pullOfDatesDefaultValueForVideo}
+      pullOfDatesOptions={pullOfDatesOptionsForVideo}
     />
   );
 };
