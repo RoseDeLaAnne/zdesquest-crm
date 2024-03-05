@@ -24,7 +24,7 @@ import {
   postQCashRegister,
   toggleQuestCashRegister,
 } from "../../api/APIUtils";
-import { getCashRegisterFormItems } from "../../constants";
+import { getCashRegisterFormItems, pullOfDatesDefaultValue, pullOfDatesOptions } from "../../constants";
 
 
 const QCashRegisterFC: FC = () => {
@@ -189,6 +189,9 @@ const QCashRegisterFC: FC = () => {
       drawerTitle={"создать новую запись"}
       formItems={formItems}
       formHandleOnChange={formHandleOnChange}
+      isPullOfDates={true}
+      pullOfDatesDefaultValue={pullOfDatesDefaultValue}
+      pullOfDatesOptions={pullOfDatesOptions}
     />
   );
 };

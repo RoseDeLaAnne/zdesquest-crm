@@ -19,6 +19,7 @@ import TemplateTable from "../../components/template/Table";
 
 // api
 import { getCurrentUser, getQVideos, getQuests, toggleQuestVideo } from "../../api/APIUtils";
+import { pullOfDatesDefaultValue, pullOfDatesOptions } from "../../constants";
 
 const QVideosFC: FC = () => {
   const { id } = useParams();
@@ -285,6 +286,9 @@ const QVideosFC: FC = () => {
       toggleFunction={toggleQuestVideo}
       isUseParams={true}
       tableScroll={{ x: 1000 }}
+      isPullOfDates={true}
+      pullOfDatesDefaultValue={pullOfDatesDefaultValue}
+      pullOfDatesOptions={pullOfDatesOptions}
     />
   );
 };

@@ -11,7 +11,7 @@ import {
   FallOutlined,
   RiseOutlined,
   VideoCameraOutlined,
-  MoneyCollectOutlined
+  MoneyCollectOutlined,
 } from "@ant-design/icons";
 
 // components
@@ -28,23 +28,23 @@ import {
   deleteSTBonus,
   getQuestIncomes,
 } from "../../api/APIUtils";
+import { pullOfDatesDefaultValue, pullOfDatesOptions } from "../../constants";
 
 const QIncomesFC: FC = () => {
   const { id } = useParams();
 
-  const [currentQuest, setCurrentQuest] = useState({})
-  const [quests, setQuests] = useState([])
+  const [currentQuest, setCurrentQuest] = useState({});
+  const [quests, setQuests] = useState([]);
   const fetchQuests = async () => {
-    const res = await getQuests()
+    const res = await getQuests();
     if (res.status === 200) {
-      setCurrentQuest(res.data.find(el => el.id === parseInt(id)))
-      setQuests(res.data)
+      setCurrentQuest(res.data.find((el) => el.id === parseInt(id)));
+      setQuests(res.data);
     }
-  }
+  };
   useEffect(() => {
-    fetchQuests()
-  }, [])
-  
+    fetchQuests();
+  }, []);
 
   const initialBreadcrumbItems = [
     {
@@ -54,7 +54,7 @@ const QIncomesFC: FC = () => {
     },
     {
       icon: FallOutlined,
-      title: currentQuest.name ? currentQuest.name.toLowerCase() : '',
+      title: currentQuest.name ? currentQuest.name.toLowerCase() : "",
       menu: [
         {
           key: "1",
@@ -179,6 +179,9 @@ const QIncomesFC: FC = () => {
       initialPackedTableColumns={initialPackedTableColumns}
       getFunction={getQuestIncomes}
       isUseParams={true}
+      isPullOfDates={true}
+      pullOfDatesDefaultValue={pullOfDatesDefaultValue}
+      pullOfDatesOptions={pullOfDatesOptions}
     />
   );
 };

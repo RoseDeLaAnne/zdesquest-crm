@@ -3,7 +3,12 @@ import { FC, useState, useEffect } from "react";
 // antd
 import { Tag } from "antd";
 // antd | icons
-import { TableOutlined, QuestionOutlined, FallOutlined, DeploymentUnitOutlined } from "@ant-design/icons";
+import {
+  TableOutlined,
+  QuestionOutlined,
+  FallOutlined,
+  DeploymentUnitOutlined,
+} from "@ant-design/icons";
 
 // components
 import TemplateTable from "../../components/template/Table";
@@ -15,7 +20,11 @@ import {
   postSTBonusPenalty,
 } from "../../api/APIUtils";
 
-import { getSTBonusesPenaltiesFormItems } from "../../constants";
+import {
+  getSTBonusesPenaltiesFormItems,
+  pullOfDatesDefaultValue,
+  pullOfDatesOptions,
+} from "../../constants";
 
 const STQuests: FC = () => {
   const initialBreadcrumbItems = [
@@ -118,7 +127,7 @@ const STQuests: FC = () => {
             );
           })}
         </>
-      ),      
+      ),
     },
     {
       title: "квесты",
@@ -144,14 +153,14 @@ const STQuests: FC = () => {
     },
   ];
 
-  const [formItems, setFormItems] = useState([])
+  const [formItems, setFormItems] = useState([]);
   const getFormItems = async () => {
-    const res = await getSTBonusesPenaltiesFormItems()
-    setFormItems(res)
-  }
+    const res = await getSTBonusesPenaltiesFormItems();
+    setFormItems(res);
+  };
   useEffect(() => {
     getFormItems();
-  }, [])
+  }, []);
 
   const formHandleOnChange = () => {};
 
@@ -178,6 +187,9 @@ const STQuests: FC = () => {
       drawerTitle={"создать новую запись"}
       formItems={formItems}
       formHandleOnChange={formHandleOnChange}
+      isPullOfDates={true}
+      pullOfDatesDefaultValue={pullOfDatesDefaultValue}
+      pullOfDatesOptions={pullOfDatesOptions}
     />
   );
 };
