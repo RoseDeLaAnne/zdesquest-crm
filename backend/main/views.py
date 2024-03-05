@@ -2397,6 +2397,25 @@ def Salaries(request):
 
 @api_view(["GET"])
 def Videos(request):
+    start_date_param = request.query_params.get("start_date")
+    end_date_param = request.query_params.get("end_date")
+
+    try:
+        start_date = (
+            datetime.strptime(start_date_param, "%d-%m-%Y").date()
+            if start_date_param
+            else None
+        )
+        end_date = (
+            datetime.strptime(end_date_param, "%d-%m-%Y").date()
+            if end_date_param
+            else None
+        )
+    except ValueError:
+        return JsonResponse(
+            {"error": "Invalid date format. Please use DD-MM-YYYY."}, status=400)
+       
+
     quests_for_videos = []
     for quest_for_videos in request.user.quests_for_videos.all():
         quests_for_videos.append(quest_for_videos.id)
@@ -2404,6 +2423,9 @@ def Videos(request):
     qvideos_by_quest_id = QVideo.objects.filter(
         quest__id__in=quests_for_videos
     ).order_by("date")
+
+    if start_date and end_date:
+        qvideos_by_quest_id = qvideos_by_quest_id.filter(date__range=(start_date, end_date))
 
     body = {}
 
