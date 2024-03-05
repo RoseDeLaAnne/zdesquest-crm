@@ -118,8 +118,8 @@ const SalariesFC: FC = () => {
       tableIsObj={true}
       isExport={true}
       isPullOfDates={true}
-      pullOfDatesDefaultValue={pullOfDatesDefaultGeneral}
-      pullOfDatesOptions={pullOfDatesOptionsGeneral}
+      pullOfDatesDefaultValue={pullOfDatesDefaultValue}
+      pullOfDatesOptions={pullOfDatesOptions}
     />
   );
 };
