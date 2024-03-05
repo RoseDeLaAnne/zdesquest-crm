@@ -79,6 +79,9 @@ const TableFC: FC = ({
   operationIsDelete,
   tableIsObj,
   isExport,
+  isPullOfDates,
+  pullOfDatesDefaultValue,
+  pullOfDatesOptions,
 }) => {
   const { id } = isUseParams ? useParams() : { id: "" };
 
@@ -544,7 +547,7 @@ const TableFC: FC = ({
           // const date = dayjs(value, datePickerFormat);
           // form2.setFieldsValue({ [key]: date });
           // const date = dayjs(value, datePickerFormat).utcOffset(3 * 60); // Add 3 hours for GMT+3
-          const date = dayjs(value, datePickerFormat) // Add 3 hours for GMT+3
+          const date = dayjs(value, datePickerFormat); // Add 3 hours for GMT+3
           form2.setFieldsValue({ [key]: date });
         } else if (key === "time") {
           const time = dayjs(value, timePickerFormat);
@@ -691,6 +694,17 @@ const TableFC: FC = ({
     setDates(dates);
 
     getEntries(startDateStr, endDateStr);
+  };
+
+  const pullOfDatesOnChange = async (dates: any) => {
+    const local_dates = dates.split(" - ");
+
+    const [day_1, month_1, year_1] = local_dates[0].split(".").map(Number);
+    const [day_2, month_2, year_2] = local_dates[1].split(".").map(Number);
+
+    const str_dates = local_dates.map(date => date.replace(/\./g, '-'));
+
+    getEntries(str_dates[0], str_dates[1])
   };
 
   // const tableIsObj = false;
@@ -953,9 +967,9 @@ const TableFC: FC = ({
   useEffect(() => {
     if (breadcrumbItems[breadcrumbItems.length - 1].title === "касса") {
       // getEntries(dayjs().format("DD-MM-YYYY"), dayjs().format("DD-MM-YYYY"));
-      getEntries(null, null);
+      getEntries('26-02-2024', '09-03-2024');
     } else {
-      getEntries(null, null);
+      getEntries('26-02-2024', '09-03-2024');
     }
 
     const breadcrumbItemsLength = breadcrumbItems.length;
@@ -992,6 +1006,10 @@ const TableFC: FC = ({
       exportHandleOnClick={exportHandleOnClick}
       isCreate={isCreate}
       form={form}
+      isPullOfDates={isPullOfDates}
+      pullOfDatesDefaultValue={pullOfDatesDefaultValue}
+      pullOfDatesOptions={pullOfDatesOptions}
+      pullOfDatesOnChange={pullOfDatesOnChange}
     >
       {contextHolder}
       <FloatButton icon={<LogoutOutlined />} onClick={() => logout()} />

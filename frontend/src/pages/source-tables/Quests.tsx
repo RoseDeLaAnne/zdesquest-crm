@@ -29,7 +29,7 @@ import {
 } from "../../api/APIUtils";
 
 // constants
-import { getSTQuestFormItems, getSTQuestsFormItems2 } from "../../constants";
+import { getSTQuestFormItems, getSTQuestsFormItems2, pullOfDatesDefaultValue, pullOfDatesOptions } from "../../constants";
 
 const STQuestsFC: FC = () => {
   const initialBreadcrumbItems = [
@@ -262,6 +262,7 @@ const STQuestsFC: FC = () => {
     {
       title: "дополнительные игроки",
       dataIndex: "add_players",
+      countable: true,
     },
     {
       title: "сумма комнат",
@@ -554,6 +555,9 @@ const STQuestsFC: FC = () => {
       operationIsAdd={true}
       operationIsEdit={user.is_superuser ? true : false}
       operationIsDelete={user.is_superuser ? true : false}
+      isPullOfDates={true}
+      pullOfDatesDefaultValue={pullOfDatesDefaultValue}
+      pullOfDatesOptions={pullOfDatesOptions}
     />
   );
 };

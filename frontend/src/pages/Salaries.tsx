@@ -12,6 +12,7 @@ import {
   getCurrentUser,
   getSalaries,
 } from "../api/APIUtils";
+import { pullOfDatesDefaultValue, pullOfDatesOptions } from "../constants";
 
 const SalariesFC: FC = () => {
   const initialBreadcrumbItems = [
@@ -46,6 +47,9 @@ const SalariesFC: FC = () => {
       getFunction={getSalaries}
       tableScroll={{ x: 2500, y: 600 }}
       tableIsObj={true}
+      isPullOfDates={true}
+      pullOfDatesDefaultValue={pullOfDatesDefaultValue}
+      pullOfDatesOptions={pullOfDatesOptions}
     />
   );
 };

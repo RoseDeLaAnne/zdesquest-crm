@@ -6,6 +6,7 @@ import {
   Skeleton,
   Layout,
   Space,
+  Select,
   Button,
   DatePicker,
   theme,
@@ -48,6 +49,10 @@ const MainFC: FC = ({
   exportHandleOnClick,
   isCreate,
   form,
+  isPullOfDates,
+  pullOfDatesDefaultValue,
+  pullOfDatesOptions,
+  pullOfDatesOnChange,
   children,
 }) => {
   const {
@@ -90,7 +95,15 @@ const MainFC: FC = ({
             <Title>{title}</Title>
             {(isRangePicker === true || isAddEntry === true) && (
               <div className="custom-space">
-                {isRangePicker === true && (
+                {isPullOfDates && (
+                  <Select
+                    defaultValue={pullOfDatesDefaultValue}
+                    options={pullOfDatesOptions}
+                    onChange={pullOfDatesOnChange}
+                    style={{ minWidth: "256px", width: "100%" }}
+                  />
+                )}
+                {/* {isRangePicker === true && (
                   <RangePicker
                     onChange={rangePickerHandleChange}
                     format={rangePickerFormat}
@@ -102,7 +115,7 @@ const MainFC: FC = ({
                     //     : ""
                     // }
                   />
-                )}
+                )} */}
                 {isAddEntry === true && (
                   <Button
                     type="primary"
