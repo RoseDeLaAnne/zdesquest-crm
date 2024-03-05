@@ -72,4 +72,5 @@ urlpatterns = [
     path("create/stexpense-category/", views.CreateSTExpenseCategory),
     path("create/stexpense-subcategory/", views.CreateSTExpenseSubCategory),
     path("create/cash-register/", views.CreateQCashRegister),
+    path("remove/quest-expenses/", views.RemoveQuestExpenses),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

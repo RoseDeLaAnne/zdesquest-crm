@@ -1237,6 +1237,18 @@ def QuestIncomes(request, id):
 
 
 @api_view(["GET"])
+def RemoveQuestExpenses(request):
+    if request.method == "GET":
+        salaries = QSalary.objects.filter(user__isnull=True)
+
+        salaries.delete()
+
+        print(salaries)
+
+        return Response(status=200)
+
+
+@api_view(["GET"])
 def QuestExpenses(request, id):
     if request.method == "GET":
         start_date_param = request.query_params.get("start_date")
@@ -1390,33 +1402,12 @@ def QuestExpenses(request, id):
                 {expense.sub_category.latin_name: {"tooltip": "", "value": 0}}
             )
 
-        # for expense in expenses:
-        # expenses_dates.append(expense.date.strftime("%d.%m.%Y"))
-
-        # salaries_dates = set(salaries_dates)
-        # expenses_dates = set(expenses_dates)
-        # print('salaries_dates', salaries_dates)
-        # print('expenses_dates', expenses_dates)
-
-        # print(set(dates))
-
         sub_categories22 = STExpenseSubCategory.objects.all()
 
         arr_dates = set(dates)
 
         for sub_category22 in sub_categories22:
             sub_categories2.append(sub_category22.latin_name)
-
-        # print(sub_categories2)
-        # sub_categories2 = ['rate', 'public_service', 'other_expenses']
-
-        # print(salaries_names_by_date)
-
-        # for item in head:
-        #     key = item['key']
-        #     body.append({str(salary_date): {key: {}}})
-
-        # print(salary_names_by_salary_date_user_id)
 
         user_taxi = {}
 
@@ -2413,8 +2404,8 @@ def Videos(request):
         )
     except ValueError:
         return JsonResponse(
-            {"error": "Invalid date format. Please use DD-MM-YYYY."}, status=400)
-       
+            {"error": "Invalid date format. Please use DD-MM-YYYY."}, status=400
+        )
 
     quests_for_videos = []
     for quest_for_videos in request.user.quests_for_videos.all():
@@ -2425,7 +2416,9 @@ def Videos(request):
     ).order_by("date")
 
     if start_date and end_date:
-        qvideos_by_quest_id = qvideos_by_quest_id.filter(date__range=(start_date, end_date))
+        qvideos_by_quest_id = qvideos_by_quest_id.filter(
+            date__range=(start_date, end_date)
+        )
 
     body = {}
 
@@ -2855,9 +2848,7 @@ def VSTExpense(request, id):
         data = json.loads(request.data["json"])
 
         # formatted_date = convert_to_date(data["date"])
-        formatted_date = datetime.strptime(
-                data["date"], "%Y-%m-%dT%H:%M:%S.%fZ"
-            ).date()
+        formatted_date = datetime.strptime(data["date"], "%Y-%m-%dT%H:%M:%S.%fZ").date()
         sub_category = STExpenseSubCategory.objects.get(id=data["sub_category"])
         quests = Quest.objects.filter(name__in=data["quests"])
 
