@@ -1681,15 +1681,31 @@ def QuestExpenses(request, id):
 
             # print(expenses_by_date)
 
+        # for expenses_by_date_item in expenses_by_date.items():
+        #     expenses_data.append(
+        #         {
+        #             "date": expenses_by_date_item[0],
+        #             "other_expenses": {
+        #                 "tooltip": expenses_by_date_item[1]["other_expenses"][
+        #                     "tooltip"
+        #                 ],
+        #                 "value": expenses_by_date_item[1]["other_expenses"]["value"],
+        #             },
+        #         }
+        #     )
         for expenses_by_date_item in expenses_by_date.items():
+            if "other_expenses" in expenses_by_date_item[1]:
+                tooltip = expenses_by_date_item[1]["other_expenses"].get("tooltip", "")
+                value = expenses_by_date_item[1]["other_expenses"].get("value", "")
+            else:
+                tooltip = ""
+                value = ""
             expenses_data.append(
                 {
                     "date": expenses_by_date_item[0],
                     "other_expenses": {
-                        "tooltip": expenses_by_date_item[1]["other_expenses"][
-                            "tooltip"
-                        ],
-                        "value": expenses_by_date_item[1]["other_expenses"]["value"],
+                        "tooltip": tooltip,
+                        "value": value,
                     },
                 }
             )
