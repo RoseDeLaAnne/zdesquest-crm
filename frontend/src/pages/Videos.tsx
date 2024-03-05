@@ -10,6 +10,7 @@ import TemplateTable from "../components/template/Table";
 
 // api
 import { getSalaries, getVideos, toggleQuestVideo } from "../api/APIUtils";
+import { pullOfDatesDefaultValue, pullOfDatesOptions } from "../constants";
 
 const VideosFC: FC = () => {
   const initialBreadcrumbItems = [
@@ -131,6 +132,9 @@ const VideosFC: FC = () => {
       tableScroll={{ x: 1000 }}
       tableIsObj={true}
       tableIsOperation={"toggle"}
+      isPullOfDates={true}
+      pullOfDatesDefaultValue={pullOfDatesDefaultValue}
+      pullOfDatesOptions={pullOfDatesOptions}
     />
   );
 };
