@@ -1762,7 +1762,7 @@ def QuestExpenses(request, id):
 
         # print(new_obj)
 
-        new_obj = dict(sorted(new_obj.items()))
+        new_obj = dict(sorted(new_obj.items(), reverse=True))
 
         # body_data = salaries_data
 
