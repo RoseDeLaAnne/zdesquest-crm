@@ -1496,16 +1496,16 @@ def QuestExpenses(request, id):
                 user_id = user["id"]
                 if user_taxi[date][user_id] == True:
                     salaries_by_date[date][user_id]["value"] -= 25
-
-                    if 'Проезд' not in salaries_by_date[date][user_id]["salary_data"]:
-                        salaries_by_date[date][user_id]["salary_data"]["Проезд"]["amount"] = 0
-                        salaries_by_date[date][user_id]["salary_data"]["Проезд"]["value"] = 0
-                    salaries_by_date[date][user_id]["salary_data"]["Проезд"][
-                        "amount"
-                    ] -= 1
-                    salaries_by_date[date][user_id]["salary_data"]["Проезд"][
-                        "value"
-                    ] -= 25
+                    salary_data = salaries_by_date[date][user_id]["salary_data"].get("Проезд", {"amount": 0, "value": 0})
+                    salary_data["amount"] -= 1
+                    salary_data["value"] -= 25
+                    salaries_by_date[date][user_id]["salary_data"]["Проезд"] = salary_data
+                    # salaries_by_date[date][user_id]["salary_data"]["Проезд"][
+                    #     "amount"
+                    # ] -= 1
+                    # salaries_by_date[date][user_id]["salary_data"]["Проезд"][
+                    #     "value"
+                    # ] -= 25
 
         # print(salaries_by_date)
 
