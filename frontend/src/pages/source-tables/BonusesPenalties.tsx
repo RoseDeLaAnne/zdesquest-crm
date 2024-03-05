@@ -26,6 +26,7 @@ import {
   pullOfDatesDefaultValue,
   pullOfDatesOptions,
   pullOfDatesOptionsGeneral,
+  pullOfDatesWhenLoadingGeneral,
 } from "../../constants";
 
 const STQuests: FC = () => {
@@ -191,6 +192,7 @@ const STQuests: FC = () => {
       formHandleOnChange={formHandleOnChange}
       isPullOfDates={true}
       pullOfDatesDefaultValue={pullOfDatesDefaultGeneral}
+      pullOfDatesWhenLoading={pullOfDatesWhenLoadingGeneral}
       pullOfDatesOptions={pullOfDatesOptionsGeneral}
     />
   );

@@ -29,7 +29,15 @@ import {
 } from "../../api/APIUtils";
 
 // constants
-import { getSTQuestFormItems, getSTQuestsFormItems2, pullOfDatesDefaultGeneral, pullOfDatesDefaultValue, pullOfDatesOptions, pullOfDatesOptionsGeneral } from "../../constants";
+import {
+  getSTQuestFormItems,
+  getSTQuestsFormItems2,
+  pullOfDatesDefaultGeneral,
+  pullOfDatesDefaultValue,
+  pullOfDatesOptions,
+  pullOfDatesOptionsGeneral,
+  pullOfDatesWhenLoadingGeneral,
+} from "../../constants";
 
 const STQuestsFC: FC = () => {
   const initialBreadcrumbItems = [
@@ -68,12 +76,12 @@ const STQuestsFC: FC = () => {
       title: "квест",
       dataIndex: "quest",
       render: (quest) => {
-        if (quest == 'Итого за день') {
-        return (
-          <Tag bordered={false} color="orange">
-            {quest}
-          </Tag>
-        );
+        if (quest == "Итого за день") {
+          return (
+            <Tag bordered={false} color="orange">
+              {quest}
+            </Tag>
+          );
         } else {
           if (quest !== null) {
             return <Tag color="black">{quest.name}</Tag>;
@@ -253,7 +261,7 @@ const STQuestsFC: FC = () => {
         }
       },
     },
-    
+
     {
       title: "актеры/второй актер/аниматор",
       dataIndex: "actor_or_second_actor_or_animator",
@@ -386,7 +394,7 @@ const STQuestsFC: FC = () => {
   const fetchUser = async () => {
     const res = await getCurrentUser();
     if (res.status === 200) {
-      setUser(res.data);      
+      setUser(res.data);
     }
   };
 
@@ -411,7 +419,7 @@ const STQuestsFC: FC = () => {
 
   const formHandleOnSelect = (value, name) => {
     // setPrepayment(1000)
-  }
+  };
 
   const formHandleOnChange = (value, name) => {
     if (name === "quest") {
@@ -440,8 +448,8 @@ const STQuestsFC: FC = () => {
         }
       }
     }
-    
-    if (name === "is_video_review" || name === 'video_as_a_gift') {
+
+    if (name === "is_video_review" || name === "video_as_a_gift") {
       if (value.target.checked) {
         setNotVisibleFormItems(["video"]);
       } else {
@@ -516,7 +524,7 @@ const STQuestsFC: FC = () => {
     }
   };
 
-  const formHandleOnSearch = (value: string, name: string) => {}
+  const formHandleOnSearch = (value: string, name: string) => {};
 
   const formInitialValues = {
     date: dayjs(),
@@ -557,6 +565,7 @@ const STQuestsFC: FC = () => {
       operationIsDelete={user.is_superuser ? true : false}
       isPullOfDates={true}
       pullOfDatesDefaultValue={pullOfDatesDefaultGeneral}
+      pullOfDatesWhenLoading={pullOfDatesWhenLoadingGeneral}
       pullOfDatesOptions={pullOfDatesOptionsGeneral}
     />
   );

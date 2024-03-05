@@ -24,7 +24,7 @@ import {
   getQuestExpenses,
   getQuests,
 } from "../../api/APIUtils";
-import { pullOfDatesDefaultGeneral, pullOfDatesDefaultValue, pullOfDatesOptions, pullOfDatesOptionsGeneral } from "../../constants";
+import { pullOfDatesDefaultGeneral, pullOfDatesDefaultValue, pullOfDatesOptions, pullOfDatesOptionsGeneral, pullOfDatesWhenLoadingGeneral } from "../../constants";
 
 const QExpensesFC: FC = () => {
   const { id } = useParams();
@@ -135,6 +135,7 @@ const QExpensesFC: FC = () => {
       tableIsObj={true}
       isPullOfDates={true}
       pullOfDatesDefaultValue={pullOfDatesDefaultGeneral}
+      pullOfDatesWhenLoading={pullOfDatesWhenLoadingGeneral}
       pullOfDatesOptions={pullOfDatesOptionsGeneral}
     />
   );

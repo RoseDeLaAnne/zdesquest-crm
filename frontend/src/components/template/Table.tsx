@@ -82,6 +82,7 @@ const TableFC: FC = ({
   isPullOfDates,
   pullOfDatesDefaultValue,
   pullOfDatesOptions,
+  pullOfDatesWhenLoading
 }) => {
   const { id } = isUseParams ? useParams() : { id: "" };
 
@@ -232,7 +233,7 @@ const TableFC: FC = ({
           dates[1].format("DD-MM-YYYY")
         );
       } else {
-        getEntries(null, null);
+        getEntries(pullOfDatesWhenLoading[0], pullOfDatesWhenLoading[1]);
       }
     }
   };
@@ -249,7 +250,7 @@ const TableFC: FC = ({
           dates[1].format("DD-MM-YYYY")
         );
       } else {
-        getEntries(null, null);
+        getEntries(pullOfDatesWhenLoading[0], pullOfDatesWhenLoading[1]);
       }
     }
   };
@@ -838,7 +839,7 @@ const TableFC: FC = ({
           dates[1].format("DD-MM-YYYY")
         );
       } else {
-        getEntries(null, null);
+        getEntries(pullOfDatesWhenLoading[0], pullOfDatesWhenLoading[1]);
       }
     } else {
       messageApi.open({
@@ -885,7 +886,7 @@ const TableFC: FC = ({
             dates[1].format("DD-MM-YYYY")
           );
         } else {
-          getEntries(null, null);
+          getEntries(pullOfDatesWhenLoading[0], pullOfDatesWhenLoading[1]);
         }
         form.resetFields();
       } else {
@@ -967,9 +968,9 @@ const TableFC: FC = ({
   useEffect(() => {
     if (breadcrumbItems[breadcrumbItems.length - 1].title === "касса") {
       // getEntries(dayjs().format("DD-MM-YYYY"), dayjs().format("DD-MM-YYYY"));
-      getEntries('26-02-2024', '09-03-2024');
+      getEntries(pullOfDatesWhenLoading[0], pullOfDatesWhenLoading[1]);
     } else {
-      getEntries('26-02-2024', '09-03-2024');
+      getEntries(pullOfDatesWhenLoading[0], pullOfDatesWhenLoading[1]);
     }
 
     const breadcrumbItemsLength = breadcrumbItems.length;

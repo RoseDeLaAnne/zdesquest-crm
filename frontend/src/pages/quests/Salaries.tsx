@@ -19,7 +19,7 @@ import {
 // api
 import { getQuestSalaries, getQuests } from "../../api/APIUtils";
 import { useParams } from "react-router-dom";
-import { pullOfDatesDefaultGeneral, pullOfDatesDefaultValue, pullOfDatesOptions, pullOfDatesOptionsGeneral } from "../../constants";
+import { pullOfDatesDefaultGeneral, pullOfDatesDefaultValue, pullOfDatesOptions, pullOfDatesOptionsGeneral, pullOfDatesWhenLoadingSalaries } from "../../constants";
 
 const SalariesFC: FC = () => {
   const { id } = useParams();
@@ -119,6 +119,7 @@ const SalariesFC: FC = () => {
       isExport={true}
       isPullOfDates={true}
       pullOfDatesDefaultValue={pullOfDatesDefaultValue}
+      pullOfDatesWhenLoading={pullOfDatesWhenLoadingSalaries}
       pullOfDatesOptions={pullOfDatesOptions}
     />
   );

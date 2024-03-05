@@ -1491,16 +1491,15 @@ def QuestExpenses(request, id):
             ] += salary.amount
             salaries_by_date[salary_date][salary.user.id]["value"] += salary.amount
 
-        # print(salaries_by_date)
-
-        # print(set(dates))
-
         for date in set(dates):
             for user in users:
-                # print(user)
                 user_id = user["id"]
                 if user_taxi[date][user_id] == True:
                     salaries_by_date[date][user_id]["value"] -= 25
+
+                    if 'Проезд' not in salaries_by_date[date][user_id]["salary_data"]:
+                        salaries_by_date[date][user_id]["salary_data"]["Проезд"]["amount"] = 0
+                        salaries_by_date[date][user_id]["salary_data"]["Проезд"]["value"] = 0
                     salaries_by_date[date][user_id]["salary_data"]["Проезд"][
                         "amount"
                     ] -= 1

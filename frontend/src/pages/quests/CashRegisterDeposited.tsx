@@ -25,7 +25,7 @@ import {
   postQCashRegister,
   toggleQuestCashRegister,
 } from "../../api/APIUtils";
-import { getCashRegisterFormItems, pullOfDatesDefaultGeneral, pullOfDatesDefaultValue, pullOfDatesOptions, pullOfDatesOptionsGeneral } from "../../constants";
+import { getCashRegisterFormItems, pullOfDatesDefaultGeneral, pullOfDatesDefaultValue, pullOfDatesOptions, pullOfDatesOptionsGeneral, pullOfDatesWhenLoadingGeneral } from "../../constants";
 
 
 const QCashRegisterFC: FC = () => {
@@ -178,6 +178,7 @@ const QCashRegisterFC: FC = () => {
       formHandleOnChange={formHandleOnChange}
       isPullOfDates={true}
       pullOfDatesDefaultValue={pullOfDatesDefaultGeneral}
+      pullOfDatesWhenLoading={pullOfDatesWhenLoadingGeneral}
       pullOfDatesOptions={pullOfDatesOptionsGeneral}
     />
   );
