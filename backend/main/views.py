@@ -1352,12 +1352,18 @@ def QuestExpenses(request, id):
 
         # salaries = QSalary.objects.filter(stquest__quest=quest)
         salaries = QSalary.objects.filter(quest=quest)
+        if start_date and end_date:
+            salaries = salaries.filter(date__range=(start_date, end_date))
         expenses = STExpense.objects.filter(
             Q(quests=quest) | Q(quests__parent_quest=quest)
         )
+        if start_date and end_date:
+            expenses = expenses.filter(date__range=(start_date, end_date))
         bonuses_penalties = STBonusPenalty.objects.filter(
             Q(quests=quest) | Q(quests__parent_quest=quest)
         )
+        if start_date and end_date:
+            bonuses_penalties = bonuses_penalties.filter(date__range=(start_date, end_date))
         # bonuses_penalties = STBonusPenalty.objects.filter(quests=quest)
 
         for salary in salaries:
