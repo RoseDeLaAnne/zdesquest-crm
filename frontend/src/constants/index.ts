@@ -23,20 +23,20 @@ export const minuteStep = 15;
 
 export const pullOfDatesOptions = [
   {
-    value: "10.01.2024 - 25.01.2024",
-    label: "10.01.2024 - 25.01.2024",
+    value: "10.01.2024 - 24.01.2024",
+    label: "10.01.2024 - 24.01.2024",
   },
   {
-    value: "26.01.2024 - 09.02.2024",
-    label: "26.01.2024 - 09.02.2024",
+    value: "25.01.2024 - 09.02.2024",
+    label: "25.01.2024 - 09.02.2024",
   },
   {
-    value: "10.02.2024 - 25.02.2024",
-    label: "10.02.2024 - 25.02.2024",
+    value: "10.02.2024 - 24.02.2024",
+    label: "10.02.2024 - 24.02.2024",
   },
   {
-    value: "26.02.2024 - 09.03.2024",
-    label: "26.02.2024 - 09.03.2024",
+    value: "25.02.2024 - 09.03.2024",
+    label: "25.02.2024 - 09.03.2024",
   },
 ];
 
@@ -70,12 +70,12 @@ export const pullOfDatesOptionsForVideo = [
   },
 ];
 
-export const pullOfDatesDefaultValue = "26.02.2024 - 09.03.2024";
+export const pullOfDatesDefaultValue = "25.02.2024 - 09.03.2024";
 export const pullOfDatesDefaultGeneral = "10.02.2024 - 09.03.2024";
 export const pullOfDatesDefaultValueForVideo = "25.02.2024 - 09.03.2024";
 
 export const pullOfDatesWhenLoadingGeneral = ["10-02-2024", "09-03-2024"];
-export const pullOfDatesWhenLoadingSalaries = ["26-02-2024", "09-03-2024"];
+export const pullOfDatesWhenLoadingSalaries = ["25-02-2024", "09-03-2024"];
 
 const optionsBanks = [
   {

@@ -2218,6 +2218,7 @@ def Salaries(request):
 
         if start_date and end_date:
             salaries = salaries.filter(date__range=(start_date, end_date))
+            bonuses_penalties = bonuses_penalties.filter(date__range=(start_date, end_date))
 
         for salary in salaries:
             date_str = salary.date.strftime("%d.%m.%Y")
