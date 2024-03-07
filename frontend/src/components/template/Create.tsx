@@ -56,7 +56,6 @@ const CreateFC: FC = ({
       // value.date = updatedDate;
       const response = await postFunction(value);
       if (response.status === 200) {
-        console.log('edited')
         // messageApi.open({
         //   type: "success",
         //   content: "запись отредактирована",

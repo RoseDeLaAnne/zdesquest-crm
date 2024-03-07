@@ -22,7 +22,6 @@ import {
 } from "../../api/APIUtils";
 import { getSTExpenseSubCategoriesFormItems } from "../../constants";
 
-
 const STExpenseSubCategories: FC = () => {
   const initialBreadcrumbItems = [
     {
@@ -61,7 +60,7 @@ const STExpenseSubCategories: FC = () => {
     getFormItems();
   }, []);
 
-  const formHandleOnChange = () => {}
+  const formHandleOnChange = () => {};
 
   return (
     <TemplateTable
@@ -72,6 +71,7 @@ const STExpenseSubCategories: FC = () => {
       isAddEntry={true}
       addEntryTitle={"новая запись"}
       drawerTitle={"создать новую запись"}
+      tableScroll={{ x: 1750, y: 600 }}
       initialPackedTableColumns={initialPackedTableColumns}
       getFunction={getSTExpenseSubCategories}
       deleteFunction={deleteSTExpenseSubCategory}

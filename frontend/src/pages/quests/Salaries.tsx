@@ -15,11 +15,16 @@ import {
   MoneyCollectOutlined,
 } from "@ant-design/icons";
 
-
 // api
 import { getQuestSalaries, getQuests } from "../../api/APIUtils";
 import { useParams } from "react-router-dom";
-import { pullOfDatesDefaultGeneral, pullOfDatesDefaultValue, pullOfDatesOptions, pullOfDatesOptionsGeneral, pullOfDatesWhenLoadingSalaries } from "../../constants";
+import {
+  pullOfDatesDefaultGeneral,
+  pullOfDatesDefaultValue,
+  pullOfDatesOptions,
+  pullOfDatesOptionsGeneral,
+  pullOfDatesWhenLoadingSalaries,
+} from "../../constants";
 
 const SalariesFC: FC = () => {
   const { id } = useParams();
@@ -114,7 +119,7 @@ const SalariesFC: FC = () => {
       tableDateColumn={"date"}
       getFunction={getQuestSalaries}
       isUseParams={true}
-      tableScroll={{ x: 1000 }}
+      tableScroll={{ x: 2500, y: 600 }}
       tableIsObj={true}
       isExport={true}
       isPullOfDates={true}

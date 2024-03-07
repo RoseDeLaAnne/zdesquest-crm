@@ -26,7 +26,13 @@ import {
   toggleExpensesFromOwn,
   toggleExpensesFromTheir,
 } from "../../api/APIUtils";
-import { pullOfDatesDefaultGeneral, pullOfDatesDefaultValue, pullOfDatesOptions, pullOfDatesOptionsGeneral, pullOfDatesWhenLoadingGeneral } from "../../constants";
+import {
+  pullOfDatesDefaultGeneral,
+  pullOfDatesDefaultValue,
+  pullOfDatesOptions,
+  pullOfDatesOptionsGeneral,
+  pullOfDatesWhenLoadingGeneral,
+} from "../../constants";
 
 const QExpensesFromOwnFC: FC = () => {
   const { id } = useParams();
@@ -141,13 +147,13 @@ const QExpensesFromOwnFC: FC = () => {
       countable: false,
       render: (user) => {
         if (user !== null) {
-        return (
-          <Tag color="black">
-            {user.first_name} {user.last_name}
-          </Tag>
-        ) }
-        else {
-          return null
+          return (
+            <Tag color="black">
+              {user.first_name} {user.last_name}
+            </Tag>
+          );
+        } else {
+          return null;
         }
       },
     },
@@ -167,25 +173,25 @@ const QExpensesFromOwnFC: FC = () => {
       render: (bank) => {
         if (bank !== null) {
           let color = "black";
-          let formattedText = ''
+          let formattedText = "";
 
-          if (bank === 'sberbank') {
+          if (bank === "sberbank") {
             color = "green";
-            formattedText = 'сбербанк'
-          } else if (bank === 'tinkoff') {
+            formattedText = "сбербанк";
+          } else if (bank === "tinkoff") {
             color = "yellow";
-            formattedText = 'тинькофф'
-          } else if (bank === 'alfabank') {
-            color = 'red'
-            formattedText = 'альфа-банк'
-          } else if (bank === 'vtb') {
-            color = 'blue'
-            formattedText = 'втб'
+            formattedText = "тинькофф";
+          } else if (bank === "alfabank") {
+            color = "red";
+            formattedText = "альфа-банк";
+          } else if (bank === "vtb") {
+            color = "blue";
+            formattedText = "втб";
           }
           return <Tag color={color}>{formattedText}</Tag>;
         } else {
           return null;
-        }        
+        }
       },
     },
     {
@@ -200,21 +206,21 @@ const QExpensesFromOwnFC: FC = () => {
       countable: false,
       render: (status) => {
         if (status !== null) {
-        let color = "red";
-        let formattedStatus = status;
+          let color = "red";
+          let formattedStatus = status;
 
-        if (status === "paid") {
-          color = "green";
-          formattedStatus = "выплачено";
-        } else if (status === "not_paid") {
-          color = "red";
-          formattedStatus = "не выплачено";
+          if (status === "paid") {
+            color = "green";
+            formattedStatus = "выплачено";
+          } else if (status === "not_paid") {
+            color = "red";
+            formattedStatus = "не выплачено";
+          }
+
+          return <Tag color={color}>{formattedStatus}</Tag>;
+        } else {
+          return null;
         }
-
-        return <Tag color={color}>{formattedStatus}</Tag>;
-      } else {
-        return null
-      }
       },
     },
   ];
@@ -229,6 +235,7 @@ const QExpensesFromOwnFC: FC = () => {
       initialPackedTableColumns={initialPackedTableColumns}
       getFunction={getExpensesFromOwn}
       toggleFunction={toggleExpensesFromOwn}
+      tableScroll={{ x: 1000, y: 600 }}
       isUseParams={true}
       tableIsOperation={"toggle"}
       isPullOfDates={true}

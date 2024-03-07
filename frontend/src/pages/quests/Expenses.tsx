@@ -131,6 +131,7 @@ const QExpensesFC: FC = () => {
       tableDateColumn={"date"}
       // initialPackedTableColumns={initialPackedTableColumns}
       getFunction={getQuestExpenses}
+      tableScroll={{ x: 1000, y: 600 }}
       isUseParams={true}
       tableIsObj={true}
       isPullOfDates={true}

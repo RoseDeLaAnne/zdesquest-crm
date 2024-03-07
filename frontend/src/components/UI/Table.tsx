@@ -20,22 +20,16 @@ const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {
           return null;
         }
 
-        // console.log('countingFields uitable', countingFields)
-
-        // console.log('columns', columns)
-
         let total = [];
         for (const column of columns) {
           if (column.children) {
             for (const nestedColumn of column.children) {
-              console.log(nestedColumn.key)
               total.push({
                 key: nestedColumn.key,
                 total: countingFields.includes(nestedColumn.key) ? 0 : null,
               });
             }
-          }
-          else {
+          } else {
             total.push({
               key: column.key,
               total: countingFields.includes(column.key) ? 0 : null,
@@ -49,7 +43,11 @@ const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {
             dataSourceColumns.status !== "paid"
           ) {
             total.forEach((totalEach) => {
-              if (totalEach.total !== null && isObj && dataSourceColumns[totalEach.key]) {
+              if (
+                totalEach.total !== null &&
+                isObj &&
+                dataSourceColumns[totalEach.key]
+              ) {
                 totalEach.total += dataSourceColumns[totalEach.key].value;
               } else if (totalEach["key"] === "game") {
                 totalEach.total += dataSourceColumns[totalEach.key].value;
@@ -60,12 +58,25 @@ const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {
           }
         });
 
+        let totalSum = 0;
+        total.forEach((item) => {
+          totalSum += item.total;
+        });
+
         return (
           <>
             <Table.Summary.Row>
               {total.map((item, index) => (
                 <Table.Summary.Cell index={index} key={index}>
-                  {index === 0 ? "итого" : <Text>{total[index].total !== null ? total[index].total.toFixed(2) : null}</Text>}
+                  {index === 0 ? (
+                    `итого: ${totalSum}`
+                  ) : (
+                    <Text>
+                      {total[index].total !== null
+                        ? total[index].total.toFixed(2)
+                        : null}
+                    </Text>
+                  )}
                 </Table.Summary.Cell>
               ))}
             </Table.Summary.Row>

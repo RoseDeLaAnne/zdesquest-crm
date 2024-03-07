@@ -107,7 +107,6 @@ const QuestFC: FC = () => {
   const [defaultValuesFormItems, setDefaultValuesFormItems] = useState({});
 
   const formHandleOnChange = (value, name) => {
-    console.log("hello2");
     if (name === "quest") {
       const quest = quests.find((el) => el.id === value);
 

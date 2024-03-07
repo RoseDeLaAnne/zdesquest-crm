@@ -27,10 +27,17 @@ import {
 } from "../../api/APIUtils";
 
 // constants
-import { getSTExpensesFormItems, pullOfDatesDefaultGeneral, pullOfDatesDefaultValue, pullOfDatesOptions, pullOfDatesOptionsGeneral, pullOfDatesWhenLoadingGeneral } from "../../constants";
+import {
+  getSTExpensesFormItems,
+  pullOfDatesDefaultGeneral,
+  pullOfDatesDefaultValue,
+  pullOfDatesOptions,
+  pullOfDatesOptionsGeneral,
+  pullOfDatesWhenLoadingGeneral,
+} from "../../constants";
 
 // const backendUrl = 'http://localhost:8000/'
-const backendUrl = 'http://crm.zdesquest.ru/'
+const backendUrl = "http://crm.zdesquest.ru/";
 
 const STExpensesFC: FC = () => {
   const initialBreadcrumbItems = [
@@ -89,11 +96,7 @@ const STExpensesFC: FC = () => {
       dataIndex: "sub_category",
       render: (sub_category) => {
         if (sub_category !== null) {
-          return (
-            <Tag color="black">
-              {sub_category.name}
-            </Tag>
-          );
+          return <Tag color="black">{sub_category.name}</Tag>;
         } else {
           return null;
         }
@@ -132,7 +135,7 @@ const STExpensesFC: FC = () => {
     {
       title: "приложение",
       dataIndex: "attachment",
-      render: (value) => (
+      render: (value) =>
         value ? (
           <Image
             src={`${backendUrl}${value}`}
@@ -140,8 +143,7 @@ const STExpensesFC: FC = () => {
             height={64}
             className="object-fit_cover"
           />
-        ) : null
-      ),
+        ) : null,
     },
     {
       title: "сотрудники",
@@ -178,7 +180,10 @@ const STExpensesFC: FC = () => {
 
   const [isTaxi, setIsTaxi] = useState(false);
   const [isOwn, setIsOwn] = useState(false);
-  const [notVisibleFormItems, setNotVisibleFormItems] = useState(['who_paid', 'employees']);
+  const [notVisibleFormItems, setNotVisibleFormItems] = useState([
+    "who_paid",
+    "employees",
+  ]);
   const [defaultValuesFormItems, setDefaultValuesFormItems] = useState({});
   const [formItems, setFormItems] = useState([]);
   const getFormItems = async () => {
@@ -190,21 +195,23 @@ const STExpensesFC: FC = () => {
   }, []);
 
   const formHandleOnChange = (value, name) => {
-    console.log('value', value)
-    console.log('name', name)
-    
-    if (name === 'name') {
-      if (value === 'Такси' || value === 'Обед') {
-        setNotVisibleFormItems(prevState => prevState.filter(item => item !== 'employees'));
+    if (name === "name") {
+      if (value === "Такси" || value === "Обед") {
+        setNotVisibleFormItems((prevState) =>
+          prevState.filter((item) => item !== "employees")
+        );
       } else {
-        setNotVisibleFormItems(prevState => prevState.filter(item => item !== 'who_paid'));
+        setNotVisibleFormItems((prevState) =>
+          prevState.filter((item) => item !== "who_paid")
+        );
       }
     }
-    if (name === 'paid_from') {
-      if (value === 'own') {
-        setNotVisibleFormItems(prevState => prevState.filter(item => item !== 'who_paid'));
+    if (name === "paid_from") {
+      if (value === "own") {
+        setNotVisibleFormItems((prevState) =>
+          prevState.filter((item) => item !== "who_paid")
+        );
       } else {
-        
       }
     }
   };
@@ -247,7 +254,7 @@ const STExpensesFC: FC = () => {
       defaultValuesFormItems={defaultValuesFormItems}
       formInitialValues={formInitialValues}
       formHandleOnChange={formHandleOnChange}
-      tableScroll={{ x: 1500 }}
+      tableScroll={{ x: 1500, y: 600 }}
       isPullOfDates={true}
       pullOfDatesDefaultValue={pullOfDatesDefaultGeneral}
       pullOfDatesWhenLoading={pullOfDatesWhenLoadingGeneral}

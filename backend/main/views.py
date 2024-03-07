@@ -1363,7 +1363,9 @@ def QuestExpenses(request, id):
             Q(quests=quest) | Q(quests__parent_quest=quest)
         )
         if start_date and end_date:
-            bonuses_penalties = bonuses_penalties.filter(date__range=(start_date, end_date))
+            bonuses_penalties = bonuses_penalties.filter(
+                date__range=(start_date, end_date)
+            )
         # bonuses_penalties = STBonusPenalty.objects.filter(quests=quest)
 
         for salary in salaries:
@@ -1502,10 +1504,14 @@ def QuestExpenses(request, id):
                 user_id = user["id"]
                 if user_taxi[date][user_id] == True:
                     salaries_by_date[date][user_id]["value"] -= 25
-                    salary_data = salaries_by_date[date][user_id]["salary_data"].get("Проезд", {"amount": 0, "value": 0})
+                    salary_data = salaries_by_date[date][user_id]["salary_data"].get(
+                        "Проезд", {"amount": 0, "value": 0}
+                    )
                     salary_data["amount"] -= 1
                     salary_data["value"] -= 25
-                    salaries_by_date[date][user_id]["salary_data"]["Проезд"] = salary_data
+                    salaries_by_date[date][user_id]["salary_data"][
+                        "Проезд"
+                    ] = salary_data
                     # salaries_by_date[date][user_id]["salary_data"]["Проезд"][
                     #     "amount"
                     # ] -= 1
@@ -1749,11 +1755,15 @@ def QuestExpenses(request, id):
                 if sub_category2 not in new_obj[date]:
                     new_obj[date][sub_category2] = {"tooltip": "", "value": 0}
 
+                # print(expenses_by_date[date][sub_category2]["value"])
+
                 new_obj[date].update(
                     {
                         sub_category2: {
                             "tooltip": expenses_by_date[date][sub_category2]["tooltip"],
-                            "value": expenses_by_date[date][sub_category2]["value"],
+                            "value": round(
+                                expenses_by_date[date][sub_category2]["value"], 2
+                            ),
                         }
                     }
                 )
@@ -2218,7 +2228,9 @@ def Salaries(request):
 
         if start_date and end_date:
             salaries = salaries.filter(date__range=(start_date, end_date))
-            bonuses_penalties = bonuses_penalties.filter(date__range=(start_date, end_date))
+            bonuses_penalties = bonuses_penalties.filter(
+                date__range=(start_date, end_date)
+            )
 
         for salary in salaries:
             date_str = salary.date.strftime("%d.%m.%Y")

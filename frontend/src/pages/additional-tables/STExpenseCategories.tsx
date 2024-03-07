@@ -58,7 +58,7 @@ const STExpenseCategoriesFC: FC = () => {
     getFormItems();
   }, []);
 
-  const formHandleOnChange = () => {}
+  const formHandleOnChange = () => {};
 
   return (
     <TemplateTable
@@ -70,6 +70,7 @@ const STExpenseCategoriesFC: FC = () => {
       addEntryTitle={"новая запись"}
       drawerTitle={"создать новую запись"}
       // tableDateColumn={"date_time"}
+      tableScroll={{ x: 1750, y: 600 }}
       initialPackedTableColumns={initialPackedTableColumns}
       getFunction={getSTExpenseCategories}
       deleteFunction={deleteSTExpenseCategory}

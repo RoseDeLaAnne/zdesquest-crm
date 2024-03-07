@@ -189,6 +189,7 @@ const QCashRegisterFC: FC = () => {
       postFunction={postQCashRegister}
       isUseParams={true}
       isAddEntry={true}
+      tableScroll={{ x: 1000, y: 600 }}
       addEntryTitle={"новая запись"}
       drawerTitle={"создать новую запись"}
       formItems={formItems}

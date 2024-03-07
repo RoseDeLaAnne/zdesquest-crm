@@ -18,8 +18,19 @@ import {
 import TemplateTable from "../../components/template/Table";
 
 // api
-import { getCurrentUser, getQVideos, getQuests, toggleQuestVideo } from "../../api/APIUtils";
-import { pullOfDatesDefaultGeneral, pullOfDatesDefaultValue, pullOfDatesOptions, pullOfDatesOptionsGeneral, pullOfDatesWhenLoadingGeneral } from "../../constants";
+import {
+  getCurrentUser,
+  getQVideos,
+  getQuests,
+  toggleQuestVideo,
+} from "../../api/APIUtils";
+import {
+  pullOfDatesDefaultGeneral,
+  pullOfDatesDefaultValue,
+  pullOfDatesOptions,
+  pullOfDatesOptionsGeneral,
+  pullOfDatesWhenLoadingGeneral,
+} from "../../constants";
 
 const QVideosFC: FC = () => {
   const { id } = useParams();
@@ -187,10 +198,10 @@ const QVideosFC: FC = () => {
             } else if (type_single == "video_review") {
               // color = "red";
               formatText = "видео отзыв";
-            } else if (type_single == 'video') {
-              formatText = "видео"
-            } else if (type_single == 'video_as_a_gift') {
-              formatText = "видео в подарок"
+            } else if (type_single == "video") {
+              formatText = "видео";
+            } else if (type_single == "video_as_a_gift") {
+              formatText = "видео в подарок";
             }
             return (
               <Tag color={color} key={formatText}>
@@ -285,7 +296,7 @@ const QVideosFC: FC = () => {
       getFunction={getQVideos}
       toggleFunction={toggleQuestVideo}
       isUseParams={true}
-      tableScroll={{ x: 1000 }}
+      tableScroll={{ x: 1000, y: 600 }}
       isPullOfDates={true}
       pullOfDatesDefaultValue={pullOfDatesDefaultGeneral}
       pullOfDatesWhenLoading={pullOfDatesWhenLoadingGeneral}

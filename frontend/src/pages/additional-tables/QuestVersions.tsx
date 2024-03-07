@@ -11,7 +11,15 @@ import {
 } from "@ant-design/icons";
 
 // api
-import { getQuests, postQuest, deleteQuest, getQuestVersions, deleteQuestVersion, postQuestVersion, getQuestsWithParentQuest } from "../../api/APIUtils";
+import {
+  getQuests,
+  postQuest,
+  deleteQuest,
+  getQuestVersions,
+  deleteQuestVersion,
+  postQuestVersion,
+  getQuestsWithParentQuest,
+} from "../../api/APIUtils";
 
 // components
 import TemplateTable from "../../components/template/Table";
@@ -76,14 +84,14 @@ const ATQuestVersions: FC = () => {
     },
   ];
 
-  const [formItems, setFormItems] = useState([])
+  const [formItems, setFormItems] = useState([]);
   const getFormItems = async () => {
-    const res = await getQuestVersionsFormItems()
-    setFormItems(res)
-  }
+    const res = await getQuestVersionsFormItems();
+    setFormItems(res);
+  };
   useEffect(() => {
     getFormItems();
-  }, [])
+  }, []);
 
   return (
     <TemplateTable
@@ -94,7 +102,7 @@ const ATQuestVersions: FC = () => {
       addEntryTitle={"новая версия квеста"}
       isCancel={false}
       isCreate={false}
-      tableScroll={null}
+      tableScroll={{ x: 1750, y: 600 }}
       tableDateColumn={null}
       initialPackedTableColumns={initialPackedTableColumns}
       tableIsOperation={true}

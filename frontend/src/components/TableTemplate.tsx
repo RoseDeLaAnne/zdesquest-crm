@@ -400,7 +400,6 @@ const App: FC = ({
       },
     ];
   }
-  console.log(tableColumns);
   const handleDelete = async (key: React.Key) => {
     const response = await deleteFunction(key);
     if (response.status === 200) {

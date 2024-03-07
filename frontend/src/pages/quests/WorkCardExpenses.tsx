@@ -23,7 +23,12 @@ import {
   getQuests,
   getWorkCardExpenses,
 } from "../../api/APIUtils";
-import { pullOfDatesDefaultGeneral, pullOfDatesDefaultValue, pullOfDatesOptions, pullOfDatesWhenLoadingGeneral } from "../../constants";
+import {
+  pullOfDatesDefaultGeneral,
+  pullOfDatesDefaultValue,
+  pullOfDatesOptions,
+  pullOfDatesWhenLoadingGeneral,
+} from "../../constants";
 
 const QWorkCardExpensesFC: FC = () => {
   const { id } = useParams();
@@ -135,6 +140,7 @@ const QWorkCardExpensesFC: FC = () => {
       breadcrumbItems={initialBreadcrumbItems}
       isRangePicker={true}
       tableDateColumn={"date"}
+      tableScroll={{ x: 1000, y: 600 }}
       initialPackedTableColumns={initialPackedTableColumns}
       getFunction={getWorkCardExpenses}
       isUseParams={true}

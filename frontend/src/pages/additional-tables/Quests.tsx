@@ -135,7 +135,7 @@ const ATQuests: FC = () => {
       addEntryTitle={"новый квест"}
       isCancel={false}
       isCreate={false}
-      tableScroll={{ x: 1750 }}
+      tableScroll={{ x: 1750, y: 600 }}
       tableDateColumn={null}
       initialPackedTableColumns={initialPackedTableColumns}
       tableIsOperation={true}

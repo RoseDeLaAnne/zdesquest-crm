@@ -74,26 +74,26 @@ const UsersFC: FC = () => {
       render: (bank) => {
         if (bank !== null) {
           let color = "black";
-          let formattedText = ''
+          let formattedText = "";
 
-          if (bank === 'sberbank') {
+          if (bank === "sberbank") {
             color = "green";
-            formattedText = 'сбербанк'
-          } else if (bank === 'tinkoff') {
+            formattedText = "сбербанк";
+          } else if (bank === "tinkoff") {
             color = "yellow";
-            formattedText = 'тинькофф'
-          } else if (bank === 'alfabank') {
-            color = 'red'
-            formattedText = 'альфа-банк'
-          } else if (bank === 'vtb') {
-            color = 'blue'
-            formattedText = 'втб'
+            formattedText = "тинькофф";
+          } else if (bank === "alfabank") {
+            color = "red";
+            formattedText = "альфа-банк";
+          } else if (bank === "vtb") {
+            color = "blue";
+            formattedText = "втб";
           }
 
           return <Tag color={color}>{formattedText}</Tag>;
         } else {
           return null;
-        }        
+        }
       },
     },
     {
@@ -195,7 +195,7 @@ const UsersFC: FC = () => {
       drawerTitle={"добавить нового сотрудника"}
       formItems={formItems}
       formHandleOnChange={formHandleOnChange}
-      tableScroll={{ x: 2250 }}
+      tableScroll={{ x: 2250, y: 600 }}
       operationIsEdit={true}
       operationIsDelete={true}
     />
