@@ -38,6 +38,10 @@ export const pullOfDatesOptions = [
     value: "25.02.2024 - 09.03.2024",
     label: "25.02.2024 - 09.03.2024",
   },
+  {
+    value: "10.03.2024 - 24.03.2024",
+    label: "10.03.2024 - 24.03.2024",
+  },
 ];
 
 export const pullOfDatesOptionsGeneral = [
@@ -48,6 +52,10 @@ export const pullOfDatesOptionsGeneral = [
   {
     value: "10.02.2024 - 09.03.2024",
     label: "10.02.2024 - 09.03.2024",
+  },
+  {
+    value: "10.03.2024 - 09.04.2024",
+    label: "10.03.2024 - 09.04.2024",
   },
 ];
 
@@ -68,14 +76,18 @@ export const pullOfDatesOptionsForVideo = [
     value: "25.02.2024 - 09.03.2024",
     label: "25.02.2024 - 09.03.2024",
   },
+  {
+    value: "10.03.2024 - 24.04.2024",
+    label: "10.03.2024 - 24.04.2024",
+  },
 ];
 
-export const pullOfDatesDefaultValue = "25.02.2024 - 09.03.2024";
-export const pullOfDatesDefaultGeneral = "10.02.2024 - 09.03.2024";
-export const pullOfDatesDefaultValueForVideo = "25.02.2024 - 09.03.2024";
+export const pullOfDatesDefaultValue = "10.03.2024 - 24.03.2024";
+export const pullOfDatesDefaultGeneral = "10.03.2024 - 09.04.2024";
+export const pullOfDatesDefaultValueForVideo = "10.03.2024 - 24.04.2024";
 
-export const pullOfDatesWhenLoadingGeneral = ["10-02-2024", "09-03-2024"];
-export const pullOfDatesWhenLoadingSalaries = ["25-02-2024", "09-03-2024"];
+export const pullOfDatesWhenLoadingGeneral = ["10-03-2024", "09-04-2024"];
+export const pullOfDatesWhenLoadingSalaries = ["10-03-2024", "24-03-2024"];
 
 const optionsBanks = [
   {
