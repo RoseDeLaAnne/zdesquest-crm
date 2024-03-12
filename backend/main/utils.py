@@ -54,8 +54,9 @@ def date_to_timestamp(date):
 
 def create_qincome(data, entry):
     if "date" in data:
-        formatted_date = convert_to_date(data["date"])
+        # formatted_date = convert_to_date(data["date"])
         # formatted_date = datetime.strptime(data["date"], '%Y-%m-%d').date()
+        formatted_date = datetime.strptime(data["date"], "%Y-%m-%dT%H:%M:%S.%fZ").date()
     else:
         formatted_date = entry.date
     if "time" in data:
@@ -509,7 +510,8 @@ def create_qincome(data, entry):
 
 
 def create_qcash_register_from_stquest(data, entry):
-    formatted_date = convert_to_date(data["date"])
+    # formatted_date = convert_to_date(data["date"])
+    formatted_date = datetime.strptime(data["date"], "%Y-%m-%dT%H:%M:%S.%fZ").date()
     # formatted_date = datetime.strptime(data["date"], '%Y-%m-%d').date()
 
     # quest = Quest.objects.get(id=data["quest"])
