@@ -2136,14 +2136,16 @@ def VCorrectnessOfSalary(request):
     if request.method == "POST":
         data = json.loads(request.body)
         query = QSalary.objects.get(id=data["id"])
+        queries = QSalary.objects.filter(Q(stquest=query.stquest) & Q(user=query.user))
+        print(queries)
 
-        if data["type"] == "correct":
-            # print('correct')
-            query.status = "correctly"
-        elif data["type"] == "incorrect":
-            query.status = "incorrectly"
+        for el in queries:
+            if data["type"] == "correct":
+                el.status = "correctly"
+            elif data["type"] == "incorrect":
+                el.status = "incorrectly"
 
-        query.save()
+            el.save()
 
         return Response(status=200)
 
@@ -2331,6 +2333,8 @@ def Salaries(request):
                             "count": 1,
                             "total_amount": salary.amount,
                         }
+            
+            merged_data[date_str][salary.user.id]['status'] = salary.status
 
         # print(user_taxi)
 

@@ -54,9 +54,9 @@ const SalariesFC: FC = () => {
       pullOfDatesDefaultValue={pullOfDatesDefaultValue}
       pullOfDatesWhenLoading={pullOfDatesWhenLoadingSalaries}
       pullOfDatesOptions={pullOfDatesOptions}
-      tableIsOperation={"actions"}
+      tableIsOperation={user.is_superuser ? undefined : "actions"}
       toggleFunction={toggleCorrectnessOfsalary}
-      tableOperationNames={['верно', 'неверно']}
+      tableOperationNames={["верно", "неверно"]}
     />
   );
 };

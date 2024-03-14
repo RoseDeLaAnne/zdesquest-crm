@@ -402,12 +402,34 @@ const TableFC: FC = ({
                     placement="bottomLeft"
                   >
                     {/* <div>{obj.value}</div> */}
-                    <Tag color="#f50">{obj.value}</Tag>
+                    <Tag
+                      color={
+                        obj.status === "correctly"
+                          ? "success"
+                          : obj.status === "incorrectly"
+                          ? "error"
+                          : "default"
+                      }
+                    >
+                      {obj.value}
+                    </Tag>
                   </Tooltip>
                 );
               } else {
                 // return <div>{obj.value}</div>;
-                return <Tag color="#f50">{obj.value}</Tag>;
+                return (
+                  <Tag
+                    color={
+                      obj.status === "correctly"
+                        ? "success"
+                        : obj.status === "incorrectly"
+                        ? "error"
+                        : "default"
+                    }
+                  >
+                    {obj.value}
+                  </Tag>
+                );
               }
             },
           })),
