@@ -11,8 +11,13 @@ import {
   getCurrentSalaries,
   getCurrentUser,
   getSalaries,
+  toggleCorrectnessOfsalary,
 } from "../api/APIUtils";
-import { pullOfDatesDefaultValue, pullOfDatesOptions, pullOfDatesWhenLoadingSalaries } from "../constants";
+import {
+  pullOfDatesDefaultValue,
+  pullOfDatesOptions,
+  pullOfDatesWhenLoadingSalaries,
+} from "../constants";
 
 const SalariesFC: FC = () => {
   const initialBreadcrumbItems = [
@@ -28,8 +33,6 @@ const SalariesFC: FC = () => {
     const response = await getCurrentUser();
     if (response.status === 200) {
       setUser(response.data);
-
-      // console.log(response.data.is_superuser)
     }
   };
   useEffect(() => {
@@ -51,6 +54,9 @@ const SalariesFC: FC = () => {
       pullOfDatesDefaultValue={pullOfDatesDefaultValue}
       pullOfDatesWhenLoading={pullOfDatesWhenLoadingSalaries}
       pullOfDatesOptions={pullOfDatesOptions}
+      tableIsOperation={"actions"}
+      toggleFunction={toggleCorrectnessOfsalary}
+      tableOperationNames={['верно', 'неверно']}
     />
   );
 };

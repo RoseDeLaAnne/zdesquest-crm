@@ -395,6 +395,16 @@ export const toggleQuestVideo = async (id: number) => {
   }
 };
 
+export const toggleCorrectnessOfsalary = async (value: object) => {
+  try {
+    const url = `${url3}/api/toggle/correctness-of-salary/`;
+    const res = await axios.post(url, value);
+    return res;
+  } catch (error) {
+    return error.response.status;
+  }
+};
+
 export const getWorkCardExpenses = async (
   startDate: string,
   endDate: string,

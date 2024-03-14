@@ -61,12 +61,6 @@ const STQuestsFC: FC = () => {
           label: "расходы",
           to: "/source-tables/expenses",
         },
-        // {
-        //   key: "3",
-        //   icon: DeploymentUnitOutlined,
-        //   label: "бонусы/штрафы",
-        //   to: "/source-tables/bonuses-penalties",
-        // },
       ],
     },
   ];

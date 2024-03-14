@@ -2131,6 +2131,23 @@ def ToggleQVideo(request, id):
         return Response(status=200)
 
 
+@api_view(["POST"])
+def VCorrectnessOfSalary(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        query = QSalary.objects.get(id=data["id"])
+
+        if data["type"] == "correct":
+            # print('correct')
+            query.status = "correctly"
+        elif data["type"] == "incorrect":
+            query.status = "incorrectly"
+
+        query.save()
+
+        return Response(status=200)
+
+
 @api_view(["GET"])
 def Salaries(request):
     if request.method == "GET":
@@ -2280,12 +2297,17 @@ def Salaries(request):
             item_name = salary.name
 
             if date_str not in merged_data:
-                merged_data[date_str] = {"id": salary.id, "date": date_str}
+                merged_data[date_str] = {
+                    "id": salary.id,
+                    # "status": salary.status,
+                    "date": date_str,
+                }
 
             for user in users:
                 id = user.id
                 if id not in merged_data[date_str]:
                     merged_data[date_str][id] = {
+                        "status": salary.status,
                         "value": 0,
                         "tooltip": {},
                     }
@@ -2403,7 +2425,8 @@ def Salaries(request):
             }
 
             for id, data in date_data.items():
-                if id not in ("id", "date"):
+                if id not in ("id", "date", "status"):
+                    # print(data)
                     user_data[id] = {
                         "value": data["value"],
                         "tooltip": "<br />".join(
@@ -2412,6 +2435,7 @@ def Salaries(request):
                                 for item_name, item_data in data["tooltip"].items()
                             ]
                         ),
+                        "status": data["status"],
                     }
 
             body_data.append(user_data)

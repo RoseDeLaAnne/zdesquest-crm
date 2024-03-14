@@ -18,6 +18,8 @@ import {
   Popconfirm,
   FloatButton,
   message,
+  Tag,
+  Dropdown,
 } from "antd";
 // antd | type
 import type { MenuProps, InputRef } from "antd";
@@ -28,7 +30,11 @@ import type {
   SorterResult,
 } from "antd/es/table/interface";
 // antd | icons
-import { SearchOutlined, LogoutOutlined } from "@ant-design/icons";
+import {
+  SearchOutlined,
+  LogoutOutlined,
+  DashOutlined,
+} from "@ant-design/icons";
 
 // components
 import CMain from "./Main";
@@ -58,6 +64,8 @@ const TableFC: FC = ({
   tableDateColumn,
   initialPackedTableColumns,
   tableIsOperation,
+  tableOperationNames,
+  tableOperationItems,
   getFunction,
   deleteFunction,
   postFunction,
@@ -89,6 +97,10 @@ const TableFC: FC = ({
   const navigate = useNavigate();
 
   const [fileList, setFileList] = useState([]);
+  const items: MenuProps["items"] = [
+    { key: "1", label: "Верно" },
+    { key: "2", label: "Неверно" },
+  ];
 
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -220,8 +232,29 @@ const TableFC: FC = ({
   };
   const cancelHandleClick = () => {};
 
-  const handleToggle = async (key: number) => {
-    // const res = await toggleQuestVideo(key)
+  const handleToggle = async (type: string, key: number) => {
+    const res = await toggleFunction({
+      type: type,
+      id: parseInt(key),
+    });
+    if (res.status === 200) {
+      const newData = tableDataSource.filter((item) => item.key !== key);
+      setTableDataSource(newData);
+
+      if (dates.length !== 0) {
+        getEntries(
+          dates[0].format("DD-MM-YYYY"),
+          dates[1].format("DD-MM-YYYY")
+        );
+      } else {
+        getEntries(
+          pullOfDatesWhenLoading && pullOfDatesWhenLoading[0],
+          pullOfDatesWhenLoading && pullOfDatesWhenLoading[1]
+        );
+      }
+    }
+  };
+  const handleToggle2 = async (key: number) => {
     const res = await toggleFunction(key);
     if (res.status === 200) {
       const newData = tableDataSource.filter((item) => item.key !== key);
@@ -233,7 +266,10 @@ const TableFC: FC = ({
           dates[1].format("DD-MM-YYYY")
         );
       } else {
-        getEntries(pullOfDatesWhenLoading && pullOfDatesWhenLoading[0], pullOfDatesWhenLoading && pullOfDatesWhenLoading[1]);
+        getEntries(
+          pullOfDatesWhenLoading && pullOfDatesWhenLoading[0],
+          pullOfDatesWhenLoading && pullOfDatesWhenLoading[1]
+        );
       }
     }
   };
@@ -250,7 +286,10 @@ const TableFC: FC = ({
           dates[1].format("DD-MM-YYYY")
         );
       } else {
-        getEntries(pullOfDatesWhenLoading && pullOfDatesWhenLoading[0], pullOfDatesWhenLoading && pullOfDatesWhenLoading[1]);
+        getEntries(
+          pullOfDatesWhenLoading && pullOfDatesWhenLoading[0],
+          pullOfDatesWhenLoading && pullOfDatesWhenLoading[1]
+        );
       }
     }
   };
@@ -262,6 +301,8 @@ const TableFC: FC = ({
   const [tableDataSource, setTableDataSource] = useState([]);
   const [form] = Form.useForm();
   const [form2] = Form.useForm();
+
+  const [currentDates, setCurrentDates] = useState([]);
 
   let tableColumns = [];
   let initialUnpackedTableDateColumn = {};
@@ -360,11 +401,13 @@ const TableFC: FC = ({
                     }
                     placement="bottomLeft"
                   >
-                    <div>{obj.value}</div>
+                    {/* <div>{obj.value}</div> */}
+                    <Tag color="#f50">{obj.value}</Tag>
                   </Tooltip>
                 );
               } else {
-                return <div>{obj.value}</div>;
+                // return <div>{obj.value}</div>;
+                return <Tag color="#f50">{obj.value}</Tag>;
               }
             },
           })),
@@ -381,11 +424,35 @@ const TableFC: FC = ({
                 }
                 placement="bottomLeft"
               >
-                <div>{obj.value}</div>
+                {/* <div>{obj.value}</div> */}
+                <Tag
+                  color={
+                    obj.status == "correctly"
+                      ? "success"
+                      : obj.status == "incorrectly"
+                      ? "error"
+                      : "default"
+                  }
+                >
+                  {obj.value}
+                </Tag>
               </Tooltip>
             );
           } else {
-            return <div>{obj.value}</div>;
+            // return <div>{obj.value}</div>;
+            return (
+              <Tag
+                color={
+                  obj.status === "correctly"
+                    ? "success"
+                    : obj.status === "incorrectly"
+                    ? "error"
+                    : "default"
+                }
+              >
+                {obj.value}
+              </Tag>
+            );
           }
         },
       };
@@ -598,7 +665,7 @@ const TableFC: FC = ({
     setDrawer2IsOpen(true);
     localStorage.setItem("drawer2IsOpen", "true");
   };
-  if (tableIsOperation == "toggle") {
+  if (tableIsOperation == "actions") {
     tableColumns = [
       ...tableColumns,
       {
@@ -609,14 +676,42 @@ const TableFC: FC = ({
           tableDataSource.length >= 1 ? (
             <Space>
               <Popconfirm
-                title="вы уверены, что хотите отправить?"
-                onConfirm={() => handleToggle(record.key)}
+                title="вы уверены?"
+                onConfirm={() => handleToggle("correct", record.key)}
+              >
+                <a>{tableOperationNames[0]}</a>
+              </Popconfirm>
+              <Popconfirm
+                title="вы уверены?"
+                onConfirm={() => handleToggle("incorrect", record.key)}
+              >
+                <a>{tableOperationNames[1]}</a>
+              </Popconfirm>
+            </Space>
+          ) : null,
+        width: 144,
+        fixed: "right",
+      },
+    ];
+  } else if (tableIsOperation == "toggle") {
+    tableColumns = [
+      ...tableColumns,
+      {
+        title: "операция",
+        dataIndex: "operation",
+        key: "operation",
+        render: (_, record: { key: React.Key }) =>
+          tableDataSource.length >= 1 ? (
+            <Space>
+              <Popconfirm
+                title="вы уверены?"
+                onConfirm={() => handleToggle2(record.key)}
               >
                 <a>отправить</a>
               </Popconfirm>
             </Space>
           ) : null,
-        width: 192,
+        width: 144,
         fixed: "right",
       },
     ];

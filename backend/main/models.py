@@ -42,8 +42,16 @@ class Quest(models.Model):
 
     duration_in_minute = models.IntegerField(blank=True, null=True)
 
-    parent_quest = models.ForeignKey("self", on_delete=models.SET_NULL, blank=True, null=True, related_name="quest_parent_quest")
-    special_versions = models.ManyToManyField("self", blank=True, symmetrical=False, related_name="quest_special_versions")
+    parent_quest = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="quest_parent_quest",
+    )
+    special_versions = models.ManyToManyField(
+        "self", blank=True, symmetrical=False, related_name="quest_special_versions"
+    )
     # versions = models.ManyToManyField(QuestVersion, blank=True)
 
     def save(self, *args, **kwargs):
@@ -53,7 +61,8 @@ class Quest(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+
 class STExpenseCategory(models.Model):
     name = models.CharField(max_length=255, unique=True)
     latin_name = models.CharField(max_length=255, unique=True, blank=True, null=True)
@@ -62,6 +71,7 @@ class STExpenseCategory(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class STExpenseSubCategory(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -74,13 +84,14 @@ class STExpenseSubCategory(models.Model):
     def __str__(self):
         return self.name
 
+
 class User(AbstractBaseUser, PermissionsMixin):
     BANKS = [
         ("sberbank", "сбербанк"),
         ("tinkoff", "тинькофф"),
         ("alfabank", "альфа-банк"),
     ]
-    
+
     email = models.EmailField(verbose_name=_("Адрес электронной почты"), unique=True)
     phone_number = models.CharField(
         verbose_name=_("Номер телефона"),
@@ -89,16 +100,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True,
         null=True,
     )
-    
-    last_name = models.CharField(
-        verbose_name=_("Фамилия"), max_length=255
-    )
-    first_name = models.CharField(
-        verbose_name=_("Имя"), max_length=255
-    )
-    middle_name = models.CharField(
-        verbose_name=_("Отчество"), max_length=255
-    )
+
+    last_name = models.CharField(verbose_name=_("Фамилия"), max_length=255)
+    first_name = models.CharField(verbose_name=_("Имя"), max_length=255)
+    middle_name = models.CharField(verbose_name=_("Отчество"), max_length=255)
 
     is_active = models.BooleanField(
         verbose_name=_("Активный"),
@@ -156,11 +161,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True,
         null=True,
     )
-    bank = models.CharField(
-        choices=BANKS, blank=True, null=True, max_length=255
-    )
+    bank = models.CharField(choices=BANKS, blank=True, null=True, max_length=255)
 
-    quests_for_videos = models.ManyToManyField(Quest, blank=True, verbose_name=_("Квесты"))
+    quests_for_videos = models.ManyToManyField(
+        Quest, blank=True, verbose_name=_("Квесты")
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -330,10 +335,18 @@ class STExpense(models.Model):
     )
 
     user = models.ForeignKey(
-        User, on_delete=models.SET_NULL, blank=True, null=True, related_name='stexpense_user'
-    ) 
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="stexpense_user",
+    )
     quest = models.ForeignKey(
-        Quest, on_delete=models.SET_NULL, blank=True, null=True, related_name='stexpense_quest'
+        Quest,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="stexpense_quest",
     )
 
     created_by = models.ForeignKey(
@@ -342,7 +355,7 @@ class STExpense(models.Model):
         blank=True,
         null=True,
         related_name="stexpense_created_by",
-    ) 
+    )
 
     def __str__(self):
         return str(self.date)
@@ -376,7 +389,7 @@ class QIncome(models.Model):
     game = models.IntegerField(default=0)
     # game_tooltip = models.CharField(default='', max_length=255)
     discount_sum = models.IntegerField(default=0)
-    discount_desc = models.CharField(default='', max_length=255)
+    discount_desc = models.CharField(default="", max_length=255)
     easy_work = models.IntegerField(default=0)
     room = models.IntegerField(default=0)
     video = models.IntegerField(default=0)
@@ -408,10 +421,18 @@ class QIncome(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return str(self.date) + ' ' + str(self.time) + ' ' + str(self.stquest.quest.name)
+        return (
+            str(self.date) + " " + str(self.time) + " " + str(self.stquest.quest.name)
+        )
 
 
 class QSalary(models.Model):
+    STATUS = [
+        ("correctly", "верно"),
+        ("incorrectly", "не верно"),
+        ("unknown", "неизвестно"),
+    ]
+
     date = models.DateField()
 
     amount = models.IntegerField()
@@ -420,20 +441,30 @@ class QSalary(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
     stquest = models.ForeignKey(
-        STQuest, on_delete=models.CASCADE, blank=True, null=True, related_name="qsalary_stquest"
+        STQuest,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="qsalary_stquest",
     )
     quest = models.ForeignKey(
-        Quest, on_delete=models.CASCADE, blank=True, null=True, related_name="qsalary_quest"
+        Quest,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="qsalary_quest",
     )
 
     sub_category = models.CharField(max_length=255, default="")
+
+    status = models.CharField(choices=STATUS, default="unknown", max_length=255)
 
     st_expense = models.ForeignKey(
         STExpense, on_delete=models.CASCADE, blank=True, null=True
     )
 
     def __str__(self):
-        return str(self.date) + ' ' + str(self.user) + ' ' + str(self.stquest)
+        return str(self.date) + " " + str(self.user) + " " + str(self.stquest)
 
 
 class QCashRegister(models.Model):
@@ -515,9 +546,7 @@ class ExpenseFromTheir(models.Model):
         blank=True,
         null=True,
     )
-    bank = models.CharField(
-        choices=BANKS, blank=True, null=True, max_length=255
-    )
+    bank = models.CharField(choices=BANKS, blank=True, null=True, max_length=255)
 
     def __str__(self):
         return str(self.date)
