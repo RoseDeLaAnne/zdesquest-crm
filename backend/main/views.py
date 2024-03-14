@@ -2136,7 +2136,7 @@ def VCorrectnessOfSalary(request):
     if request.method == "POST":
         data = json.loads(request.body)
         query = QSalary.objects.get(id=data["id"])
-        queries = QSalary.objects.filter(Q(stquest=query.stquest) & Q(user=query.user))
+        queries = QSalary.objects.filter(Q(date=query.date) & Q(user=query.user))
         print(queries)
 
         for el in queries:
