@@ -794,6 +794,334 @@ def STQuests(request):
         return Response(response_data)
 
 
+# @api_view(["GET"])
+# @permission_classes([IsAuthenticated])
+# def STQuestsHistory(request):
+#     if request.method == "GET":
+#         start_date_param = request.query_params.get("start_date", None)
+#         end_date_param = request.query_params.get("end_date", None)
+
+#         entries = []
+
+#         if request.user.is_superuser == True:
+#             entries = STQuestHistory.objects.all().order_by("date")
+#         else:
+#             entries = STQuest.objects.filter(created_by=request.user).order_by("date")
+
+#         # entries = STQuest.objects.all().order_by("date")
+
+#         if start_date_param and end_date_param:
+#             try:
+#                 start_date = datetime.strptime(start_date_param, "%d-%m-%Y").date()
+#                 end_date = datetime.strptime(end_date_param, "%d-%m-%Y").date()
+
+#                 entries = entries.filter(date__range=(start_date, end_date))
+#             except ValueError:
+#                 return Response(
+#                     {
+#                         "error": "Неверный формат даты. Пожалуйста, используйте ДД-ММ-ГГГГ."
+#                     },
+#                     status=400,
+#                 )
+
+#         entry_dict = {}  # To track incomes by date
+
+#         for entry in entries:
+#             date_timestamp = date_to_timestamp(
+#                 entry.date
+#             )  # Convert date to Unix timestamp
+#             date_str = entry.date.strftime("%d.%m.%Y")  # Format date as DD.MM.YYYY
+
+#             if date_timestamp not in entry_dict:
+#                 entry_dict[date_timestamp] = {
+#                     "id": date_timestamp,
+#                     "key": str(date_timestamp),  # Use Unix timestamp as the key
+#                     "date_time": date_str,
+#                     "quest": "",
+#                     "quest_cost": 0,
+#                     "add_players": 0,
+#                     "actor_or_second_actor_or_animator": 0,
+#                     "discount_sum": 0,
+#                     "discount_desc": "",
+#                     "room_sum": 0,
+#                     "room_quantity": 0,
+#                     "room_employee_name": "",
+#                     "video": 0,
+#                     "video_after": 0,
+#                     "photomagnets_quantity": 0,
+#                     "photomagnets_sum": 0,
+#                     "birthday_congr": 0,
+#                     "easy_work": 0,
+#                     "night_game": 0,
+#                     "administrator": "",
+#                     "actors": "",
+#                     "actors_half": "",
+#                     "administrators_half": "",
+#                     "employees_first_time": "",
+#                     "animator": "",
+#                     "is_package": False,
+#                     "is_video_review": False,
+#                     "video_as_a_gift": False,
+#                     "cash_payment": 0,
+#                     "cashless_payment": 0,
+#                     "cash_delivery": 0,
+#                     "cashless_delivery": 0,
+#                     "prepayment": 0,
+#                     "created_by": "",
+#                     "children": [],
+#                 }
+
+#             child_id = str(entry.id)  # Use entry.id as the child's key
+#             entry_time = entry.time.strftime("%H:%M")  # Format time as HH:MM
+
+#             serialized_actors = []
+#             for (
+#                 actor
+#             ) in (
+#                 entry.actors.all()
+#             ):  # Assuming actors is a related manager (e.g., a ManyToManyField or ForeignKey)
+#                 serialized_actor = {
+#                     "id": actor.id,
+#                     "last_name": actor.last_name,
+#                     "first_name": actor.first_name,
+#                 }
+
+#                 # Append the serialized actor to the list
+#                 serialized_actors.append(serialized_actor)
+#             serialized_administrators_half = []
+#             for (
+#                 administrator_half
+#             ) in (
+#                 entry.administrators_half.all()
+#             ):  # Assuming actors is a related manager (e.g., a ManyToManyField or ForeignKey)
+#                 serialized_administrator_half = {
+#                     "id": administrator_half.id,
+#                     "last_name": administrator_half.last_name,
+#                     "first_name": administrator_half.first_name,
+#                 }
+
+#                 # Append the serialized actor to the list
+#                 serialized_administrators_half.append(serialized_administrator_half)
+#             serialized_half_actors = []
+#             for (
+#                 actor_half
+#             ) in (
+#                 entry.actors_half.all()
+#             ):  # Assuming actors is a related manager (e.g., a ManyToManyField or ForeignKey)
+#                 serialized_half_actor = {
+#                     "id": actor_half.id,
+#                     "last_name": actor_half.last_name,
+#                     "first_name": actor_half.first_name,
+#                 }
+
+#                 # Append the serialized actor to the list
+#                 serialized_half_actors.append(serialized_half_actor)
+
+#             serialized_employees_first_time = []
+#             for (
+#                 employee_first_time
+#             ) in (
+#                 entry.employees_first_time.all()
+#             ):  # Assuming actors is a related manager (e.g., a ManyToManyField or ForeignKey)
+#                 serialized_employee_first_time = {
+#                     "id": employee_first_time.id,
+#                     "last_name": employee_first_time.last_name,
+#                     "first_name": employee_first_time.first_name,
+#                     "middle_name": employee_first_time.middle_name,
+#                 }
+
+#                 # Append the serialized actor to the list
+#                 serialized_employees_first_time.append(serialized_employee_first_time)
+
+#             # entry_dict[date_timestamp]["quest"] = {
+#             #     "id": entry.quest.id,
+#             #     "name": entry.quest.name,
+#             # }
+#             entry_dict[date_timestamp]["quest"] = "Итого за день"
+#             entry_dict[date_timestamp]["quest_cost"] += entry.quest_cost
+#             entry_dict[date_timestamp]["add_players"] += entry.add_players
+#             entry_dict[date_timestamp][
+#                 "actor_or_second_actor_or_animator"
+#             ] += entry.actor_or_second_actor_or_animator
+#             entry_dict[date_timestamp]["discount_sum"] += entry.discount_sum
+#             entry_dict[date_timestamp]["discount_desc"] = entry.discount_desc
+#             entry_dict[date_timestamp]["room_sum"] += entry.room_sum
+#             entry_dict[date_timestamp]["room_quantity"] += entry.room_quantity
+#             entry_dict[date_timestamp]["room_employee_name"] = {
+#                 "id": entry.room_employee_name.id if entry.room_employee_name else None,
+#                 "last_name": (
+#                     entry.room_employee_name.last_name
+#                     if entry.room_employee_name
+#                     else None
+#                 ),
+#                 "first_name": (
+#                     entry.room_employee_name.first_name
+#                     if entry.room_employee_name
+#                     else None
+#                 ),
+#                 "middle_name": (
+#                     entry.room_employee_name.middle_name
+#                     if entry.room_employee_name
+#                     else None
+#                 ),
+#             }
+
+#             entry_dict[date_timestamp]["video"] += entry.video
+#             entry_dict[date_timestamp]["video_after"] += entry.video_after
+#             entry_dict[date_timestamp][
+#                 "photomagnets_quantity"
+#             ] += entry.photomagnets_quantity
+#             entry_dict[date_timestamp]["photomagnets_sum"] += entry.photomagnets_sum
+#             entry_dict[date_timestamp]["birthday_congr"] += entry.birthday_congr
+#             entry_dict[date_timestamp]["easy_work"] += entry.easy_work
+#             entry_dict[date_timestamp]["night_game"] += entry.night_game
+#             entry_dict[date_timestamp]["administrator"] = {
+#                 "id": entry.administrator.id if entry.administrator else None,
+#                 "last_name": (
+#                     entry.administrator.last_name if entry.administrator else None
+#                 ),
+#                 "first_name": (
+#                     entry.administrator.first_name if entry.administrator else None
+#                 ),
+#                 "middle_name": (
+#                     entry.created_by.middle_name if entry.administrator else None
+#                 ),
+#             }
+#             entry_dict[date_timestamp]["actors"] = serialized_actors
+#             entry_dict[date_timestamp]["actors_half"] = serialized_half_actors
+#             entry_dict[date_timestamp][
+#                 "administrators_half"
+#             ] = serialized_administrators_half
+#             entry_dict[date_timestamp][
+#                 "employees_first_time"
+#             ] = serialized_employees_first_time
+#             entry_dict[date_timestamp]["animator"] = {
+#                 "id": entry.animator.id if entry.animator else None,
+#                 "last_name": entry.animator.last_name if entry.animator else None,
+#                 "first_name": entry.animator.first_name if entry.animator else None,
+#                 "middle_name": entry.animator.middle_name if entry.animator else None,
+#             }
+#             entry_dict[date_timestamp]["is_package"] = entry.is_package
+#             entry_dict[date_timestamp]["is_video_review"] = entry.is_video_review
+#             entry_dict[date_timestamp]["video_as_a_gift"] = entry.video_as_a_gift
+#             entry_dict[date_timestamp]["cash_payment"] += entry.cash_payment
+#             entry_dict[date_timestamp]["cashless_payment"] += entry.cashless_payment
+#             entry_dict[date_timestamp]["cash_delivery"] += entry.cash_delivery
+#             entry_dict[date_timestamp]["cashless_delivery"] += entry.cashless_delivery
+#             entry_dict[date_timestamp]["prepayment"] += entry.prepayment
+#             entry_dict[date_timestamp]["created_by"] = {
+#                 "id": entry.created_by.id,
+#                 "last_name": entry.created_by.last_name,
+#                 "first_name": entry.created_by.first_name,
+#                 "middle_name": entry.created_by.middle_name,
+#             }
+
+#             entry_dict[date_timestamp]["children"].append(
+#                 {
+#                     "id": entry.id,
+#                     "key": child_id,
+#                     "date_time": entry_time,  # Use formatted time
+#                     "quest": {
+#                         "id": entry.quest.id,
+#                         "name": entry.quest.name,
+#                     },
+#                     "quest_cost": entry.quest_cost,
+#                     "add_players": entry.add_players,
+#                     "actor_or_second_actor_or_animator": entry.actor_or_second_actor_or_animator,
+#                     "discount_sum": entry.discount_sum,
+#                     "discount_desc": entry.discount_desc,
+#                     "room_sum": entry.room_sum,
+#                     "room_quantity": entry.room_quantity,
+#                     "room_employee_name": {
+#                         "id": (
+#                             entry.room_employee_name.id
+#                             if entry.room_employee_name
+#                             else None
+#                         ),
+#                         "last_name": (
+#                             entry.room_employee_name.last_name
+#                             if entry.room_employee_name
+#                             else None
+#                         ),
+#                         "first_name": (
+#                             entry.room_employee_name.first_name
+#                             if entry.room_employee_name
+#                             else None
+#                         ),
+#                         "middle_name": (
+#                             entry.room_employee_name.middle_name
+#                             if entry.room_employee_name
+#                             else None
+#                         ),
+#                     },
+#                     "video": entry.video,
+#                     "video_after": entry.video_after,
+#                     "photomagnets_quantity": entry.photomagnets_quantity,
+#                     "photomagnets_sum": entry.photomagnets_sum,
+#                     "birthday_congr": entry.birthday_congr,
+#                     "easy_work": entry.easy_work,
+#                     "night_game": entry.night_game,
+#                     "administrator": {
+#                         "id": entry.administrator.id if entry.administrator else None,
+#                         "last_name": (
+#                             entry.administrator.last_name
+#                             if entry.administrator
+#                             else None
+#                         ),
+#                         "first_name": (
+#                             entry.administrator.first_name
+#                             if entry.administrator
+#                             else None
+#                         ),
+#                         "middle_name": (
+#                             entry.administrator.middle_name
+#                             if entry.administrator
+#                             else None
+#                         ),
+#                     },
+#                     "actors": serialized_actors,
+#                     "actors_half": serialized_half_actors,
+#                     "administrators_half": serialized_administrators_half,
+#                     "employees_first_time": serialized_employees_first_time,
+#                     "animator": {
+#                         "id": entry.animator.id if entry.animator else None,
+#                         "last_name": (
+#                             entry.animator.last_name if entry.animator else None
+#                         ),
+#                         "first_name": (
+#                             entry.animator.first_name if entry.animator else None
+#                         ),
+#                         "middle_name": (
+#                             entry.animator.middle_name if entry.animator else None
+#                         ),
+#                     },
+#                     "is_package": entry.is_package,
+#                     "is_video_review": entry.is_video_review,
+#                     "video_as_a_gift": entry.video_as_a_gift,
+#                     "cash_payment": entry.cash_payment,
+#                     "cashless_payment": entry.cashless_payment,
+#                     "cash_delivery": entry.cash_delivery,
+#                     "cashless_delivery": entry.cashless_delivery,
+#                     "prepayment": entry.prepayment,
+#                     "created_by": {
+#                         "id": entry.created_by.id,
+#                         "last_name": entry.created_by.last_name,
+#                         "first_name": entry.created_by.first_name,
+#                         "middle_name": entry.created_by.middle_name,
+#                     },
+#                 }
+#             )
+
+#         # Sort children by "date_time" within each parent object
+#         for date_data in entry_dict.values():
+#             date_data["children"].sort(key=lambda x: x["date_time"])
+
+#         # Convert the dictionary to a list
+#         response_data = list(entry_dict.values())
+
+#         return Response(response_data)
+
+
 @api_view(["GET"])
 def UserSTExpenses(request):
     if request.method == "GET":
@@ -2333,8 +2661,8 @@ def Salaries(request):
                             "count": 1,
                             "total_amount": salary.amount,
                         }
-            
-            merged_data[date_str][salary.user.id]['status'] = salary.status
+
+            merged_data[date_str][salary.user.id]["status"] = salary.status
 
         # print(user_taxi)
 
@@ -2379,45 +2707,46 @@ def Salaries(request):
 
             if len(bp.users.all()) != 0:
                 for bp_user in bp.users.all():
-                    if bp_user == request.user:
-                        if bp.type == "bonus":
-                            merged_data[date_str][bp_user.id]["value"] += bp.amount
-                            if (
+                    print(bp_user)
+                    # if bp_user == request.user:
+                    if bp.type == "bonus":
+                        merged_data[date_str][bp_user.id]["value"] += bp.amount
+                        if (
+                            item_name
+                            in merged_data[date_str][bp_user.id]["tooltip"]
+                        ):
+                            merged_data[date_str][bp_user.id]["tooltip"][item_name][
+                                "count"
+                            ] += 1
+                            merged_data[date_str][bp_user.id]["tooltip"][item_name][
+                                "total_amount"
+                            ] += bp.amount
+                        else:
+                            merged_data[date_str][bp_user.id]["tooltip"][
                                 item_name
-                                in merged_data[date_str][bp_user.id]["tooltip"]
-                            ):
-                                merged_data[date_str][bp_user.id]["tooltip"][item_name][
-                                    "count"
-                                ] += 1
-                                merged_data[date_str][bp_user.id]["tooltip"][item_name][
-                                    "total_amount"
-                                ] += bp.amount
-                            else:
-                                merged_data[date_str][bp_user.id]["tooltip"][
-                                    item_name
-                                ] = {
-                                    "count": 1,
-                                    "total_amount": bp.amount,
-                                }
-                        elif bp.type == "penalty":
-                            merged_data[date_str][bp_user.id]["value"] -= bp.amount
-                            if (
+                            ] = {
+                                "count": 1,
+                                "total_amount": bp.amount,
+                            }
+                    elif bp.type == "penalty":
+                        merged_data[date_str][bp_user.id]["value"] -= bp.amount
+                        if (
+                            item_name
+                            in merged_data[date_str][bp_user.id]["tooltip"]
+                        ):
+                            merged_data[date_str][bp_user.id]["tooltip"][item_name][
+                                "count"
+                            ] += 1
+                            merged_data[date_str][bp_user.id]["tooltip"][item_name][
+                                "total_amount"
+                            ] -= bp.amount
+                        else:
+                            merged_data[date_str][bp_user.id]["tooltip"][
                                 item_name
-                                in merged_data[date_str][bp_user.id]["tooltip"]
-                            ):
-                                merged_data[date_str][bp_user.id]["tooltip"][item_name][
-                                    "count"
-                                ] += 1
-                                merged_data[date_str][bp_user.id]["tooltip"][item_name][
-                                    "total_amount"
-                                ] -= bp.amount
-                            else:
-                                merged_data[date_str][bp_user.id]["tooltip"][
-                                    item_name
-                                ] = {
-                                    "count": 1,
-                                    "total_amount": -bp.amount,
-                                }
+                            ] = {
+                                "count": 1,
+                                "total_amount": -bp.amount,
+                            }
 
         body_data = []
 
@@ -4130,6 +4459,14 @@ def CreateSTExpense(request):
 
         expense.save()
 
+        # history_stexpense_data = {
+        #     "date_time": datetime.now(),
+        #     "operation": "create",
+        #     "stquest": expense
+        # }
+        # history_stexpense = STExpenseHistory(**history_stexpense_data)
+        # history_stexpense.save()
+
         if "quests" in data:
             quests = Quest.objects.filter(name__in=data["quests"])
             expense.quests.set(quests)
@@ -4333,6 +4670,14 @@ def CreateSTQuest(request):
                     administrator_rate = 250
 
             entry.save()
+
+            # history_stquest_data = {
+            #     "date_time": datetime.now(),
+            #     "operation": "create",
+            #     "stquest": entry
+            # }
+            # history_stquest = STQuestHistory(**history_stquest_data)
+            # history_stquest.save()
 
             if "actors" in data:
                 actor_names = data["actors"]
@@ -4856,7 +5201,8 @@ def CreateSTBonusPenalty(request):
         data1 = json.loads(request.body)
         data = {key: value for key, value in data1.items() if value not in ("", None)}
 
-        formatted_date = datetime.strptime(data["date"], "%Y-%m-%dT%H:%M:%S.%fZ").date()
+        # formatted_date = datetime.strptime(data["date"], "%Y-%m-%dT%H:%M:%S.%fZ").date()
+        formatted_date = convert_to_date(data["date"])
         # user = User.objects.get(id=data["user"])
 
         optional_fields = ["name"]

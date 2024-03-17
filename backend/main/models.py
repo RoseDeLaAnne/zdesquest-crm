@@ -265,6 +265,8 @@ class STQuest(models.Model):
         related_name="created_by",
     )
 
+    # created_date = models.DateTimeField(default=timezone.now)
+
     client_name = models.CharField(max_length=255, default="")
 
     def save(self, *args, **kwargs):
@@ -296,6 +298,23 @@ class STQuest(models.Model):
 
         return str(self.quest)
 
+
+class STQuestHistory(models.Model):
+    OPERATION = [
+        ("create", "создание"),
+        ("edit", "редактирование"),
+        ("delete", "удаление"),
+    ]
+    date_time = models.DateTimeField(default=timezone.now)
+    stquest = models.ForeignKey(
+        STQuest, on_delete=models.CASCADE, blank=True, null=True
+    )
+    operation = models.CharField(
+        choices=OPERATION, blank=True, null=True, max_length=255
+    )
+
+    def __str__(self):
+        return str(self.date_time)
 
 class STExpense(models.Model):
     PAID_FROM = [
@@ -359,6 +378,23 @@ class STExpense(models.Model):
 
     def __str__(self):
         return str(self.date)
+
+class STExpenseHistory(models.Model):
+    OPERATION = [
+        ("create", "создание"),
+        ("edit", "редактирование"),
+        ("delete", "удаление"),
+    ]
+    date_time = models.DateTimeField(default=timezone.now)
+    stexpense = models.ForeignKey(
+        STExpense, on_delete=models.DO_NOTHING, blank=True, null=True
+    )
+    operation = models.CharField(
+        choices=OPERATION, blank=True, null=True, max_length=255
+    )
+
+    def __str__(self):
+        return str(self.date_time)
 
 
 class STBonusPenalty(models.Model):

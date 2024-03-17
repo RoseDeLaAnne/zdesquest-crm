@@ -86,6 +86,7 @@ const EditFC: FC = ({
               key === "actors_half" ||
               key === "employees_first_time" ||
               key === "employees" ||
+              key === "users" ||
               key === "administrators_half"
             ) {
               form.setFieldsValue({
@@ -114,7 +115,7 @@ const EditFC: FC = ({
               form.setFieldsValue({ [key]: value !== null ? value.id : value });
             } else if (
               // key === "administrators_half" ||
-              key === "users" ||
+              // key === "users" ||
               // key === "actors" ||
               // key === "actors_half" ||
               key === "special_versions" ||
