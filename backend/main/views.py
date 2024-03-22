@@ -509,6 +509,7 @@ def STQuests(request):
                     "id": date_timestamp,
                     "key": str(date_timestamp),  # Use Unix timestamp as the key
                     "date_time": date_str,
+                    "client_name": "",
                     "quest": "",
                     "quest_cost": 0,
                     "add_players": 0,
@@ -681,6 +682,7 @@ def STQuests(request):
             entry_dict[date_timestamp]["cash_delivery"] += entry.cash_delivery
             entry_dict[date_timestamp]["cashless_delivery"] += entry.cashless_delivery
             entry_dict[date_timestamp]["prepayment"] += entry.prepayment
+            entry_dict[date_timestamp]["client_name"] += entry.client_name
             entry_dict[date_timestamp]["created_by"] = {
                 "id": entry.created_by.id,
                 "last_name": entry.created_by.last_name,
@@ -697,6 +699,7 @@ def STQuests(request):
                         "id": entry.quest.id,
                         "name": entry.quest.name,
                     },
+                    "client_name": entry.client_name,
                     "quest_cost": entry.quest_cost,
                     "add_players": entry.add_players,
                     "actor_or_second_actor_or_animator": entry.actor_or_second_actor_or_animator,
@@ -2465,7 +2468,6 @@ def VCorrectnessOfSalary(request):
         data = json.loads(request.body)
         query = QSalary.objects.get(id=data["id"])
         queries = QSalary.objects.filter(Q(date=query.date) & Q(user=query.user))
-        print(queries)
 
         for el in queries:
             if data["type"] == "correct":
@@ -2662,7 +2664,8 @@ def Salaries(request):
                             "total_amount": salary.amount,
                         }
 
-            merged_data[date_str][salary.user.id]["status"] = salary.status
+            if (salary.name != 'Проезд'):
+                merged_data[date_str][salary.user.id]["status"] = salary.status
 
         # print(user_taxi)
 
@@ -2707,7 +2710,7 @@ def Salaries(request):
 
             if len(bp.users.all()) != 0:
                 for bp_user in bp.users.all():
-                    print(bp_user)
+                    # print(bp_user)
                     # if bp_user == request.user:
                     if bp.type == "bonus":
                         merged_data[date_str][bp_user.id]["value"] += bp.amount

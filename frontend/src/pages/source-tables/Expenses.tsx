@@ -78,12 +78,6 @@ const STExpensesFC: FC = () => {
       sorting: true,
       searching: "наименованию расхода",
     },
-    // {
-    //   title: "описание расхода",
-    //   dataIndex: "description",
-    //   sorting: true,
-    //   searching: "описанию расхода",
-    // },
     {
       title: "сумма расхода",
       dataIndex: "amount",

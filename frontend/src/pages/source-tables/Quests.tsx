@@ -255,7 +255,6 @@ const STQuestsFC: FC = () => {
         }
       },
     },
-
     {
       title: "актеры/второй актер/аниматор",
       dataIndex: "actor_or_second_actor_or_animator",
@@ -354,6 +353,21 @@ const STQuestsFC: FC = () => {
           })}
         </>
       ),
+    },
+    {
+      title: "создатель",
+      dataIndex: "created_by",
+      render: (created_by) => {
+        if (created_by !== null) {
+          return (
+            <Tag color="black">
+              {created_by.last_name} {created_by.first_name}
+            </Tag>
+          );
+        } else {
+          return null;
+        }
+      },
     },
   ];
 

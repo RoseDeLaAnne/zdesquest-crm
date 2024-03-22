@@ -1265,7 +1265,7 @@ export const getSTExpensesFormItems = async () => {
           spanMD: 12,
           name: "quests",
           label: "квесты",
-          isRequired: false,
+          isRequired: true,
           placeholder: "пожалуйста, выберите квесты",
           element: {
             name: "Select",

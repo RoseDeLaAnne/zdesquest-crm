@@ -829,7 +829,7 @@ const TableFC: FC = ({
 
   const [messageApi, contextHolder] = message.useMessage();
   const form2OnFinish = async (value) => {
-    console.log("trigerred");
+    // console.log("trigerred");
 
     const cleanedData = Object.fromEntries(
       Object.entries(value).filter(([key, val]) => val !== "" && val !== null)
