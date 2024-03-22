@@ -5,7 +5,14 @@ import { Typography, Table } from "antd";
 
 const { Text } = Typography;
 
-const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {
+const App: FC = ({
+  scroll,
+  columns,
+  dataSource,
+  countingFields,
+  sumFields,
+  isObj,
+}) => {
   // console.log('columns', columns)
 
   return (
@@ -58,9 +65,16 @@ const App: FC = ({ scroll, columns, dataSource, countingFields, isObj }) => {
           }
         });
 
+        console.log(sumFields);
+
         let totalSum = 0;
         total.forEach((item) => {
-          totalSum += item.total;
+          if (sumFields.length > 0 && sumFields.includes(item.key)) {
+            console.log("hi");
+            totalSum += item.total;
+          } else if (sumFields.length == 0) {
+            totalSum += item.total;
+          }
         });
 
         return (

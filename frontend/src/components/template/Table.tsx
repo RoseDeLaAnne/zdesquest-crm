@@ -308,6 +308,7 @@ const TableFC: FC = ({
   let initialUnpackedTableDateColumn = {};
   let unpackedTableColumns = [];
   let tableCountingFields = [];
+  let tableSumFields = [];
   if (tableDateColumn === "date") {
     initialUnpackedTableDateColumn = {
       title: "дата",
@@ -373,18 +374,12 @@ const TableFC: FC = ({
         newColumn.onFilter = column.onFilter;
       }
 
-      // if (column.isFiltering) {
-      //   newColumn.filters = [
-      //     { text: 'квартира 404', value: 'Квартира 404' },
-      //     { text: 'проклятые', value: 'Проклятые' },
-      //   ];
-      // }
-
       return newColumn;
     });
     tableCountingFields = initialPackedTableColumns
       .filter((column) => column.countable)
       .map((column) => column.dataIndex);
+    tableSumFields = initialPackedTableColumns.filter((column) => column.inSum).map((column) => column.dataIndex)
   } else {
     unpackedTableColumns = tableDataHead.map((item) => {
       if (item.children) {
@@ -1148,6 +1143,7 @@ const TableFC: FC = ({
         columns={tableColumns}
         dataSource={tableDataSource}
         countingFields={tableCountingFields}
+        sumFields={tableSumFields}
         isObj={tableIsObj}
       />
       {isAddEntry === true && (

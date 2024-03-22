@@ -2647,6 +2647,7 @@ def Salaries(request):
             if salary.user:
                 if salary.user.id not in merged_data[date_str]:
                     merged_data[date_str][salary.user.id] = {
+                        "status": salary.status,
                         "value": salary.amount,
                         "tooltip": {
                             item_name: {"count": 1, "total_amount": salary.amount}
@@ -2654,6 +2655,7 @@ def Salaries(request):
                     }
                 else:
                     child = merged_data[date_str][salary.user.id]
+                    child["status"] = salary.status
                     child["value"] += salary.amount
                     if item_name in child["tooltip"]:
                         child["tooltip"][item_name]["count"] += 1
@@ -2704,6 +2706,7 @@ def Salaries(request):
                 id = user.id
                 if id not in merged_data[date_str]:
                     merged_data[date_str][id] = {
+                        "status": "unknown",
                         "value": 0,
                         "tooltip": {},
                     }

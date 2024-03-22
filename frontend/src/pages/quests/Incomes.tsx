@@ -162,6 +162,7 @@ const QIncomesFC: FC = () => {
       title: "итог",
       dataIndex: "total",
       countable: true,
+      inSum: true,
     },
     {
       title: "заплачено наличными",

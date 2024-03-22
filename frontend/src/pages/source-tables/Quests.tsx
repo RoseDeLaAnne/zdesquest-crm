@@ -204,11 +204,13 @@ const STQuestsFC: FC = () => {
       title: "наличный расчет",
       dataIndex: "cash_payment",
       countable: true,
+      inSum: true,
     },
     {
       title: "безналичный расчет",
       dataIndex: "cashless_payment",
       countable: true,
+      inSum: true,
     },
     {
       title: "сдача наличными",
@@ -224,6 +226,7 @@ const STQuestsFC: FC = () => {
       title: "предоплата",
       dataIndex: "prepayment",
       countable: true,
+      inSum: true,
     },
     {
       title: "сотрудник комнаты",
