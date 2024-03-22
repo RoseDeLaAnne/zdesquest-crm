@@ -1922,17 +1922,17 @@ def QuestExpenses(request, id):
                 if bonus_penalty.type == "bonus":
                     salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
                         "salary_data"
-                    ][bonus_penalty.name]["value"] -= bonus_penalty.amount
-                    salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
-                        "value"
-                    ] -= bonus_penalty.amount
-                else:
-                    salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
-                        "salary_data"
                     ][bonus_penalty.name]["value"] += bonus_penalty.amount
                     salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
                         "value"
                     ] += bonus_penalty.amount
+                else:
+                    salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
+                        "salary_data"
+                    ][bonus_penalty.name]["value"] -= bonus_penalty.amount
+                    salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
+                        "value"
+                    ] -= bonus_penalty.amount
 
         # print(salaries_by_date)
 
@@ -2103,7 +2103,7 @@ def QuestExpenses(request, id):
 
         # print(new_obj)
 
-        new_obj = dict(sorted(new_obj.items(), reverse=True))
+        new_obj = dict(sorted(new_obj.items(), reverse=False))
 
         # body_data = salaries_data
 

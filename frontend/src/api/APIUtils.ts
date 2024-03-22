@@ -445,7 +445,7 @@ export const getExpensesFromOwn = async (
 
 export const getExpensesFromOwnAll = async (
   startDate: string,
-  endDate: string,
+  endDate: string
 ) => {
   try {
     let url;

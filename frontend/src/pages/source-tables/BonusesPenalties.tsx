@@ -1,3 +1,6 @@
+// libs
+import dayjs from "dayjs";
+
 import { FC, useState, useEffect } from "react";
 
 // antd
@@ -167,8 +170,13 @@ const STQuests: FC = () => {
 
   const formHandleOnChange = () => {};
 
+  const formInitialValues = {
+    date: dayjs(),
+  };
+
   return (
     <TemplateTable
+      formInitialValues={formInitialValues}
       defaultOpenKeys={["sourceTables"]}
       defaultSelectedKeys={["sourceTablesBonusesPenalties"]}
       breadcrumbItems={initialBreadcrumbItems}

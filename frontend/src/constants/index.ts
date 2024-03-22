@@ -1359,7 +1359,7 @@ export const getSTExpensesFormItems = async () => {
 // getSTBonusesPenaltiesFormItems
 export const getSTBonusesPenaltiesFormItems = async () => {
   const optionsUsers = await fetchUsers();
-  const optionsQuests = await fetchQuestsWithSpecVersions();
+  const optionsQuests = await fetchQuests();
 
   const formItems = [
     {
