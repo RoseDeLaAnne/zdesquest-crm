@@ -443,6 +443,24 @@ export const getExpensesFromOwn = async (
   }
 };
 
+export const getExpensesFromOwnAll = async (
+  startDate: string,
+  endDate: string,
+) => {
+  try {
+    let url;
+    if (startDate !== null && endDate !== null) {
+      url = `${url3}/api/expenses-from-own/?start_date=${startDate}&end_date=${endDate}`;
+    } else {
+      url = `${url3}/api/expenses-from-own/`;
+    }
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    return error.response.status;
+  }
+};
+
 export const getQVideos = async (
   startDate: string,
   endDate: string,

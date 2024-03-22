@@ -242,6 +242,7 @@ const App: FC = ({
         ...questsData.map(convertQuestToMenuItem),
       ]),
       getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
+      // getItem("расходы со своих", "expenses-from-own", "/expenses-from-own", <DollarOutlined />),
     ];
   } else {
     menuItems = [

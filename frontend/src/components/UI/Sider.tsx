@@ -37,7 +37,7 @@ const App: FC = ({
   defaultOpenKeys,
   defaultSelectedKeys,
 }) => {
-  const [isVideo, setIsVideo] = useState(false)
+  const [isVideo, setIsVideo] = useState(false);
   const [user, setUser] = useState([]);
   const [questsData, setQuestsData] = useState([]);
   const fetchUser = async () => {
@@ -153,7 +153,9 @@ const App: FC = ({
             <Link to={to} className="menu__link">
               {label}
             </Link>
-          ) : label}
+          ) : (
+            label
+          )}
         </>
       ),
       type,
@@ -223,32 +225,26 @@ const App: FC = ({
   if (user.is_superuser) {
     menuItems = [
       getItem("сотрудники", "users", "/users", <UserOutlined />),
-      getItem(
-        "исходные таблицы",
-        "sourceTables",
-        null,
-        <TableOutlined />,
-        [
-          getItem(
-            "квесты",
-            "sourceTablesQuests",
-            "/source-tables/quests",
-            <QuestionOutlined />
-          ),
-          getItem(
-            "расходы",
-            "sourceTablesExpenses",
-            "/source-tables/expenses",
-            <FallOutlined />
-          ),
-          getItem(
-            "бонусы/штрафы",
-            "sourceTablesBonusesPenalties",
-            "/source-tables/bonuses-penalties",
-            <DeploymentUnitOutlined />
-          ),
-        ]
-      ),
+      getItem("исходные таблицы", "sourceTables", null, <TableOutlined />, [
+        getItem(
+          "квесты",
+          "sourceTablesQuests",
+          "/source-tables/quests",
+          <QuestionOutlined />
+        ),
+        getItem(
+          "расходы",
+          "sourceTablesExpenses",
+          "/source-tables/expenses",
+          <FallOutlined />
+        ),
+        getItem(
+          "бонусы/штрафы",
+          "sourceTablesBonusesPenalties",
+          "/source-tables/bonuses-penalties",
+          <DeploymentUnitOutlined />
+        ),
+      ]),
       getItem(
         "дополнительные таблицы",
         "additionalTables",
@@ -285,8 +281,14 @@ const App: FC = ({
         ...questsData.map(convertQuestToMenuItem),
       ]),
       getItem("зарплаты", "salaries", "/salaries", <DollarOutlined />),
+      getItem(
+        "расходы со своих",
+        "expensesFromOwn",
+        "/expenses-from-own",
+        <DollarOutlined />
+      ),
     ];
-  } else if (user.roles && user.roles.some(role => role.name == 'Видео')) {
+  } else if (user.roles && user.roles.some((role) => role.name == "Видео")) {
     menuItems = [
       getItem("исходные таблицы", "sourceTables", null, <TableOutlined />, [
         getItem(

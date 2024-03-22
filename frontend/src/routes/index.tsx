@@ -1,4 +1,9 @@
-import { Link, Navigate, RouterProvider, createBrowserRouter } from "react-router-dom";
+import {
+  Link,
+  Navigate,
+  RouterProvider,
+  createBrowserRouter,
+} from "react-router-dom";
 import { useAuth } from "../provider/authProdiver";
 import { ProtectedRoute } from "./ProtectedRoute";
 
@@ -49,6 +54,7 @@ import QExpensesFromOwn from "../pages/quests/ExpensesFromOwn";
 import QVideos from "../pages/quests/Videos";
 
 import Salaries from "../pages/Salaries";
+import ExpensesFromOwn from "../pages/ExpensesFromOwn";
 
 const Routes = () => {
   const { access } = useAuth();
@@ -212,6 +218,10 @@ const Routes = () => {
         {
           path: "/salaries",
           element: <Salaries />,
+        },
+        {
+          path: "/expenses-from-own",
+          element: <ExpensesFromOwn />,
         },
       ],
     },

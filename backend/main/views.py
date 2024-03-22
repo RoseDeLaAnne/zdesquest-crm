@@ -2664,7 +2664,7 @@ def Salaries(request):
                             "total_amount": salary.amount,
                         }
 
-            if (salary.name != 'Проезд'):
+            if salary.name != "Проезд":
                 merged_data[date_str][salary.user.id]["status"] = salary.status
 
         # print(user_taxi)
@@ -2714,10 +2714,7 @@ def Salaries(request):
                     # if bp_user == request.user:
                     if bp.type == "bonus":
                         merged_data[date_str][bp_user.id]["value"] += bp.amount
-                        if (
-                            item_name
-                            in merged_data[date_str][bp_user.id]["tooltip"]
-                        ):
+                        if item_name in merged_data[date_str][bp_user.id]["tooltip"]:
                             merged_data[date_str][bp_user.id]["tooltip"][item_name][
                                 "count"
                             ] += 1
@@ -2725,18 +2722,13 @@ def Salaries(request):
                                 "total_amount"
                             ] += bp.amount
                         else:
-                            merged_data[date_str][bp_user.id]["tooltip"][
-                                item_name
-                            ] = {
+                            merged_data[date_str][bp_user.id]["tooltip"][item_name] = {
                                 "count": 1,
                                 "total_amount": bp.amount,
                             }
                     elif bp.type == "penalty":
                         merged_data[date_str][bp_user.id]["value"] -= bp.amount
-                        if (
-                            item_name
-                            in merged_data[date_str][bp_user.id]["tooltip"]
-                        ):
+                        if item_name in merged_data[date_str][bp_user.id]["tooltip"]:
                             merged_data[date_str][bp_user.id]["tooltip"][item_name][
                                 "count"
                             ] += 1
@@ -2744,9 +2736,7 @@ def Salaries(request):
                                 "total_amount"
                             ] -= bp.amount
                         else:
-                            merged_data[date_str][bp_user.id]["tooltip"][
-                                item_name
-                            ] = {
+                            merged_data[date_str][bp_user.id]["tooltip"][item_name] = {
                                 "count": 1,
                                 "total_amount": -bp.amount,
                             }
@@ -2778,6 +2768,87 @@ def Salaries(request):
 
         transformed_data = {"head": head_data, "body": body_data}
         return Response(transformed_data)
+
+
+@api_view(["GET"])
+def ExpensesFromOwn(request):
+    if request.method == "GET":
+        start_date_param = request.query_params.get("start_date")
+        end_date_param = request.query_params.get("end_date")
+
+        try:
+            start_date = (
+                datetime.strptime(start_date_param, "%d-%m-%Y").date()
+                if start_date_param
+                else None
+            )
+            end_date = (
+                datetime.strptime(end_date_param, "%d-%m-%Y").date()
+                if end_date_param
+                else None
+            )
+        except ValueError:
+            return JsonResponse(
+                {"error": "Invalid date format. Please use DD-MM-YYYY."}, status=400
+            )
+
+        entries = ExpenseFromTheir.objects.all().order_by("date")
+
+        if start_date and end_date:
+            entries = entries.filter(date__range=(start_date, end_date))
+
+        entries_dict = {}  # To track incomes by date
+
+        for entry in entries:
+            date_timestamp = date_to_timestamp(
+                entry.date
+            )  # Convert date to Unix timestamp
+            date_str = entry.date.strftime("%d.%m.%Y")  # Format date as DD.MM.YYYY
+
+            if date_timestamp not in entries_dict:
+                entries_dict[date_timestamp] = {
+                    "id": date_timestamp,
+                    "key": str(date_timestamp),  # Use Unix timestamp as the key
+                    "date": date_str,
+                    "amount": 0,
+                    "description": None,
+                    "who_paid": None,
+                    "phone_number_for_transfer": None,
+                    "bank": None,
+                    "status": None,
+                    "quest": None,
+                    "children": [],
+                }
+
+            child_id = str(entry.id)  # Use income.id as the child's key
+
+            entries_dict[date_timestamp]["amount"] += entry.amount
+
+            entries_dict[date_timestamp]["children"].append(
+                {
+                    "id": entry.id,
+                    "key": child_id,
+                    "amount": entry.amount,
+                    "description": entry.description,
+                    "who_paid": {
+                        "id": entry.who_paid.id,
+                        "last_name": entry.who_paid.last_name,
+                        "first_name": entry.who_paid.first_name,
+                    },
+                    "phone_number_for_transfer": entry.phone_number_for_transfer,
+                    "bank": entry.bank,
+                    "status": entry.status,
+                    "quest": {
+                        "id": entry.quest.id,
+                        "name": entry.quest.name,
+                    },
+                }
+            )
+
+        # Convert the dictionary to a list
+        response_data = list(entries_dict.values())
+
+        return Response(response_data)
 
 
 @api_view(["GET"])
@@ -3037,18 +3108,6 @@ def QExpensesFromOwn(request, id):
             child_id = str(entry.id)  # Use income.id as the child's key
 
             entries_dict[date_timestamp]["amount"] += entry.amount
-            # entries_dict[date_timestamp]["description"] = entry.description
-            # entries_dict[date_timestamp]["who_paid"] = {
-            #     "id": entry.who_paid.id,
-            #     "last_name": entry.who_paid.last_name,
-            #     "first_name": entry.who_paid.first_name,
-            # }
-            # entries_dict[date_timestamp]["status"] = entry.status
-            # entries_dict[date_timestamp]["quest"] = {
-            #     "id": entry.quest.id,
-            #     "latin_name": entry.quest.latin_name,
-            #     "name": entry.quest.name,
-            # }
 
             entries_dict[date_timestamp]["children"].append(
                 {
