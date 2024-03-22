@@ -682,7 +682,7 @@ def STQuests(request):
             entry_dict[date_timestamp]["cash_delivery"] += entry.cash_delivery
             entry_dict[date_timestamp]["cashless_delivery"] += entry.cashless_delivery
             entry_dict[date_timestamp]["prepayment"] += entry.prepayment
-            entry_dict[date_timestamp]["client_name"] += entry.client_name
+            entry_dict[date_timestamp]["client_name"] = entry.client_name
             entry_dict[date_timestamp]["created_by"] = {
                 "id": entry.created_by.id,
                 "last_name": entry.created_by.last_name,
