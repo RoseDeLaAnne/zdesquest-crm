@@ -260,10 +260,13 @@ const TableFC: FC = ({
       const newData = tableDataSource.filter((item) => item.key !== key);
       setTableDataSource(newData);
 
-      if (dates.length !== 0) {
+      if (dates2.length !== 0) {
+        // getEntries(
+        //   dates[0].format("DD-MM-YYYY"),
+        //   dates[1].format("DD-MM-YYYY")
+        // );
         getEntries(
-          dates[0].format("DD-MM-YYYY"),
-          dates[1].format("DD-MM-YYYY")
+          dates2[0], dates2[1]
         );
       } else {
         getEntries(
@@ -297,6 +300,7 @@ const TableFC: FC = ({
   const form2HandleOnChange = () => {};
 
   const [dates, setDates] = useState([]);
+  const [dates2, setDates2] = useState([]);
   const [tableDataHead, setTableDataHead] = useState([]);
   const [tableDataSource, setTableDataSource] = useState([]);
   const [form] = Form.useForm();
@@ -379,7 +383,9 @@ const TableFC: FC = ({
     tableCountingFields = initialPackedTableColumns
       .filter((column) => column.countable)
       .map((column) => column.dataIndex);
-    tableSumFields = initialPackedTableColumns.filter((column) => column.inSum).map((column) => column.dataIndex)
+    tableSumFields = initialPackedTableColumns
+      .filter((column) => column.inSum)
+      .map((column) => column.dataIndex);
   } else {
     unpackedTableColumns = tableDataHead.map((item) => {
       if (item.children) {
@@ -804,8 +810,6 @@ const TableFC: FC = ({
     const startDateStr = startDate ? startDate.format("DD-MM-YYYY") : null;
     const endDateStr = endDate ? endDate.format("DD-MM-YYYY") : null;
 
-    setDates(dates);
-
     getEntries(startDateStr, endDateStr);
   };
 
@@ -817,6 +821,7 @@ const TableFC: FC = ({
 
     const str_dates = local_dates.map((date) => date.replace(/\./g, "-"));
 
+    setDates2([str_dates[0], str_dates[1]]);
     getEntries(str_dates[0], str_dates[1]);
   };
 

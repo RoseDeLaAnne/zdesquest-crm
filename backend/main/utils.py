@@ -121,13 +121,6 @@ def create_qincome(data, entry):
                 + int(data["night_game"])
             )
 
-            # if local_data['discount_sum']:
-            # local_data['game_tooltip'] =
-            # local_data['game'] = {
-            #     "value": int(data['quest_cost']) + int(data['add_players']) + int(data['easy_work']) + int(data['night_game']) - int(data['discount_sum']),
-            #     "tooltip": ""
-            # }
-
             local_data["discount_sum"] = int(data["discount_sum"])
             local_data["discount_desc"] = data["discount_desc"]
             local_data["easy_work"] = data["easy_work"]

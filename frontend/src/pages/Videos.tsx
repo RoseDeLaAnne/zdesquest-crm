@@ -10,7 +10,13 @@ import TemplateTable from "../components/template/Table";
 
 // api
 import { getSalaries, getVideos, toggleQuestVideo } from "../api/APIUtils";
-import { pullOfDatesDefaultValue, pullOfDatesDefaultValueForVideo, pullOfDatesOptions, pullOfDatesOptionsForVideo } from "../constants";
+import {
+  pullOfDatesDefaultValue,
+  pullOfDatesDefaultValueForVideo,
+  pullOfDatesOptions,
+  pullOfDatesOptionsForVideo,
+  pullOfDatesWhenLoadingSalaries,
+} from "../constants";
 
 const VideosFC: FC = () => {
   const initialBreadcrumbItems = [
@@ -50,6 +56,17 @@ const VideosFC: FC = () => {
       render: (client_name) => {
         if (client_name !== "") {
           return <Tag color="black">{client_name}</Tag>;
+        } else {
+          return null;
+        }
+      },
+    },
+    {
+      title: "администратор",
+      dataIndex: "administrator",
+      render: (administrator) => {
+        if (administrator !== "") {
+          return <Tag color="black">{administrator}</Tag>;
         } else {
           return null;
         }
@@ -129,11 +146,12 @@ const VideosFC: FC = () => {
       toggleFunction={toggleQuestVideo}
       tableDateColumn={"date_time"}
       initialPackedTableColumns={initialPackedTableColumns}
-      tableScroll={{ x: 1000 }}
+      tableScroll={{ x: 1500 }}
       tableIsObj={true}
       tableIsOperation={"toggle"}
       isPullOfDates={true}
       pullOfDatesDefaultValue={pullOfDatesDefaultValueForVideo}
+      pullOfDatesWhenLoading={pullOfDatesWhenLoadingSalaries}
       pullOfDatesOptions={pullOfDatesOptionsForVideo}
     />
   );
