@@ -3723,9 +3723,6 @@ def VSTQuest(request, id):
             entry.actors.set([])
 
         if "employees_first_time" in data:
-            # employees_first_time = User.objects.filter(
-            #     id__in=data["employees_first_time"]
-            # )
             employee_first_time_names = data["employees_first_time"]
             formatted_employee_first_time_names = [
                 " ".join(word.capitalize() for word in name.split())
@@ -4221,9 +4218,9 @@ def VSTQuest(request, id):
             ).save()
 
         if "employees_first_time" in data:
-            employees_first_time = User.objects.filter(
-                id__in=data["employees_first_time"]
-            )
+            # employees_first_time = User.objects.filter(
+            #     id__in=data["employees_first_time"]
+            # )
 
             for employee_first_time in employees_first_time:
                 QSalary(
