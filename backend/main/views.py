@@ -1873,6 +1873,9 @@ def QuestExpenses(request, id):
         for bonus_penalty in bonuses_penalties:
             bonus_penalty_date = bonus_penalty.date.strftime("%d.%m.%Y")
             bonus_penalty_users = bonus_penalty.users
+            bonus_penalty_value = round(
+                bonus_penalty.amount / len(bonus_penalty.quests.all()), 2
+            )
 
             for bonus_penalty_user in bonus_penalty_users.all():
                 if bonus_penalty_user.id not in salaries_by_date[bonus_penalty_date]:
@@ -1890,6 +1893,13 @@ def QuestExpenses(request, id):
                 ):
                     salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
                         "value"
+                    ] = 0
+                if (
+                    "full_value"
+                    not in salaries_by_date[bonus_penalty_date][bonus_penalty_user.id]
+                ):
+                    salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
+                        "full_value"
                     ] = 0
                 if (
                     "first_name"
@@ -1914,24 +1924,48 @@ def QuestExpenses(request, id):
                 ):
                     salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
                         "salary_data"
-                    ][bonus_penalty.name] = {"amount": 0, "value": 0}
+                    ][bonus_penalty.name] = {"amount": 0, "value": 0, "full_value": 0}
                 salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
                     "salary_data"
                 ][bonus_penalty.name]["amount"] += 1
 
                 if bonus_penalty.type == "bonus":
+                    # salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
+                    #     "salary_data"
+                    # ][bonus_penalty.name]["value"] += bonus_penalty.amount
                     salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
                         "salary_data"
-                    ][bonus_penalty.name]["value"] += bonus_penalty.amount
+                    ][bonus_penalty.name]["value"] += bonus_penalty_value
+                    salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
+                        "salary_data"
+                    ][bonus_penalty.name]["full_value"] += bonus_penalty.amount
+                    # salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
+                    #     "value"
+                    # ] += bonus_penalty.amount
                     salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
                         "value"
-                    ] += bonus_penalty.amount
+                    ] += bonus_penalty_value
+                    salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
+                        "full_value"
+                    ] += bonus_penalty_value
                 else:
+                    # salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
+                    #     "salary_data"
+                    # ][bonus_penalty.name]["value"] -= bonus_penalty.amount
+                    # salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
+                    #     "value"
+                    # ] -= bonus_penalty.amount
                     salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
                         "salary_data"
-                    ][bonus_penalty.name]["value"] -= bonus_penalty.amount
+                    ][bonus_penalty.name]["value"] -= bonus_penalty_value
                     salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
                         "value"
+                    ] -= bonus_penalty_value
+                    salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
+                        "salary_data"
+                    ][bonus_penalty.name]["full_value"] -= bonus_penalty.amount
+                    salaries_by_date[bonus_penalty_date][bonus_penalty_user.id][
+                        "full_value"
                     ] -= bonus_penalty.amount
 
         # print(salaries_by_date)
@@ -1970,7 +2004,10 @@ def QuestExpenses(request, id):
                         item_value_item_value_salary_data_item[1]
                     )
 
-                    info += f"{item_value_item_value_salary_data_item_value['value']}р. - {item_value_item_value_salary_data_item_value['amount']} {item_value_item_value_salary_data_item_key}<br />"
+                    if ('full_value' in item_value_item_value_salary_data_item_value):
+                        info += f"{item_value_item_value_salary_data_item_value['value']}р. ({item_value_item_value_salary_data_item_value['full_value']}р.) - {item_value_item_value_salary_data_item_value['amount']} {item_value_item_value_salary_data_item_key}<br />"
+                    else:
+                        info += f"{item_value_item_value_salary_data_item_value['value']}р. - {item_value_item_value_salary_data_item_value['amount']} {item_value_item_value_salary_data_item_key}<br />"
 
                 body_data_salary_tooltip[
                     item_date
@@ -2934,7 +2971,7 @@ def Videos(request):
 
     for body_data in body.values():
         # print(len(body_data["children"]))
-        body_data['quest'] = len(body_data['children'])
+        body_data["quest"] = len(body_data["children"])
         body_data["children"].sort(key=lambda x: x["date_time"])
 
     response_data = list(body.values())
