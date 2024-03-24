@@ -28,25 +28,33 @@ const VideosFC: FC = () => {
   ];
 
   const initialPackedTableColumns = [
-    {
-      title: "номер",
-      dataIndex: "id",
-      render: (id) => {
-        if (id !== 0) {
-          return <Tag color="">{id}</Tag>;
-        } else {
-          return null;
-        }
-      },
-    },
+    // {
+    //   title: "номер",
+    //   dataIndex: "id",
+    //   render: (id) => {
+    //     if (id !== 0) {
+    //       return <Tag color="">{id}</Tag>;
+    //     } else {
+    //       return null;
+    //     }
+    //   },
+    // },
     {
       title: "квест",
       dataIndex: "quest",
       render: (quest) => {
-        if (quest !== null) {
-          return <Tag color="orange">{quest.name}</Tag>;
+        if (typeof quest === 'number') {
+          return (
+            <Tag bordered={false} color="orange">
+              {quest}
+            </Tag>
+          );
         } else {
-          return null;
+          if (quest !== null) {
+            return <Tag color="orange">{quest.name}</Tag>;
+          } else {
+            return null;
+          }
         }
       },
     },

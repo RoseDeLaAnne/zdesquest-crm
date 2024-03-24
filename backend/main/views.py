@@ -2904,7 +2904,7 @@ def Videos(request):
                 "sent": None,
                 "type": "",
                 "note": "",
-                "quest": {},
+                "quest": 0,
                 "stquest": {},
                 "children": [],
             }
@@ -2930,7 +2930,11 @@ def Videos(request):
             }
         )
 
+        # print(body)
+
     for body_data in body.values():
+        # print(len(body_data["children"]))
+        body_data['quest'] = len(body_data['children'])
         body_data["children"].sort(key=lambda x: x["date_time"])
 
     response_data = list(body.values())
