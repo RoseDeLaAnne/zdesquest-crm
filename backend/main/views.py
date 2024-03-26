@@ -55,7 +55,7 @@ def AllUsers(request):
 
 # GET
 @api_view(["GET"])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def Users(request):
     if request.method == "GET":
         # if request.user.is_superuser:
@@ -1499,7 +1499,10 @@ def QuestIncomes(request, id):
                 )
             if income.easy_work > 0:
                 tooltip += f"Простой - {income.easy_work}<br>"
+            if income.night_game > 0:
+                tooltip += f"Ночная игра - {income.night_game}<br>"
 
+            print(income.night_game)
             income_game = {
                 "value": value,
                 "tooltip": tooltip,
@@ -2004,7 +2007,7 @@ def QuestExpenses(request, id):
                         item_value_item_value_salary_data_item[1]
                     )
 
-                    if ('full_value' in item_value_item_value_salary_data_item_value):
+                    if "full_value" in item_value_item_value_salary_data_item_value:
                         info += f"{item_value_item_value_salary_data_item_value['value']}р. ({item_value_item_value_salary_data_item_value['full_value']}р.) - {item_value_item_value_salary_data_item_value['amount']} {item_value_item_value_salary_data_item_key}<br />"
                     else:
                         info += f"{item_value_item_value_salary_data_item_value['value']}р. - {item_value_item_value_salary_data_item_value['amount']} {item_value_item_value_salary_data_item_key}<br />"
@@ -4368,6 +4371,7 @@ def VSTExpenseSubCategory(request, id):
 
 # POST
 @api_view(["POST"])
+# @permission_classes([IsAuthenticated])
 def CreateUser(request):
     if request.method == "POST":
         # try:

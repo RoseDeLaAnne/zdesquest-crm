@@ -124,6 +124,7 @@ def create_qincome(data, entry):
             local_data["discount_sum"] = int(data["discount_sum"])
             local_data["discount_desc"] = data["discount_desc"]
             local_data["easy_work"] = data["easy_work"]
+            local_data["night_game"] = int(data["night_game"])
 
             local_data["paid_cash"] = int(data["cash_payment"]) - int(
                 data["cash_delivery"]
@@ -227,9 +228,10 @@ def create_qincome(data, entry):
                 ) / 2
                 # local_data['game_tooltip'] = f"{special_version} - {sum_for_game/2}"
 
-                local_data["discount_sum"] = int(data["discount_sum"])
+                local_data["discount_sum"] = int(data["discount_sum"]) / 2
                 local_data["discount_desc"] = data["discount_desc"]
                 local_data["easy_work"] = data["easy_work"]
+                local_data["night_game"] = int(data["night_game"])
 
                 local_data["paid_cash"] = int(data["cash_payment"]) - int(
                     data["cash_delivery"]
@@ -397,6 +399,7 @@ def create_qincome(data, entry):
             local_data["discount_sum"] = int(data["discount_sum"])
             local_data["discount_desc"] = data["discount_desc"]
             local_data["easy_work"] = data["easy_work"]
+            local_data["night_game"] = int(data["night_game"])
 
             local_data["paid_cash"] = int(data["cash_payment"]) - int(
                 data["cash_delivery"]

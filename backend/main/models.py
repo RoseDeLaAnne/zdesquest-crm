@@ -52,7 +52,6 @@ class Quest(models.Model):
     special_versions = models.ManyToManyField(
         "self", blank=True, symmetrical=False, related_name="quest_special_versions"
     )
-    # versions = models.ManyToManyField(QuestVersion, blank=True)
 
     def save(self, *args, **kwargs):
         if self.actor_rate is not None:
@@ -180,7 +179,6 @@ class STQuest(models.Model):
     date = models.DateField(default=timezone.now)
     time = models.TimeField(default=timezone.now)
     quest = models.ForeignKey(Quest, on_delete=models.DO_NOTHING, blank=True, null=True)
-    # quest_version = models.ForeignKey(QuestVersion, on_delete=models.DO_NOTHING, blank=True, null=True)
     quest_cost = models.IntegerField()
     add_players = models.IntegerField(default=0)
     actor_or_second_actor_or_animator = models.IntegerField(default=0)
@@ -197,13 +195,6 @@ class STQuest(models.Model):
         null=True,
         related_name="room_employee_stquest",
     )
-    # room_employee_name_after = models.ForeignKey(
-    #     User,
-    #     on_delete=models.SET_NULL,
-    #     blank=True,
-    #     null=True,
-    #     related_name="room_employee_after_stquest",
-    # )
     video = models.IntegerField(default=0)
     video_after = models.IntegerField(default=0)
     video_total = models.IntegerField(default=0)
@@ -265,8 +256,6 @@ class STQuest(models.Model):
         related_name="created_by",
     )
 
-    # created_date = models.DateTimeField(default=timezone.now)
-
     client_name = models.CharField(max_length=255, default="")
 
     def save(self, *args, **kwargs):
@@ -286,16 +275,12 @@ class STQuest(models.Model):
             self.cashless_delivery_after
         )
 
-        # if (self.photomagnets_quantity):
         photomagnets_promo = self.photomagnets_quantity // 2
         photomagnets_not_promo = self.photomagnets_quantity - photomagnets_promo
         self.photomagnets_sum = photomagnets_not_promo * 250 + photomagnets_promo * 150
         super().save(*args, **kwargs)
 
     def __str__(self):
-        # for actors
-        # print(self.actors)
-
         return str(self.quest)
 
 
@@ -410,7 +395,6 @@ class STBonusPenalty(models.Model):
     amount = models.IntegerField(default=0)
     name = models.CharField(max_length=255, default="")
 
-    # users = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
     users = models.ManyToManyField(User, blank=True)
 
     quests = models.ManyToManyField(Quest, blank=True)
@@ -423,10 +407,10 @@ class QIncome(models.Model):
     date = models.DateField(default=timezone.now)
     time = models.TimeField(default=timezone.now)
     game = models.IntegerField(default=0)
-    # game_tooltip = models.CharField(default='', max_length=255)
     discount_sum = models.IntegerField(default=0)
     discount_desc = models.CharField(default="", max_length=255)
     easy_work = models.IntegerField(default=0)
+    night_game = models.IntegerField(default=0)
     room = models.IntegerField(default=0)
     video = models.IntegerField(default=0)
     video_after = models.IntegerField(default=0)

@@ -434,7 +434,7 @@ const STQuestsFC: FC = () => {
 
   const formHandleOnChange = (value, name) => {
     if (name === "quest") {
-      const quest = quests.find((el) => el.id === value);
+      const quest = quests.find((el) => el.name === value);
       setSelectedQuest(quest);
 
       if (isWeekend) {
