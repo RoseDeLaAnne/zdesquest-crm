@@ -55,6 +55,7 @@ import QVideos from "../pages/quests/Videos";
 
 import Salaries from "../pages/Salaries";
 import ExpensesFromOwn from "../pages/ExpensesFromOwn";
+import WorkCardExpense from "../pages/WorkCardExpense";
 
 const Routes = () => {
   const { access } = useAuth();
@@ -222,6 +223,10 @@ const Routes = () => {
         {
           path: "/expenses-from-own",
           element: <ExpensesFromOwn />,
+        },
+        {
+          path: "/work-card-expense",
+          element: <WorkCardExpense />,
         },
       ],
     },

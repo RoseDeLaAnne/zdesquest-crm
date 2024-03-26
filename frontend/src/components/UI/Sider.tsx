@@ -287,6 +287,12 @@ const App: FC = ({
         "/expenses-from-own",
         <DollarOutlined />
       ),
+      getItem(
+        "расходы с рабочей карты",
+        "WorkCardExpense",
+        "/work-card-expense",
+        <DollarOutlined />
+      ),
     ];
   } else if (user.roles && user.roles.some((role) => role.name == "Видео")) {
     menuItems = [

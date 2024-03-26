@@ -53,6 +53,7 @@ urlpatterns = [
     path("toggle/correctness-of-salary/", views.VCorrectnessOfSalary),
     path("salaries/", views.Salaries),
     path("expenses-from-own/", views.ExpensesFromOwn),
+    path("work-card-expenses/", views.WorkCardExpenses),
     path("videos/", views.Videos),
     path("quest-profit/<int:id>/", views.QuestProfitById),
     # GET, PUT, DELETE

@@ -461,6 +461,24 @@ export const getExpensesFromOwnAll = async (
   }
 };
 
+export const getWorkCardExpensesAll = async (
+  startDate: string,
+  endDate: string
+) => {
+  try {
+    let url;
+    if (startDate !== null && endDate !== null) {
+      url = `${url3}/api/work-card-expenses/?start_date=${startDate}&end_date=${endDate}`;
+    } else {
+      url = `${url3}/api/work-card-expenses/`;
+    }
+    const response = await axios.get(url);
+    return response;
+  } catch (error) {
+    return error.response.status;
+  }
+};
+
 export const getQVideos = async (
   startDate: string,
   endDate: string,
